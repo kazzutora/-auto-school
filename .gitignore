@@ -33,6 +33,8 @@ htmlcov/
 /playwright-report/
 
 # Tooling caches
+# Playwright browsers, downloaded into the bind mounted workdir
+.cache/
 .mypy_cache/
 .ruff_cache/
 
