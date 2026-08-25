@@ -86,6 +86,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.auth.context_processors.auth",
     "django.contrib.messages.context_processors.messages",
     "django.template.context_processors.i18n",
+    "apps.core.context_processors.site_settings",
 ]
 
 TEMPLATES = [
@@ -164,6 +165,9 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@naukajazdywielun.pl"
 
 SMSAPI_TOKEN = env("SMSAPI_TOKEN", default="")
+
+# Where FakeMailClient drops messages, tech.md section 6.
+MAIL_OUTBOX_DIR = BASE_DIR / "tests" / "outbox"
 
 # Raw client ip is never stored, only sha256(ip + salt), tech.md section 4.3.
 IP_HASH_SALT = env("IP_HASH_SALT", default="dev-salt")
