@@ -11,8 +11,9 @@ class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Django would add this implicitly. Declaring it lets django-stubs
-    # resolve the manager on every subclass.
+    # Django adds this implicitly. Declared here because django-stubs cannot
+    # resolve a manager it never sees, and declaring it on the concrete
+    # models instead makes it worse.
     objects = models.Manager()
 
     class Meta:

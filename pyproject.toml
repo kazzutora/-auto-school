@@ -73,9 +73,9 @@ strict_equality = true
 module = "apps.*"
 disallow_untyped_defs = true
 
-# Neither django-environ nor celery ships a py.typed marker.
+# None of these ship a py.typed marker.
 [[tool.mypy.overrides]]
-module = ["environ.*", "celery.*"]
+module = ["environ.*", "celery.*", "imagekit.*"]
 ignore_missing_imports = true
 
 [tool.django-stubs]

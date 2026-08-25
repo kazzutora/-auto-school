@@ -7,7 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.models import TimeStampedModel
 
 
-class Course(TimeStampedModel):
+# django-stubs cannot synthesise the reverse managers for intakes and vehicles
+# when the related models inherit their manager from an abstract base in
+# another module. Runtime is unaffected. warn_unused_ignores will flag this
+# the day the plugin learns to resolve it.
+class Course(TimeStampedModel):  # type: ignore[django-manager-missing]
     class Kind(models.TextChoices):
         LICENSE = "license", "Kategoria prawa jazdy"
         PROFESSIONAL = "professional", "Kierowca zawodowy"

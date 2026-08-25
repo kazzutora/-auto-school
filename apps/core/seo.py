@@ -100,3 +100,52 @@ def driving_school_jsonld(site: Any) -> dict[str, Any]:
         data["sameAs"] = same_as
 
     return data
+
+
+def breadcrumb_jsonld(items: list[tuple[str, str]]) -> dict[str, Any]:
+    """schema.org BreadcrumbList from (title, absolute url) pairs."""
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": position, "name": name, "item": url}
+            for position, (name, url) in enumerate(items, start=1)
+        ],
+    }
+
+
+def page_seo(
+    request: Any,
+    *,
+    subject: str,
+    description: str,
+    breadcrumbs: list[tuple[str, str]] | None = None,
+    og_image: str | None = None,
+    robots: str = "index,follow",
+    extra_jsonld: list[dict[str, Any]] | None = None,
+) -> Seo:
+    """Assemble the section 8 contract for a public page.
+
+    Every public view goes through here, so no slice has to remember that the
+    canonical drops the query string or that DrivingSchool belongs on every page.
+    """
+    from apps.core.models import SiteSettings
+
+    jsonld: list[dict[str, Any]] = [driving_school_jsonld(SiteSettings.get_solo())]
+    if breadcrumbs:
+        jsonld.append(
+            breadcrumb_jsonld(
+                [(name, request.build_absolute_uri(path)) for name, path in breadcrumbs]
+            )
+        )
+    jsonld.extend(extra_jsonld or [])
+
+    return Seo(
+        title=build_title(subject),
+        description=build_description(description),
+        # The canonical never carries the query string.
+        canonical=request.build_absolute_uri(request.path),
+        og_image=og_image,
+        robots=robots,
+        jsonld=jsonld,
+    )
