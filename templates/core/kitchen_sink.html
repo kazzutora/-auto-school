@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<c-section id="components">
+  <c-slot name="heading">Kitchen sink</c-slot>
+  <c-slot name="sub">Każdy komponent z tech.md sekcja 7, we wszystkich wariantach propsów.</c-slot>
+
+  <c-heading level="1" eyebrow="Design system">Komponenty UI</c-heading>
+
+  <div class="mt-8 space-y-10">
+    <div>
+      <c-heading level="3">c-button</c-heading>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <c-button variant="primary" size="sm">primary sm</c-button>
+        <c-button variant="primary" size="md">primary md</c-button>
+        <c-button variant="primary" size="lg">primary lg</c-button>
+        <c-button variant="secondary">secondary</c-button>
+        <c-button variant="ghost">ghost</c-button>
+        <c-button href="/kontakt/">jako link</c-button>
+        <c-button type="submit">type submit</c-button>
+      </div>
+      <div class="mt-3"><c-button full="1">full</c-button></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-badge</c-heading>
+      <div class="mt-3 flex flex-wrap gap-3">
+        <c-badge tone="neutral">neutral</c-badge>
+        <c-badge tone="success">success</c-badge>
+        <c-badge tone="warning">warning</c-badge>
+        <c-badge tone="danger">danger</c-badge>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-card</c-heading>
+      <div class="mt-3 grid gap-4 sm:grid-cols-3">
+        <c-card><c-slot name="title">Z tytułem</c-slot>Treść karty.</c-card>
+        <c-card href="/kursy/"><c-slot name="title">Klikalna</c-slot>Karta jako link.</c-card>
+        <c-card padded="">Bez paddingu.</c-card>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-heading</c-heading>
+      <c-heading level="2">level 2</c-heading>
+      <c-heading level="3">level 3</c-heading>
+      <c-heading level="4" eyebrow="z eyebrow">level 4</c-heading>
+    </div>
+
+    <div>
+      <c-heading level="3">c-alert</c-heading>
+      <div class="mt-3 space-y-3">
+        <c-alert tone="info" title="info">Treść komunikatu.</c-alert>
+        <c-alert tone="success" title="success">Zapisano.</c-alert>
+        <c-alert tone="warning" title="warning">Brak miejsc.</c-alert>
+        <c-alert tone="danger" title="danger">Nie udało się wysłać.</c-alert>
+        <c-alert>Bez tytułu.</c-alert>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-breadcrumbs</c-heading>
+      <div class="mt-3"><c-breadcrumbs :items="breadcrumbs" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-table i c-intake-row</c-heading>
+      <div class="mt-3">
+        <c-table :headers="intake_headers">
+          {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
+        </c-table>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-accordion</c-heading>
+      <div class="mt-3">
+        <c-accordion>
+          <c-accordion.item title="Otwarty od startu" open="1">Treść pierwszej pozycji.</c-accordion.item>
+          <c-accordion.item title="Zamknięty">Treść drugiej pozycji.</c-accordion.item>
+        </c-accordion>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-modal</c-heading>
+      <div class="mt-3" x-data>
+        <c-button x-on:click="$dispatch('open-modal', 'demo')">Otwórz modal</c-button>
+        <c-modal id="demo" title="Modal demo">Zawartość modala. Escape zamyka.</c-modal>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-field, pusty i z błędami</c-heading>
+      <div class="mt-3 grid gap-6 sm:grid-cols-2">
+        <div>{% for field in form %}<c-field :field="field" />{% endfor %}</div>
+        <div>{% for field in bound_form %}<c-field :field="field" />{% endfor %}</div>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-input, c-select, c-textarea, c-checkbox</c-heading>
+      <div class="mt-3 grid gap-4 sm:grid-cols-2">
+        <c-input name="imie" placeholder="Imię" />
+        <c-input name="tel" type="tel" value="605 065 795" />
+        <c-input name="zly" value="x" error="Pole wymagane" />
+        <c-select name="kat" :options="select_options" value="c" />
+        <c-select name="kat_err" :options="select_options" error="Wybierz kategorię" />
+        <c-textarea name="wiadomosc" rows="3" value="Treść" />
+        <c-textarea name="wiadomosc_err" error="Za długa wiadomość" />
+        <c-checkbox name="zgoda" checked="1">Zgadzam się na kontakt</c-checkbox>
+        <c-checkbox name="zgoda_err" error="Zgoda jest wymagana">Zgoda RODO</c-checkbox>
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-picture</c-heading>
+      <div class="mt-3 grid w-64 gap-4">
+        <c-picture :image="images.0.image" alt="Placeholder kwadratowy" ratio="square" loading="eager" />
+        <c-picture :image="images.0.image" alt="Placeholder szesnaście do dziewięciu" ratio="video" />
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-gallery-grid</c-heading>
+      <div class="mt-3"><c-gallery-grid :images="images" columns="4" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-lightbox</c-heading>
+      <div class="mt-3"><c-lightbox :images="images" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-price-tile</c-heading>
+      <div class="mt-3 grid gap-4 sm:grid-cols-3">
+        <c-price-tile title="Kategoria B" price="3200 zł" note="cena od" href="/kursy/kat-b/" />
+        <c-price-tile title="Jazdy doszkalające" price="120 zł" note="za godzinę" />
+        <c-price-tile title="Badania psychologiczne" price="200 zł" />
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-course-card</c-heading>
+      <div class="mt-3 grid gap-4 sm:grid-cols-2"><c-course-card :course="course" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-hours-table</c-heading>
+      <div class="mt-3 grid gap-6 sm:grid-cols-2">
+        <c-hours-table department="office" />
+        <c-hours-table department="psychology" />
+      </div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-map</c-heading>
+      <div class="mt-3"><c-map lat="51.2206" lng="18.5697" zoom="16" label="ul. Zielona 45" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-testimonials</c-heading>
+      <div class="mt-3"><c-testimonials :items="testimonials" /></div>
+    </div>
+
+    <div>
+      <c-heading level="3">c-lang-switcher, c-nav</c-heading>
+      <div class="mt-3 space-y-4">
+        <c-lang-switcher />
+        <c-nav />
+        <p class="text-sm text-ink-500">c-cookie-banner renderuje base.html na dole strony.</p>
+      </div>
+    </div>
+  </div>
+</c-section>
+
+<c-section tone="muted"><c-slot name="heading">tone muted</c-slot>Sekcja na tle paper-50.</c-section>
+<c-section tone="brand"><c-slot name="heading">tone brand</c-slot><c-slot name="sub">Odwrócone kolory.</c-slot>Sekcja na tle brand-900.</c-section>
+
+<div class="mx-auto max-w-6xl px-4 pb-24">
+  <c-heading level="3">c-cta-bar</c-heading>
+  <div class="mt-3"><c-cta-bar title="Zapisz się na kurs" phone="605 065 795" href="/zapisz-sie/" /></div>
+</div>
+{% endblock %}

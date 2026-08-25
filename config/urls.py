@@ -15,4 +15,8 @@ urlpatterns = [
 urlpatterns += i18n_patterns(prefix_default_language=False)
 
 if settings.DEBUG:
+    from apps.core.views import kitchen_sink
+
+    # Review surface for the design system, DEV.md S0.7. Debug only.
+    urlpatterns += [path("__kitchen-sink/", kitchen_sink, name="kitchen_sink")]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
