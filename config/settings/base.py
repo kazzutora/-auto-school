@@ -176,13 +176,19 @@ IP_HASH_SALT = env("IP_HASH_SALT", default="dev-salt")
 SENTRY_DSN = env("SENTRY_DSN", default="")
 
 # Nothing on a public page may come from a third party host, tech.md section 2.
-# Leaflet map tiles are the single documented exception and stay off until the
-# map component ships in S0.7.
+# Two deliberate exceptions, both forced by contracts in section 7:
+#   script-src 'unsafe-eval'  Alpine 3 evaluates x-* expressions with
+#                             new Function(). The modal and the lightbox are
+#                             specified as Alpine components. Dropping this
+#                             means switching to the Alpine CSP build, which
+#                             forbids inline expressions entirely.
+#   img-src tile hosts        Leaflet pulls OpenStreetMap tiles. Chosen over
+#                             google maps precisely because it sets no cookies.
 CONTENT_SECURITY_POLICY = {
     "default-src": ["'self'"],
-    "script-src": ["'self'"],
+    "script-src": ["'self'", "'unsafe-eval'"],
     "style-src": ["'self'", "'unsafe-inline'"],
-    "img-src": ["'self'", "data:"],
+    "img-src": ["'self'", "data:", "https://tile.openstreetmap.org"],
     "font-src": ["'self'"],
     "connect-src": ["'self'"],
     "frame-ancestors": ["'none'"],

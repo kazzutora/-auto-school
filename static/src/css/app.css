@@ -82,6 +82,10 @@
 @tailwind utilities;
 
 @layer base {
+  [x-cloak] {
+    display: none !important;
+  }
+
   html {
     @apply bg-paper-0 text-ink-900 antialiased;
     font-family: theme("fontFamily.sans");
