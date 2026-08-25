@@ -1,0 +1,176 @@
+name: CI
+
+# Gate on pull requests, no deploy. tech.md section 17.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  TAILWIND_VERSION: "3.4.17"
+  DJANGO_SETTINGS_MODULE: config.settings.test
+
+jobs:
+  lint:
+    name: ruff and mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install
+        # PEP 735 dependency groups need pip 25.1 or newer.
+        run: |
+          python -m pip install --upgrade "pip>=25.1"
+          pip install -e . --group dev
+
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy apps/
+
+  test:
+    name: migrations and pytest
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: osk
+          POSTGRES_USER: osk
+          POSTGRES_PASSWORD: osk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U osk -d osk"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+
+    env:
+      DATABASE_URL: postgres://osk:osk@localhost:5432/osk
+      REDIS_URL: redis://localhost:6379/0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade "pip>=25.1"
+          pip install -e . --group dev
+
+      - name: No unmade migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Tests
+        # e2e runs against the built image in its own job.
+        run: pytest -q --cov=apps --cov-fail-under=80 --ignore=tests/e2e
+
+  e2e:
+    name: playwright on the built image
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: osk
+          POSTGRES_USER: osk
+          POSTGRES_PASSWORD: osk
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U osk -d osk"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the development image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: dev
+          tags: osk-dev:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build the css
+        # The built stylesheet is a build artifact and is not committed, so the
+        # browser would otherwise load an unstyled page and the layout
+        # assertions would be meaningless.
+        run: |
+          curl -fsSL -o /usr/local/bin/tailwindcss \
+            "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          chmod +x /usr/local/bin/tailwindcss
+          tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
+
+      - name: End to end
+        # Host networking so the container reaches the service containers, which
+        # github publishes on the runner's localhost. The image entrypoint waits
+        # for postgres before handing over to pytest.
+        run: |
+          docker run --rm --network host \
+            -v "$PWD:/app" -w /app \
+            -e DJANGO_SETTINGS_MODULE=config.settings.test \
+            -e DATABASE_URL=postgres://osk:osk@localhost:5432/osk \
+            -e REDIS_URL=redis://localhost:6379/0 \
+            --entrypoint sh osk-dev:ci -c \
+            "playwright install chromium >/dev/null && pytest tests/e2e -q"
+
+  images:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          tags: osk:ci
+          load: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
