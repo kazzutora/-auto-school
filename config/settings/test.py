@@ -1,21 +1,17 @@
-"""Bootstrap settings for the test runner and the mypy django plugin.
+"""Test settings. The suite runs against fakes only, tech.md section 6."""
 
-Deliberately minimal. The real settings tree (base, dev, prod, test on top of
-django-environ, tech.md section 10) lands in S0.3 and replaces this module.
-Until then it only has to let django.setup() succeed against the empty skeleton,
-so it declares no DATABASES: postgres belongs to the S0.2 compose stack.
-"""
+from .base import *  # noqa: F403
 
-SECRET_KEY = "test-not-secret"
 DEBUG = False
-USE_TZ = True
+SECRET_KEY = "test-not-secret"
 
-INSTALLED_APPS = [
-    "apps.core",
-    "apps.courses",
-    "apps.leads",
-    "apps.people",
-    "apps.gallery",
-    "apps.links",
-    "apps.reviews",
-]
+MAIL_CLIENT = "fake"
+SMS_CLIENT = "fake"
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+
+# Run tasks in process so idempotency tests can call them twice directly,
+# tech.md section 9.
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

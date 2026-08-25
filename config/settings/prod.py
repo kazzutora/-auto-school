@@ -1,0 +1,50 @@
+"""Production settings. Security baseline comes from tech.md section 19."""
+
+import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+
+from .base import *  # noqa: F403
+from .base import COTTON_TEMPLATE_LOADERS, MIDDLEWARE, SENTRY_DSN, TEMPLATES, env
+
+DEBUG = False
+
+# No development fallback: the stack must refuse to start without real values.
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+
+TEMPLATES[0]["OPTIONS"]["loaders"] = [
+    ("django.template.loaders.cached.Loader", COTTON_TEMPLATE_LOADERS),
+]
+
+# Caddy terminates tls and sets the header, tech.md section 19.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = "DENY"
+
+# tech.md section 19 scopes the policy to production: the django debug page
+# needs inline scripts that 'self' would block.
+MIDDLEWARE = [*MIDDLEWARE, "config.middleware.ContentSecurityPolicyMiddleware"]
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), CeleryIntegration()],
+        traces_sample_rate=0.1,
+        # Lead data is personal data under RODO, keep it out of error reports.
+        send_default_pii=False,
+    )
