@@ -1,0 +1,5 @@
+<c-vars name="" options="" value="" error="" />
+<select name="{{ name }}" id="id_{{ name }}" {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %} class="w-full rounded-lg border bg-paper-0 px-3 py-2.5 text-ink-900 focus-visible:outline-none{% if error %} border-state-err{% else %} border-paper-100{% endif %}" {{ attrs }}>
+  {% for option in options %}<option value="{{ option.0 }}" {% if option.0|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ option.1 }}</option>{% endfor %}
+</select>
+{% if error %}<p id="err_{{ name }}" class="mt-1 text-sm text-state-err">{{ error }}</p>{% endif %}

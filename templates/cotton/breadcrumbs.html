@@ -1,0 +1,9 @@
+<c-vars items="" />
+<nav aria-label="Breadcrumb" {{ attrs }}>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-500">
+    {% for item in items %}<li class="flex items-center gap-2">
+      {% if not forloop.first %}<span aria-hidden="true">/</span>{% endif %}
+      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="hover:text-brand-700 hover:underline">{{ item.title }}</a>{% else %}<span aria-current="page" class="text-ink-900">{{ item.title }}</span>{% endif %}
+    </li>{% endfor %}
+  </ol>
+</nav>

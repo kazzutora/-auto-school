@@ -1,0 +1,19 @@
+{% load core_ui %}
+{% nav_items as items %}
+{# Mobile menu opens on click only, never on hover. Kontakt is a first level
+   item: hiding it in a submenu was the main defect of the old site. #}
+<nav x-data="{ open: false }" aria-label="Główna nawigacja" {{ attrs }}>
+  <button type="button" x-on:click="open = !open" x-bind:aria-expanded="open ? 'true' : 'false'" aria-controls="main-menu" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 font-display font-bold text-brand-900 lg:hidden">
+    <span aria-hidden="true">&#9776;</span> Menu
+  </button>
+
+  <ul id="main-menu" x-bind:class="open ? 'block' : 'hidden'" class="lg:!flex lg:items-center lg:gap-1">
+    {% for item in items %}<li class="lg:relative">
+      {% nav_url item as url %}
+      <a href="{% if url %}{{ url }}{% else %}#{% endif %}" class="block rounded-lg px-3 py-2 font-display font-bold text-ink-900 transition hover:bg-brand-100 hover:text-brand-900">{{ item.title }}</a>
+      {% if item.children %}<ul class="ml-3 lg:absolute lg:left-0 lg:top-full lg:ml-0 lg:hidden lg:min-w-56 lg:rounded-lg lg:border lg:border-paper-100 lg:bg-paper-0 lg:p-2 lg:shadow-lg">
+        {% for child in item.children %}<li>{% nav_url child as child_url %}<a href="{% if child_url %}{{ child_url }}{% else %}#{% endif %}" class="block rounded px-3 py-2 text-ink-700 hover:bg-paper-50 hover:text-brand-700">{{ child.title }}</a></li>{% endfor %}
+      </ul>{% endif %}
+    </li>{% endfor %}
+  </ul>
+</nav>

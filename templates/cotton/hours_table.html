@@ -1,0 +1,16 @@
+<c-vars department="office" />
+{% load core_ui %}
+{% opening_hours department as rows %}
+{% is_open_now department as open_now %}
+<div {{ attrs }}>
+  <p class="mb-3">{% if open_now %}<c-badge tone="success">Otwarte teraz</c-badge>{% else %}<c-badge tone="neutral">Zamknięte</c-badge>{% endif %}</p>
+  <table class="w-full text-left">
+    <tbody class="divide-y divide-paper-100">
+      {% for entry in rows %}<tr class="{% if entry.is_today %}font-bold text-ink-900{% else %}text-ink-700{% endif %}">
+        <th scope="row" class="py-2 pr-4 font-normal{% if entry.is_today %} font-bold{% endif %}">{{ entry.label }}</th>
+        <td class="py-2">{% if entry.row and not entry.row.is_closed %}{{ entry.row.opens|time:"H:i" }}&ndash;{{ entry.row.closes|time:"H:i" }}{% else %}<span class="text-ink-500">Nieczynne</span>{% endif %}</td>
+        <td class="py-2 text-sm text-ink-500">{% if entry.row.note %}{{ entry.row.note }}{% endif %}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table>
+</div>

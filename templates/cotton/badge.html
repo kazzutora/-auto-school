@@ -1,0 +1,2 @@
+<c-vars tone="neutral" />
+<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold{% if tone == 'success' %} bg-state-ok/10 text-state-ok{% elif tone == 'warning' %} bg-state-warn/10 text-state-warn{% elif tone == 'danger' %} bg-state-err/10 text-state-err{% else %} bg-paper-100 text-ink-700{% endif %}" {{ attrs }}>{{ slot }}</span>

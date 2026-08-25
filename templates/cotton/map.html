@@ -1,0 +1,10 @@
+<c-vars lat="" lng="" zoom="16" label="" />
+{# Leaflet and OpenStreetMap, no google script, so no cookie gate on the map.
+   The page using this component must pull in the leaflet stylesheet:
+     {% block head %}<link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+     <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>{% endblock %}
+   It is not in base.html on purpose: one page carries a map and the mobile
+   performance gate is 90.
+   Init data rides on data attributes: static/js/app.js reads them, which keeps
+   the page free of inline script under the production CSP. #}
+<div data-map data-lat="{{ lat }}" data-lng="{{ lng }}" data-zoom="{{ zoom }}" data-label="{{ label }}" class="h-80 w-full rounded-xl border border-paper-100" role="img" aria-label="{% if label %}{{ label }}{% else %}Mapa dojazdu{% endif %}" {{ attrs }}></div>

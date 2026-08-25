@@ -1,0 +1,8 @@
+<c-vars title="" price="" note="" href="" />
+<div class="flex flex-col rounded-xl border border-paper-100 bg-paper-0 p-6" {{ attrs }}>
+  <h3 class="font-display text-lg font-bold text-brand-900">{{ title }}</h3>
+  <p class="mt-2 font-display text-3xl font-bold text-brand-700">{{ price }}</p>
+  {% if note %}<p class="mt-1 text-sm text-ink-500">{{ note }}</p>{% endif %}
+  <div class="mt-4">{{ slot }}</div>
+  {% if href %}<div class="mt-auto pt-4"><c-button href="{{ href }}" variant="secondary" full="1">Szczegóły</c-button></div>{% endif %}
+</div>

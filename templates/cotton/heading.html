@@ -1,0 +1,6 @@
+<c-vars level="2" eyebrow="" />
+{% if eyebrow %}<p class="font-display text-sm font-bold uppercase tracking-widest text-brand-500">{{ eyebrow }}</p>{% endif %}
+{% if level == '1' or level == 1 %}<h1 class="font-display text-4xl font-bold tracking-tight text-brand-900 sm:text-5xl" {{ attrs }}>{{ slot }}</h1>
+{% elif level == '3' or level == 3 %}<h3 class="font-display text-xl font-bold text-brand-900" {{ attrs }}>{{ slot }}</h3>
+{% elif level == '4' or level == 4 %}<h4 class="font-display text-lg font-bold text-brand-700" {{ attrs }}>{{ slot }}</h4>
+{% else %}<h2 class="font-display text-3xl font-bold tracking-tight text-brand-900" {{ attrs }}>{{ slot }}</h2>{% endif %}

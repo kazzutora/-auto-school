@@ -1,0 +1,11 @@
+{# Hidden until static/js/app.js decides no choice is stored yet. Analytics stay
+   off until the visitor accepts, tech.md stage S10. #}
+<div data-cookie-banner hidden class="fixed inset-x-0 bottom-0 z-50 border-t border-paper-100 bg-paper-0 p-4 shadow-lg" {{ attrs }}>
+  <div class="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-sm text-ink-700">Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie.</p>
+    <div class="flex shrink-0 gap-2">
+      <c-button variant="ghost" size="sm" data-cookie-reject="1">Tylko niezbędne</c-button>
+      <c-button size="sm" data-cookie-accept="1">Akceptuję</c-button>
+    </div>
+  </div>
+</div>

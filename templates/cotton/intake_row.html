@@ -1,0 +1,13 @@
+<c-vars intake="" />
+<tr {{ attrs }}>
+  <td class="px-4 py-3 font-bold text-ink-900">{{ intake.start_date|date:"d.m.Y" }}</td>
+  <td class="px-4 py-3 text-ink-700">{{ intake.course.title }}</td>
+  <td class="px-4 py-3 text-ink-700">{{ intake.get_mode_display }}</td>
+  <td class="px-4 py-3 text-ink-700">{{ intake.language|upper }}</td>
+  <td class="px-4 py-3">
+    {% if intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
+    {% elif intake.status == 'full' %}<c-badge tone="warning">Brak miejsc</c-badge>
+    {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
+    {% else %}<c-badge tone="neutral">Planowany</c-badge>{% endif %}
+  </td>
+</tr>

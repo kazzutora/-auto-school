@@ -1,0 +1,5 @@
+{% load core_ui i18n %}
+{% language_links as links %}
+<nav aria-label="{% translate 'Language' %}" class="flex items-center gap-1" {{ attrs }}>
+  {% for link in links %}<a href="{{ link.url }}" hreflang="{{ link.code }}" lang="{{ link.code }}" {% if link.is_active %}aria-current="true"{% endif %} class="rounded px-2 py-1 text-sm font-bold uppercase transition{% if link.is_active %} bg-brand-100 text-brand-900{% else %} text-ink-500 hover:text-brand-700{% endif %}">{{ link.code }}</a>{% endfor %}
+</nav>

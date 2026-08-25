@@ -1,0 +1,5 @@
+<c-vars href="" padded="1" />
+{% if href %}<a href="{{ href }}"{% else %}<article{% endif %} class="block rounded-xl border border-paper-100 bg-paper-0 shadow-sm transition{% if href %} hover:border-brand-500 hover:shadow-md{% endif %}{% if padded %} p-6{% endif %}" {{ attrs }}>
+  {% if title %}<h3 class="font-display text-xl font-bold text-brand-900">{{ title }}</h3>{% endif %}
+  <div class="{% if title %}mt-2 {% endif %}text-ink-700">{{ slot }}</div>
+{% if href %}</a>{% else %}</article>{% endif %}

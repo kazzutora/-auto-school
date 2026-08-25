@@ -1,0 +1,5 @@
+<c-vars tone="info" title="" />
+<div role="{% if tone == 'danger' %}alert{% else %}status{% endif %}" class="rounded-xl border-l-4 p-4{% if tone == 'success' %} border-state-ok bg-state-ok/5{% elif tone == 'warning' %} border-state-warn bg-state-warn/5{% elif tone == 'danger' %} border-state-err bg-state-err/5{% else %} border-brand-500 bg-brand-100/50{% endif %}" {{ attrs }}>
+  {% if title %}<p class="font-display font-bold text-ink-900">{{ title }}</p>{% endif %}
+  <div class="{% if title %}mt-1 {% endif %}text-ink-700">{{ slot }}</div>
+</div>

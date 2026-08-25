@@ -1,0 +1,6 @@
+<c-vars image="" alt="" sizes="100vw" loading="lazy" ratio="" />
+{# alt is mandatory: the a11y gate rejects an empty one, tech.md section 8 #}
+<picture {{ attrs }}>
+  {% if image.webp %}<source type="image/webp" srcset="{{ image.webp.url }}" sizes="{{ sizes }}">{% endif %}
+  <img src="{{ image.url }}" alt="{{ alt }}" loading="{{ loading }}" {% if loading == 'lazy' %}decoding="async"{% endif %} sizes="{{ sizes }}" class="h-full w-full object-cover{% if ratio == 'square' %} aspect-square{% elif ratio == 'video' %} aspect-video{% elif ratio == 'portrait' %} aspect-[3/4]{% endif %}">
+</picture>

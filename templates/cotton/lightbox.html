@@ -1,0 +1,20 @@
+<c-vars images="" />
+<div x-data="{ open: false, index: 0, total: {{ images|length }} }" x-on:keydown.escape.window="open = false" x-on:keydown.arrow-right.window="if (open) index = (index + 1) % total" x-on:keydown.arrow-left.window="if (open) index = (index - 1 + total) % total" {{ attrs }}>
+  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+    {% for image in images %}<li>
+      <button type="button" x-on:click="index = {{ forloop.counter0 }}; open = true" class="block w-full overflow-hidden rounded-xl border border-paper-100 focus-visible:outline-none">
+        <c-picture :image="image.image" alt="{{ image.alt }}" ratio="square" sizes="(min-width: 640px) 33vw, 50vw" />
+      </button>
+    </li>{% endfor %}
+  </ul>
+
+  <div x-cloak x-show="open" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/90 p-4" role="dialog" aria-modal="true">
+    <button type="button" x-on:click="open = false" aria-label="Zamknij" class="absolute right-4 top-4 text-3xl text-paper-0">&times;</button>
+    <button type="button" x-on:click="index = (index - 1 + total) % total" aria-label="Poprzednie" class="absolute left-4 text-4xl text-paper-0">&lsaquo;</button>
+    {% for image in images %}<figure x-cloak x-show="index === {{ forloop.counter0 }}" class="max-h-full max-w-4xl">
+      <img src="{{ image.image.url }}" alt="{{ image.alt }}" class="max-h-[80vh] w-auto rounded-lg">
+      {% if image.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ image.caption }}</figcaption>{% endif %}
+    </figure>{% endfor %}
+    <button type="button" x-on:click="index = (index + 1) % total" aria-label="Następne" class="absolute right-4 text-4xl text-paper-0">&rsaquo;</button>
+  </div>
+</div>

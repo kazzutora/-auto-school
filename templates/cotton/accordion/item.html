@@ -1,0 +1,9 @@
+<c-vars title="" open="" />
+{# details/summary: keyboard accessible with no javascript at all #}
+<details class="group" {% if open %}open{% endif %} {{ attrs }}>
+  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-display font-bold text-brand-900 focus-visible:outline-none">
+    {{ title }}
+    <span aria-hidden="true" class="shrink-0 transition group-open:rotate-45 text-brand-500">+</span>
+  </summary>
+  <div class="px-4 pb-4 text-ink-700">{{ slot }}</div>
+</details>

@@ -1,0 +1,11 @@
+<c-vars title="" phone="" href="" />
+{# sticky at the bottom on mobile: calling is one of the two actions that matter #}
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-brand-700 bg-brand-900 p-3 sm:static sm:rounded-xl sm:border" {{ attrs }}>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+    {% if title %}<p class="hidden font-display font-bold text-paper-0 sm:block">{{ title }}</p>{% endif %}
+    <div class="flex w-full gap-2 sm:w-auto">
+      {% if phone %}<c-button variant="secondary" size="lg" full="1" href="tel:{{ phone|cut:' ' }}">{{ phone }}</c-button>{% endif %}
+      {% if href %}<c-button size="lg" full="1" href="{{ href }}">Zapisz się</c-button>{% endif %}
+    </div>
+  </div>
+</div>

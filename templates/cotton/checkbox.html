@@ -1,0 +1,6 @@
+<c-vars name="" checked="" error="" />
+<label for="id_{{ name }}" class="flex items-start gap-3 text-ink-700">
+  <input type="checkbox" name="{{ name }}" id="id_{{ name }}" {% if checked %}checked{% endif %} {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %} class="mt-1 h-5 w-5 shrink-0 rounded border-paper-100 text-brand-700 focus-visible:outline-none{% if error %} border-state-err{% endif %}" {{ attrs }}>
+  <span class="text-sm">{{ slot }}</span>
+</label>
+{% if error %}<p id="err_{{ name }}" class="mt-1 text-sm text-state-err">{{ error }}</p>{% endif %}
