@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+<c-section>
+  <c-breadcrumbs :items="breadcrumbs" />
+
+  <div class="mt-4 flex flex-wrap items-center gap-3">
+    {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
+    {% for language in course.languages %}<c-badge tone="success">{{ language|upper }}</c-badge>{% endfor %}
+  </div>
+
+  <div class="mt-2">
+    <c-heading level="1">{{ course.title }}</c-heading>
+  </div>
+
+  {% if course.lead %}<p class="mt-3 max-w-2xl text-lg text-ink-500">{{ course.lead }}</p>{% endif %}
+
+  {% if course.hero_image %}
+    <div class="mt-6 overflow-hidden rounded-xl border border-paper-100">
+      <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}" ratio="video" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
+    </div>
+  {% endif %}
+
+  <div class="mt-10 grid gap-10 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      {% if entitlements %}
+        <c-heading level="2">Uprawnia do kierowania</c-heading>
+        <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ entitlements }}</div>
+      {% endif %}
+
+      {% if requirements %}
+        <div class="mt-8">
+          <c-heading level="2">Wymagania</c-heading>
+          <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ requirements }}</div>
+        </div>
+      {% endif %}
+
+      {% if body %}
+        <div class="mt-8">
+          <c-heading level="2">O kursie</c-heading>
+          <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ body }}</div>
+        </div>
+      {% endif %}
+    </div>
+
+    <aside>
+      <c-heading level="2">W skrócie</c-heading>
+      <div class="mt-3">
+        <c-table :headers="fact_headers">
+          {% if course.min_age %}
+            <tr>
+              <th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Wiek</th>
+              <td class="px-4 py-3 font-bold text-ink-900">
+                od {{ course.min_age }} lat
+                {% if start_age %}<span class="block text-sm font-normal text-ink-500">kurs od {{ start_age.0 }} lat {{ start_age.1 }} mies.</span>{% endif %}
+              </td>
+            </tr>
+          {% endif %}
+          {% if course.theory_hours %}
+            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Teoria</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.theory_hours }} h</td></tr>
+          {% endif %}
+          {% if course.practice_hours %}
+            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Praktyka</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.practice_hours }} h</td></tr>
+          {% endif %}
+          {% if course.total_hours %}
+            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Razem</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.total_hours }} h</td></tr>
+          {% endif %}
+          {% if price %}
+            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Cena</th><td class="px-4 py-3 font-bold text-brand-700">{{ price }}</td></tr>
+          {% endif %}
+        </c-table>
+      </div>
+
+      {% if not course.price_gross %}
+        <div class="mt-4">{% include "courses/_ask_for_price.html" %}</div>
+      {% endif %}
+    </aside>
+  </div>
+
+  {% if intakes %}
+    <div class="mt-14">
+      <c-heading level="2">Najbliższe terminy</c-heading>
+      <div class="mt-4">
+        <c-table :headers="intake_headers">
+          {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
+        </c-table>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if vehicles %}
+    <div class="mt-14">
+      <c-heading level="2">Pojazdy szkoleniowe</c-heading>
+      <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {% for vehicle in vehicles %}
+          <li>
+            <c-card>
+              <c-slot name="title">{{ vehicle.make }} {{ vehicle.model }}</c-slot>
+              <p class="flex flex-wrap gap-2">
+                {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
+                <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
+                {% if vehicle.is_exam_spec %}<c-badge tone="success">Zgodny z egzaminem</c-badge>{% endif %}
+              </p>
+              {% if vehicle.note %}<p class="mt-2 text-sm text-ink-500">{{ vehicle.note }}</p>{% endif %}
+            </c-card>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</c-section>
+
+{# Sticky at the bottom on mobile, so calling never needs a scroll. #}
+<div class="pb-24 sm:pb-0">
+  <c-cta-bar data-testid="call-bar" title="Zapisz się na {{ course.title }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+</div>
+{% endblock %}

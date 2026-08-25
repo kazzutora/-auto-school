@@ -1,0 +1,16 @@
+{# Price not set yet. Never render an empty gap or a misleading 0 zl. #}
+{% if compact %}
+  <p class="mt-2">
+    <c-button variant="ghost" size="sm" full="1" href="{{ enrol_url }}">Zapytaj o cenę</c-button>
+  </p>
+{% else %}
+  <c-alert tone="info" title="Zapytaj o cenę">
+    <p>Cena tego kursu ustalana jest indywidualnie. Napisz do nas albo zadzwoń, podamy ją od ręki.</p>
+    <p class="mt-3 flex flex-wrap gap-2">
+      <c-button href="{{ enrol_url }}">Zapytaj o cenę</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">{{ site_settings.phone_primary }}</c-button>
+      {% endif %}
+    </p>
+  </c-alert>
+{% endif %}

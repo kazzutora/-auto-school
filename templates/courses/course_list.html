@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">{{ heading }}</c-heading>
+  <p class="mt-3 max-w-2xl text-lg text-ink-500">{{ intro }}</p>
+
+  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+
+  {% if courses %}
+    <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for course in courses %}
+        <li class="flex flex-col">
+          <a href="{{ course.get_absolute_url }}" class="flex h-full flex-col focus-visible:outline-none">
+            <c-course-card :course="course" />
+          </a>
+          {% if not course.price_gross %}
+            {% include "courses/_ask_for_price.html" with compact=1 %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="mt-8"><c-alert tone="info" title="Oferta w przygotowaniu">Kursy pojawią się wkrótce.</c-alert></div>
+  {% endif %}
+
+  {% if show_other_kinds %}
+    <div class="mt-14">
+      <c-heading level="2">Pozostałe szkolenia</c-heading>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <c-card href="/kierowca-zawodowy/"><c-slot name="title">Kierowca zawodowy</c-slot>Kwalifikacja wstępna, szkolenia okresowe, ADR.</c-card>
+        <c-card href="/badania-psychologiczne/"><c-slot name="title">Badania psychologiczne</c-slot>Dla kierowców, instruktorów i operatorów.</c-card>
+        <c-card href="/wozki-widlowe/"><c-slot name="title">Wózki widłowe</c-slot>Uprawnienia operatora wózków jezdniowych.</c-card>
+      </div>
+    </div>
+  {% endif %}
+</c-section>
+
+<div class="pb-24 sm:pb-0">
+  <c-cta-bar data-testid="call-bar" title="Nie wiesz, którą kategorię wybrać?" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+</div>
+{% endblock %}

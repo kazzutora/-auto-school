@@ -18,6 +18,7 @@ urlpatterns = [
 
 # Polish carries no prefix, russian and ukrainian get /ru/ and /uk/.
 urlpatterns += i18n_patterns(
+    path("", include("apps.courses.urls")),
     path("", include("apps.gallery.urls")),
     prefix_default_language=False,
 )
