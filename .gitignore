@@ -45,6 +45,7 @@ htmlcov/
 node_modules/
 
 # Backups
+/backups/
 /deploy/backups/
 
 # Editors

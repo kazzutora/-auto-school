@@ -179,6 +179,11 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@naukajazdywielun.pl"
 
 SMSAPI_TOKEN = env("SMSAPI_TOKEN", default="")
 
+# core.tasks.db_backup writes here, tech.md section 19. The production stack
+# mounts deploy/backups on this path.
+BACKUP_DIR = BASE_DIR / "backups"
+BACKUP_RETENTION_DAYS = 14
+
 # Where FakeMailClient drops messages, tech.md section 6.
 MAIL_OUTBOX_DIR = BASE_DIR / "tests" / "outbox"
 
