@@ -1,0 +1,12 @@
+{% if seo %}<title>{{ seo.title }}</title>
+<meta name="description" content="{{ seo.description }}">
+<meta name="robots" content="{{ seo.robots }}">
+<link rel="canonical" href="{{ seo.canonical }}">
+{% for alt in alternates %}<link rel="alternate" hreflang="{{ alt.hreflang }}" href="{{ alt.href }}">
+{% endfor %}<meta property="og:type" content="website">
+<meta property="og:title" content="{{ seo.title }}">
+<meta property="og:description" content="{{ seo.description }}">
+<meta property="og:url" content="{{ seo.canonical }}">
+{% if seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">
+{% endif %}<meta name="twitter:card" content="summary_large_image">
+{% endif %}
