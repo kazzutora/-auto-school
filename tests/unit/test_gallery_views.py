@@ -92,8 +92,11 @@ def test_images_are_served_as_webp_and_lazily(client: Client, content: None, rou
     sources = re.findall(r'<source type="image/webp" srcset="([^"]+)"', body)
     assert sources
     for srcset in sources:
-        widths = re.findall(r"(\d+)w", srcset)
-        assert widths == ["480", "960", "1600"]
+        # Split the srcset rather than scanning it: django gives a colliding
+        # upload a random suffix, and one shaped like "_HDPnQ3w" would look like
+        # a width descriptor to a regex.
+        widths = [entry.strip().rsplit(" ", 1)[-1] for entry in srcset.split(",")]
+        assert widths == ["480w", "960w", "1600w"]
     assert 'loading="lazy"' in body
 
 
