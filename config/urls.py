@@ -12,7 +12,10 @@ urlpatterns = [
 ]
 
 # Polish carries no prefix, russian and ukrainian get /ru/ and /uk/.
-urlpatterns += i18n_patterns(prefix_default_language=False)
+urlpatterns += i18n_patterns(
+    path("", include("apps.gallery.urls")),
+    prefix_default_language=False,
+)
 
 if settings.DEBUG:
     from apps.core.views import kitchen_sink

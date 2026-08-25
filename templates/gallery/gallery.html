@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Galeria</c-heading>
+
+  <div class="mt-4">
+    <c-breadcrumbs :items="breadcrumbs" />
+  </div>
+
+  {% if images %}
+    {% for label, section_images in sections %}
+      <div class="mt-10">
+        <c-heading level="2">{{ label }}</c-heading>
+        <div class="mt-4"><c-lightbox :images="section_images" /></div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="mt-8"><c-alert tone="info" title="Galeria w przygotowaniu">Zdjęcia pojawią się wkrótce.</c-alert></div>
+  {% endif %}
+
+  <div class="mt-12">
+    <c-cta-bar title="Chcesz zobaczyć ośrodek na żywo?" phone="{{ site_settings.phone_primary }}" href="/zapisz-sie/" />
+  </div>
+</c-section>
+{% endblock %}
