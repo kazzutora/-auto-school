@@ -1,0 +1,113 @@
+name: Deploy
+
+# Runs on merge into main, tech.md section 17.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}/web
+
+jobs:
+  build:
+    name: build and push
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag
+        id: meta
+        run: |
+          echo "image=${IMAGE,,}:${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    name: migrate and start
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
+    steps:
+      - name: Open an ssh session to the vps
+        run: |
+          install -d -m 700 ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          IMAGE: ${{ needs.build.outputs.image }}
+          VPS: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          APP_DIR: ${{ secrets.VPS_PATH }}
+        # The released tag is pinned into the env file compose reads, so a
+        # manual compose call on the box later uses the same image.
+        #
+        # Migrations run in a one off container before the new web containers
+        # start serving. tech.md section 17 puts the migrate step before the new
+        # container, which the literal pull-then-up order would not do.
+        run: |
+          ssh -o BatchMode=yes "$VPS" "APP_DIR='$APP_DIR' IMAGE='$IMAGE' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_DIR"
+
+          grep -v '^WEB_IMAGE=' .env > .env.next 2>/dev/null || true
+          echo "WEB_IMAGE=$IMAGE" >> .env.next
+          mv .env.next .env
+
+          compose="docker compose --env-file .env -f deploy/docker-compose.prod.yml"
+
+          $compose pull
+          $compose run --rm web python manage.py migrate --noinput
+          $compose run --rm web python manage.py collectstatic --noinput
+          $compose up -d
+          REMOTE
+
+      - name: Smoke
+        env:
+          VPS: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+        # /healthz answers 200 only when both postgres and redis are reachable,
+        # tech.md section 17. It ships with S0.11.
+        run: |
+          ssh -o BatchMode=yes "$VPS" bash -s <<'EOF'
+            set -euo pipefail
+            for attempt in $(seq 1 30); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/healthz || true)
+              if [ "$code" = "200" ]; then
+                echo "healthz ok"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "healthz never answered 200, last code: $code"
+            exit 1
+          EOF
