@@ -44,17 +44,16 @@ ENTRYPOINT ["entrypoint.sh"]
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 
-FROM debian:bookworm-slim AS tailwind
+FROM dev AS tailwind
 
-# Standalone CLI, per tech.md section 2: no node in the runtime image.
+# Standalone CLI, per tech.md section 2: no node in the runtime image. Built on
+# the dev stage rather than a bare image because the content scanner has to see
+# the crispy-tailwind templates that live in /venv.
+USER root
 ARG TAILWIND_VERSION=3.4.17
-RUN apt-get update \
- && apt-get install -y --no-install-recommends curl ca-certificates \
- && curl -fsSL -o /usr/local/bin/tailwindcss \
-    "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64" \
- && chmod 0755 /usr/local/bin/tailwindcss \
- && apt-get purge -y --auto-remove curl \
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update  && apt-get install -y --no-install-recommends curl ca-certificates  && curl -fsSL -o /usr/local/bin/tailwindcss     "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"  && chmod 0755 /usr/local/bin/tailwindcss  && apt-get purge -y --auto-remove curl  && rm -rf /var/lib/apt/lists/*
+USER app
 
 WORKDIR /app
+ENTRYPOINT []
 CMD ["tailwindcss", "--help"]

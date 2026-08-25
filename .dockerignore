@@ -25,6 +25,7 @@ coverage.xml
 celerybeat-schedule*
 media
 staticfiles
+static/css
 deploy/backups
 tests/outbox
 test-results

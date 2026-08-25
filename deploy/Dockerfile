@@ -19,6 +19,21 @@ COPY pyproject.toml ./
 RUN pip install .
 
 
+
+FROM builder AS css
+
+# Same standalone CLI as development, and the same /venv so the content scanner
+# sees the crispy-tailwind templates.
+ARG TAILWIND_VERSION=3.4.17
+RUN apt-get update  && apt-get install -y --no-install-recommends curl ca-certificates  && curl -fsSL -o /usr/local/bin/tailwindcss     "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"  && chmod 0755 /usr/local/bin/tailwindcss  && apt-get purge -y --auto-remove curl  && rm -rf /var/lib/apt/lists/*
+
+COPY tailwind.config.js ./
+COPY static ./static
+COPY templates ./templates
+COPY apps ./apps
+RUN tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
+
+
 FROM python:3.12-slim AS runtime
 
 ENV PYTHONUNBUFFERED=1 \
@@ -33,6 +48,7 @@ RUN groupadd --gid 1000 app \
 
 COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY --chown=app:app . /app
+COPY --from=css --chown=app:app /app/static/css/app.css /app/static/css/app.css
 
 WORKDIR /app
 USER app
