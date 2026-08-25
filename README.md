@@ -20,6 +20,7 @@ Current core version: **v1**.
 ## Requirements
 
 - Python 3.12
+- pip 25.1 or newer, the dev toolchain ships as a PEP 735 dependency group
 - Docker and Docker Compose
 - GNU make
 
@@ -28,6 +29,7 @@ Current core version: **v1**.
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate      # Windows; use .venv/bin/activate on Linux
+python -m pip install -U pip
 pip install -e . --group dev
 ```
 
