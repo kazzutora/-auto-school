@@ -112,6 +112,36 @@ Two one time steps once the repository is on github:
 .github/branch-protection.sh owner/repo
 ```
 
+## Production
+
+`/healthz` answers 200 only when postgres and redis both respond, and 503 with
+the failing dependency named otherwise. The deploy smoke step and the container
+healthcheck both use it.
+
+`core.tasks.db_backup` runs at 02:00 and writes `deploy/backups/osk-YYYYMMDD.sql.gz`,
+keeping fourteen days. The dated filename is the idempotency key, so a second
+run the same day does nothing.
+
+A backup nobody has restored is not a backup. tech.md section 19 asks for one
+manual restore before the domain moves:
+
+```bash
+# on the vps, from the application directory
+compose="docker compose -f deploy/docker-compose.prod.yml"
+$compose stop web worker beat
+$compose exec -T db dropdb -U osk osk
+$compose exec -T db createdb -U osk osk
+gzip -dc deploy/backups/osk-YYYYMMDD.sql.gz | $compose exec -T db psql -U osk -d osk
+$compose start web worker beat
+curl -sf http://localhost/healthz
+```
+
+Confirm Sentry is receiving events:
+
+```bash
+docker compose -f deploy/docker-compose.prod.yml run --rm web python manage.py sentry_check
+```
+
 ## Conventions
 
 Commits follow `tech.md` section 12: English, `type(scope): summary`, imperative,
