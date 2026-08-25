@@ -36,5 +36,5 @@ fmt: ## format and autofix
 css: ## build tailwind css
 	$(COMPOSE) run --rm tailwind tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
 
-e2e: ## playwright end to end suite
-	pytest tests/e2e
+e2e: ## playwright end to end suite, runs in the web container
+	$(COMPOSE) exec web pytest tests/e2e

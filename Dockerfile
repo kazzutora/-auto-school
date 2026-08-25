@@ -35,6 +35,13 @@ RUN groupadd --gid 1000 app \
 
 COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 
+# Browser for the e2e suite, baked in so it survives container recreation.
+# --with-deps pulls the system libraries chromium needs: without them the
+# browser launches and dies immediately. A shared path keeps it readable by
+# the app user.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN playwright install --with-deps chromium && chmod -R a+rX /ms-playwright && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 USER app
 EXPOSE 8000

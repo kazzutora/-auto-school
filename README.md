@@ -49,7 +49,7 @@ Runtime dependencies live in `[project.dependencies]`, the dev toolchain in the
 | `make lint` | `ruff check`, `ruff format --check`, `mypy apps/` |
 | `make fmt` | format and autofix |
 | `make css` | build Tailwind CSS |
-| `make e2e` | Playwright end to end suite, needs `playwright install chromium` once |
+| `make e2e` | Playwright end to end suite, runs in the web container |
 
 Without make, run the tools directly:
 
@@ -58,13 +58,8 @@ ruff check . && ruff format --check . && mypy apps/
 pytest --cov=apps --cov-report=term-missing --ignore=tests/e2e
 ```
 
-The end to end suite drives a real browser. Install it once inside the web
-container:
-
-```bash
-docker compose exec -u root web playwright install --with-deps chromium
-docker compose exec web playwright install chromium
-```
+The end to end suite drives a real browser. Chromium ships inside the
+development image, so `make e2e` needs no extra setup.
 
 ## Test markers
 
@@ -95,6 +90,27 @@ fallback, so production refuses to start on a missing secret.
 Every app under `apps/` is one vertical slice: models, admin, forms, views, urls,
 tasks, templates. Shared code lives in `apps/core/` only. The full tree is in
 `tech.md` section 3.
+
+## CI and deploy
+
+Two pipelines, tech.md section 17.
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `.github/workflows/ci.yml` | pull request | ruff, mypy, pending migration check, pytest with an 80 percent floor, Playwright against the built image, both docker builds |
+| `.github/workflows/deploy.yml` | push to `main` | build and push to ghcr, then over ssh: pull, migrate, collectstatic, start, smoke `GET /healthz` |
+
+Before the first deploy, set these repository secrets: `VPS_HOST`, `VPS_USER`,
+`VPS_SSH_KEY`, `VPS_PATH`. The registry uses the built in `GITHUB_TOKEN`.
+
+Two one time steps once the repository is on github:
+
+```bash
+# 1. Replace @lead in .github/CODEOWNERS with the real handle or team.
+#    Github ignores an entry naming an account it cannot resolve.
+# 2. Apply branch protection: pull requests only, green CI, linear history.
+.github/branch-protection.sh owner/repo
+```
 
 ## Conventions
 
