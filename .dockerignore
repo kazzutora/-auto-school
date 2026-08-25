@@ -1,0 +1,36 @@
+.git
+.gitignore
+.gitattributes
+.idea
+.vscode
+.claude
+.mcp.json
+
+# Host virtualenv: windows binaries, never valid inside the image
+.venv
+venv
+*.egg-info
+
+__pycache__
+*.py[cod]
+.mypy_cache
+.ruff_cache
+.pytest_cache
+.coverage
+.coverage.*
+htmlcov
+coverage.xml
+
+# Runtime data lives in volumes
+celerybeat-schedule*
+media
+staticfiles
+deploy/backups
+tests/outbox
+test-results
+playwright-report
+
+node_modules
+bin
+.env
+.env.local
