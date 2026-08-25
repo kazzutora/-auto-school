@@ -1,0 +1,31 @@
+<footer class="mt-16 border-t border-paper-100 bg-paper-50">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div>
+      <p class="font-display text-lg font-bold text-brand-900">{{ site_settings.legal_name|default:"OSK Nawrocki" }}</p>
+      <address class="mt-2 not-italic text-ink-700">
+        {{ site_settings.street }}<br>
+        {{ site_settings.postal_code }} {{ site_settings.city }}<br>
+        {% if site_settings.nip %}NIP: {{ site_settings.nip }}{% endif %}
+      </address>
+    </div>
+
+    <div>
+      <p class="font-display font-bold text-brand-900">Kontakt</p>
+      <ul class="mt-2 space-y-1 text-ink-700">
+        {% for phone in site_settings.phones %}
+          <li><a href="tel:{{ phone|cut:' ' }}" class="hover:text-brand-700 hover:underline">{{ phone }}</a></li>
+        {% endfor %}
+        {% if site_settings.email %}<li><a href="mailto:{{ site_settings.email }}" class="hover:text-brand-700 hover:underline">{{ site_settings.email }}</a></li>{% endif %}
+      </ul>
+    </div>
+
+    <div>
+      <p class="font-display font-bold text-brand-900">Informacje</p>
+      <ul class="mt-2 space-y-1 text-ink-700">
+        <li><a href="/polityka-prywatnosci/" class="hover:text-brand-700 hover:underline">Polityka prywatności</a></li>
+        <li><a href="/rodo/" class="hover:text-brand-700 hover:underline">RODO</a></li>
+      </ul>
+      {% if site_settings.founded_year %}<p class="mt-4 text-sm text-ink-500">Na rynku od {{ site_settings.founded_year }} roku.</p>{% endif %}
+    </div>
+  </div>
+</footer>

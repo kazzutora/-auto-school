@@ -1,0 +1,28 @@
+{% load static i18n core_ui seo %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'pl' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% seo_meta %}
+  {% jsonld %}
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block head %}{% endblock %}
+  {# Self hosted, tech.md section 2 bans third party scripts on public pages. #}
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/alpine.min.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+</head>
+<body class="flex min-h-screen flex-col bg-paper-0 text-ink-900">
+  <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded focus:bg-brand-900 focus:px-4 focus:py-2 focus:text-paper-0">Przejdź do treści</a>
+
+  {% include "layout/header.html" %}
+
+  <main id="content" class="grow">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "layout/footer.html" %}
+  {% include "layout/cookie_banner.html" %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

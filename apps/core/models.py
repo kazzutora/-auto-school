@@ -49,6 +49,12 @@ class SiteSettings(SingletonModel, TimeStampedModel):
         return self.short_name
 
     @property
+    def phones(self) -> list[str]:
+        """The numbers that are actually filled in, in display order."""
+        candidates = (self.phone_primary, self.phone_secondary, self.phone_tertiary)
+        return [phone for phone in candidates if phone]
+
+    @property
     def notify_emails(self) -> list[str]:
         """lead_notify_emails split into addresses, tech.md section 6."""
         return [part.strip() for part in self.lead_notify_emails.split(",") if part.strip()]
