@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    # Skips static/src, the tailwind build input, see config/staticfiles.py.
+    "config.staticfiles.OskStaticFilesConfig",
     "django.contrib.sites",
     "django.contrib.sitemaps",
     # tech.md section 4.8: legacy urls are served from the redirects table.
