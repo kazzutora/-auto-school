@@ -4,7 +4,7 @@ COMPOSE := docker compose
 .PHONY: help up down sh migrate seed test lint fmt css e2e
 
 help:
-	grep -E '^[a-z][a-z-]*:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/\t/'
+	grep -E '^[a-z0-9][a-z0-9-]*:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/\t/'
 
 up: ## start the dev stack: web, db, redis, worker, beat, tailwind
 	$(COMPOSE) up -d
