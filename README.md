@@ -49,13 +49,21 @@ Runtime dependencies live in `[project.dependencies]`, the dev toolchain in the
 | `make lint` | `ruff check`, `ruff format --check`, `mypy apps/` |
 | `make fmt` | format and autofix |
 | `make css` | build Tailwind CSS |
-| `make e2e` | Playwright end to end suite |
+| `make e2e` | Playwright end to end suite, needs `playwright install chromium` once |
 
 Without make, run the tools directly:
 
 ```bash
 ruff check . && ruff format --check . && mypy apps/
 pytest --cov=apps --cov-report=term-missing --ignore=tests/e2e
+```
+
+The end to end suite drives a real browser. Install it once inside the web
+container:
+
+```bash
+docker compose exec -u root web playwright install --with-deps chromium
+docker compose exec web playwright install chromium
 ```
 
 ## Test markers
