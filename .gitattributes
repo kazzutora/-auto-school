@@ -1,0 +1,12 @@
+# Containers run Linux: keep LF in the repo and in the working tree so the
+# Makefile, shell scripts and Dockerfiles stay executable there.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
