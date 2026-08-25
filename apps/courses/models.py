@@ -47,6 +47,21 @@ class Course(TimeStampedModel):  # type: ignore[django-manager-missing]
     def __str__(self) -> str:
         return self.title
 
+    def get_absolute_url(self) -> str:
+        """Where this course lives, tech.md section 5.
+
+        Licence categories sit under /kursy/, professional ones under
+        /kierowca-zawodowy/, and the remaining two kinds have a page each.
+        """
+        from django.urls import reverse
+
+        if self.kind == self.Kind.PSYCHOTEST:
+            return reverse("courses:psychotests")
+        if self.kind == self.Kind.OPERATOR:
+            return reverse("courses:forklifts")
+        route = "courses:pro_detail" if self.kind == self.Kind.PROFESSIONAL else "courses:detail"
+        return reverse(route, kwargs={"slug": self.slug})
+
 
 class CourseIntake(TimeStampedModel):
     """A group start, tech.md section 4.2."""
