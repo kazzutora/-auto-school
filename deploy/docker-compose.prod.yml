@@ -1,0 +1,105 @@
+name: osk
+
+# Production stack, tech.md sections 17 and 19. Run from the repo root:
+#   docker compose -f deploy/docker-compose.prod.yml up -d
+# Unlike the development stack this file has no fallbacks: every secret must be
+# present in .env or the stack refuses to start.
+x-django-env: &django-env
+  DJANGO_SETTINGS_MODULE: config.settings.prod
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+  DJANGO_DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?set DJANGO_ALLOWED_HOSTS in .env}
+  DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+  MAIL_CLIENT: ${MAIL_CLIENT:-smtp}
+  SMS_CLIENT: ${SMS_CLIENT:-fake}
+  EMAIL_HOST: ${EMAIL_HOST:-}
+  EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+  EMAIL_PORT: ${EMAIL_PORT:-587}
+  SMSAPI_TOKEN: ${SMSAPI_TOKEN:-}
+  SENTRY_DSN: ${SENTRY_DSN:-}
+  IP_HASH_SALT: ${IP_HASH_SALT:?set IP_HASH_SALT in .env}
+  MEDIA_ROOT: ${MEDIA_ROOT:-/app/media}
+
+x-app: &app
+  image: ${WEB_IMAGE:?set WEB_IMAGE in .env}
+  restart: unless-stopped
+  environment: *django-env
+  volumes:
+    - media:/app/media
+    - static:/app/staticfiles
+    - ./backups:/app/backups
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - static:/srv/static:ro
+      - media:/srv/media:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "no"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+
+  web:
+    <<: *app
+
+  worker:
+    <<: *app
+    command: ["celery", "-A", "config", "worker", "-l", "info", "-Q", "default"]
+
+  beat:
+    <<: *app
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+
+volumes:
+  pgdata:
+  redisdata:
+  media:
+  static:
+  caddy_data:
+  caddy_config:

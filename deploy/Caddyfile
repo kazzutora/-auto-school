@@ -1,0 +1,25 @@
+{
+	email {$ACME_EMAIL:osk.adam.nawrocki@wp.pl}
+}
+
+www.{$SITE_DOMAIN:naukajazdywielun.pl} {
+	redir https://{$SITE_DOMAIN:naukajazdywielun.pl}{uri} permanent
+}
+
+{$SITE_DOMAIN:naukajazdywielun.pl} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+	}
+	handle_path /static/* {
+		root * /srv/static
+		file_server
+	}
+	handle_path /media/* {
+		root * /srv/media
+		file_server
+	}
+	reverse_proxy web:8000
+}

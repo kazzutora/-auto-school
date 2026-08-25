@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1
+# Production image. Development builds from the Dockerfile in the repo root.
+# Build from the repo root: docker build -f deploy/Dockerfile .
+
+FROM python:3.12-slim AS builder
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /app
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+# PEP 735 dependency groups need pip 25.1 or newer.
+RUN pip install --upgrade "pip>=25.1"
+
+# Runtime dependencies only: the dev group never reaches production.
+COPY pyproject.toml ./
+RUN pip install .
+
+
+FROM python:3.12-slim AS runtime
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/venv/bin:$PATH"
+
+COPY --from=builder /venv /venv
+
+RUN groupadd --gid 1000 app \
+ && useradd --uid 1000 --gid app --home-dir /app --no-create-home app \
+ && install -d -o app -g app /app /app/media /app/staticfiles
+
+COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY --chown=app:app . /app
+
+WORKDIR /app
+USER app
+EXPOSE 8000
+
+# collectstatic and migrate run as separate deploy steps, see tech.md section 17.
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["gunicorn", "config.wsgi:application", \
+     "--bind", "0.0.0.0:8000", \
+     "--worker-class", "gthread", \
+     "--workers", "3", \
+     "--threads", "4", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]
