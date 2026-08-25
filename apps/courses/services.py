@@ -115,3 +115,31 @@ def group_price_items(items: Iterable[Any]) -> list[tuple[str, list[PriceRow]]]:
     if unnamed:
         named.append(("", price_item_rows(unnamed)))
     return named
+
+
+class HasSeats(Protocol):
+    status: str
+    seats_total: int | None
+    seats_taken: int
+
+
+def seats_left(intake: HasSeats) -> int | None:
+    """Places still free, or None when the group has no declared capacity.
+
+    Never negative: an over booked group reads as full, not as minus two.
+    """
+    if intake.seats_total is None:
+        return None
+    return max(0, intake.seats_total - (intake.seats_taken or 0))
+
+
+def is_bookable(intake: HasSeats) -> bool:
+    """Can a visitor still sign up for this start.
+
+    Open, and either uncapped or with a place left. A group marked full or
+    planned is visible but not bookable yet.
+    """
+    if intake.status != "open":
+        return False
+    free = seats_left(intake)
+    return free is None or free > 0

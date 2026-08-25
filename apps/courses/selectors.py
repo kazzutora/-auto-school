@@ -24,8 +24,9 @@ def active_courses(kind: str | None = None) -> QuerySet[Course]:
 def _upcoming_intakes() -> QuerySet[CourseIntake]:
     """Starts still ahead of us, soonest first.
 
-    select_related on the course because the intake row prints the course title,
-    and a closed intake is not something to advertise.
+    select_related on the course because the intake row prints the course title.
+    Closed groups are dropped and past dates are dropped: everything else stays,
+    so a full group can still say "brak miejsc" instead of vanishing.
     """
     return (
         CourseIntake.objects.filter(start_date__gte=timezone.localdate())
@@ -33,6 +34,29 @@ def _upcoming_intakes() -> QuerySet[CourseIntake]:
         .select_related("course")
         .order_by("start_date")
     )
+
+
+def filtered_intakes(
+    course: str = "", language: str = "", mode: str = ""
+) -> QuerySet[CourseIntake]:
+    """The schedule, narrowed by whichever filters were supplied.
+
+    Unknown values narrow to nothing rather than being ignored: a visitor who
+    picked a language must never be shown rows in another one.
+    """
+    intakes = _upcoming_intakes()
+    if course:
+        intakes = intakes.filter(course__slug=course)
+    if language:
+        intakes = intakes.filter(language=language)
+    if mode:
+        intakes = intakes.filter(mode=mode)
+    return intakes
+
+
+def courses_with_upcoming_intakes() -> QuerySet[Course]:
+    """Only courses a visitor could actually pick in the filter."""
+    return active_courses().filter(intakes__in=_upcoming_intakes()).distinct()
 
 
 def course_by_slug(slug: str, kind: str | None = None) -> Course:
