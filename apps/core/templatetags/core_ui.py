@@ -13,6 +13,7 @@ from django.http import HttpRequest
 from django.urls import NoReverseMatch, translate_url
 from django.utils import timezone, translation
 
+from apps.core.imaging import webp_srcset as build_webp_srcset
 from apps.core.models import OpeningHours
 from apps.core.navigation import NAV, NavItem
 from apps.core.services import is_open_at
@@ -29,6 +30,12 @@ WEEKDAYS = (
     ("Niedziela", "Воскресенье", "Неділя"),
 )
 _LANGUAGE_COLUMN = {"pl": 0, "ru": 1, "uk": 2}
+
+
+@register.simple_tag
+def webp_srcset(source: Any) -> str:
+    """WebP srcset for an ImageField, tech.md section 6."""
+    return build_webp_srcset(source)
 
 
 @register.simple_tag

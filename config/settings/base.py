@@ -33,8 +33,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    # Skips static/src, the tailwind build input, see config/staticfiles.py.
-    "config.staticfiles.OskStaticFilesConfig",
+    "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.sitemaps",
     # tech.md section 4.8: legacy urls are served from the redirects table.
@@ -129,7 +128,15 @@ STATIC_URL = "static/"
 # Not BASE_DIR/static: that directory holds the sources, and the compose stack
 # mounts the static volume here.
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# Listed one by one rather than as the whole static/ tree, because tech.md
+# section 3 puts the tailwind input at static/src/css/app.css. Collecting that
+# breaks the manifest: its font urls are relative to the built file, so
+# ../fonts resolves to src/fonts and nothing is there.
+STATICFILES_DIRS = [
+    ("css", BASE_DIR / "static" / "css"),
+    ("js", BASE_DIR / "static" / "js"),
+    ("fonts", BASE_DIR / "static" / "fonts"),
+]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
@@ -138,6 +145,11 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
+
+# gallery.tasks.build_renditions warms these ahead of time, tech.md section 6.
+# JustInTime is the safety net for anything the task has not reached yet.
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = "imagekit.cachefiles.strategies.JustInTime"
+IMAGEKIT_CACHEFILE_DIR = "renditions"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
