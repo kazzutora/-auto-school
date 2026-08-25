@@ -73,6 +73,11 @@ strict_equality = true
 module = "apps.*"
 disallow_untyped_defs = true
 
+# django-environ ships no py.typed marker.
+[[tool.mypy.overrides]]
+module = ["environ.*"]
+ignore_missing_imports = true
+
 [tool.django-stubs]
 django_settings_module = "config.settings.test"
 

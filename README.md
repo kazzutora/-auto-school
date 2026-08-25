@@ -67,6 +67,21 @@ pytest --cov=apps --cov-report=term-missing --ignore=tests/e2e
 - `a11y`, accessibility checks, non-empty `img` alt above all
 - `owner_data`, content the owner still owes, blocks the production release
 
+## Settings
+
+Four modules under `config/settings/`, every value read from the environment
+through django-environ. `.env.example` lists the variables, tech.md section 10.
+
+| Module | Used by | Notes |
+|---|---|---|
+| `base.py` | all | shared configuration, development defaults |
+| `dev.py` | `docker compose up` | DEBUG on, uncached template loaders, console email, fake clients |
+| `prod.py` | gunicorn in the production stack | security baseline from tech.md section 19, WhiteNoise manifest storage, Sentry |
+| `test.py` | pytest | fake clients, eager Celery, locmem email |
+
+`prod.py` reads `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS` without a
+fallback, so production refuses to start on a missing secret.
+
 ## Layout
 
 Every app under `apps/` is one vertical slice: models, admin, forms, views, urls,
