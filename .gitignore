@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+build/
+dist/
+
+# Virtualenv
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# Django
+*.log
+/media/
+/staticfiles/
+/static/css/app.css
+db.sqlite3
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+/tests/outbox/
+/test-results/
+/playwright-report/
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+
+# Tailwind standalone CLI binary
+/bin/
+
+# Node (Tailwind dev container only, no Node in prod)
+node_modules/
+
+# Backups
+/deploy/backups/
+
+# Editors
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
