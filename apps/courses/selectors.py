@@ -8,7 +8,7 @@ from django.db.models import Prefetch, QuerySet
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from apps.courses.models import Course, CourseIntake
+from apps.courses.models import Course, CourseIntake, PriceItem
 from apps.people.models import Vehicle
 
 UPCOMING_ON_DETAIL = 3
@@ -64,3 +64,17 @@ def prefetched_intakes(course: Course, limit: int = UPCOMING_ON_DETAIL) -> list[
 
 def prefetched_vehicles(course: Course) -> list[Vehicle]:
     return list(getattr(course, "active_vehicles", []))
+
+
+def priced_courses() -> QuerySet[Course]:
+    """Active courses that have a price to show."""
+    return active_courses().exclude(price_gross=None)
+
+
+def unpriced_courses() -> QuerySet[Course]:
+    """Active courses whose price is still agreed case by case."""
+    return active_courses().filter(price_gross=None)
+
+
+def active_price_items() -> QuerySet[PriceItem]:
+    return PriceItem.objects.filter(is_active=True).order_by("group", "order", "id")

@@ -1,7 +1,9 @@
 """Pure domain logic for the courses slice. No ORM here."""
 
+from collections.abc import Iterable
+from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
-from typing import Protocol
+from typing import Any, Protocol
 
 # A candidate may start the course three months before reaching the legal age.
 START_LEAD_MONTHS = 3
@@ -60,3 +62,56 @@ def format_price(value: Decimal | int | float | str | None, note: str = "") -> s
     price = f"{sign}{grouped}{DECIMAL_SEPARATOR}{fraction}{CURRENCY_SEPARATOR}{CURRENCY}"
 
     return f"{price} {note}" if note else price
+
+
+@dataclass(frozen=True)
+class PriceRow:
+    """One line of the price table: service, gross price, note."""
+
+    label: str
+    price: str
+    note: str
+    url: str = ""
+
+
+def course_rows(courses: Iterable[Any]) -> list[PriceRow]:
+    """Priced courses as table rows. A course with no price does not belong here."""
+    rows = []
+    for course in courses:
+        if course.price_gross is None:
+            continue
+        label = f"{course.title} ({course.code})" if course.code else course.title
+        rows.append(
+            PriceRow(
+                label=label,
+                price=format_price(course.price_gross),
+                note=course.price_note or "",
+                url=course.get_absolute_url(),
+            )
+        )
+    return rows
+
+
+def price_item_rows(items: Iterable[Any]) -> list[PriceRow]:
+    rows = []
+    for item in items:
+        note = " ".join(part for part in (item.unit, item.note) if part).strip()
+        rows.append(PriceRow(label=item.title, price=format_price(item.price_gross), note=note))
+    return rows
+
+
+def group_price_items(items: Iterable[Any]) -> list[tuple[str, list[PriceRow]]]:
+    """Bucket extra services by their group, in first seen order.
+
+    Items with no group land in one unnamed bucket at the end, so nothing is
+    dropped just because an editor left the field empty.
+    """
+    buckets: dict[str, list[Any]] = {}
+    for item in items:
+        buckets.setdefault(item.group or "", []).append(item)
+
+    named = [(name, price_item_rows(rows)) for name, rows in buckets.items() if name]
+    unnamed = buckets.get("")
+    if unnamed:
+        named.append(("", price_item_rows(unnamed)))
+    return named
