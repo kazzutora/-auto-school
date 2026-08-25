@@ -1,0 +1,18 @@
+# Ownership from tech.md section 18. The rule "do not touch shared files" is
+# held by the platform, not by good intentions: even with one developer this
+# stops a DEV session quietly editing a contract.
+#
+# Replace @lead with the real github handle or team before this file does
+# anything. Github ignores an entry that names an account it cannot resolve.
+
+tech.md                     @lead
+/config/**                  @lead
+/apps/core/**               @lead
+/templates/cotton/**        @lead
+/templates/base.html        @lead
+/templates/layout/**        @lead
+/tailwind.config.js         @lead
+/scripts/seed.py            @lead
+/**/migrations/**           @lead
+/.github/**                 @lead
+/deploy/**                  @lead
