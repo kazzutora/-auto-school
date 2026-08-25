@@ -13,6 +13,9 @@ app_name = "courses"
 urlpatterns = [
     path("kursy/", views.course_list, name="list"),
     path("cennik/", views.pricing, name="pricing"),
+    path("terminy/", views.intakes, name="intakes"),
+    # HTMX partial, tech.md section 5.
+    path("terminy/filter/", views.intake_filter, name="intake_filter"),
     path("kursy/<slug:slug>/", views.course_detail, {"kind": "license"}, name="detail"),
     path("kierowca-zawodowy/", views.pro_hub, name="pro_hub"),
     path(

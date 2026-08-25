@@ -13,7 +13,7 @@ from django.urls import reverse
 from apps.core.markdown import render_markdown
 from apps.core.seo import build_description, page_seo
 from apps.courses import selectors, services
-from apps.courses.models import Course
+from apps.courses.models import Course, CourseIntake
 from apps.courses.services import format_price, min_start_age, split_age
 
 ENROL_URL = "/zapisz-sie/"  # frozen in tech.md section 5, ships with S3
@@ -206,3 +206,75 @@ def pricing(request: HttpRequest) -> HttpResponse:
             "enrol_url": ENROL_URL,
         },
     )
+
+
+INTAKE_HEADERS_FULL = ["Start", "Kurs", "Tryb", "Język", "Status", ""]
+ANY = ""
+
+
+def _intake_filters(request: HttpRequest) -> dict[str, str]:
+    """The three dimensions from tech.md section 5, as given in the query string."""
+    return {
+        "course": request.GET.get("course", ANY).strip(),
+        "language": request.GET.get("language", ANY).strip(),
+        "mode": request.GET.get("mode", ANY).strip(),
+    }
+
+
+def _intake_context(request: HttpRequest) -> dict[str, Any]:
+    from django.conf import settings
+
+    chosen = _intake_filters(request)
+    rows = list(selectors.filtered_intakes(**chosen))
+
+    return {
+        "intakes": [
+            {
+                "intake": intake,
+                "seats_left": services.seats_left(intake),
+                "bookable": services.is_bookable(intake),
+                "enrol_url": f"{ENROL_URL}?intake={intake.pk}",
+            }
+            for intake in rows
+        ],
+        "chosen": chosen,
+        "headers": INTAKE_HEADERS_FULL,
+        "course_options": [(ANY, "Wszystkie kursy")]
+        + [(course.slug, course.title) for course in selectors.courses_with_upcoming_intakes()],
+        "language_options": [(ANY, "Wszystkie języki")]
+        + [(code, label) for code, label in settings.LANGUAGES],
+        "mode_options": [(ANY, "Wszystkie tryby"), *CourseIntake.Mode.choices],
+    }
+
+
+def intakes(request: HttpRequest) -> HttpResponse:
+    """The schedule, tech.md section 5.
+
+    The same filters answer here and on the htmx endpoint, so the plain GET form
+    gives a visitor without javascript exactly the same result.
+    """
+    trail = [("Start", "/"), ("Terminy", reverse("courses:intakes"))]
+
+    return render(
+        request,
+        "courses/intakes.html",
+        {
+            "seo": page_seo(
+                request,
+                subject="Terminy kursów",
+                description=(
+                    "Najbliższe terminy kursów prawa jazdy i szkoleń dla kierowców "
+                    "zawodowych w Wieluniu."
+                ),
+                breadcrumbs=trail,
+            ),
+            "breadcrumbs": _crumbs(trail),
+            "enrol_url": ENROL_URL,
+            **_intake_context(request),
+        },
+    )
+
+
+def intake_filter(request: HttpRequest) -> HttpResponse:
+    """HTMX partial: table rows only, tech.md section 5."""
+    return render(request, "courses/_intake_rows.html", _intake_context(request))
