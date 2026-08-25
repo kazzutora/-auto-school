@@ -42,6 +42,12 @@ ENV PYTHONUNBUFFERED=1 \
 
 COPY --from=builder /venv /venv
 
+# pg_dump for core.tasks.db_backup, tech.md section 19. Debian ships a client
+# older than the server and pg_dump refuses to dump a newer one, so take 16
+# from the postgres apt repository. The suite is read from the base image
+# rather than hardcoded: pinning the wrong codename silently mixes releases.
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg && curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/pgdg.gpg && echo "deb [signed-by=/usr/share/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && apt-get update && apt-get install -y --no-install-recommends postgresql-client-16 && apt-get purge -y curl gnupg && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd --gid 1000 app \
  && useradd --uid 1000 --gid app --home-dir /app --no-create-home app \
  && install -d -o app -g app /app /app/media /app/staticfiles

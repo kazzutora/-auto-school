@@ -84,6 +84,14 @@ jobs:
           python -m pip install --upgrade "pip>=25.1"
           pip install -e . --group dev
 
+      - name: Postgres client
+        # core.tasks.db_backup shells out to pg_dump, and pg_dump refuses to
+        # dump a server newer than itself. Ubuntu 24.04 carries 16.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-client-16
+          pg_dump --version
+
       - name: No unmade migrations
         run: python manage.py makemigrations --check --dry-run
 
