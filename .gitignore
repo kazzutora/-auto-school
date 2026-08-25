@@ -16,6 +16,7 @@ venv/
 
 # Django
 *.log
+celerybeat-schedule*
 /media/
 /staticfiles/
 /static/css/app.css

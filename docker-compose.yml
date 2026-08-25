@@ -1,0 +1,97 @@
+name: osk
+
+# Every value below has a development default, so `docker compose up` works on a
+# clean machine with no .env and no real secret. Copy .env.example to .env to
+# override.
+x-django-env: &django-env
+  DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.dev}
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-not-secret}
+  DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+  DATABASE_URL: ${DATABASE_URL:-postgres://osk:osk@db:5432/osk}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+  MAIL_CLIENT: ${MAIL_CLIENT:-fake}
+  SMS_CLIENT: ${SMS_CLIENT:-fake}
+  EMAIL_HOST: ${EMAIL_HOST:-}
+  EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+  EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+  EMAIL_PORT: ${EMAIL_PORT:-587}
+  SMSAPI_TOKEN: ${SMSAPI_TOKEN:-}
+  SENTRY_DSN: ${SENTRY_DSN:-}
+  IP_HASH_SALT: ${IP_HASH_SALT:-dev-salt}
+  MEDIA_ROOT: ${MEDIA_ROOT:-/app/media}
+
+x-app: &app
+  build:
+    context: .
+    target: dev
+  image: osk-dev:latest
+  environment: *django-env
+  volumes:
+    - .:/app
+    - media:/app/media
+    - static:/app/staticfiles
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-osk}
+      POSTGRES_USER: ${POSTGRES_USER:-osk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-osk}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  web:
+    <<: *app
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+
+  worker:
+    <<: *app
+    command: ["celery", "-A", "config", "worker", "-l", "info", "-Q", "default"]
+
+  beat:
+    <<: *app
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+
+  tailwind:
+    build:
+      context: .
+      target: tailwind
+    image: osk-tailwind:latest
+    # watch=always keeps the watcher alive when compose detaches stdin.
+    command:
+      ["tailwindcss", "-i", "static/src/css/app.css", "-o", "static/css/app.css",
+       "--watch=always"]
+    volumes:
+      - .:/app
+
+volumes:
+  pgdata:
+  media:
+  static:
