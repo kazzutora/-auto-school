@@ -12,6 +12,7 @@ app_name = "courses"
 
 urlpatterns = [
     path("kursy/", views.course_list, name="list"),
+    path("cennik/", views.pricing, name="pricing"),
     path("kursy/<slug:slug>/", views.course_detail, {"kind": "license"}, name="detail"),
     path("kierowca-zawodowy/", views.pro_hub, name="pro_hub"),
     path(

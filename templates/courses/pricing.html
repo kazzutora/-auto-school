@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Cennik</c-heading>
+  <p class="mt-3 max-w-2xl text-lg text-ink-500">Wszystkie ceny są cenami brutto.</p>
+
+  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+
+  {% if groups %}
+    {% for label, rows in groups %}
+      <div class="mt-10">
+        {% if label %}<c-heading level="2">{{ label }}</c-heading>{% else %}<c-heading level="2">Pozostałe usługi</c-heading>{% endif %}
+        <div class="mt-4">
+          {# c-table keeps its own overflow-x-auto, so a wide row scrolls inside
+             the container instead of pushing the page sideways. #}
+          <c-table :headers="headers">
+            {% for row in rows %}
+              <tr>
+                <th scope="row" class="px-4 py-3 text-left font-normal text-ink-900">
+                  {% if row.url %}<a href="{{ row.url }}" class="font-bold text-brand-700 hover:underline">{{ row.label }}</a>{% else %}{{ row.label }}{% endif %}
+                </th>
+                <td class="whitespace-nowrap px-4 py-3 font-display font-bold text-brand-700">{{ row.price }}</td>
+                <td class="px-4 py-3 text-sm text-ink-500">{{ row.note }}</td>
+              </tr>
+            {% endfor %}
+          </c-table>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="mt-8">
+      <c-alert tone="info" title="Cennik w przygotowaniu">Ceny podamy telefonicznie od ręki.</c-alert>
+    </div>
+  {% endif %}
+
+  {% if on_request %}
+    <div class="mt-14">
+      <c-heading level="2">Cena ustalana indywidualnie</c-heading>
+      <p class="mt-2 max-w-2xl text-ink-500">Te kursy wyceniamy pod konkretne zgłoszenie. Zadzwoń albo napisz, podamy cenę od ręki.</p>
+      <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {% for course in on_request %}
+          <li>
+            <c-price-tile title="{{ course.title }}" price="Zapytaj o cenę" note="{{ course.price_note }}" href="{{ course.get_absolute_url }}" />
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if payments %}
+    <div class="mt-14">
+      <c-heading level="2">{{ payments_title|default:"Płatności i raty" }}</c-heading>
+      <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ payments }}</div>
+    </div>
+  {% endif %}
+</c-section>
+
+<div class="pb-24 sm:pb-0">
+  <c-cta-bar data-testid="call-bar" title="Masz pytanie o cenę?" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+</div>
+{% endblock %}

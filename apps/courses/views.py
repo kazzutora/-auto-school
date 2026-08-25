@@ -12,7 +12,7 @@ from django.urls import reverse
 
 from apps.core.markdown import render_markdown
 from apps.core.seo import build_description, page_seo
-from apps.courses import selectors
+from apps.courses import selectors, services
 from apps.courses.models import Course
 from apps.courses.services import format_price, min_start_age, split_age
 
@@ -154,6 +154,55 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
             "body": render_markdown(course.body),
             "intakes": selectors.prefetched_intakes(course),
             "vehicles": selectors.prefetched_vehicles(course),
+            "enrol_url": ENROL_URL,
+        },
+    )
+
+
+# tech.md section 4.2 kinds, in the order the price page reads best.
+PRICE_GROUPS = (
+    (Course.Kind.LICENSE, "Kategorie prawa jazdy"),
+    (Course.Kind.PROFESSIONAL, "Kierowca zawodowy"),
+    (Course.Kind.PSYCHOTEST, "Badania psychologiczne"),
+    (Course.Kind.OPERATOR, "Uprawnienia operatora"),
+)
+PRICE_HEADERS = ["Usługa", "Cena brutto", "Uwagi"]
+
+
+def pricing(request: HttpRequest) -> HttpResponse:
+    """One page that answers "how much", tech.md section 5."""
+    from apps.core.models import Page
+
+    priced = list(selectors.priced_courses())
+    groups = [
+        (label, services.course_rows(course for course in priced if course.kind == kind))
+        for kind, label in PRICE_GROUPS
+    ]
+    groups = [(label, rows) for label, rows in groups if rows]
+    groups += services.group_price_items(selectors.active_price_items())
+
+    trail = [("Start", "/"), ("Cennik", reverse("courses:pricing"))]
+    payments = Page.objects.filter(slug="platnosci", is_published=True).first()
+
+    return render(
+        request,
+        "courses/pricing.html",
+        {
+            "seo": page_seo(
+                request,
+                subject="Cennik",
+                description=(
+                    "Cennik kursów prawa jazdy, szkoleń dla kierowców zawodowych i badań "
+                    "psychologicznych w Wieluniu."
+                ),
+                breadcrumbs=trail,
+            ),
+            "breadcrumbs": _crumbs(trail),
+            "groups": groups,
+            "headers": PRICE_HEADERS,
+            "on_request": list(selectors.unpriced_courses()),
+            "payments": render_markdown(payments.body) if payments else "",
+            "payments_title": payments.title if payments else "",
             "enrol_url": ENROL_URL,
         },
     )
