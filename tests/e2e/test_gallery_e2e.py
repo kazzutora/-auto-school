@@ -6,35 +6,13 @@ actually loaded and self hosted, which no server side assertion can show.
 Needs a browser: `playwright install chromium`. Run with `make e2e`.
 """
 
-from collections.abc import Iterator
-
 import pytest
-from playwright.sync_api import Browser, Page, sync_playwright
+from playwright.sync_api import Page
 
 from apps.gallery.models import GalleryImage
 from tests.factories import GalleryImageFactory
 
 pytestmark = pytest.mark.django_db
-
-# tech.md section 9 wants the mobile viewport covered: the visitor arrives from
-# a phone searching "prawo jazdy Wieluń".
-MOBILE = {"width": 390, "height": 844}
-
-
-@pytest.fixture(scope="session")
-def browser() -> Iterator[Browser]:
-    with sync_playwright() as playwright:
-        instance = playwright.chromium.launch()
-        yield instance
-        instance.close()
-
-
-@pytest.fixture
-def page(browser: Browser) -> Iterator[Page]:
-    context = browser.new_context(viewport=MOBILE)
-    new_page = context.new_page()
-    yield new_page
-    context.close()
 
 
 @pytest.fixture
