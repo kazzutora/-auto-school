@@ -8,8 +8,10 @@ from urllib.parse import quote
 from django import forms
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.urls import reverse
 
-from apps.core.seo import Seo, build_title
+from apps.core.models import SiteSettings
+from apps.core.seo import Seo, build_title, page_seo
 
 _PLACEHOLDER_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">'
@@ -99,3 +101,53 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
         "intake_headers": ["Start", "Kurs", "Tryb", "Język", "Status"],
     }
     return render(request, "core/kitchen_sink.html", context)
+
+
+# Frozen in tech.md section 5, ships with S3.1. The course pages point at the
+# same string rather than reverse(), so the link survives until leads.urls lands.
+ENROL_URL = "/zapisz-sie/"
+
+CONTACT_DESCRIPTION = (
+    "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. "
+    "Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
+)
+
+
+def directions(site: SiteSettings) -> dict[str, str]:
+    """Links that start the navigation, tech.md section 5.
+
+    geo: hands the point to whatever navigation app the phone already has, and
+    the openstreetmap route is the desktop fallback. No google script either way.
+    """
+    if site.map_lat is None or site.map_lng is None:
+        return {}
+
+    point = f"{site.map_lat},{site.map_lng}"
+    label = ", ".join(part for part in (site.short_name, site.street) if part)
+    return {
+        "geo": f"geo:{point}?q={quote(point)}({quote(label)})",
+        # An empty first waypoint means "from where I am now".
+        "osm": f"https://www.openstreetmap.org/directions?route=%3B{quote(point)}",
+    }
+
+
+def contact(request: HttpRequest) -> HttpResponse:
+    """The page people call and drive from, tech.md section 5."""
+    site = SiteSettings.get_solo()
+    trail = [("Start", "/"), ("Kontakt", reverse("core:contact"))]
+
+    return render(
+        request,
+        "core/contact.html",
+        {
+            "seo": page_seo(
+                request,
+                subject="Kontakt",
+                description=CONTACT_DESCRIPTION,
+                breadcrumbs=trail,
+            ),
+            "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
+            "directions": directions(site),
+            "enrol_url": ENROL_URL,
+        },
+    )

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load l10n static %}
+
+{# Leaflet rides on this page only: base.html stays free of it because the
+   mobile performance gate is 90 and one page carries the map, tech.md section 7. #}
+{% block head %}
+  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Kontakt</c-heading>
+  <p class="mt-3 max-w-2xl text-lg text-ink-500">Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy przez telefon i przez formularz.</p>
+
+  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+
+  <div class="mt-8 grid gap-6 lg:grid-cols-2">
+    <c-card data-testid="details">
+      <c-slot name="title">Dane kontaktowe</c-slot>
+      <address class="not-italic">
+        <p class="font-bold text-ink-900">{{ site_settings.legal_name }}</p>
+        <p class="mt-1">{{ site_settings.street }}<br>{{ site_settings.postal_code }} {{ site_settings.city }}</p>
+
+        {# Every number is a tel: link: the visitor arrives from a phone and the
+           point of this page is that they call, tech.md section 1. #}
+        <ul class="mt-4 space-y-2">
+          {% for phone in site_settings.phones %}
+            <li><a href="tel:{{ phone|cut:' ' }}" class="inline-flex items-center py-2 font-display text-lg font-bold text-brand-900 hover:text-brand-700 hover:underline">{{ phone }}</a></li>
+          {% endfor %}
+        </ul>
+
+        {% if site_settings.email %}
+          <p class="mt-4"><a href="mailto:{{ site_settings.email }}" class="text-brand-700 hover:underline">{{ site_settings.email }}</a></p>
+        {% endif %}
+      </address>
+
+      <dl class="mt-4 space-y-1 text-sm text-ink-500">
+        {% if site_settings.nip %}<div class="flex gap-2"><dt>NIP:</dt><dd>{{ site_settings.nip }}</dd></div>{% endif %}
+        {# The account number is published only when the owner says so,
+           DEV.md S4 and tech.md section 4.1. #}
+        {% if site_settings.bank_account_public and site_settings.bank_account %}
+          <div class="flex flex-wrap gap-2" data-testid="bank-account"><dt>Konto:</dt><dd>{{ site_settings.bank_account }}</dd></div>
+        {% endif %}
+      </dl>
+    </c-card>
+
+    <c-card data-testid="enrol">
+      <c-slot name="title">Zapisy na kurs</c-slot>
+      <p>Wybierz termin i zostaw numer telefonu. Oddzwaniamy w godzinach pracy biura, także po rosyjsku i po ukraińsku.</p>
+      {# The form itself ships with S3.1 (leads.forms.LeadForm), and this is the
+         slot it drops into. Until then the page sends people the same two ways
+         the course pages do: the enrolment route and the phone. #}
+      <div class="mt-4 flex flex-wrap gap-3">
+        <c-button href="{{ enrol_url }}">Zapisz się</c-button>
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">Zadzwoń</c-button>
+      </div>
+    </c-card>
+  </div>
+</c-section>
+
+<c-section id="godziny" tone="muted" heading="Godziny otwarcia" sub="Biuro i pracownia psychologiczna pracują w innych godzinach.">
+  <div class="grid gap-6 sm:grid-cols-2">
+    <c-card>
+      <c-slot name="title">Biuro</c-slot>
+      <c-hours-table department="office" data-testid="hours-office" />
+    </c-card>
+    <c-card>
+      <c-slot name="title">Pracownia psychologiczna</c-slot>
+      <c-hours-table department="psychology" data-testid="hours-psychology" />
+    </c-card>
+  </div>
+</c-section>
+
+<c-section id="dojazd" heading="Dojazd" sub="Wieluń, ul. Zielona 45. Parking przed budynkiem.">
+  {% if directions %}
+    {# unlocalize: the polish locale would write the coordinates with a comma
+       and leaflet reads them as integers, dropping the pin in the wrong town. #}
+    <c-map lat="{{ site_settings.map_lat|unlocalize }}" lng="{{ site_settings.map_lng|unlocalize }}" zoom="16" label="{{ site_settings.short_name }}, {{ site_settings.street }}" data-testid="map" />
+    <div class="mt-4 flex flex-wrap gap-3">
+      <c-button href="{{ directions.osm }}" data-testid="route-osm">Wyznacz trasę</c-button>
+      {# geo: opens whatever navigation the phone has, and does nothing on a
+         desktop, so the openstreetmap route above stays the primary action. #}
+      <c-button variant="secondary" href="{{ directions.geo }}" data-testid="route-geo">Otwórz w nawigacji</c-button>
+    </div>
+  {% else %}
+    <c-alert tone="info" title="Mapa nieskonfigurowana">Współrzędne biura nie są jeszcze ustawione. Adres: {{ site_settings.street }}, {{ site_settings.postal_code }} {{ site_settings.city }}.</c-alert>
+  {% endif %}
+</c-section>
+
+<div class="pb-24 sm:pb-0">
+  <c-cta-bar data-testid="call-bar" title="Masz pytanie o kurs albo o badania?" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+</div>
+{% endblock %}
