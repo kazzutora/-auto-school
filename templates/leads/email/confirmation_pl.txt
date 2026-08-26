@@ -1,0 +1,15 @@
+{% autoescape off %}Dzień dobry {{ lead.first_name }},
+
+dziękujemy za zgłoszenie do naszej szkoły jazdy w Wieluniu. Odebraliśmy je
+i oddzwonimy w godzinach pracy biura.
+
+Kurs: {% if lead.course %}{{ lead.course.title }}{% else %}do ustalenia{% endif %}
+{% if lead.intake %}Termin: {{ lead.intake.start_date|date:"d.m.Y" }}
+{% endif %}Telefon: {{ lead.phone }}
+
+Jeśli sprawa jest pilna albo chcesz coś dopowiedzieć, zadzwoń: {{ site.phone_primary }}.
+
+Do zobaczenia,
+zespół {{ site.short_name }}
+{{ site.street }}, {{ site.postal_code }} {{ site.city }}
+{% endautoescape %}

@@ -1,0 +1,15 @@
+{% autoescape off %}Nowe zgłoszenie ze strony, {{ lead.created_at|date:"d.m.Y H:i" }}.
+
+Imię i nazwisko: {{ lead.first_name }} {{ lead.last_name }}
+Telefon: {{ lead.phone }}
+{% if lead.email %}E-mail: {{ lead.email }}
+{% endif %}Kurs: {% if lead.course %}{{ lead.course.title }}{% else %}—{% endif %}
+{% if lead.intake %}Termin: {{ lead.intake.start_date|date:"d.m.Y" }}, {{ lead.intake.get_mode_display }}
+{% endif %}Język: {{ language_name }}
+{% if lead.source_path %}Strona: {{ lead.source_path }}
+{% endif %}{% if lead.message %}
+Wiadomość:
+{{ lead.message }}
+{% endif %}
+Otwórz zgłoszenie w panelu: {{ admin_url }}
+{% endautoescape %}

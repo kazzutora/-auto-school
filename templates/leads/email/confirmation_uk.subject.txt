@@ -1,0 +1,1 @@
+{% autoescape off %}Дякуємо за заявку — {{ site.short_name }}{% endautoescape %}

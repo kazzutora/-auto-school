@@ -1,0 +1,1 @@
+{% autoescape off %}Dziękujemy za zgłoszenie — {{ site.short_name }}{% endautoescape %}

@@ -1,0 +1,16 @@
+{% autoescape off %}Здравствуйте, {{ lead.first_name }}!
+
+Спасибо за заявку в нашу автошколу в Велюне. Мы её получили и перезвоним
+в рабочие часы офиса.
+
+Курс: {% if lead.course %}{{ lead.course.title }}{% else %}уточним при звонке{% endif %}
+{% if lead.intake %}Набор: {{ lead.intake.start_date|date:"d.m.Y" }}
+{% endif %}Телефон: {{ lead.phone }}
+
+Занятия у нас проходят в том числе на русском языке, так что спрашивать
+можно на нём же. Если вопрос срочный, позвоните: {{ site.phone_primary }}.
+
+До встречи,
+команда {{ site.short_name }}
+{{ site.street }}, {{ site.postal_code }} {{ site.city }}
+{% endautoescape %}
