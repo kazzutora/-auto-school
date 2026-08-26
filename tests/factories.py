@@ -1,10 +1,11 @@
 """factory_boy factories, tech.md section 3."""
 
+import random
 from io import BytesIO
 
 import factory
 from django.core.files.base import ContentFile
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 
 from apps.core.models import SiteSettings
 from apps.gallery.models import Certificate, GalleryImage
@@ -70,3 +71,26 @@ def notify_site(recipients: str = "biuro@example.com") -> SiteSettings:
     site.lead_notify_emails = recipients
     site.save()
     return site
+
+
+def photo_bytes(width: int = 1600, height: int = 1200) -> ContentFile:
+    """An image that compresses like a photograph, not like a flat swatch.
+
+    The weight budget in DEV.md S6.1 is meaningless against a single colour:
+    it would shrink to a few hundred bytes and any regression would still fit.
+    """
+    picture = Image.new("RGB", (width, height))
+    draw = ImageDraw.Draw(picture)
+    for row in range(height):
+        draw.line([(0, row), (width, row)], fill=(60 + row // 12, 90 + row // 20, 140 - row // 30))
+    shapes = random.Random(20260826)
+    for _ in range(400):
+        left, top = shapes.randint(0, width), shapes.randint(0, height)
+        draw.ellipse(
+            [left, top, left + shapes.randint(20, 160), top + shapes.randint(20, 160)],
+            fill=(shapes.randint(40, 220), shapes.randint(40, 220), shapes.randint(40, 220)),
+        )
+
+    buffer = BytesIO()
+    picture.filter(ImageFilter.GaussianBlur(1.5)).save(buffer, format="JPEG", quality=82)
+    return ContentFile(buffer.getvalue(), name="photo.jpg")
