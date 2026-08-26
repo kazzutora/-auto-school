@@ -1,19 +1,27 @@
-{# Tiles plus their lightbox, one instance per section.
+{# A grid of triggers plus the dialog they open, one Alpine scope for both.
 
-   CONTRACT GAP: this is a local copy of <c-lightbox>, DEV.md S6.1 cannot be
-   closed with the component as it stands.
+   items    rows carrying .image, .alt and optionally .caption
+   tile     template rendering one item, it gets `item` and `position`
+   grid     css classes for the list
+   testid   hook for the tests
+   label    what a screen reader hears when the dialog opens
+
+   CONTRACT GAP: this is a local copy of <c-lightbox>, DEV.md S6.1 and S6.2
+   cannot be closed with the component as it stands.
      - the modal renders every original with no loading attribute, so a browser
        fetches all of them on page load. Twelve photos came to 16 MB, against
        the 400 KB the task allows above the fold. loading="lazy" on an element
        that is display:none defers the fetch until the modal shows it.
      - closing the modal leaves the focus on <body>, and the acceptance
        criterion asks for it back on the tile that opened it.
+     - the component owns its grid, so a certificate card cannot be the thing
+       that opens it. The tile template is the seam that allows that.
    Everything else is the component markup, unchanged. #}
 <div
   x-data="{
     open: false,
     index: 0,
-    total: {{ images|length }},
+    total: {{ items|length }},
     trigger: null,
     show(position, element) {
       this.index = position;
@@ -33,21 +41,19 @@
   x-on:keydown.arrow-left.window="if (open) move(-1)"
   data-testid="{{ testid|default:'gallery-grid' }}"
 >
-  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-    {% for image in images %}<li>
-      <button type="button" x-on:click="show({{ forloop.counter0 }}, $event.currentTarget)" aria-haspopup="dialog" class="block w-full overflow-hidden rounded-xl border border-paper-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-        <c-picture :image="image.image" alt="{{ image.alt }}" ratio="square" sizes="(min-width: 640px) 33vw, 50vw" />
-      </button>
+  <ul class="{{ grid|default:'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
+    {% for item in items %}<li>
+      {% include tile|default:"gallery/_photo_tile.html" with item=item position=forloop.counter0 %}
     </li>{% endfor %}
   </ul>
 
-  <div x-cloak x-show="open" x-ref="dialog" tabindex="-1" x-on:click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/90 p-4 focus:outline-none" role="dialog" aria-modal="true" aria-label="Podgląd zdjęcia">
+  <div x-cloak x-show="open" x-ref="dialog" tabindex="-1" x-on:click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/90 p-4 focus:outline-none" role="dialog" aria-modal="true" aria-label="{{ label|default:'Podgląd zdjęcia' }}">
     <button type="button" x-on:click="close()" aria-label="Zamknij" class="absolute right-4 top-4 text-3xl text-paper-0">&times;</button>
     <button type="button" x-on:click="move(-1)" aria-label="Poprzednie" class="absolute left-4 text-4xl text-paper-0">&lsaquo;</button>
-    {% for image in images %}<figure x-cloak x-show="index === {{ forloop.counter0 }}" class="max-h-full max-w-4xl">
+    {% for item in items %}<figure x-cloak x-show="index === {{ forloop.counter0 }}" class="max-h-full max-w-4xl">
       {# lazy, so a hidden original is not downloaded before anyone asks for it #}
-      <img src="{{ image.image.url }}" alt="{{ image.alt }}" loading="lazy" decoding="async" class="max-h-[80vh] w-auto rounded-lg">
-      {% if image.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ image.caption }}</figcaption>{% endif %}
+      <img src="{{ item.image.url }}" alt="{{ item.alt }}" loading="lazy" decoding="async" class="max-h-[80vh] w-auto rounded-lg">
+      {% if item.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ item.caption }}</figcaption>{% endif %}
     </figure>{% endfor %}
     <button type="button" x-on:click="move(1)" aria-label="Następne" class="absolute right-4 text-4xl text-paper-0">&rsaquo;</button>
   </div>

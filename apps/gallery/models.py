@@ -1,5 +1,6 @@
 """Gallery and certificates, tech.md section 4.5."""
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -43,6 +44,29 @@ class Certificate(TimeStampedModel):
 
     class Meta:
         ordering = ("order", "id")
+
+    def clean(self) -> None:
+        """A scan with no title is exactly what the old site shipped, eleven
+        times over, DEV.md S6.2.
+
+        Checked on the model and not only on the admin form, so an import or a
+        management command cannot put an unnamed scan in front of a visitor.
+        The message is not attached to a field: modeltranslation replaces title
+        with title_pl on the form, and an error keyed to a field the form does
+        not have would blow up the admin instead of showing the problem.
+        """
+        super().clean()
+        if not (self.title or "").strip():
+            raise ValidationError(_("Certyfikat musi mieć tytuł."))
+
+    @property
+    def alt(self) -> str:
+        """A scan shows the document, so its title is also its alt text.
+
+        Named alt because that is what the picture component and the lightbox
+        ask every row for, tech.md section 7.
+        """
+        return self.title
 
     def __str__(self) -> str:
         return self.title

@@ -2,8 +2,10 @@
 
 import json
 import re
+from datetime import date
 
 import pytest
+from django.core.files.base import ContentFile
 from django.test import Client
 from django.urls import reverse
 
@@ -241,3 +243,63 @@ def test_the_lightbox_does_not_preload_the_originals(client: Client, content: No
 
     assert originals
     assert not [image for image in originals if 'loading="lazy"' not in image]
+
+
+# --------------------------------------------------------------------------
+# certificates, DEV.md S6.2
+
+
+def certificates_page(client: Client) -> str:
+    return get(client, "gallery:certificates")
+
+
+def test_a_certificate_card_carries_everything_the_owner_filled_in(client: Client) -> None:
+    CertificateFactory(
+        title="Certyfikat ADR",
+        issuer="Urząd Marszałkowski",
+        issued_on=date(2021, 4, 12),
+        description="Uprawnienia do szkolenia kierowców ADR.",
+    )
+    body = certificates_page(client)
+
+    assert '<h3 class="font-display text-xl font-bold text-brand-900">Certyfikat ADR</h3>' in body
+    assert "Urząd Marszałkowski, 12.04.2021" in re.sub(r"\s+", " ", body)
+    assert "Uprawnienia do szkolenia kierowców ADR." in body
+
+
+def test_the_date_shows_even_without_an_issuer(client: Client) -> None:
+    """The two fields are independent, and the owner may only know one of them."""
+    CertificateFactory(title="Zaświadczenie", issuer="", issued_on=date(2019, 1, 5))
+
+    assert "05.01.2019" in certificates_page(client)
+
+
+def test_the_pdf_link_appears_only_with_a_file(client: Client) -> None:
+    with_file = CertificateFactory(title="Ze skanem")
+    with_file.file.save("skan.pdf", ContentFile(b"%PDF-1.4"), save=True)
+    CertificateFactory(title="Bez skanu")
+
+    body = certificates_page(client)
+
+    assert body.count("Pobierz PDF") == 1
+    assert re.findall(r'href="([^"]*\.pdf)"', body) == [with_file.file.url]
+
+
+def test_every_scan_opens_the_lightbox(client: Client) -> None:
+    """The acceptance criterion: a click on the preview shows the big scan."""
+    CertificateFactory.create_batch(3)
+    body = certificates_page(client)
+
+    assert body.count('x-on:click="show(') == 3
+    # One dialog for the page, not one per card.
+    assert body.count('role="dialog"') == 1
+    assert 'aria-label="Podgląd skanu"' in body
+
+
+def test_the_big_scans_are_not_preloaded(client: Client) -> None:
+    """Same budget as the gallery: a hidden image still costs its bytes."""
+    CertificateFactory.create_batch(3)
+    scans = re.findall(r"<img[^>]*/media/certificates/[^>]*>", certificates_page(client))
+
+    assert scans
+    assert not [scan for scan in scans if 'loading="lazy"' not in scan]

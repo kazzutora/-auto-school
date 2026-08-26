@@ -10,7 +10,7 @@ import pytest
 from playwright.sync_api import Browser, Page, expect
 
 from apps.gallery.models import GalleryImage
-from tests.factories import GalleryImageFactory, photo_bytes
+from tests.factories import CertificateFactory, GalleryImageFactory, photo_bytes
 
 pytestmark = pytest.mark.django_db
 
@@ -219,3 +219,39 @@ def test_the_page_stays_inside_its_weight_budget(live_server, page: Page) -> Non
     assert sum(images) <= 400 * 1024, f"{round(sum(images) / 1024)} KB of images on first load"
     # A full size photo on the page would mean the renditions were bypassed.
     assert max(widths) <= 960
+
+
+def test_a_certificate_scan_opens_and_gives_the_focus_back(live_server, page: Page) -> None:
+    """DEV.md S6.2: the preview opens the big scan, and the keyboard gets out."""
+    CertificateFactory(title="Certyfikat ADR")
+    CertificateFactory(title="Zaświadczenie o wpisie")
+
+    page.goto(f"{live_server.url}/certyfikaty/")
+    page.wait_for_function("() => window.Alpine !== undefined")
+
+    dialog = page.locator('[role="dialog"]')
+    assert dialog.is_hidden()
+
+    second = page.locator("button:has(picture)").nth(1)
+    second.click()
+    dialog.wait_for(state="visible")
+    expect(dialog.locator("figure:visible img")).to_have_attribute("alt", "Zaświadczenie o wpisie")
+
+    page.keyboard.press("Escape")
+    dialog.wait_for(state="hidden")
+
+    page.wait_for_function("() => document.activeElement.tagName === 'BUTTON'")
+    assert second.evaluate("node => node === document.activeElement")
+
+
+def test_the_certificate_page_does_not_preload_the_scans(live_server, page: Page) -> None:
+    CertificateFactory.create_batch(3, image=photo_bytes())
+
+    fetched: list[str] = []
+    page.on("request", lambda request: fetched.append(request.url))
+
+    page.goto(f"{live_server.url}/certyfikaty/")
+    page.wait_for_load_state("networkidle")
+
+    originals = [url for url in fetched if "/media/certificates/" in url]
+    assert not originals, f"scans downloaded before anyone asked: {originals}"

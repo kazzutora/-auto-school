@@ -24,7 +24,7 @@
     {% for section in sections %}
       <div class="mt-10">
         <c-heading level="2">{{ section.label }}</c-heading>
-        <div class="mt-4">{% include "gallery/_lightbox.html" with images=section.images testid="gallery-grid" %}</div>
+        <div class="mt-4">{% include "gallery/_lightbox.html" with items=section.images testid="gallery-grid" %}</div>
       </div>
     {% endfor %}
   {% elif chosen %}

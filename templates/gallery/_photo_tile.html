@@ -1,0 +1,4 @@
+{# One gallery tile: the thing that opens the lightbox at `position`. #}
+<button type="button" x-on:click="show({{ position }}, $event.currentTarget)" aria-haspopup="dialog" class="block w-full overflow-hidden rounded-xl border border-paper-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
+  <c-picture :image="item.image" alt="{{ item.alt }}" ratio="square" sizes="(min-width: 640px) 33vw, 50vw" />
+</button>
