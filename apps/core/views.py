@@ -7,10 +7,11 @@ from urllib.parse import quote
 
 from django import forms
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
-from apps.core.models import SiteSettings
+from apps.core.markdown import render_markdown
+from apps.core.models import Page, SiteSettings
 from apps.core.seo import Seo, build_title, page_seo
 
 _PLACEHOLDER_SVG = (
@@ -148,6 +149,49 @@ def contact(request: HttpRequest) -> HttpResponse:
             ),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "directions": directions(site),
+            "enrol_url": ENROL_URL,
+        },
+    )
+
+
+# tech.md section 4.1 names the flat pages: o-nas, polityka-prywatnosci, rodo.
+ABOUT_SLUG = "o-nas"
+
+
+def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
+    """A flat page, tech.md section 5.
+
+    The about page carries more than its own text: the url map gives it
+    Instructor and Vehicle as well, so the team and the fleet are assembled
+    here. The slice selectors are imported inside the function on purpose,
+    since apps/core is shared and must not depend on a feature slice at import
+    time.
+    """
+    from apps.courses.models import Course
+    from apps.courses.selectors import active_courses
+    from apps.people import selectors as people
+
+    page = get_object_or_404(Page, slug=slug, is_published=True)
+    about = slug == ABOUT_SLUG
+    trail = [("Start", "/"), (page.title, reverse("core:page", kwargs={"slug": slug}))]
+
+    return render(
+        request,
+        "core/page_detail.html",
+        {
+            "seo": page_seo(
+                request,
+                subject=page.seo_title or page.title,
+                description=page.seo_desc or page.lead or page.title,
+                breadcrumbs=trail,
+            ),
+            "page": page,
+            "body": render_markdown(page.body),
+            "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
+            "about": about,
+            "instructors": people.active_instructors() if about else [],
+            "vehicle_groups": people.vehicles_by_course() if about else [],
+            "category_count": active_courses(Course.Kind.LICENSE).count() if about else 0,
             "enrol_url": ENROL_URL,
         },
     )
