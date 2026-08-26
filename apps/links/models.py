@@ -1,9 +1,13 @@
 """Useful links and faq, tech.md section 4.6."""
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
+
+# Anything from here up is a broken link, tech.md section 4.6.
+HTTP_ERROR = 400
 
 
 class UsefulLink(TimeStampedModel):
@@ -27,6 +31,31 @@ class UsefulLink(TimeStampedModel):
 
     class Meta:
         ordering = ("group", "order", "id")
+
+    def clean(self) -> None:
+        """A bare url with no explanation is not allowed, tech.md section 4.6.
+
+        On the model and not only on the admin form: the starting set arrives
+        through a script, and an imported row without a description would put a
+        naked url in front of a visitor. The message carries no field name,
+        because modeltranslation replaces description with description_pl on
+        the form and an error keyed to a missing field breaks the admin.
+        """
+        super().clean()
+        if not (self.description or "").strip():
+            raise ValidationError(_("Link musi mieć opis."))
+
+    @property
+    def is_broken(self) -> bool:
+        """What the last check found, for the admin to flag, DEV.md S7.1.
+
+        A timeout counts as well: it leaves no status at all, and a link nobody
+        can reach is as broken as one answering 404. The site keeps showing it
+        either way until the owner switches is_active off.
+        """
+        return bool(self.last_error) or (
+            self.last_status is not None and self.last_status >= HTTP_ERROR
+        )
 
     def __str__(self) -> str:
         return self.title

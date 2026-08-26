@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Przydatne linki</c-heading>
+  <p class="mt-3 max-w-2xl text-lg text-ink-500">Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy.</p>
+
+  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+
+  {% if groups %}
+    <div class="mt-10 space-y-12" data-testid="groups">
+      {% for group in groups %}
+        <div>
+          <c-heading level="2">{{ group.label }}</c-heading>
+          <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+            {% for link in group.links %}
+              <li>
+                {# Every link leaves the site: new tab, and rel guards the
+                   opener against the target rewriting it. #}
+                <c-card href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
+                  <c-slot name="title">{{ link.title }}<span aria-hidden="true" class="ml-1 text-brand-500">&#8599;</span></c-slot>
+                  <p>{{ link.description }}</p>
+                  <p class="mt-2 break-all text-sm text-ink-500">{{ link.url }}<span class="sr-only">, otwiera się w nowej karcie</span></p>
+                </c-card>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="mt-8">
+      <c-alert tone="info" title="Lista w przygotowaniu">Linki pojawią się wkrótce. W razie pytań zadzwoń: <a href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="font-bold text-brand-700 hover:underline">{{ site_settings.phone_primary }}</a>.</c-alert>
+    </div>
+  {% endif %}
+
+  {# pb-24 reserves the room the sticky bar takes on a phone. #}
+  <div class="mt-12 pb-24 sm:pb-0">
+    <c-cta-bar title="Nie wiesz, od czego zacząć?" phone="{{ site_settings.phone_primary }}" href="/zapisz-sie/" />
+  </div>
+</c-section>
+{% endblock %}
