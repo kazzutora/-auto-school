@@ -20,3 +20,16 @@ def isolated_media(tmp_path: Path, settings: Any) -> None:
     cache.clear()
     yield
     cache.clear()
+
+
+@pytest.fixture(autouse=True)
+def outbox(tmp_path: Path, settings: Any) -> Path:
+    """Point FakeMailClient at a throwaway directory.
+
+    Autouse for the same reason as isolated_media: the default outbox is
+    tests/outbox/ inside the repository, and no test has any business writing
+    there. Tests that assert on the mail take the path as an argument.
+    """
+    directory = tmp_path / "outbox"
+    settings.MAIL_OUTBOX_DIR = directory
+    return directory

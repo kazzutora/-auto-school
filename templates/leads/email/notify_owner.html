@@ -22,7 +22,7 @@
     {% endif %}
     <tr>
       <td style="padding:6px 12px 6px 0;color:#6B6383;vertical-align:top;">Kurs</td>
-      <td style="padding:6px 0;">{% if lead.course %}{{ lead.course.title }}{% else %}—{% endif %}</td>
+      <td style="padding:6px 0;">{% if lead.course %}{{ lead.course.title }}{% else %}nie wybrano{% endif %}</td>
     </tr>
     {% if lead.intake %}
       <tr>
