@@ -17,7 +17,8 @@ from tests.factories import LeadFactory, notify_site
 
 pytestmark = pytest.mark.django_db
 
-ATTEMPTS = BaseTask.max_retries + 1  # the first try plus the retries
+# One retry past what the policy allows, tech.md section 6: max_retries is five.
+PAST_THE_LIMIT = BaseTask.max_retries + 1
 
 
 class CountingMail(FakeMailClient):
@@ -224,15 +225,15 @@ def test_a_failing_mail_client_is_retried_and_the_lead_survives(
 def test_the_last_attempt_gives_up_without_stamping(failing_mail: Any, task: Any) -> None:
     """Out of retries the original error surfaces, and the stamp stays empty.
 
-    Entering the task with retries already at the limit is how the worker sees
-    the final attempt, tech.md section 6: max_retries is five.
+    Entering the task with the retry count already spent is how the worker
+    reaches the last attempt.
     """
     notify_site()
     lead = LeadFactory()
     client = failing_mail(500)
 
     with pytest.raises(ClientServerError):
-        task.apply(kwargs={"lead_id": lead.pk}, retries=ATTEMPTS).get()
+        task.apply(kwargs={"lead_id": lead.pk}, retries=PAST_THE_LIMIT).get()
 
     assert client.attempts == 1
     lead.refresh_from_db()
@@ -246,15 +247,14 @@ def test_the_attempt_after_a_failure_sends_exactly_one_mail(
     """A dead attempt leaves no trace, so the retry is not a second mail."""
     notify_site()
     lead = LeadFactory()
-    down = CountingMail(fail_with="timeout")
+    down = FakeMailClient(fail_with="timeout")
     monkeypatch.setattr("apps.leads.tasks.get_mail_client", lambda: down)
 
     with pytest.raises(BaseException):  # noqa: B017, PT011
         notify_owner.apply(kwargs={"lead_id": lead.pk}).get()
 
     assert sent(outbox) == []
-    up = CountingMail()
-    monkeypatch.setattr("apps.leads.tasks.get_mail_client", lambda: up)
+    monkeypatch.setattr("apps.leads.tasks.get_mail_client", FakeMailClient)
 
     result = notify_owner.apply(kwargs={"lead_id": lead.pk}).get()
 
