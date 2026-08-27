@@ -71,7 +71,10 @@ def _grid(
             "seo": page_seo(request, subject=subject, description=description, breadcrumbs=trail),
             "courses": courses,
             "breadcrumbs": _crumbs(trail),
-            "heading": heading,
+            # Not "heading": a cotton component reads the page context, and
+            # <c-section> would take that key as its own heading slot and print
+            # the title a second time above the h1.
+            "page_heading": heading,
             "intro": intro,
             "show_other_kinds": kind == Course.Kind.LICENSE,
             "enrol_url": ENROL_URL,

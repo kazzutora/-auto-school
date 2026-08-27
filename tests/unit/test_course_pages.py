@@ -70,6 +70,23 @@ def test_every_course_page_has_exactly_one_h1(client: Client, offer: list[Course
         assert len(re.findall(r"<h1[ >]", body)) == 1, course.slug
 
 
+@pytest.mark.parametrize(
+    ("url", "title"),
+    [("/kursy/", "Kursy prawa jazdy"), ("/kierowca-zawodowy/", "Kierowca zawodowy")],
+)
+def test_a_listing_prints_its_title_once(
+    client: Client, offer: list[Course], url: str, title: str
+) -> None:
+    """A cotton component reads the page context.
+
+    Handing the view's title over under the key `heading` made <c-section> take
+    it for its own slot and print it again, as an h2 right above the h1.
+    """
+    headings = re.findall(r"<h[12][^>]*>(.*?)</h[12]>", body_of(client, url))
+
+    assert headings.count(title) == 1
+
+
 def test_an_inactive_course_is_gone(client: Client) -> None:
     course = make_course(is_active=False)
     assert client.get("/kursy/kat-b/").status_code == 404
