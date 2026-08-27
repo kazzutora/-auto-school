@@ -1,6 +1,7 @@
 """Shared Celery base class and the core background tasks."""
 
 import gzip
+import logging
 import os
 import re
 import shutil
@@ -9,11 +10,16 @@ import tempfile
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
+from urllib.request import Request, urlopen
 
 from celery import Task, shared_task
 from django.conf import settings
+from django.urls import reverse
 
 from apps.core.contracts import validate_payload
+
+logger = logging.getLogger(__name__)
 
 
 class BaseTask(Task):
@@ -34,6 +40,90 @@ class BaseTask(Task):
 def ping(self: Task) -> str:
     """Prove the broker, the worker and the result backend are wired up."""
     return "pong"
+
+
+# --------------------------------------------------------------------------
+# sitemap ping, tech.md section 6, DEV.md S8
+#
+# CONTRACT GAP: tech.md section 6 keeps every call that leaves the machine
+# behind a protocol in apps/core/clients, and the only two there are MailClient
+# and SmsClient. A ping is the same kind of call: it goes out, it times out, it
+# answers with a status. Until an HttpClient and a settings switch for it exist,
+# the seam is fetch_status below and the tests replace it, the same stand in
+# apps/links/checker.py had to make for the link sweep.
+
+PING_TIMEOUT = 10.0
+PING_ERROR = 400
+
+# tech.md section 6 names google and bing. Google retired its ping endpoint in
+# 2023 and now answers 404 there, which is why one engine refusing is a logged
+# line and not a failed task.
+SEARCH_ENGINES = {
+    "google": "https://www.google.com/ping?sitemap=",
+    "bing": "https://www.bing.com/ping?sitemap=",
+}
+
+# What django.contrib.sites ships with. It means nobody has set the real one.
+PLACEHOLDER_DOMAIN = "example.com"
+
+
+def fetch_status(url: str, *, timeout: float = PING_TIMEOUT) -> int:
+    """GET the url and return the status code it answered with."""
+    request = Request(url, headers={"User-Agent": "OSK Nawrocki sitemap ping"})  # noqa: S310
+    with urlopen(request, timeout=timeout) as response:  # noqa: S310
+        return int(response.status)
+
+
+def sitemap_url() -> str:
+    """The absolute url of sitemap.xml, or empty when the domain is unset.
+
+    A background job has no request to build an absolute url from, so the
+    domain can only come from the Site row. https because production is behind
+    Caddy and http would advertise a url that immediately redirects.
+    """
+    from django.contrib.sites.models import Site
+
+    domain = Site.objects.get_current().domain
+    if not domain or domain == PLACEHOLDER_DOMAIN:
+        return ""
+    return f"https://{domain}{reverse('sitemap')}"
+
+
+@shared_task(bind=True, base=BaseTask)
+def ping_sitemap(self: Task) -> dict[str, Any]:
+    """Tell the search engines where sitemap.xml is, tech.md section 6.
+
+    Repeatable by nature: the task writes nothing anywhere, so a second run in
+    the same night sends the same two requests and leaves the same state.
+
+    One engine failing does not fail the task. Both are best effort, and a
+    retry storm against a search engine would earn the domain nothing but a
+    rate limit.
+    """
+    validate_payload("core.tasks.ping_sitemap", {})
+
+    target = sitemap_url()
+    if not target:
+        logger.warning("sitemap ping skipped: the site domain is still the default")
+        return {"sitemap": "", "accepted": [], "failed": []}
+
+    accepted = []
+    failed = []
+    for engine, endpoint in SEARCH_ENGINES.items():
+        try:
+            status = fetch_status(endpoint + quote(target, safe=""))
+        except Exception as error:
+            logger.warning("sitemap ping to %s failed: %s", engine, error)
+            failed.append(engine)
+            continue
+
+        if status >= PING_ERROR:
+            logger.warning("sitemap ping to %s answered %s", engine, status)
+            failed.append(engine)
+        else:
+            accepted.append(engine)
+
+    return {"sitemap": target, "accepted": accepted, "failed": failed}
 
 
 BACKUP_NAME = re.compile(r"^osk-(\d{8})\.sql\.gz$")
