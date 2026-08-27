@@ -137,6 +137,8 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
         subject=seo_subject(course),
         description=course.seo_desc or course.lead or course.title,
         breadcrumbs=trail,
+        # What a link to this course shows when it is shared, DEV.md S8.
+        og_image=request.build_absolute_uri(course.hero_image.url) if course.hero_image else None,
         extra_jsonld=[course_jsonld(course, canonical, SiteSettings.get_solo())],
     )
 

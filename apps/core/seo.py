@@ -2,6 +2,13 @@
 
 Every public view puts a Seo instance in the context. The rules the gate checks
 live here so no slice reimplements them.
+
+CONTRACT GAP: DEV.md S8 wants a default og image taken from SiteSettings, and
+tech.md section 4.1 freezes that model without an image field. Until the field
+exists, og_image is whatever the page itself owns: a course hands over its
+hero_image, every other page ships no og:image at all. A tag pointing at a
+picture that does not exist is worse than the missing tag, so nothing is
+invented here.
 """
 
 from dataclasses import dataclass, field

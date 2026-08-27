@@ -55,3 +55,25 @@ def test_title_always_carries_wielun(subject: str) -> None:
     """tech.md section 8: commercial page titles must contain Wieluń."""
     assert "Wieluń" in build_title(subject)
     assert build_title(subject).endswith(TITLE_SUFFIX)
+
+
+@given(st.text(), st.integers(min_value=1, max_value=300))
+def test_truncation_leaves_no_dangling_space(text: str, limit: int) -> None:
+    """DEV.md S8: a description must not end mid air.
+
+    Cutting on a word boundary is the easy way to leave the space that boundary
+    was made of, and it shows up in a search result as a gap before the ellipsis.
+    """
+    result = truncate_text(text, limit)
+
+    assert result == result.strip()
+
+
+@given(st.text(), st.integers(min_value=1, max_value=300))
+def test_truncation_never_invents_whitespace(text: str, limit: int) -> None:
+    """Every run of whitespace in the source collapses to one plain space."""
+    result = truncate_text(text, limit)
+
+    assert "  " not in result
+    assert "\n" not in result
+    assert "\t" not in result
