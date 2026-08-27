@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<c-section>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Najczęstsze pytania</c-heading>
+  <p class="mt-3 max-w-2xl text-lg text-ink-500">To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki.</p>
+
+  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+
+  {% if groups %}
+    <div class="mt-10 max-w-3xl space-y-10" data-testid="faq">
+      {% for group in groups %}
+        <div>
+          {% if group.label %}<c-heading level="2">{{ group.label }}</c-heading>{% endif %}
+          {# details/summary inside the component, so the accordion opens with
+             javascript switched off, DEV.md S7.3. #}
+          <c-accordion class="mt-4">
+            {% for entry in group.questions %}
+              <c-accordion.item title="{{ entry.question }}">
+                <div class="prose text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ entry.answer }}</div>
+              </c-accordion.item>
+            {% endfor %}
+          </c-accordion>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="mt-8">
+      <c-alert tone="info" title="Pytania w przygotowaniu">Lista pojawi się wkrótce. W międzyczasie zadzwoń: <a href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="font-bold text-brand-700 hover:underline">{{ site_settings.phone_primary }}</a>.</c-alert>
+    </div>
+  {% endif %}
+
+  {# pb-24 reserves the room the sticky bar takes on a phone. #}
+  <div class="mt-12 pb-24 sm:pb-0">
+    <c-cta-bar title="Nie znalazłeś odpowiedzi?" phone="{{ site_settings.phone_primary }}" href="/zapisz-sie/" />
+  </div>
+</c-section>
+{% endblock %}

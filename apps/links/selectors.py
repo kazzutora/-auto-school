@@ -2,7 +2,7 @@
 
 from django.db.models import QuerySet
 
-from apps.links.models import UsefulLink
+from apps.links.models import Faq, UsefulLink
 
 
 def active_links() -> QuerySet[UsefulLink]:
@@ -13,3 +13,8 @@ def active_links() -> QuerySet[UsefulLink]:
     section. Only is_active takes a link off the page.
     """
     return UsefulLink.objects.filter(is_active=True).order_by("group", "order", "id")
+
+
+def published_faqs() -> QuerySet[Faq]:
+    """Questions the owner has answered, in the order they set."""
+    return Faq.objects.filter(is_published=True).order_by("order", "id")

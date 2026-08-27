@@ -4,8 +4,11 @@ from collections.abc import Iterable, Sequence
 from typing import Protocol
 
 
-class GroupedLink(Protocol):
+class Grouped(Protocol):
     group: str
+
+
+class GroupedLink(Grouped, Protocol):
     description: str
 
 
@@ -32,3 +35,18 @@ def group_links(
     for link in links:
         buckets.setdefault(link.group, []).append(link)
     return [(name, items) for name, items in buckets.items() if items]
+
+
+def group_questions[GroupedT: Grouped](
+    questions: Iterable[GroupedT],
+) -> list[tuple[str, list[GroupedT]]]:
+    """Bucket questions by their group, in the order the owner put them in.
+
+    Unlike links, a faq group is free text, so there is no declared order to
+    follow: a group appears where its first question does. Questions with no
+    group form one bucket with an empty label, and the page leaves it unheaded.
+    """
+    buckets: dict[str, list[GroupedT]] = {}
+    for question in questions:
+        buckets.setdefault((question.group or "").strip(), []).append(question)
+    return list(buckets.items())

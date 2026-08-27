@@ -7,7 +7,7 @@ from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from modeltranslation.admin import TranslationAdmin
 
-from apps.links.models import HTTP_ERROR, UsefulLink
+from apps.links.models import HTTP_ERROR, Faq, UsefulLink
 
 BROKEN = '<span style="color:#B3382B;font-weight:700">{}</span>'
 OK = '<span style="color:#1E7A56">{}</span>'
@@ -56,3 +56,14 @@ class UsefulLinkAdmin(TranslationAdmin):
         if obj.is_broken:
             return format_html(BROKEN, obj.last_error or f"HTTP {obj.last_status}")
         return format_html(OK, f"HTTP {obj.last_status}")
+
+
+@admin.register(Faq)
+class FaqAdmin(TranslationAdmin):
+    """Without this the owner cannot add a question, DEV.md S7.3."""
+
+    list_display = ("question", "group", "order", "is_published")
+    list_filter = ("is_published", "group")
+    search_fields = ("question", "answer")
+    list_editable = ("order", "is_published")
+    ordering = ("order", "id")

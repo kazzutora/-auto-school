@@ -10,7 +10,7 @@ from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.links.models import UsefulLink
+from apps.links.models import Faq, UsefulLink
 
 pytestmark = pytest.mark.django_db
 
@@ -107,3 +107,18 @@ def test_flagging_a_link_does_not_take_it_off_the_site(client: Client, staff: No
     make_link(title="Zepsuty", last_checked_at=timezone.now(), last_status=404)
 
     assert "Zepsuty" in client.get("/przydatne-linki/").content.decode()
+
+
+# --------------------------------------------------------------------------
+# faq, DEV.md S7.3
+
+
+def test_the_faq_is_editable(client: Client, staff: None) -> None:
+    """A page the owner cannot fill is a page that stays empty."""
+    Faq.objects.create(question="Ile trwa kurs?", answer="Około trzech miesięcy.")
+
+    response = client.get(reverse("admin:links_faq_changelist"))
+
+    assert response.status_code == 200
+    assert Faq in site._registry
+    assert "Ile trwa kurs?" in results(response.content.decode())
