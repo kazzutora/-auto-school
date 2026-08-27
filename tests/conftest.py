@@ -4,7 +4,9 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from django.conf import settings
 from django.core.cache import cache
+from django.utils import translation
 
 
 @pytest.fixture(autouse=True)
@@ -33,3 +35,17 @@ def outbox(tmp_path: Path, settings: Any) -> Path:
     directory = tmp_path / "outbox"
     settings.MAIL_OUTBOX_DIR = directory
     return directory
+
+
+@pytest.fixture(autouse=True)
+def default_language() -> Any:
+    """Every test starts in the language the site answers on by default.
+
+    LocaleMiddleware activates the language of the request and never puts it
+    back, so a single test that visits /ru/ leaves reverse() prefixing every url
+    after it. It showed up as a route assertion that passed alone and failed in
+    a full run.
+    """
+    translation.activate(settings.LANGUAGE_CODE)
+    yield
+    translation.activate(settings.LANGUAGE_CODE)
