@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /__kitchen-sink/
+Allow: /
+
+Sitemap: {{ sitemap_url }}

@@ -7,6 +7,8 @@ from django.contrib import admin
 from django.urls import include, path
 
 from apps.core.health import healthz
+from apps.core.sitemaps import sitemap
+from apps.core.views import robots
 
 urlpatterns = [
     # Infrastructure, never language prefixed: the deploy smoke step and the
@@ -14,6 +16,10 @@ urlpatterns = [
     path("healthz", healthz, name="healthz"),
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
+    # Crawler files are never language prefixed: one sitemap, one robots.txt,
+    # tech.md section 5.
+    path("sitemap.xml", sitemap, name="sitemap"),
+    path("robots.txt", robots, name="robots"),
 ]
 
 # Polish carries no prefix, russian and ukrainian get /ru/ and /uk/.

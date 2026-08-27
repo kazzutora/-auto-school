@@ -155,6 +155,7 @@ def contact(request: HttpRequest) -> HttpResponse:
 
 
 # tech.md section 4.1 names the flat pages: o-nas, polityka-prywatnosci, rodo.
+FLAT_PAGE_SLUGS = ("o-nas", "polityka-prywatnosci", "rodo")
 ABOUT_SLUG = "o-nas"
 
 
@@ -194,4 +195,18 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "category_count": active_courses(Course.Kind.LICENSE).count() if about else 0,
             "enrol_url": ENROL_URL,
         },
+    )
+
+
+def robots(request: HttpRequest) -> HttpResponse:
+    """robots.txt, tech.md section 5.
+
+    Everything is open except the admin and the design review page. The sitemap
+    is named absolutely, which is what a crawler needs to follow it.
+    """
+    return render(
+        request,
+        "robots.txt",
+        {"sitemap_url": request.build_absolute_uri(reverse("sitemap"))},
+        content_type="text/plain; charset=utf-8",
     )
