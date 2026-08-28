@@ -413,9 +413,23 @@
 
   /* A ground is a block that flips the local colour roles: the hero and the
    * footer sit on one. Declaring them here keeps the pairing of background
-   * and foreground in one place instead of on every section that inverts. */
+   * and foreground in one place instead of on every section that inverts.
+   *
+   * Each ground also publishes the pair as two variables. That is what lets a
+   * component sitting on one work out its own colours without being told which
+   * ground it landed on: --on-ground is what reads against the block, --ground
+   * is the block itself, and a secondary button needs both because its hover
+   * swaps them. Without this a button carries text-ink wherever it goes and
+   * turns invisible the moment the hero inverts underneath it. */
+  :root {
+    --ground: var(--paper);
+    --on-ground: var(--ink);
+  }
+
   .u-ground-ink {
     @apply bg-ink text-paper;
+    --ground: var(--ink);
+    --on-ground: var(--paper);
   }
 
   .u-ground-ink :is(h1, h2, h3, h4) {
@@ -428,6 +442,8 @@
   .u-ground-deep {
     background-color: rgb(var(--deep));
     color: rgb(var(--fixed-paper));
+    --ground: var(--deep);
+    --on-ground: var(--fixed-paper);
   }
 
   .u-ground-deep :is(h1, h2, h3, h4) {
@@ -441,15 +457,71 @@
   .u-ground-accent {
     background-color: rgb(var(--accent));
     color: rgb(var(--fixed-ink));
+    --ground: var(--accent);
+    --on-ground: var(--fixed-ink);
   }
 
   .u-ground-accent :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-ink));
   }
 
+  /* The same fixed pair as a text colour on its own, for the pieces that sit on
+   * a non-swapping ground without being one: a badge filled with the yellow, a
+   * button inside the accent strip. Reaching for text-ink there would invert
+   * underneath them in the dark theme. */
+  .u-fixed-ink {
+    color: rgb(var(--fixed-ink));
+  }
+
+  /* The focus ring has the same problem the text does. A.2 already says the
+   * ring turns near black on a yellow ground; anything wearing the fixed ink
+   * is on such a ground by definition, so the ring follows it here rather than
+   * being repeated on every component that sits on the yellow. */
+  .u-fixed-ink:focus-visible {
+    outline-color: rgb(var(--fixed-ink));
+  }
+
+  .u-fixed-paper {
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* Borders on a non-swapping ground have the same problem. */
+  .u-fixed-ink-border {
+    border-color: rgb(var(--fixed-ink));
+  }
+
+  /* The outlined button, FRONTEND.md A.5. Written against the ground rather
+   * than against the palette: on the page it is the ink frame A.5 describes,
+   * on the inverted hero it is the paper frame A.9 point 1 asks for, and on the
+   * yellow strip it is the near black one — all three from the same class,
+   * because the ground says what reads on it.
+   *
+   * It lives here rather than as utilities on the component because the hover
+   * has to fill with the foreground and repaint the text in the ground's own
+   * colour, and there is no utility that names "the background behind me". */
+  .u-btn-secondary {
+    border-color: rgb(var(--on-ground));
+    color: rgb(var(--on-ground));
+  }
+
+  .u-btn-secondary:hover:not(:disabled) {
+    background-color: rgb(var(--on-ground));
+    color: rgb(var(--ground));
+  }
+
+  .u-btn-secondary:disabled {
+    border-color: rgb(var(--line-soft));
+    color: rgb(var(--ink-300));
+    background-color: transparent;
+  }
+
   /* Anything wide scrolls inside its own box. The page never moves sideways,
    * A.4. */
   .u-scroll-x {
     @apply overflow-x-auto;
+    /* A flex or grid item defaults to min-width: auto and refuses to shrink
+     * below its content, which is exactly how a wide table drags the page
+     * sideways even though it has a scroll box of its own. */
+    min-width: 0;
   }
 }

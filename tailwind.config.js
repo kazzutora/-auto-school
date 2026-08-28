@@ -150,11 +150,15 @@ module.exports = {
       2: "2px",
     },
 
-    // A.1: borders instead of shadows. The one exception is the hard offset a
-    // card grows on hover, and it has no blur.
+    // A.1: borders instead of shadows. Two exceptions, and neither is an
+    // elevation effect. `card` is the hard 2px offset a clickable card grows on
+    // hover, no blur. `field` is the second pixel of a focused field's frame:
+    // A.5 asks for a 2px ink border on focus that does not move the layout, and
+    // growing the border itself would shove everything beside it over.
     boxShadow: {
       none: "none",
       card: "0 2px 0 0 rgb(var(--ink))",
+      field: "inset 0 0 0 1px rgb(var(--ink))",
     },
 
     extend: {
