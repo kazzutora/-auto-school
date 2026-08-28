@@ -213,7 +213,11 @@ def test_each_table_scrolls_inside_its_own_container(client: Client) -> None:
     tables = body.count("<table")
 
     assert tables >= 2
-    assert body.count("overflow-x-auto") >= tables
+    # c-table wraps every table in the design system's scroll container,
+    # FRONTEND.md A.4. The class carries overflow-x: auto and a min-width of 0,
+    # without which a grid or flex item refuses to shrink and the table drags
+    # the page sideways regardless of the overflow.
+    assert body.count("u-scroll-x") >= tables
 
 
 @pytest.mark.seo

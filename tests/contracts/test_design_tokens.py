@@ -68,7 +68,16 @@ FAMILIES = {
     "Roboto Mono": "data: prices, phones, dates, hours, labels",
 }
 
-# A.7, the minimum set.
+# A.7 calls its list a minimum, so the sprite may carry more. What it may not do
+# is carry less, or draw one of them off contract, or grow an icon nobody wrote
+# down — an icon that is not accounted for is one nobody finds twice.
+EXTRA_ICONS = (
+    # A.9 point 7 puts a star rating on every testimonial, and the alternative
+    # is a dingbat character, which would be the one place in the interface
+    # where an icon is text.
+    "star",
+)
+
 ICONS = (
     "phone",
     "mail",
@@ -370,6 +379,11 @@ def test_the_sprite_carries_the_minimum_icon_set(icon: str) -> None:
     assert f'id="i-{icon}"' in SPRITE.read_text(encoding="utf-8")
 
 
+def test_the_sprite_carries_nothing_it_has_not_accounted_for() -> None:
+    ids = set(re.findall(r'<symbol id="i-([\w-]+)"', SPRITE.read_text(encoding="utf-8")))
+    assert ids == set(ICONS) | set(EXTRA_ICONS)
+
+
 def test_sprite_symbols_travel_with_their_own_stroke() -> None:
     """A.7, and a use element pointing at another file clones the nodes only.
 
@@ -378,7 +392,7 @@ def test_sprite_symbols_travel_with_their_own_stroke() -> None:
     """
     svg = uncommented(SPRITE.read_text(encoding="utf-8"))
     symbols = re.findall(r"<symbol\b[^>]*>", svg)
-    assert len(symbols) == len(ICONS)
+    assert len(symbols) == len(ICONS) + len(EXTRA_ICONS)
     for symbol in symbols:
         assert 'stroke="currentColor"' in symbol
         assert 'stroke-width="1.75"' in symbol

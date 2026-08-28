@@ -61,10 +61,13 @@ def test_nothing_is_loaded_from_a_third_party_host() -> None:
 def test_kontakt_stays_a_first_level_menu_item() -> None:
     """Hiding it in a submenu was the main defect of the old site."""
     body = render_sink()
-    menu = re.search(r'<ul id="main-menu".*?</ul>\s*</nav>', body, re.S)
-    assert menu
+    menu = re.search(r'<nav aria-label="Główna nawigacja".*?</nav>', body, re.S)
+    assert menu, "c-nav did not render"
 
-    top_level = re.findall(r'<li class="lg:relative">\s*\n?\s*<a[^>]*>([^<]+)</a>', menu.group())
+    # First level items are the direct children of the one list in c-nav. A
+    # submenu entry sits inside its own nested <ul> under a button, so an <a>
+    # matched straight after an <li> is top level by construction.
+    top_level = re.findall(r"<li[^>]*>\s*<a[^>]*>([^<]+)</a>", menu.group())
     assert "Kontakt" in [title.strip() for title in top_level]
 
 

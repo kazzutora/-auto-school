@@ -8,9 +8,9 @@ from django.conf import settings
 
 COTTON = Path(settings.BASE_DIR) / "templates" / "cotton"
 
-# tech.md section 7: component file -> the props its row declares. Slot only
-# components carry an empty set. Cotton maps <c-gallery-grid> to gallery_grid
-# and <c-accordion.item> to accordion/item.
+# tech.md section 7 at core v3: component file -> the props its row declares.
+# Slot only components carry an empty set. Cotton maps <c-gallery-grid> to
+# gallery_grid and <c-accordion.item> to accordion/item.
 TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "button": {"variant", "size", "href", "type", "full"},
     "card": {"href", "padded"},
@@ -36,7 +36,8 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "course_card": {"course"},
     "intake_row": {"intake"},
     "hours_table": {"department"},
-    "map": {"lat", "lng", "zoom", "label"},
+    "map": {"lat", "lng", "zoom", "label", "height"},
+    "icon": {"name", "size", "label"},
     "lang_switcher": set(),
     "cookie_banner": set(),
     "testimonials": {"items"},
@@ -93,8 +94,9 @@ def test_mobile_menu_opens_on_click_not_hover() -> None:
 
 def test_map_carries_no_inline_script() -> None:
     """Production CSP is script-src 'self', so init data rides on data-*."""
-    # The component documents the tags a page must add, inside a comment.
-    body = re.sub(r"\{#.*?#\}", "", source("map"), flags=re.S)
+    # The component documents the tags a page must add, inside a comment, and
+    # one of them is the leaflet <script>. Both comment forms come out.
+    body = re.sub(r"\{#.*?#\}|\{% comment %\}.*?\{% endcomment %\}", "", source("map"), flags=re.S)
     assert "<script" not in body
     assert "data-lat" in body and "data-lng" in body
 
