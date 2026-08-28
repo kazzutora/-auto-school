@@ -1,80 +1,122 @@
 /* Tailwind input. Build with `make css`.
  *
+ * The design contract is FRONTEND.md part A. Colours live as CSS variables so
+ * the dark theme is a swap of roles rather than a second set of classes, and
+ * tailwind.config.js reads every one of them through rgb(var(--x) / alpha).
+ *
  * Fonts are self hosted, tech.md section 2 bans third party font hosts. The
- * faces below are variable woff2 subsets: one file per script, weight 400 to
- * 700, font-display swap so text paints before the font arrives.
+ * faces below are variable woff2 subsets sliced to exactly the weights A.3
+ * uses, with font-display: swap so text paints before the font arrives.
+ *
+ * CONTRACT GAP: A.3 asks for the polish diacritics and cyrillic on all three
+ * families. Archivo and Public Sans have no cyrillic glyphs to subset — the
+ * families ship latin, latin-ext and vietnamese and nothing else — so on /ru/
+ * and /uk/ every heading and paragraph falls back to the system sans, while
+ * Roboto Mono carries its own cyrillic and the data stays on contract. The
+ * fallback stack below is the stand in; closing this properly means either a
+ * fourth family for cyrillic or swapping one of the two, which is a change to
+ * a frozen part of FRONTEND.md and belongs to the owner.
  */
 
+/* Archivo, display. One variable file per subset covering 700 and 800. */
 @font-face {
-  font-family: 'Roboto Condensed';
+  font-family: 'Archivo';
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 700 800;
+  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/roboto-condensed-cyrillic-ext.woff2) format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-
-@font-face {
-  font-family: 'Roboto Condensed';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/roboto-condensed-cyrillic.woff2) format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-
-@font-face {
-  font-family: 'Roboto Condensed';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/roboto-condensed-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-@font-face {
-  font-family: 'Roboto Condensed';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/roboto-condensed-latin.woff2) format('woff2');
+  src: url(../fonts/archivo-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'Source Sans 3';
+  font-family: 'Archivo';
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 700 800;
+  font-stretch: 100%;
   font-display: swap;
-  src: url(../fonts/source-sans-3-cyrillic-ext.woff2) format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+  src: url(../fonts/archivo-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Archivo Expanded 800, the display scale. Same family, wider width axis: the
+ * browser picks this file when font-stretch asks for 125%. */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-display: swap;
+  src: url(../fonts/archivo-expanded-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'Source Sans 3';
+  font-family: 'Archivo';
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 800;
+  font-stretch: 125%;
   font-display: swap;
-  src: url(../fonts/source-sans-3-cyrillic.woff2) format('woff2');
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  src: url(../fonts/archivo-expanded-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Public Sans, text. 400 and 600. */
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(../fonts/public-sans-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'Source Sans 3';
+  font-family: 'Public Sans';
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 400 600;
   font-display: swap;
-  src: url(../fonts/source-sans-3-latin-ext.woff2) format('woff2');
+  src: url(../fonts/public-sans-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Roboto Mono, the utility face that carries data. The only one of the three
+ * that ships cyrillic, so it is also the only one that covers the russian and
+ * ukrainian versions of the site without falling back. */
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(../fonts/roboto-mono-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(../fonts/roboto-mono-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'Source Sans 3';
+  font-family: 'Roboto Mono';
   font-style: normal;
-  font-weight: 400 700;
+  font-weight: 400 500;
   font-display: swap;
-  src: url(../fonts/source-sans-3-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url(../fonts/roboto-mono-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(../fonts/roboto-mono-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
 
 @tailwind base;
@@ -82,25 +124,330 @@
 @tailwind utilities;
 
 @layer base {
-  [x-cloak] {
-    display: none !important;
+  /* ------------------------------------------------------------------ *
+   * Tokens, FRONTEND.md A.2
+   *
+   * Channel triplets rather than hex, so tailwind can put an alpha on any
+   * of them. Every colour is defined here in the light theme first: a value
+   * that exists only inside a media block leaves the explicit theme with
+   * nothing to fall back to.
+   * ------------------------------------------------------------------ */
+  :root {
+    --paper: 255 255 255;
+    --paper-50: 250 250 250;
+    --paper-100: 242 242 241;
+    --paper-200: 230 230 228;
+
+    --ink: 14 14 16;
+    --ink-700: 51 51 58;
+    --ink-500: 92 92 102;
+    --ink-300: 138 138 148;
+
+    --line: 26 26 30;
+    --line-soft: 217 217 214;
+
+    --accent: 255 212 0;
+    --accent-600: 229 190 0;
+    --accent-100: 255 246 204;
+
+    --deep: 42 32 96;
+    --deep-700: 59 45 113;
+
+    --state-ok: 15 107 69;
+    --state-warn: 138 90 0;
+    --state-err: 166 32 21;
+
+    /* Two grounds in A.2 are not roles and do not swap with the theme: the
+     * yellow is the same yellow in the dark, and deep stays a dark purple. The
+     * text on them therefore cannot follow --ink or --paper, which do swap —
+     * it would land on white-on-yellow at 1.4:1, forbidden outright by A.2, and
+     * near-black on deep purple at 1.1:1. These two are the fixed pair the
+     * .u-ground-accent and .u-ground-deep utilities below write instead.
+     *
+     * The inverted hero needs no pair of its own: it is inverted against the
+     * page, not fixed, so bg-ink with text-paper already gives a black block on
+     * the white page and a near-white block on the dark one. */
+    --fixed-ink: 14 14 16;
+    --fixed-paper: 245 245 244;
+
+    color-scheme: light;
   }
 
+  /* The dark theme is a swap of roles, not an inversion: paper becomes the
+   * near black, ink the near white, and the yellow does not move because it
+   * reads better on black than it does on white.
+   *
+   * Two identical blocks on purpose. The first answers the system preference
+   * unless the reader has explicitly chosen light; the second answers that
+   * explicit choice and has to win over the media query, which it does by
+   * coming later. Neither defines a colour the light theme has not already. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --paper: 14 14 16;
+      --paper-50: 21 21 24;
+      --paper-100: 28 28 33;
+      --paper-200: 38 38 44;
+
+      --ink: 245 245 244;
+      --ink-700: 201 201 198;
+      --ink-500: 154 154 152;
+      --ink-300: 110 110 112;
+
+      --line: 245 245 244;
+      --line-soft: 46 46 52;
+
+      --deep: 26 20 64;
+
+      --state-ok: 79 191 143;
+      --state-warn: 224 169 58;
+      --state-err: 240 112 95;
+
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --paper: 14 14 16;
+    --paper-50: 21 21 24;
+    --paper-100: 28 28 33;
+    --paper-200: 38 38 44;
+
+    --ink: 245 245 244;
+    --ink-700: 201 201 198;
+    --ink-500: 154 154 152;
+    --ink-300: 110 110 112;
+
+    --line: 245 245 244;
+    --line-soft: 46 46 52;
+
+    --deep: 26 20 64;
+
+    --state-ok: 79 191 143;
+    --state-warn: 224 169 58;
+    --state-err: 240 112 95;
+
+    color-scheme: dark;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Document
+   * ------------------------------------------------------------------ */
   html {
-    @apply bg-paper-0 text-ink-900 antialiased;
-    font-family: theme("fontFamily.sans");
+    @apply bg-paper text-ink antialiased;
+    font-family: theme('fontFamily.sans');
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
+  body {
+    @apply text-body;
+  }
+
+  /* Polish stacks long words like `psychologiczne` and `kwalifikacja`, and at
+   * 320px one of them is wider than the column. A.3. */
+  [lang='pl'] {
+    hyphens: auto;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Typography, A.3. The scale is the whole vocabulary: a heading picks a
+   * step, never a size of its own.
+   * ------------------------------------------------------------------ */
   h1,
   h2,
   h3,
   h4 {
-    font-family: theme("fontFamily.display");
-    @apply text-brand-900;
+    font-family: theme('fontFamily.display');
+    @apply text-ink;
+    text-wrap: balance;
   }
 
-  /* Keyboard focus must stay visible: the accessibility gate is 95, tech.md section I.5. */
+  h1 {
+    @apply text-h1 font-extrabold;
+  }
+
+  h2 {
+    @apply text-h2 font-bold;
+  }
+
+  h3,
+  h4 {
+    @apply text-h3 font-bold;
+  }
+
+  p {
+    /* A.3 asks for pretty on leads. Every paragraph is a lead to something. */
+    text-wrap: pretty;
+  }
+
+  b,
+  strong {
+    @apply font-semibold;
+  }
+
+  /* The reset ships a grey of its own here, and it ships it on
+   * `input::placeholder, textarea::placeholder`. A bare `::placeholder` is a
+   * step less specific and loses, which is how a stray #9ca3af was surviving
+   * into the built css. Matching the reset's selector puts the two level and
+   * lets source order decide, and this block comes after it.
+   *
+   * A placeholder is a hint, never a label, A.5, so it takes the same muted
+   * ink as any other de-emphasised text. */
+  input::placeholder,
+  textarea::placeholder,
+  ::placeholder {
+    color: rgb(var(--ink-300));
+    opacity: 1;
+  }
+
+  small {
+    @apply text-small;
+  }
+
+  /* Data reads down a column: the price, the start date, the phone number.
+   * tabular-nums is what keeps the digits in line, A.3. */
+  .data {
+    font-family: theme('fontFamily.mono');
+    font-variant-numeric: tabular-nums;
+    @apply text-data;
+  }
+
+  .label {
+    font-family: theme('fontFamily.mono');
+    @apply text-label font-medium uppercase;
+  }
+
+  /* Archivo carries a width axis, so Expanded is a font-stretch away.
+   *
+   * CONTRACT GAP: A.3 floors this step at 2.75rem and A.4 says the page never
+   * moves sideways at 320px. Both cannot hold for the school's own name. At a
+   * 320px viewport the container is 265px wide and NAWROCKI alone measures
+   * 313px in Archivo Expanded 800 at 44px, so it pushes the document to 334px
+   * and the page slides. It wraps at the space already; the single word is
+   * what does not fit. Left as A.3 writes it rather than papered over with an
+   * overflow-wrap that would hyphenate the wordmark mid glyph or a clip on the
+   * root that would shave its last letters — both hide the conflict from F2,
+   * which puts OSK NAWROCKI in the header, and F3, which puts this step in the
+   * hero. Closing it is a choice between a lower floor on the display step and
+   * a header lettering that uses h1 instead. Owner's call. */
+  .display {
+    font-family: theme('fontFamily.display');
+    font-stretch: 125%;
+    @apply text-display font-extrabold uppercase;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Focus, A.2: yellow ring 2px with a 2px offset. On a yellow ground the
+   * ring itself would vanish, so there it turns near black.
+   *
+   * CONTRACT GAP: the same vanishing act happens on every other light ground
+   * and A.2 does not cover it. The yellow measures 1.6:1 against white paper,
+   * which is the whole light theme, and 1.3:1 against the inverted hero in the
+   * dark theme, where the ink ground is near white. WCAG 1.4.11 wants 3:1 for
+   * a focus indicator against what is next to it, and A.11 asks for a visible
+   * focus everywhere plus Lighthouse accessibility at 95. Implemented literally
+   * as A.2 writes it, because the palette is frozen; closing it means either a
+   * ring that follows the ground the way the yellow ground already does, or a
+   * two tone ring, and both are edits to A.2. Owner's call.
+   * ------------------------------------------------------------------ */
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-paper-0;
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+  }
+
+  .u-ground-accent :focus-visible {
+    outline-color: rgb(var(--fixed-ink));
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Motion, A.6: colour, border and background on interactive things. That
+   * is the whole list.
+   * ------------------------------------------------------------------ */
+  a,
+  button,
+  summary,
+  input,
+  select,
+  textarea,
+  [role='button'] {
+    transition-property: color, background-color, border-color, outline-color, box-shadow;
+    transition-duration: theme('transitionDuration.DEFAULT');
+    transition-timing-function: theme('transitionTimingFunction.DEFAULT');
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------------------------ *
+   * Layout, A.4. Spacing is the layout's job: these three carry the
+   * container, the reading column and the vertical rhythm of a section, and
+   * everything else uses flex or grid with a gap.
+   * ------------------------------------------------------------------ */
+  .u-container {
+    @apply mx-auto w-full max-w-container px-5 md:px-8 xl:px-12;
+  }
+
+  .u-narrow {
+    @apply max-w-narrow;
+  }
+
+  .u-section {
+    @apply py-16 md:py-24 xl:py-32;
+  }
+
+  /* A ground is a block that flips the local colour roles: the hero and the
+   * footer sit on one. Declaring them here keeps the pairing of background
+   * and foreground in one place instead of on every section that inverts. */
+  .u-ground-ink {
+    @apply bg-ink text-paper;
+  }
+
+  .u-ground-ink :is(h1, h2, h3, h4) {
+    @apply text-paper;
+  }
+
+  /* Deep stays a dark purple in both themes, so its text is fixed for the same
+   * reason the yellow's is: text-paper turns near black in the dark and the
+   * footer would read at 1.1:1. */
+  .u-ground-deep {
+    background-color: rgb(var(--deep));
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-ground-deep :is(h1, h2, h3, h4) {
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* The yellow does not swap with the theme, so the text on it must not swap
+   * either: text-ink would resolve to near-white in the dark and land on the
+   * one pair A.2 forbids outright, white on yellow at 1.4:1. --fixed-ink is
+   * the same near black in both themes, 13.5:1 on the yellow. */
+  .u-ground-accent {
+    background-color: rgb(var(--accent));
+    color: rgb(var(--fixed-ink));
+  }
+
+  .u-ground-accent :is(h1, h2, h3, h4) {
+    color: rgb(var(--fixed-ink));
+  }
+
+  /* Anything wide scrolls inside its own box. The page never moves sideways,
+   * A.4. */
+  .u-scroll-x {
+    @apply overflow-x-auto;
   }
 }
