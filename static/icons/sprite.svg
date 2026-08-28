@@ -82,4 +82,12 @@
     <path d="M20 4 11.5 12.5" />
     <path d="M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" />
   </symbol>
+
+  <!-- Not in A.7's list, which calls itself a minimum. A.9 point 7 puts a star
+       rating on every testimonial, and the alternative is a dingbat character,
+       which would be the one place in the interface where an icon is text. The
+       filled half of the rating sets fill="currentColor" on the use element. -->
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m12 3.5 2.6 5.55 5.9.8-4.3 4.3 1.05 6.05L12 17.35 6.75 20.2 7.8 14.15 3.5 9.85l5.9-.8z" />
+  </symbol>
 </svg>

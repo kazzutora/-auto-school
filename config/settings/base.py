@@ -136,6 +136,7 @@ STATICFILES_DIRS = [
     ("css", BASE_DIR / "static" / "css"),
     ("js", BASE_DIR / "static" / "js"),
     ("fonts", BASE_DIR / "static" / "fonts"),
+    ("icons", BASE_DIR / "static" / "icons"),
 ]
 
 MEDIA_URL = "media/"
