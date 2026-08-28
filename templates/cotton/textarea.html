@@ -1,3 +1,11 @@
+{% comment %}
+Textarea, tech.md section 7. Same box as c-input, states from FRONTEND.md A.5.
+Height comes from rows, so no fixed height here; the padding matches the input
+so a stacked form lines up.
+{% endcomment %}
 <c-vars name="" rows="5" value="" error="" />
-<textarea name="{{ name }}" id="id_{{ name }}" rows="{{ rows }}" {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %} class="w-full rounded-lg border bg-paper-0 px-3 py-2.5 text-ink-900 focus-visible:outline-none{% if error %} border-state-err{% else %} border-paper-100{% endif %}" {{ attrs }}>{{ value }}</textarea>
-{% if error %}<p id="err_{{ name }}" class="mt-1 text-sm text-state-err">{{ error }}</p>{% endif %}
+<textarea name="{{ name }}" id="id_{{ name }}" rows="{{ rows }}"
+  {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
+  class="w-full rounded border bg-paper px-4 py-3 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %}"
+  {{ attrs }}>{{ value }}</textarea>
+{% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

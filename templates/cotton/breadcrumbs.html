@@ -1,9 +1,17 @@
+{% comment %}
+Breadcrumbs, tech.md section 7.
+
+The separator is a sprite arrow rather than a slash so it inherits the stroke
+weight of the rest of the interface, and it is hidden from assistive tech: the
+list structure already carries the nesting.
+{% endcomment %}
 <c-vars items="" />
-<nav aria-label="Breadcrumb" {{ attrs }}>
-  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-500">
-    {% for item in items %}<li class="flex items-center gap-2">
-      {% if not forloop.first %}<span aria-hidden="true">/</span>{% endif %}
-      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="hover:text-brand-700 hover:underline">{{ item.title }}</a>{% else %}<span aria-current="page" class="text-ink-900">{{ item.title }}</span>{% endif %}
+<nav aria-label="Okruszki" {{ attrs }}>
+  <ol class="flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-ink-500">
+    {% for item in items %}<li class="flex items-center gap-3">
+      {% if not forloop.first %}<c-icon name="arrow-right" size="sm" class="text-ink-300" />{% endif %}
+      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="underline-offset-4 hover:text-ink hover:underline">{{ item.title }}</a>
+      {% else %}<span aria-current="page" class="text-ink">{{ item.title }}</span>{% endif %}
     </li>{% endfor %}
   </ol>
 </nav>

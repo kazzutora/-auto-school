@@ -1,9 +1,31 @@
+{% comment %}
+Form field, tech.md section 7. Wraps a Django BoundField with its label, help
+text and errors, states from FRONTEND.md A.5.
+
+The label is always visible. A placeholder is a hint that disappears the moment
+someone types, so A.5 refuses to let it stand in for a label.
+
+The widget renders itself, so the box styling reaches it through the form's own
+widget attrs rather than from here — and so does aria-describedby, which is the
+one thing this component cannot write.
+
+CONTRACT GAP: A.5 wants the error text tied to the control through
+aria-describedby. c-input does that itself because it renders its own tag; here
+Django renders the widget, and it only points aria-describedby at the help text,
+never at the errors. The errors carry ids and static/js/app.js appends them
+after load, which covers anyone running javascript. Doing it properly means the
+form adding the attribute server side, which is python and belongs to the owner.
+{% endcomment %}
 <c-vars field="" label="" help="" required="" />
-<div class="mb-4" {{ attrs }}>
-  <label for="{{ field.id_for_label }}" class="mb-1 block font-display text-sm font-bold text-ink-900">
+<div class="flex flex-col gap-2" {{ attrs }}>
+  <label for="{{ field.id_for_label }}" class="font-semibold text-ink">
     {% if label %}{{ label }}{% else %}{{ field.label }}{% endif %}{% if required or field.field.required %}<span class="text-state-err" aria-hidden="true"> *</span>{% endif %}
   </label>
   {{ field }}
-  {% if help %}<p class="mt-1 text-sm text-ink-500">{{ help }}</p>{% elif field.help_text %}<p class="mt-1 text-sm text-ink-500">{{ field.help_text }}</p>{% endif %}
-  {% for error in field.errors %}<p class="mt-1 text-sm text-state-err">{{ error }}</p>{% endfor %}
+  {# Django already points the widget's aria-describedby at {auto_id}_helptext
+     whenever the field has help text, so the paragraph has to answer to that
+     id or the reference dangles. #}
+  {% if help %}<p id="{{ field.auto_id }}_helptext" class="text-small text-ink-500">{{ help }}</p>
+  {% elif field.help_text %}<p id="{{ field.auto_id }}_helptext" class="text-small text-ink-500">{{ field.help_text }}</p>{% endif %}
+  {% for error in field.errors %}<p id="{{ field.auto_id }}_error_{{ forloop.counter0 }}" class="text-small text-state-err">{{ error }}</p>{% endfor %}
 </div>

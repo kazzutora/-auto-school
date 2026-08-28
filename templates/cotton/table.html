@@ -1,9 +1,26 @@
+{% comment %}
+Table, tech.md section 7, styling from FRONTEND.md A.5.
+
+Header in label typography over a 2px ink rule, rows parted by line.soft, no
+zebra. Numeric columns align right in the data face with tabular figures.
+
+Which columns are numeric cannot be guessed from a list of strings, and the
+rows arrive through the slot, so a header may be either a plain string or an
+object carrying title and numeric. That keeps the section 7 prop as a list and
+lets the caller line the header up with cells it wrote itself.
+
+Wide tables scroll inside their own box: the page never moves sideways, A.4.
+{% endcomment %}
 <c-vars headers="" />
-<div class="overflow-x-auto rounded-xl border border-paper-100">
-  <table class="w-full min-w-full border-collapse text-left" {{ attrs }}>
-    {% if headers %}<thead class="bg-paper-50">
-      <tr>{% for header in headers %}<th scope="col" class="px-4 py-3 font-display text-sm font-bold uppercase tracking-wide text-ink-700">{{ header }}</th>{% endfor %}</tr>
+<div class="u-scroll-x">
+  <table class="w-full border-collapse text-left" {{ attrs }}>
+    {% if headers %}<thead>
+      <tr class="border-b-2 border-ink">
+        {% for header in headers %}
+          <th scope="col" class="label pb-3 pr-6 text-ink-500 last:pr-0{% if header.numeric %} text-right{% endif %}">{% if header.title %}{{ header.title }}{% else %}{{ header }}{% endif %}</th>
+        {% endfor %}
+      </tr>
     </thead>{% endif %}
-    <tbody class="divide-y divide-paper-100">{{ slot }}</tbody>
+    <tbody>{{ slot }}</tbody>
   </table>
 </div>

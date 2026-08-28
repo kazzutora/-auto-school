@@ -1,20 +1,50 @@
+{% comment %}
+Lightbox, tech.md section 7.
+
+The overlay is a native <dialog> for the same reasons c-modal is one: the focus
+lock, Esc and the focus restore are the browser's job and it does them right.
+Alpine carries the one thing <dialog> has no opinion about, which image is
+showing, and calls showModal() and close() on it.
+
+Arrow keys move between images while the dialog is open. They are bound on the
+dialog rather than the window so they do nothing when it is shut.
+
+Thumbnails are buttons, not links: there is no page to go to. Each one names
+the photo it opens so the list is usable without seeing it.
+{% endcomment %}
 <c-vars images="" />
-<div x-data="{ open: false, index: 0, total: {{ images|length }} }" x-on:keydown.escape.window="open = false" x-on:keydown.arrow-right.window="if (open) index = (index + 1) % total" x-on:keydown.arrow-left.window="if (open) index = (index - 1 + total) % total" {{ attrs }}>
-  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+<div x-data="{ i: 0, total: {{ images|length }}, show(n) { this.i = n; this.$refs.dlg.showModal() }, next() { this.i = (this.i + 1) % this.total }, prev() { this.i = (this.i - 1 + this.total) % this.total } }" {{ attrs }}>
+  <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
     {% for image in images %}<li>
-      <button type="button" x-on:click="index = {{ forloop.counter0 }}; open = true" class="block w-full overflow-hidden rounded-xl border border-paper-100 focus-visible:outline-none">
-        <c-picture :image="image.image" alt="{{ image.alt }}" ratio="square" sizes="(min-width: 640px) 33vw, 50vw" />
+      <button type="button" x-on:click="show({{ forloop.counter0 }})"
+        class="block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
+        <c-picture :image="image.image" alt="{{ image.alt }}" ratio="tile" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" />
+        <span class="sr-only">Powiększ: {{ image.alt }}</span>
       </button>
     </li>{% endfor %}
   </ul>
 
-  <div x-cloak x-show="open" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/90 p-4" role="dialog" aria-modal="true">
-    <button type="button" x-on:click="open = false" aria-label="Zamknij" class="absolute right-4 top-4 text-3xl text-paper-0">&times;</button>
-    <button type="button" x-on:click="index = (index - 1 + total) % total" aria-label="Poprzednie" class="absolute left-4 text-4xl text-paper-0">&lsaquo;</button>
-    {% for image in images %}<figure x-cloak x-show="index === {{ forloop.counter0 }}" class="max-h-full max-w-4xl">
-      <img src="{{ image.image.url }}" alt="{{ image.alt }}" class="max-h-[80vh] w-auto rounded-lg">
-      {% if image.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ image.caption }}</figcaption>{% endif %}
+  <dialog x-ref="dlg" x-on:keydown.arrow-right.prevent="next()" x-on:keydown.arrow-left.prevent="prev()"
+    class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 text-ink backdrop:bg-ink/90">
+    <div class="flex items-center justify-between gap-4">
+      <p class="label text-ink-500"><span x-text="i + 1"></span> / {{ images|length }}</p>
+      <button type="button" x-on:click="$refs.dlg.close()" aria-label="Zamknij" class="-m-2 p-2 text-ink-500 transition hover:text-ink">
+        <c-icon name="close" />
+      </button>
+    </div>
+
+    {% for image in images %}<figure x-cloak x-show="i === {{ forloop.counter0 }}" class="mt-3">
+      <img src="{{ image.image.url }}" alt="{{ image.alt }}" class="mx-auto max-h-[70vh] w-auto">
+      {% if image.caption %}<figcaption class="mt-3 text-center text-small text-ink-500">{{ image.caption }}</figcaption>{% endif %}
     </figure>{% endfor %}
-    <button type="button" x-on:click="index = (index + 1) % total" aria-label="Następne" class="absolute right-4 text-4xl text-paper-0">&rsaquo;</button>
-  </div>
+
+    <div class="mt-3 flex justify-between gap-4">
+      <button type="button" x-on:click="prev()" class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+        <span class="rotate-180"><c-icon name="arrow-right" /></span> Poprzednie
+      </button>
+      <button type="button" x-on:click="next()" class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+        Następne <c-icon name="arrow-right" />
+      </button>
+    </div>
+  </dialog>
 </div>

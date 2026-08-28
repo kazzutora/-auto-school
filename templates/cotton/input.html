@@ -1,3 +1,17 @@
+{% comment %}
+Text input, tech.md section 7, states from FRONTEND.md A.5.
+
+48px tall, 1px line.soft border. On focus A.5 asks for a 2px ink frame that does
+not move the layout, so the second pixel arrives as an inset shadow rather than
+a thicker border — a border that grows on focus shifts everything beside it.
+
+The error message is rendered here and tied to the field through
+aria-describedby, so a screen reader reads the reason and not just "invalid".
+{% endcomment %}
 <c-vars name="" type="text" value="" error="" placeholder="" />
-<input type="{{ type }}" name="{{ name }}" id="id_{{ name }}" value="{{ value }}" {% if placeholder %}placeholder="{{ placeholder }}"{% endif %} {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %} class="w-full rounded-lg border bg-paper-0 px-3 py-2.5 text-ink-900 placeholder:text-ink-500/70 focus-visible:outline-none{% if error %} border-state-err{% else %} border-paper-100{% endif %}" {{ attrs }}>
-{% if error %}<p id="err_{{ name }}" class="mt-1 text-sm text-state-err">{{ error }}</p>{% endif %}
+<input type="{{ type }}" name="{{ name }}" id="id_{{ name }}" value="{{ value }}"
+  {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+  {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
+  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %}"
+  {{ attrs }}>
+{% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

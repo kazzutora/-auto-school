@@ -1,5 +1,15 @@
+{% comment %}
+Select, tech.md section 7. Same box as c-input, states from FRONTEND.md A.5.
+
+The chevron is the browser's own: A.7 has no chevron in the minimum set, and
+replacing a native select's arrow means replacing the whole control, which
+costs more accessibility than it buys.
+{% endcomment %}
 <c-vars name="" options="" value="" error="" />
-<select name="{{ name }}" id="id_{{ name }}" {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %} class="w-full rounded-lg border bg-paper-0 px-3 py-2.5 text-ink-900 focus-visible:outline-none{% if error %} border-state-err{% else %} border-paper-100{% endif %}" {{ attrs }}>
+<select name="{{ name }}" id="id_{{ name }}"
+  {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
+  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %}"
+  {{ attrs }}>
   {% for option in options %}<option value="{{ option.0 }}" {% if option.0|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ option.1 }}</option>{% endfor %}
 </select>
-{% if error %}<p id="err_{{ name }}" class="mt-1 text-sm text-state-err">{{ error }}</p>{% endif %}
+{% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

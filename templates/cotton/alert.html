@@ -1,5 +1,24 @@
+{% comment %}
+Alert, tech.md section 7.
+
+A.1 leaves no room for tinted panels, so an alert is a bordered box like every
+other surface, with the state colour on the border and the title rather than a
+wash behind the text. The left rule is 2px so it reads as the state marker at a
+glance without a fill.
+
+role=alert only for danger. status for everything else: an assertive live
+region interrupts a screen reader mid sentence, which a success message has no
+business doing.
+{% endcomment %}
 <c-vars tone="info" title="" />
-<div role="{% if tone == 'danger' %}alert{% else %}status{% endif %}" class="rounded-xl border-l-4 p-4{% if tone == 'success' %} border-state-ok bg-state-ok/5{% elif tone == 'warning' %} border-state-warn bg-state-warn/5{% elif tone == 'danger' %} border-state-err bg-state-err/5{% else %} border-brand-500 bg-brand-100/50{% endif %}" {{ attrs }}>
-  {% if title %}<p class="font-display font-bold text-ink-900">{{ title }}</p>{% endif %}
+<div role="{% if tone == 'danger' %}alert{% else %}status{% endif %}"
+  class="rounded border border-l-2 p-4
+{% if tone == 'success' %} border-line-soft border-l-state-ok
+{% elif tone == 'warning' %} border-line-soft border-l-state-warn
+{% elif tone == 'danger' %} border-line-soft border-l-state-err
+{% else %} border-line-soft border-l-ink
+{% endif %}" {{ attrs }}>
+  {% if title %}<p class="font-semibold
+{% if tone == 'success' %}text-state-ok{% elif tone == 'warning' %}text-state-warn{% elif tone == 'danger' %}text-state-err{% else %}text-ink{% endif %}">{{ title }}</p>{% endif %}
   <div class="{% if title %}mt-1 {% endif %}text-ink-700">{{ slot }}</div>
 </div>

@@ -1,1 +1,5 @@
-<div class="divide-y divide-paper-100 rounded-xl border border-paper-100" {{ attrs }}>{{ slot }}</div>
+{% comment %}
+Accordion, tech.md section 7. Native details/summary, FRONTEND.md A.5.
+The group is a bordered stack; each item draws its own divider.
+{% endcomment %}
+<div class="rounded border border-line-soft" {{ attrs }}>{{ slot }}</div>

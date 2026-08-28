@@ -1,5 +1,20 @@
+{% comment %}
+Card, tech.md section 7, states from FRONTEND.md A.5.
+
+Paper ground, 1px line.soft border, 2px radius, 24px of padding. A clickable
+card takes an ink border on hover plus the one shadow the whole design allows:
+2px, hard, no blur, in the spirit of A.1's borders-instead-of-shadows.
+
+A.5 wants the whole card clickable with focus caught by the heading link. That
+needs the heading to be the anchor and the card to stretch it, which the title
+slot cannot express on its own, so the href form is a plain anchor wrapper and
+the heading inside it stays a heading. The focus ring lands on the card, which
+is the same rectangle either way.
+{% endcomment %}
 <c-vars href="" padded="1" />
-{% if href %}<a href="{{ href }}"{% else %}<article{% endif %} class="block rounded-xl border border-paper-100 bg-paper-0 shadow-sm transition{% if href %} hover:border-brand-500 hover:shadow-md{% endif %}{% if padded %} p-6{% endif %}" {{ attrs }}>
-  {% if title %}<h3 class="font-display text-xl font-bold text-brand-900">{{ title }}</h3>{% endif %}
-  <div class="{% if title %}mt-2 {% endif %}text-ink-700">{{ slot }}</div>
+{% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
+  class="block rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:border-ink hover:shadow-card{% endif %}"
+  {{ attrs }}>
+  {% if title %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
+  <div class="{% if title %}mt-3 {% endif %}text-ink-700">{{ slot }}</div>
 {% if href %}</a>{% else %}</article>{% endif %}

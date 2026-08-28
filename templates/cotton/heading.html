@@ -1,6 +1,16 @@
+{% comment %}
+Section heading, tech.md section 7.
+
+The scale lives in the base layer, so a heading here picks its level and adds
+nothing: A.3 says a heading takes a step of the scale, never a size of its own.
+The eyebrow is label typography, which is the mono face, uppercase, tracked.
+
+A.3 also says exactly one h1 per page and no skipped levels. That is the page's
+job, not the component's; this one renders the level it is handed.
+{% endcomment %}
 <c-vars level="2" eyebrow="" />
-{% if eyebrow %}<p class="font-display text-sm font-bold uppercase tracking-widest text-brand-500">{{ eyebrow }}</p>{% endif %}
-{% if level == '1' or level == 1 %}<h1 class="font-display text-4xl font-bold tracking-tight text-brand-900 sm:text-5xl" {{ attrs }}>{{ slot }}</h1>
-{% elif level == '3' or level == 3 %}<h3 class="font-display text-xl font-bold text-brand-900" {{ attrs }}>{{ slot }}</h3>
-{% elif level == '4' or level == 4 %}<h4 class="font-display text-lg font-bold text-brand-700" {{ attrs }}>{{ slot }}</h4>
-{% else %}<h2 class="font-display text-3xl font-bold tracking-tight text-brand-900" {{ attrs }}>{{ slot }}</h2>{% endif %}
+{% if eyebrow %}<p class="label mb-3 text-ink-500">{{ eyebrow }}</p>{% endif %}
+{% if level == '1' or level == 1 %}<h1 {{ attrs }}>{{ slot }}</h1>
+{% elif level == '3' or level == 3 %}<h3 {{ attrs }}>{{ slot }}</h3>
+{% elif level == '4' or level == 4 %}<h4 {{ attrs }}>{{ slot }}</h4>
+{% else %}<h2 {{ attrs }}>{{ slot }}</h2>{% endif %}

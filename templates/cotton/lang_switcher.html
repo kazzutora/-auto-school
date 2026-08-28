@@ -1,5 +1,15 @@
 {% load core_ui i18n %}
+{% comment %}
+Language switcher, tech.md section 7.
+
+Every link carries hreflang and lang, so a screen reader switches voice on the
+code itself rather than reading UK as english. The globe names what the row is
+for without a word of chrome around it.
+{% endcomment %}
 {% language_links as links %}
 <nav aria-label="{% translate 'Language' %}" class="flex items-center gap-1" {{ attrs }}>
-  {% for link in links %}<a href="{{ link.url }}" hreflang="{{ link.code }}" lang="{{ link.code }}" {% if link.is_active %}aria-current="true"{% endif %} class="rounded px-2 py-1 text-sm font-bold uppercase transition{% if link.is_active %} bg-brand-100 text-brand-900{% else %} text-ink-500 hover:text-brand-700{% endif %}">{{ link.code }}</a>{% endfor %}
+  <c-icon name="globe" size="sm" class="mr-1 text-ink-500" />
+  {% for link in links %}<a href="{{ link.url }}" hreflang="{{ link.code }}" lang="{{ link.code }}"
+    {% if link.is_active %}aria-current="true"{% endif %}
+    class="label rounded px-2 py-2 transition{% if link.is_active %} bg-accent u-fixed-ink{% else %} text-ink-500 hover:text-ink{% endif %}">{{ link.code }}</a>{% endfor %}
 </nav>

@@ -1,8 +1,22 @@
+{% comment %}
+Section, tech.md section 7. Rhythm and container from FRONTEND.md A.4.
+
+tone carries the ground. default and muted are the page itself; brand is the
+inverted block A.9 puts at the top of the home page, which A.1 grounds in ink
+rather than the purple. accent is the fifth value: A.9 point 5 needs a full
+width yellow strip and the section 7 enum has no name for it, so A.9 extends
+the enum the way A.5 extends the badge's.
+
+deep is deliberately absent. A.1 allows it for inverted blocks and the footer,
+and the footer is layout, not a section.
+{% endcomment %}
 <c-vars id="" tone="default" />
-<section {% if id %}id="{{ id }}"{% endif %} class="py-12 sm:py-16{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} bg-brand-900 text-paper-0{% endif %}" {{ attrs }}>
-  <div class="mx-auto w-full max-w-6xl px-4">
-    {% if heading %}<h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl{% if tone == 'brand' %} text-paper-0{% else %} text-brand-900{% endif %}">{{ heading }}</h2>{% endif %}
-    {% if sub %}<p class="mt-3 max-w-2xl text-lg{% if tone == 'brand' %} text-brand-100{% else %} text-ink-500{% endif %}">{{ sub }}</p>{% endif %}
-    <div class="{% if heading or sub %}mt-8{% endif %}">{{ slot }}</div>
+<section {% if id %}id="{{ id }}"{% endif %}
+  class="u-section{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'accent' %} u-ground-accent{% endif %}"
+  {{ attrs }}>
+  <div class="u-container">
+    {% if heading %}<h2>{{ heading }}</h2>{% endif %}
+    {% if sub %}<p class="u-narrow mt-4 text-body-lg{% if tone == 'accent' %} u-fixed-ink{% elif tone == 'brand' %}{% else %} text-ink-700{% endif %}">{{ sub }}</p>{% endif %}
+    <div class="{% if heading or sub %}mt-12{% endif %}">{{ slot }}</div>
   </div>
 </section>

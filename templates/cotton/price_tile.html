@@ -1,8 +1,14 @@
+{% comment %}
+Price tile, tech.md section 7. The number is the point, so it takes the data
+face at the large step with tabular figures, FRONTEND.md A.3.
+A tile with no price says so rather than showing an empty line.
+{% endcomment %}
 <c-vars title="" price="" note="" href="" />
-<div class="flex flex-col rounded-xl border border-paper-100 bg-paper-0 p-6" {{ attrs }}>
-  <h3 class="font-display text-lg font-bold text-brand-900">{{ title }}</h3>
-  <p class="mt-2 font-display text-3xl font-bold text-brand-700">{{ price }}</p>
-  {% if note %}<p class="mt-1 text-sm text-ink-500">{{ note }}</p>{% endif %}
-  <div class="mt-4">{{ slot }}</div>
-  {% if href %}<div class="mt-auto pt-4"><c-button href="{{ href }}" variant="secondary" full="1">Szczegóły</c-button></div>{% endif %}
+<div class="flex h-full flex-col rounded border border-line-soft bg-paper p-6" {{ attrs }}>
+  <h3 class="text-body font-semibold text-ink">{{ title }}</h3>
+  {% if price %}<p class="data mt-3 text-data-lg text-ink">{{ price }}</p>
+  {% else %}<p class="mt-3 text-ink-500">Cena ustalana indywidualnie</p>{% endif %}
+  {% if note %}<p class="mt-1 text-small text-ink-500">{{ note }}</p>{% endif %}
+  {% if slot %}<div class="mt-4 text-ink-700">{{ slot }}</div>{% endif %}
+  {% if href %}<div class="mt-auto pt-6"><c-button href="{{ href }}" variant="secondary" full="1">Szczegóły</c-button></div>{% endif %}
 </div>

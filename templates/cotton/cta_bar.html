@@ -1,11 +1,24 @@
+{% comment %}
+Sticky CTA, tech.md section 7, FRONTEND.md A.5 and A.9 point 11.
+
+Below md only. 64px tall on a paper ground with a 2px ink rule along the top,
+two buttons side by side: calling is primary because it is the action people on
+a phone actually take, and enrolling is secondary beside it.
+
+safe-area-inset-bottom keeps it off the home indicator on an iPhone. The z
+index sits under the cookie banner on purpose — A.5 says the banner is always
+above, and a bar covering the consent buttons is a bar that cannot be dismissed.
+
+The title is desktop copy and there is no desktop here, so it rides as the
+accessible name of the bar rather than as text nobody below md would see.
+{% endcomment %}
 <c-vars title="" phone="" href="" />
-{# sticky at the bottom on mobile: calling is one of the two actions that matter #}
-<div class="fixed inset-x-0 bottom-0 z-40 border-t border-brand-700 bg-brand-900 p-3 sm:static sm:rounded-xl sm:border" {{ attrs }}>
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
-    {% if title %}<p class="hidden font-display font-bold text-paper-0 sm:block">{{ title }}</p>{% endif %}
-    <div class="flex w-full gap-2 sm:w-auto">
-      {% if phone %}<c-button variant="secondary" size="lg" full="1" href="tel:{{ phone|cut:' ' }}">{{ phone }}</c-button>{% endif %}
-      {% if href %}<c-button size="lg" full="1" href="{{ href }}">Zapisz się</c-button>{% endif %}
-    </div>
+<div class="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper pb-[env(safe-area-inset-bottom)] md:hidden"
+  {% if title %}role="region" aria-label="{{ title }}"{% endif %} {{ attrs }}>
+  <div class="flex h-16 items-center gap-3 px-5">
+    {% if phone %}<c-button variant="primary" full="1" href="tel:{{ phone|cut:' ' }}">
+      <c-icon name="phone" size="sm" /> Zadzwoń
+    </c-button>{% endif %}
+    {% if href %}<c-button variant="secondary" full="1" href="{{ href }}">Zapisz się</c-button>{% endif %}
   </div>
 </div>

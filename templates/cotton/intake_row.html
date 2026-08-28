@@ -1,13 +1,35 @@
+{% comment %}
+Intake row, tech.md section 7, layout from FRONTEND.md A.9 point 3.
+
+Not a table row. A.9 puts the date up front in the data face at display size
+with the year small under it, then the course, then the badges, then the button
+hard right — a shape a <tr> cannot hold and keep readable when it stacks on a
+phone. /terminy/ in A.10 uses the same row, so there is one of these, not two.
+
+The enrol link carries the intake id so the form arrives with the term already
+chosen. tech.md section 5 freezes that url as a string until leads.urls ships.
+{% endcomment %}
 <c-vars intake="" />
-<tr {{ attrs }}>
-  <td class="px-4 py-3 font-bold text-ink-900">{{ intake.start_date|date:"d.m.Y" }}</td>
-  <td class="px-4 py-3 text-ink-700">{{ intake.course.title }}</td>
-  <td class="px-4 py-3 text-ink-700">{{ intake.get_mode_display }}</td>
-  <td class="px-4 py-3 text-ink-700">{{ intake.language|upper }}</td>
-  <td class="px-4 py-3">
-    {% if intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
-    {% elif intake.status == 'full' %}<c-badge tone="warning">Brak miejsc</c-badge>
-    {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
-    {% else %}<c-badge tone="neutral">Planowany</c-badge>{% endif %}
-  </td>
-</tr>
+<div class="flex flex-col gap-4 border-b border-line-soft py-6 last:border-b-0 md:flex-row md:items-center md:gap-8" {{ attrs }}>
+  <p class="flex shrink-0 items-baseline gap-2 md:w-28 md:flex-col md:items-start md:gap-0">
+    <span class="data text-data-xl text-ink">{{ intake.start_date|date:"d.m" }}</span>
+    <span class="data text-small text-ink-500">{{ intake.start_date|date:"Y" }}</span>
+  </p>
+
+  <div class="grow">
+    <p class="font-semibold text-ink">{{ intake.course.title }}</p>
+    <p class="mt-2 flex flex-wrap gap-2">
+      <c-badge tone="neutral">{{ intake.get_mode_display }}</c-badge>
+      <c-badge tone="neutral">{{ intake.language|upper }}</c-badge>
+      {% if intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
+      {% elif intake.status == 'full' %}<c-badge tone="warning">Brak miejsc</c-badge>
+      {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
+      {% else %}<c-badge tone="accent">Nowy termin</c-badge>{% endif %}
+    </p>
+    {% if intake.note %}<p class="mt-2 text-small text-ink-500">{{ intake.note }}</p>{% endif %}
+  </div>
+
+  {% if intake.status == 'open' or intake.status == 'planned' %}
+    <div class="shrink-0"><c-button size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapisz się</c-button></div>
+  {% endif %}
+</div>

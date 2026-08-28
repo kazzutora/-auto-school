@@ -1,10 +1,24 @@
-<c-vars lat="" lng="" zoom="16" label="" />
-{# Leaflet and OpenStreetMap, no google script, so no cookie gate on the map.
-   The page using this component must pull in the leaflet stylesheet:
-     {% block head %}<link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-     <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>{% endblock %}
-   It is not in base.html on purpose: one page carries a map and the mobile
-   performance gate is 90.
-   Init data rides on data attributes: static/js/app.js reads them, which keeps
-   the page free of inline script under the production CSP. #}
-<div data-map data-lat="{{ lat }}" data-lng="{{ lng }}" data-zoom="{{ zoom }}" data-label="{{ label }}" class="h-80 w-full rounded-xl border border-paper-100" role="img" aria-label="{% if label %}{{ label }}{% else %}Mapa dojazdu{% endif %}" {{ attrs }}></div>
+{% comment %}
+Map, tech.md section 7. Leaflet from static/js/leaflet/, OpenStreetMap tiles,
+2px ink frame, FRONTEND.md A.5 and F1 point 6. No google script anywhere.
+
+height is not in the section 7 prop list; F1 point 6 asks for it outright, and
+A.9 point 9 puts the map at 320px on the contact block. Named steps rather than
+a free number, because tailwind only generates class names it can read in the
+source.
+
+The page that uses this must pull leaflet in itself:
+
+  {% block head %}<link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>{% endblock %}
+
+It is deliberately not in base.html: one page carries a map and the mobile
+performance gate is 90.
+
+Init data rides on data attributes, which static/js/app.js reads. That keeps
+the page free of inline script under the production CSP.
+{% endcomment %}
+<c-vars lat="" lng="" zoom="16" label="" height="md" />
+<div data-map data-lat="{{ lat }}" data-lng="{{ lng }}" data-zoom="{{ zoom }}" data-label="{{ label }}"
+  class="w-full border-2 border-ink{% if height == 'sm' %} h-60{% elif height == 'lg' %} h-[420px]{% else %} h-80{% endif %}"
+  role="img" aria-label="{% if label %}{{ label }}{% else %}Mapa dojazdu{% endif %}" {{ attrs }}></div>

@@ -1,8 +1,23 @@
-<c-vars image="" alt="" sizes="100vw" loading="lazy" ratio="" />
-{% load core_ui %}
-{# alt is mandatory: the a11y gate rejects an empty one, tech.md section 8. #}
+<c-vars image="" alt="" sizes="100vw" loading="lazy" ratio="" />{% load core_ui %}
+{% comment %}
+Picture, tech.md section 7, rules from FRONTEND.md A.8.
+
+WebP at 480, 960 and 1600 with the original as the fallback. width and height
+are mandatory: without them the browser cannot reserve the box and the layout
+jumps when the image lands, which is the CLS budget in A.11 gone.
+
+The aspect ratios are the four A.8 fixes, so the intrinsic size falls back to
+the ratio when the source has no dimensions of its own — a stand-in object in
+the kitchen sink, a data uri, anything that is not a stored file.
+
+alt is not optional. The a11y gate rejects an empty one, tech.md section 8; a
+decorative image passes alt="" together with aria-hidden and says so.
+{% endcomment %}
 {% webp_srcset image as webp %}
 <picture {{ attrs }}>
   {% if webp %}<source type="image/webp" srcset="{{ webp }}" sizes="{{ sizes }}">{% endif %}
-  <img src="{{ image.url }}" alt="{{ alt }}" loading="{{ loading }}" {% if loading == 'lazy' %}decoding="async"{% endif %} sizes="{{ sizes }}" class="h-full w-full object-cover{% if ratio == 'square' %} aspect-square{% elif ratio == 'video' %} aspect-video{% elif ratio == 'portrait' %} aspect-[3/4]{% endif %}">
+  <img src="{{ image.url }}" alt="{{ alt }}" loading="{{ loading }}" decoding="async" sizes="{{ sizes }}"
+    width="{% if image.width %}{{ image.width }}{% elif ratio == 'card' %}1200{% elif ratio == 'tile' %}1200{% elif ratio == 'a4' %}1000{% else %}1000{% endif %}"
+    height="{% if image.height %}{{ image.height }}{% elif ratio == 'card' %}800{% elif ratio == 'tile' %}900{% elif ratio == 'a4' %}1410{% else %}1000{% endif %}"
+    class="h-full w-full object-cover{% if ratio == 'square' %} aspect-square{% elif ratio == 'card' %} aspect-[3/2]{% elif ratio == 'tile' %} aspect-[4/3]{% elif ratio == 'a4' %} aspect-[1/1.41]{% endif %}">
 </picture>

@@ -1,2 +1,18 @@
+{% comment %}
+Badge, tech.md section 7, states from FRONTEND.md A.5.
+
+24px tall, label typography, 1px border, no fill — except the one variant A.5
+carves out: accent, a yellow fill with near black text, for "Nowy termin". That
+fifth tone is not in the section 7 enum; it comes from A.5, which extends the
+table rather than replacing it. The near black is the fixed token, not --ink:
+the yellow does not swap with the theme, so its text must not either, or the
+dark theme lands on white-on-yellow at 1.4:1, banned outright in A.2.
+{% endcomment %}
 <c-vars tone="neutral" />
-<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold{% if tone == 'success' %} bg-state-ok/10 text-state-ok{% elif tone == 'warning' %} bg-state-warn/10 text-state-warn{% elif tone == 'danger' %} bg-state-err/10 text-state-err{% else %} bg-paper-100 text-ink-700{% endif %}" {{ attrs }}>{{ slot }}</span>
+<span class="label inline-flex h-6 items-center rounded border px-2
+{% if tone == 'success' %} border-state-ok text-state-ok
+{% elif tone == 'warning' %} border-state-warn text-state-warn
+{% elif tone == 'danger' %} border-state-err text-state-err
+{% elif tone == 'accent' %} border-accent bg-accent u-fixed-ink
+{% else %} border-line-soft text-ink-700
+{% endif %}" {{ attrs }}>{{ slot }}</span>

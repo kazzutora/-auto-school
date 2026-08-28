@@ -1,2 +1,32 @@
+{% comment %}
+Button, tech.md section 7, states from FRONTEND.md A.5.
+
+Heights 40/48/56 for sm/md/lg, radius 2px, 24px of horizontal padding, and the
+1px downward nudge on :active that all three variants share.
+
+The primary sits on the yellow, and the yellow does not swap with the theme, so
+neither its text nor its focus ring may: text-ink would turn near white in the
+dark and put the button on white-on-yellow at 1.3:1, the one pair A.2 forbids
+outright. u-fixed-ink carries both the near black text and the near black ring
+A.2 asks for on a yellow ground.
+
+secondary and ghost name no colour at all. Ghost inherits whatever ground it is
+standing on, and secondary reads that ground's own pair through u-btn-secondary,
+so one button is an ink frame on the page, the paper frame A.9 point 1 asks for
+on the inverted hero, and a near black one on the yellow strip. Overriding the
+colour with a utility from outside does not work: two text- utilities have the
+same specificity and the winner is whichever tailwind happened to emit last.
+
+A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej.
+{% endcomment %}
 <c-vars variant="primary" size="md" type="button" href="" full="" />
-{% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %} class="inline-flex items-center justify-center gap-2 rounded-lg font-display font-bold tracking-wide transition focus-visible:outline-none{% if full %} w-full{% endif %}{% if size == 'sm' %} px-3 py-1.5 text-sm{% elif size == 'lg' %} px-7 py-3.5 text-lg{% else %} px-5 py-2.5 text-base{% endif %}{% if variant == 'secondary' %} bg-brand-100 text-brand-900 hover:bg-brand-700 hover:text-paper-0{% elif variant == 'ghost' %} bg-transparent text-brand-700 hover:bg-brand-100{% else %} bg-accent-500 text-ink-900 hover:bg-accent-600{% endif %}" {{ attrs }}>{{ slot }}{% if href %}</a>{% else %}</button>{% endif %}
+{% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %}
+  class="inline-flex items-center justify-center gap-2 rounded border-2 px-6 text-center font-semibold leading-none transition active:translate-y-px
+{% if full %} w-full{% endif %}
+{% if size == 'sm' %} h-10 text-small{% elif size == 'lg' %} h-14 text-body-lg{% else %} h-12 text-body{% endif %}
+{% if variant == 'secondary' %} u-btn-secondary bg-transparent
+{% elif variant == 'ghost' %} border-transparent bg-transparent px-0 underline-offset-4 hover:underline disabled:text-ink-300 disabled:no-underline
+{% else %} border-accent bg-accent u-fixed-ink hover:border-accent-600 hover:bg-accent-600 disabled:border-paper-200 disabled:bg-paper-200 disabled:text-ink-300
+{% endif %}
+disabled:cursor-not-allowed disabled:active:translate-y-0"
+  {{ attrs }}>{{ slot }}{% if href %}</a>{% else %}</button>{% endif %}
