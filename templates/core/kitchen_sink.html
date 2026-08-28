@@ -1,191 +1,300 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% comment %}
+Review surface for the design system, DEV.md S0.7 and FRONTEND.md F1 point 8.
+Debug only — the view raises 404 outside DEBUG. Every component from tech.md
+section 7 in every prop variant and every state A.5 names, including the ones a
+screenshot cannot reach on its own: disabled, error, hover, focus.
+{% endcomment %}
+
 {% block head %}
   <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
   <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
-<c-section id="components">
-  <c-slot name="heading">Kitchen sink</c-slot>
-  <c-slot name="sub">Każdy komponent z tech.md sekcja 7, we wszystkich wariantach propsów.</c-slot>
+<div class="u-container u-section">
+  <c-heading level="1" eyebrow="Design system">Kitchen sink</c-heading>
+  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    Każdy komponent z tech.md sekcja 7 we wszystkich wariantach propsów i stanach z FRONTEND.md A.5.
+  </p>
 
-  <c-heading level="1" eyebrow="Design system">Komponenty UI</c-heading>
+  {# The switch writes the same data-theme attribute the tokens key off, so both
+     themes are checkable here without touching the system preference. #}
+  <div class="mt-8 flex flex-wrap items-center gap-3" x-data>
+    <span class="label text-ink-500">Motyw</span>
+    <c-button variant="secondary" size="sm" x-on:click="document.documentElement.setAttribute('data-theme', 'light')">Jasny</c-button>
+    <c-button variant="secondary" size="sm" x-on:click="document.documentElement.setAttribute('data-theme', 'dark')">Ciemny</c-button>
+    <c-button variant="ghost" size="sm" x-on:click="document.documentElement.removeAttribute('data-theme')">Systemowy</c-button>
+  </div>
+</div>
 
-  <div class="mt-8 space-y-10">
-    <div>
-      <c-heading level="3">c-button</c-heading>
-      <div class="mt-3 flex flex-wrap items-center gap-3">
+<div class="u-container flex flex-col gap-16 pb-32">
+
+  <section>
+    <c-heading level="2">c-button</c-heading>
+    <div class="mt-6 flex flex-col gap-6">
+      <div class="flex flex-wrap items-center gap-4">
         <c-button variant="primary" size="sm">primary sm</c-button>
         <c-button variant="primary" size="md">primary md</c-button>
         <c-button variant="primary" size="lg">primary lg</c-button>
-        <c-button variant="secondary">secondary</c-button>
-        <c-button variant="ghost">ghost</c-button>
-        <c-button href="/kontakt/">jako link</c-button>
+        <c-button variant="primary" disabled>primary disabled</c-button>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <c-button variant="secondary" size="sm">secondary sm</c-button>
+        <c-button variant="secondary" size="md">secondary md</c-button>
+        <c-button variant="secondary" size="lg">secondary lg</c-button>
+        <c-button variant="secondary" disabled>secondary disabled</c-button>
+      </div>
+      <div class="flex flex-wrap items-center gap-6">
+        <c-button variant="ghost" size="sm">ghost sm</c-button>
+        <c-button variant="ghost" size="md">ghost md</c-button>
+        <c-button variant="ghost" size="lg">ghost lg</c-button>
+        <c-button variant="ghost" disabled>ghost disabled</c-button>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <c-button href="/kursy/">jako link</c-button>
         <c-button type="submit">type submit</c-button>
+        <c-button><c-icon name="phone" size="sm" /> z ikoną</c-button>
       </div>
-      <div class="mt-3"><c-button full="1">full</c-button></div>
+      <div class="max-w-sm"><c-button full="1">full</c-button></div>
+      <p class="text-small text-ink-500">
+        Fokus: tabuj przez rząd. Primary dostaje obwódkę ink, bo sam jest żółty; secondary i ghost żółtą. A.2.
+      </p>
     </div>
+  </section>
 
-    <div>
-      <c-heading level="3">c-badge</c-heading>
-      <div class="mt-3 flex flex-wrap gap-3">
-        <c-badge tone="neutral">neutral</c-badge>
-        <c-badge tone="success">success</c-badge>
-        <c-badge tone="warning">warning</c-badge>
-        <c-badge tone="danger">danger</c-badge>
-      </div>
+  <section>
+    <c-heading level="2">c-badge</c-heading>
+    <div class="mt-6 flex flex-wrap gap-4">
+      <c-badge tone="neutral">neutral</c-badge>
+      <c-badge tone="success">success</c-badge>
+      <c-badge tone="warning">warning</c-badge>
+      <c-badge tone="danger">danger</c-badge>
+      <c-badge tone="accent">Nowy termin</c-badge>
     </div>
+  </section>
 
-    <div>
-      <c-heading level="3">c-card</c-heading>
-      <div class="mt-3 grid gap-4 sm:grid-cols-3">
-        <c-card><c-slot name="title">Z tytułem</c-slot>Treść karty.</c-card>
-        <c-card href="/kursy/"><c-slot name="title">Klikalna</c-slot>Karta jako link.</c-card>
-        <c-card padded="">Bez paddingu.</c-card>
-      </div>
+  <section>
+    <c-heading level="2">c-card</c-heading>
+    <div class="mt-6 grid gap-6 sm:grid-cols-3">
+      <c-card><c-slot name="title">Z tytułem</c-slot>Treść karty na papierze.</c-card>
+      <c-card href="/kursy/"><c-slot name="title">Klikalna</c-slot>Najedź: ramka ink i twardy cień 2px.</c-card>
+      <c-card padded="">Bez paddingu.</c-card>
     </div>
+  </section>
 
-    <div>
-      <c-heading level="3">c-heading</c-heading>
+  <section>
+    <c-heading level="2">c-heading</c-heading>
+    <div class="mt-6 flex flex-col gap-4">
       <c-heading level="2">level 2</c-heading>
       <c-heading level="3">level 3</c-heading>
       <c-heading level="4" eyebrow="z eyebrow">level 4</c-heading>
+      <p class="text-small text-ink-500">level 1 stoi wyżej na tej stronie — jeden h1 na stronę, A.3.</p>
     </div>
+  </section>
 
-    <div>
-      <c-heading level="3">c-alert</c-heading>
-      <div class="mt-3 space-y-3">
-        <c-alert tone="info" title="info">Treść komunikatu.</c-alert>
-        <c-alert tone="success" title="success">Zapisano.</c-alert>
-        <c-alert tone="warning" title="warning">Brak miejsc.</c-alert>
-        <c-alert tone="danger" title="danger">Nie udało się wysłać.</c-alert>
-        <c-alert>Bez tytułu.</c-alert>
+  <section>
+    <c-heading level="2">c-alert</c-heading>
+    <div class="mt-6 flex flex-col gap-4">
+      <c-alert tone="info" title="info">Treść komunikatu.</c-alert>
+      <c-alert tone="success" title="success">Zgłoszenie wysłane.</c-alert>
+      <c-alert tone="warning" title="warning">Zostały ostatnie miejsca.</c-alert>
+      <c-alert tone="danger" title="danger">Nie udało się wysłać zgłoszenia.</c-alert>
+      <c-alert>Bez tytułu.</c-alert>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-breadcrumbs</c-heading>
+    <div class="mt-6"><c-breadcrumbs :items="breadcrumbs" /></div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-table</c-heading>
+    <div class="mt-6">
+      <c-table :headers="price_headers">
+        <tr class="border-b border-line-soft">
+          <td class="py-3 pr-6">Kategoria B</td><td class="py-3 pr-6 text-ink-500">kurs podstawowy</td>
+          <td class="data py-3 text-right text-ink">3 200 zł</td>
+        </tr>
+        <tr class="border-b border-line-soft">
+          <td class="py-3 pr-6">Jazdy doszkalające</td><td class="py-3 pr-6 text-ink-500">za godzinę</td>
+          <td class="data py-3 text-right text-ink">120 zł</td>
+        </tr>
+        <tr>
+          <td class="py-3 pr-6">ADR podstawowy</td><td class="py-3 pr-6 text-ink-500">&mdash;</td>
+          <td class="data py-3 text-right text-ink">1 100 zł</td>
+        </tr>
+      </c-table>
+      <p class="mt-3 text-small text-ink-500">Kolumna liczbowa w prawo, cyfry tabularne, bez zebry. A.5.</p>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-intake-row</c-heading>
+    <div class="mt-6">{% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}</div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-accordion</c-heading>
+    <div class="mt-6">
+      <c-accordion>
+        <c-accordion.item title="Otwarty od startu" open="1">Działa bez JavaScriptu: details i summary. A.5.</c-accordion.item>
+        <c-accordion.item title="Zamknięty">Wskaźnik to plus i minus, nie szewron.</c-accordion.item>
+        <c-accordion.item title="Trzeci">Treść trzeciej pozycji.</c-accordion.item>
+      </c-accordion>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-modal</c-heading>
+    <div class="mt-6 flex flex-wrap items-center gap-4">
+      <c-button data-modal-open="demo">Otwórz modal</c-button>
+      <p class="text-small text-ink-500">Esc zamyka, fokus zamknięty w środku, po zamknięciu wraca na przycisk.</p>
+      <c-modal id="demo" title="Modal demo">
+        <p>Zawartość modala.</p>
+        <div class="mt-4 flex gap-3">
+          <c-button size="sm" data-modal-close>Zamknij</c-button>
+          <c-button variant="secondary" size="sm" href="/kontakt/">Link w środku</c-button>
+        </div>
+      </c-modal>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-field</c-heading>
+    <div class="mt-6 grid gap-8 sm:grid-cols-2">
+      <div class="flex flex-col gap-6">
+        <p class="label text-ink-500">Pusty formularz</p>
+        {% for field in form %}<c-field :field="field" />{% endfor %}
+      </div>
+      <div class="flex flex-col gap-6">
+        <p class="label text-ink-500">Z błędami walidacji</p>
+        {% for field in bound_form %}<c-field :field="field" />{% endfor %}
       </div>
     </div>
+  </section>
 
-    <div>
-      <c-heading level="3">c-breadcrumbs</c-heading>
-      <div class="mt-3"><c-breadcrumbs :items="breadcrumbs" /></div>
+  <section>
+    <c-heading level="2">c-input, c-select, c-textarea, c-checkbox</c-heading>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2">
+      <c-input name="imie" placeholder="Imię" />
+      <c-input name="tel" type="tel" value="605 065 795" />
+      <c-input name="wylaczone" value="niedostępne" disabled />
+      <c-input name="zly" value="x" error="To pole jest wymagane" />
+      <c-select name="kat" :options="select_options" value="c" />
+      <c-select name="kat_err" :options="select_options" error="Wybierz kategorię" />
+      <c-textarea name="wiadomosc" rows="3" value="Treść wiadomości" />
+      <c-textarea name="wiadomosc_err" rows="3" error="Wiadomość jest za długa" />
+      <c-checkbox name="zgoda" checked="1">Zgadzam się na kontakt telefoniczny</c-checkbox>
+      <c-checkbox name="zgoda_err" error="Zgoda jest wymagana">Zgoda RODO</c-checkbox>
     </div>
+    <p class="mt-4 text-small text-ink-500">Fokus dokłada drugi piksel ramki od środka, więc layout nie skacze. A.5.</p>
+  </section>
 
-    <div>
-      <c-heading level="3">c-table i c-intake-row</c-heading>
-      <div class="mt-3">
-        <c-table :headers="intake_headers">
-          {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
-        </c-table>
+  <section>
+    <c-heading level="2">c-picture</c-heading>
+    <div class="mt-6 grid gap-6 sm:grid-cols-4">
+      <div><p class="label mb-2 text-ink-500">square</p><c-picture :image="images.0.image" alt="Plac manewrowy, kwadrat" ratio="square" loading="eager" /></div>
+      <div><p class="label mb-2 text-ink-500">card 3:2</p><c-picture :image="images.0.image" alt="Plac manewrowy, karta kursu" ratio="card" /></div>
+      <div><p class="label mb-2 text-ink-500">tile 4:3</p><c-picture :image="images.0.image" alt="Plac manewrowy, kafel galerii" ratio="tile" /></div>
+      <div><p class="label mb-2 text-ink-500">a4 1:1.41</p><c-picture :image="images.0.image" alt="Certyfikat w proporcji A4" ratio="a4" /></div>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-gallery-grid</c-heading>
+    <div class="mt-6"><c-gallery-grid :images="images" columns="4" /></div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-lightbox</c-heading>
+    <div class="mt-6"><c-lightbox :images="images" /></div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-price-tile</c-heading>
+    <div class="mt-6 grid gap-6 sm:grid-cols-3">
+      <c-price-tile title="Kategoria B" price="3 200 zł" note="cena od" href="/kursy/kat-b/" />
+      <c-price-tile title="Jazdy doszkalające" price="120 zł" note="za godzinę" />
+      <c-price-tile title="Szkolenie indywidualne" />
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-course-card</c-heading>
+    <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      {% for course in courses %}<c-course-card :course="course" />{% endfor %}
+    </div>
+    <p class="mt-4 text-small text-ink-500">Ostatni kafel bez ceny: cena na zapytanie, nie pusta linia. A.9 punkt 2.</p>
+  </section>
+
+  <section>
+    <c-heading level="2">c-hours-table</c-heading>
+    <div class="mt-6 grid gap-8 sm:grid-cols-2">
+      <div class="min-w-0"><p class="label mb-3 text-ink-500">office</p><c-hours-table department="office" /></div>
+      <div class="min-w-0"><p class="label mb-3 text-ink-500">psychology</p><c-hours-table department="psychology" /></div>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-map</c-heading>
+    <div class="mt-6"><c-map lat="51.2206" lng="18.5697" zoom="16" label="ul. Zielona 45, Wieluń" height="md" /></div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-testimonials</c-heading>
+    <div class="mt-6"><c-testimonials :items="testimonials" /></div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-nav, c-lang-switcher, c-icon</c-heading>
+    <div class="mt-6 flex flex-col gap-8">
+      <div class="u-scroll-x"><c-nav /></div>
+      <c-lang-switcher />
+      <div>
+        <p class="label mb-3 text-ink-500">Sprite A.7</p>
+        <div class="flex flex-wrap gap-4 text-ink">
+          <c-icon name="phone" /><c-icon name="mail" /><c-icon name="pin" /><c-icon name="clock" />
+          <c-icon name="calendar" /><c-icon name="arrow-right" /><c-icon name="close" /><c-icon name="plus" />
+          <c-icon name="minus" /><c-icon name="check" /><c-icon name="menu" /><c-icon name="globe" />
+          <c-icon name="download" /><c-icon name="external" /><c-icon name="star" />
+        </div>
       </div>
     </div>
+  </section>
+</div>
 
-    <div>
-      <c-heading level="3">c-accordion</c-heading>
-      <div class="mt-3">
-        <c-accordion>
-          <c-accordion.item title="Otwarty od startu" open="1">Treść pierwszej pozycji.</c-accordion.item>
-          <c-accordion.item title="Zamknięty">Treść drugiej pozycji.</c-accordion.item>
-        </c-accordion>
-      </div>
-    </div>
+<c-section tone="muted">
+  <c-slot name="heading">c-section tone muted</c-slot>
+  <c-slot name="sub">Tło paper-50, ten sam tekst ink.</c-slot>
+  Zawartość sekcji.
+</c-section>
 
-    <div>
-      <c-heading level="3">c-modal</c-heading>
-      <div class="mt-3" x-data>
-        <c-button x-on:click="$dispatch('open-modal', 'demo')">Otwórz modal</c-button>
-        <c-modal id="demo" title="Modal demo">Zawartość modala. Escape zamyka.</c-modal>
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-field, pusty i z błędami</c-heading>
-      <div class="mt-3 grid gap-6 sm:grid-cols-2">
-        <div>{% for field in form %}<c-field :field="field" />{% endfor %}</div>
-        <div>{% for field in bound_form %}<c-field :field="field" />{% endfor %}</div>
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-input, c-select, c-textarea, c-checkbox</c-heading>
-      <div class="mt-3 grid gap-4 sm:grid-cols-2">
-        <c-input name="imie" placeholder="Imię" />
-        <c-input name="tel" type="tel" value="605 065 795" />
-        <c-input name="zly" value="x" error="Pole wymagane" />
-        <c-select name="kat" :options="select_options" value="c" />
-        <c-select name="kat_err" :options="select_options" error="Wybierz kategorię" />
-        <c-textarea name="wiadomosc" rows="3" value="Treść" />
-        <c-textarea name="wiadomosc_err" error="Za długa wiadomość" />
-        <c-checkbox name="zgoda" checked="1">Zgadzam się na kontakt</c-checkbox>
-        <c-checkbox name="zgoda_err" error="Zgoda jest wymagana">Zgoda RODO</c-checkbox>
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-picture</c-heading>
-      <div class="mt-3 grid w-64 gap-4">
-        <c-picture :image="images.0.image" alt="Placeholder kwadratowy" ratio="square" loading="eager" />
-        <c-picture :image="images.0.image" alt="Placeholder szesnaście do dziewięciu" ratio="video" />
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-gallery-grid</c-heading>
-      <div class="mt-3"><c-gallery-grid :images="images" columns="4" /></div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-lightbox</c-heading>
-      <div class="mt-3"><c-lightbox :images="images" /></div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-price-tile</c-heading>
-      <div class="mt-3 grid gap-4 sm:grid-cols-3">
-        <c-price-tile title="Kategoria B" price="3200 zł" note="cena od" href="/kursy/kat-b/" />
-        <c-price-tile title="Jazdy doszkalające" price="120 zł" note="za godzinę" />
-        <c-price-tile title="Badania psychologiczne" price="200 zł" />
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-course-card</c-heading>
-      <div class="mt-3 grid gap-4 sm:grid-cols-2"><c-course-card :course="course" /></div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-hours-table</c-heading>
-      <div class="mt-3 grid gap-6 sm:grid-cols-2">
-        <c-hours-table department="office" />
-        <c-hours-table department="psychology" />
-      </div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-map</c-heading>
-      <div class="mt-3"><c-map lat="51.2206" lng="18.5697" zoom="16" label="ul. Zielona 45" /></div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-testimonials</c-heading>
-      <div class="mt-3"><c-testimonials :items="testimonials" /></div>
-    </div>
-
-    <div>
-      <c-heading level="3">c-lang-switcher, c-nav</c-heading>
-      <div class="mt-3 space-y-4">
-        <c-lang-switcher />
-        <c-nav />
-        <p class="text-sm text-ink-500">c-cookie-banner renderuje base.html na dole strony.</p>
-      </div>
-    </div>
+<c-section tone="brand">
+  <c-slot name="heading">c-section tone brand</c-slot>
+  <c-slot name="sub">Blok odwrócony: ground ink, tekst paper. Jedyny taki na stronie, A.9 punkt 1.</c-slot>
+  <div class="flex flex-wrap gap-4">
+    <c-button variant="primary">Zapisz się</c-button>
+    <c-button variant="secondary">Zadzwoń</c-button>
   </div>
 </c-section>
 
-<c-section tone="muted"><c-slot name="heading">tone muted</c-slot>Sekcja na tle paper-50.</c-section>
-<c-section tone="brand"><c-slot name="heading">tone brand</c-slot><c-slot name="sub">Odwrócone kolory.</c-slot>Sekcja na tle brand-900.</c-section>
+<c-section tone="accent">
+  <c-slot name="heading">c-section tone accent</c-slot>
+  <c-slot name="sub">Jedyny żółty blok na całą szerokość, A.9 punkt 5. Tekst prawie czarny w obu motywach.</c-slot>
+  <c-button variant="secondary">Zobacz kursy po rosyjsku</c-button>
+</c-section>
 
-<div class="mx-auto max-w-6xl px-4 pb-24">
-  <c-heading level="3">c-cta-bar</c-heading>
-  <div class="mt-3"><c-cta-bar title="Zapisz się na kurs" phone="605 065 795" href="/zapisz-sie/" /></div>
+<div class="u-container py-16">
+  <c-heading level="2">c-cta-bar i c-cookie-banner</c-heading>
+  <p class="mt-4 text-small text-ink-500">
+    Oba są przypięte do dołu okna. CTA tylko poniżej md — zwęź okno do 375px, żeby je zobaczyć.
+    Baner ma wyższy z-index i nigdy nie zakrywa przycisków zgody, A.5.
+  </p>
 </div>
+
+<c-cta-bar title="Zapisz się na kurs" phone="605 065 795" href="/zapisz-sie/" />
 {% endblock %}

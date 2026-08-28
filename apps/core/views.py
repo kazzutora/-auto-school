@@ -16,8 +16,8 @@ from apps.core.seo import Seo, build_title, page_seo
 
 _PLACEHOLDER_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">'
-    '<rect width="400" height="400" fill="#EBE6F8"/>'
-    '<text x="200" y="210" font-family="sans-serif" font-size="28" fill="#5B47A8"'
+    '<rect width="400" height="400" fill="#F2F2F1"/>'
+    '<text x="200" y="210" font-family="sans-serif" font-size="28" fill="#5C5C66"'
     ' text-anchor="middle">OSK</text></svg>'
 )
 PLACEHOLDER = "data:image/svg+xml," + quote(_PLACEHOLDER_SVG)
@@ -47,26 +47,37 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
     if not settings.DEBUG:
         raise Http404
 
-    course = SimpleNamespace(
-        title="Kategoria B",
-        code="B",
-        lead="Kurs na prawo jazdy kategorii B, teoria i praktyka w Wieluniu.",
-        min_age=18,
-        theory_hours=30,
-        practice_hours=30,
-        price_gross="3200.00",
-        price_note="cena od",
-        languages=["pl", "ru", "uk"],
-    )
+    def _course(code: str, title: str, min_age: int, price: str | None) -> SimpleNamespace:
+        return SimpleNamespace(
+            code=code,
+            title=title,
+            slug=code.lower().replace("+", "-"),
+            get_absolute_url=f"/kursy/kat-{code.lower()}/",
+            min_age=min_age,
+            price_gross=price,
+        )
+
+    # Five tiles, because A.9 point 2 lays them out five across on lg, and the
+    # last one carries no price so the "cena na zapytanie" fallback is on screen
+    # rather than described.
+    courses = [
+        _course("AM", "Motorower", 14, "1200.00"),
+        _course("A1", "Motocykl do 125", 16, "2400.00"),
+        _course("B", "Samochód osobowy", 18, "3200.00"),
+        _course("B+E", "Osobowy z przyczepą", 18, "1800.00"),
+        _course("C+E", "Ciężarowy z naczepą", 21, None),
+    ]
     intakes = [
         SimpleNamespace(
+            id=index,
             start_date=date(2026, 9, 14),
             course=SimpleNamespace(title="Kategoria B"),
             get_mode_display=lambda: "Stacjonarny",
             language="pl",
             status=status,
+            note="Zajęcia po rosyjsku" if status == "planned" else "",
         )
-        for status in ("open", "full", "closed", "planned")
+        for index, status in enumerate(("open", "full", "closed", "planned"), start=1)
     ]
     images = [_sample_image(f"Plac manewrowy {n}", f"Podpis {n}") for n in range(1, 7)]
     testimonials = [
@@ -89,7 +100,7 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
         ),
         "form": KitchenSinkForm(),
         "bound_form": KitchenSinkForm(data={"first_name": "", "email": "nie-email"}),
-        "course": course,
+        "courses": courses,
         "intakes": intakes,
         "images": images,
         "testimonials": testimonials,
@@ -99,7 +110,13 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
             {"title": "Kategoria B", "url": ""},
         ],
         "select_options": [("b", "Kategoria B"), ("c", "Kategoria C")],
-        "intake_headers": ["Start", "Kurs", "Tryb", "Język", "Status"],
+        # A header may be a plain string or carry numeric, which right aligns
+        # the column the way A.5 asks for a column of figures.
+        "price_headers": [
+            "Pozycja",
+            {"title": "Uwagi"},
+            {"title": "Cena", "numeric": True},
+        ],
     }
     return render(request, "core/kitchen_sink.html", context)
 
