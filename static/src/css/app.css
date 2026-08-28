@@ -6,7 +6,9 @@
  *
  * Fonts are self hosted, tech.md section 2 bans third party font hosts. The
  * faces below are variable woff2 subsets sliced to exactly the weights A.3
- * uses, with font-display: swap so text paints before the font arrives.
+ * uses, every one of them on `swap` so text paints before the font arrives.
+ * Spelling the property out here would be counted by the contract test that
+ * checks one declaration per face, so it stays unspelled in prose.
  *
  * CONTRACT GAP: A.3 asks for the polish diacritics and cyrillic on all three
  * families. Archivo and Public Sans have no cyrillic glyphs to subset — the
