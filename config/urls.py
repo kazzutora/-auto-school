@@ -27,6 +27,7 @@ urlpatterns += i18n_patterns(
     path("", include("apps.core.urls")),
     path("", include("apps.courses.urls")),
     path("", include("apps.gallery.urls")),
+    path("", include("apps.leads.urls")),
     path("", include("apps.links.urls")),
     prefix_default_language=False,
 )

@@ -75,7 +75,7 @@ disallow_untyped_defs = true
 
 # None of these ship a py.typed marker.
 [[tool.mypy.overrides]]
-module = ["environ.*", "celery.*", "imagekit.*"]
+module = ["environ.*", "celery.*", "imagekit.*", "django_ratelimit.*"]
 ignore_missing_imports = true
 
 [tool.django-stubs]
