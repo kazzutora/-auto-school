@@ -2,9 +2,14 @@
 {% comment %}
 Header, FRONTEND.md A.9 point 0.
 
-Sticky, 72px, paper ground, a line.soft hairline underneath that turns into the
-heavy ink rule once the page has moved. The height is fixed rather than derived
-from the contents, so the rule sits in the same place on every page.
+Sticky, 72px, and a dark band over a light page — the owner's call, after a
+dark theme put a near black page under a near black header and the two grounds
+dissolved into each other. The height is fixed rather than derived from the
+contents, so the band is the same depth on every page.
+
+Nothing in here names a colour: the band publishes the ink ground and its
+contents read --on-ground, so the lettering, the outlined phone button and the
+language codes all turn themselves the right way round.
 
 Three clusters: the lettering, the menu in the middle, and the two things a
 visitor reaches for. The logo is type, not an image — Archivo at the expanded
@@ -23,7 +28,7 @@ which half of A.9 point 0 to honour.
   <div class="u-container flex h-[72px] items-center justify-between gap-2">
     <a href="/"
        class="font-display inline-flex min-h-[44px] shrink-0 items-center text-h3 font-extrabold
-              uppercase leading-none tracking-tight text-ink [font-stretch:125%]">
+              uppercase leading-none tracking-tight [font-stretch:125%]">
       {{ site_settings.short_name|default:"OSK Nawrocki" }}
     </a>
 

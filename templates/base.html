@@ -31,11 +31,6 @@
     Przejdź do treści
   </a>
 
-  {# The header watches this, not the scroll position. It is one pixel tall and
-     sits above the header, so the moment it leaves the viewport the page has
-     moved and the hairline turns into the ink rule, A.9 point 0. #}
-  <div data-header-sentinel aria-hidden="true" class="h-px"></div>
-
   {% include "layout/header.html" %}
 
   <main id="content" class="grow">

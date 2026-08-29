@@ -20,14 +20,6 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     Każdy komponent z tech.md sekcja 7 we wszystkich wariantach propsów i stanach z FRONTEND.md A.5.
   </p>
 
-  {# The switch writes the same data-theme attribute the tokens key off, so both
-     themes are checkable here without touching the system preference. #}
-  <div class="mt-8 flex flex-wrap items-center gap-3" x-data>
-    <span class="label text-ink-500">Motyw</span>
-    <c-button variant="secondary" size="sm" x-on:click="document.documentElement.setAttribute('data-theme', 'light')">Jasny</c-button>
-    <c-button variant="secondary" size="sm" x-on:click="document.documentElement.setAttribute('data-theme', 'dark')">Ciemny</c-button>
-    <c-button variant="ghost" size="sm" x-on:click="document.documentElement.removeAttribute('data-theme')">Systemowy</c-button>
-  </div>
 </div>
 
 <div class="u-container flex flex-col gap-16 pb-32">

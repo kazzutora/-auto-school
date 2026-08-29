@@ -175,60 +175,22 @@
     color-scheme: light;
   }
 
-  /* The dark theme is a swap of roles, not an inversion: paper becomes the
-   * near black, ink the near white, and the yellow does not move because it
-   * reads better on black than it does on white.
+  /* One theme, and it is the light one.
    *
-   * Two identical blocks on purpose. The first answers the system preference
-   * unless the reader has explicitly chosen light; the second answers that
-   * explicit choice and has to win over the media query, which it does by
-   * coming later. Neither defines a colour the light theme has not already. */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-      --paper: 14 14 16;
-      --paper-50: 21 21 24;
-      --paper-100: 28 28 33;
-      --paper-200: 38 38 44;
-
-      --ink: 245 245 244;
-      --ink-700: 201 201 198;
-      --ink-500: 154 154 152;
-      --ink-300: 110 110 112;
-
-      --line: 245 245 244;
-      --line-soft: 46 46 52;
-
-      --deep: 26 20 64;
-
-      --state-ok: 79 191 143;
-      --state-warn: 224 169 58;
-      --state-err: 240 112 95;
-
-      color-scheme: dark;
-    }
-  }
-
-  :root[data-theme='dark'] {
-    --paper: 14 14 16;
-    --paper-50: 21 21 24;
-    --paper-100: 28 28 33;
-    --paper-200: 38 38 44;
-
-    --ink: 245 245 244;
-    --ink-700: 201 201 198;
-    --ink-500: 154 154 152;
-    --ink-300: 110 110 112;
-
-    --line: 245 245 244;
-    --line-soft: 46 46 52;
-
-    --deep: 26 20 64;
-
-    --state-ok: 79 191 143;
-    --state-warn: 224 169 58;
-    --state-err: 240 112 95;
-
-    color-scheme: dark;
+   * The design used to swap roles on prefers-color-scheme, which put a near
+   * black page under a near black header on every page but the home one — the
+   * two grounds were the same colour and the hairline between them measured
+   * 1.4:1, so the header simply dissolved into the page. The owner's call was
+   * a dark header over a light page, always, rather than a theme that has to
+   * be told apart from its own chrome.
+   *
+   * The role swapping machinery stays and is still doing work: --ground and
+   * --on-ground are what let the header, the inverted hero and the yellow
+   * strip each carry their own foreground without a component naming a colour.
+   * What has gone is the second set of token values.
+   */
+  :root {
+    color-scheme: light;
   }
 
   /* ------------------------------------------------------------------ *
@@ -472,6 +434,14 @@
     --on-ground: var(--paper);
   }
 
+  /* The way back. A panel that floats over the page from inside an inverted
+   * region — the header's dropdown — is on the page, not on the band, and has
+   * to say so or it inherits a foreground meant for a dark ground. */
+  .u-ground-paper {
+    --ground: var(--paper);
+    --on-ground: var(--ink);
+  }
+
   .u-ground-ink :is(h1, h2, h3, h4) {
     @apply text-paper;
   }
@@ -570,20 +540,23 @@
     background-color: transparent;
   }
 
-  /* The header, A.9 point 0. 72px, paper ground, a hairline underneath that
-   * turns into the heavy ink rule once the page has moved.
+  /* The header, A.9 point 0. 72px, and a dark band over a light page on every
+   * page.
    *
-   * data-stuck is set by an IntersectionObserver watching a sentinel above the
-   * header rather than by a scroll handler: the question is only ever "has the
-   * top of the page left the viewport", and that is one callback instead of one
-   * per scroll event. */
+   * It publishes the ink ground, so everything inside it that reads
+   * --on-ground — the outlined phone button, the language codes, the menu
+   * rules — turns itself the right way round without naming a colour. The
+   * yellow underline on the active item is the one thing that stays put, and
+   * it wants a dark ground anyway.
+   *
+   * No hairline underneath: the colour change is the edge. A border here would
+   * be a line drawn between two things that already do not touch. */
   .u-header {
-    @apply sticky top-0 z-30 bg-paper;
-    border-bottom: 1px solid rgb(var(--line-soft));
-  }
-
-  .u-header[data-stuck] {
-    border-bottom-color: rgb(var(--line));
+    @apply sticky top-0 z-30;
+    background-color: rgb(var(--ink));
+    color: rgb(var(--paper));
+    --ground: var(--ink);
+    --on-ground: var(--paper);
   }
 
   /* The honeypot, DEV.md S3.1 and FRONTEND.md F7.

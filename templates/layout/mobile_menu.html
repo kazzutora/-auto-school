@@ -20,7 +20,10 @@ switcher and the phone number.
 {% endcomment %}
 {% nav_items as items %}
 <dialog id="main-menu" data-modal aria-label="Menu"
-        class="m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
+        {# u-ground-paper: the panel lives inside the header element, so without
+     it the ink ground the band publishes would reach in here and every
+     control reading --on-ground would come out white on white. #}
+        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
   <div class="flex h-full flex-col">
     <div class="u-container flex h-[72px] shrink-0 items-center justify-between border-b border-line-soft">
       <p class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight [font-stretch:125%]">
