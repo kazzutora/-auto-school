@@ -130,7 +130,9 @@ def test_every_phone_is_tappable(client: Client, site: SiteSettings) -> None:
 
     for phone in PHONES:
         assert f'href="tel:{phone.replace(" ", "")}"' in details
-        assert f">{phone}<" in details
+        # The number follows an icon now, so it is no longer tight against the
+        # tag before it.
+        assert re.search(rf">\s*{re.escape(phone)}\s*<", details), phone
 
 
 def test_the_email_is_a_mailto(client: Client, site: SiteSettings) -> None:
@@ -189,7 +191,13 @@ WEDNESDAY = datetime(2026, 9, 16, 12, 0)
 
 
 def badges(body: str) -> list[str]:
-    return re.findall(r">(Otwarte teraz|Zamknięte)<", body)
+    """The open/closed word from each department's indicator.
+
+    Whitespace tolerant on purpose: the badge carries an icon as well as the
+    word, F8, so the text no longer sits tight against the opening tag. What
+    matters is which word the badge says, not what precedes it.
+    """
+    return re.findall(r">\s*(Otwarte teraz|Zamknięte)\s*<", body)
 
 
 @pytest.mark.parametrize(
@@ -281,3 +289,67 @@ def test_nothing_on_the_page_comes_from_a_third_party(client: Client, site: Site
     # are fetched by leaflet at runtime, which the browser test watches.
     assert {urlsplit(url).netloc for url in sources} - {""} <= {"testserver"}
     assert "leaflet.js" in " ".join(sources)
+
+
+# --------------------------------------------------------------------------
+# FRONTEND.md F8
+
+
+def indicator(body: str, department: str) -> str:
+    """The open/closed badge of one department, markup and all."""
+    region = block(body, f"hours-{department}")
+    found = re.search(r"<span[^>]*label[^>]*>.*?</span>", region, re.S)
+    assert found, f"the {department} indicator did not render"
+    return found.group()
+
+
+def test_the_two_states_differ_by_more_than_colour(
+    client: Client, site: SiteSettings, clock: Any
+) -> None:
+    """F8, and the commonest sight difference there is.
+
+    Green against grey is invisible to a good few people, so open and closed
+    have to be told apart by the word, by the border and by the mark as well.
+    """
+    clock(WEDNESDAY.replace(hour=12, minute=0))
+    office_hours(WEDNESDAY.weekday(), time(9, 0), time(17, 0))
+
+    body = page(client)
+    open_now = indicator(body, "office")
+    closed = indicator(body, "psychology")
+
+    assert "Otwarte teraz" in open_now
+    assert "Zamknięte" in closed
+
+    assert "border-state-ok" in open_now
+    assert "border-state-ok" not in closed
+    assert "border-line-soft" in closed
+
+    assert "#i-check" in open_now
+    assert "#i-clock" in closed
+
+
+def test_a_phone_number_never_breaks_mid_number(client: Client, site: SiteSettings) -> None:
+    """F8: at 320px a wrapped number is a number nobody can read back."""
+    details = block(page(client), "details")
+    links = re.findall(r'<a[^>]*href="tel:[^"]*"[^>]*>', details)
+
+    assert len(links) == len(PHONES)
+    for link in links:
+        assert "whitespace-nowrap" in link, link
+
+
+def test_the_map_is_taller_where_there_is_room(client: Client, site: SiteSettings) -> None:
+    """F8: 320px on a phone, 420px on a desktop."""
+    node = re.search(r"<div[^>]*data-map[^>]*>", page(client))
+    assert node
+    assert "h-80" in node.group(), "the mobile height is not the 320px step"
+    assert "lg:h-[420px]" in node.group()
+
+
+def test_the_map_reaches_no_google(client: Client, site: SiteSettings) -> None:
+    """tech.md section 2: openstreetmap tiles and nothing else."""
+    body = page(client)
+    assert "googleapis" not in body
+    assert "google.com/maps" not in body
+    assert "maps.google" not in body
