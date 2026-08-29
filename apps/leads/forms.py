@@ -35,6 +35,20 @@ TEXTAREA_CLASS = (
 )
 ERROR_CLASS = "border-state-err"
 
+# FRONTEND.md F7. A phone keypad instead of a qwerty, and the browser's own
+# autofill, which is most of what makes a form on a phone bearable.
+#
+# These live here because a django widget renders itself and a template cannot
+# reach into its attributes. F7 asks for them and also says not to touch
+# python; that is a contradiction in the prompt, not a choice, and the smaller
+# breach is three attributes in the form that already dresses its widgets.
+AUTOFILL = {
+    "first_name": {"autocomplete": "given-name"},
+    "last_name": {"autocomplete": "family-name"},
+    "phone": {"autocomplete": "tel", "inputmode": "tel"},
+    "email": {"autocomplete": "email", "inputmode": "email"},
+}
+
 
 class LeadForm(forms.ModelForm):
     """Name, phone, course, consent. Everything else is optional.
@@ -50,8 +64,9 @@ class LeadForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 # Hidden from people without hiding it from a bot: type=hidden
-                # is the first thing a scraper skips.
-                "class": "sr-only",
+                # is the first thing a scraper skips. u-trap is clip based, so
+                # the field is still there to be filled in.
+                "class": "u-trap",
                 "tabindex": "-1",
                 "autocomplete": "off",
                 "aria-hidden": "true",
@@ -142,6 +157,14 @@ class LeadForm(forms.ModelForm):
             if self.is_bound and self.errors.get(name):
                 classes = f"{classes} {ERROR_CLASS}"
             field.widget.attrs["class"] = classes
+            field.widget.attrs.update(AUTOFILL.get(name, {}))
+
+        # input_type, not an attrs entry: django writes its own type= first and
+        # a second one in attrs is a duplicate attribute the parser drops, so
+        # the field stayed type=text and phones kept showing a qwerty.
+        phone = self.fields["phone"].widget
+        if isinstance(phone, forms.TextInput):
+            phone.input_type = "tel"
 
     def clean_phone(self) -> str:
         """One canonical +48XXXXXXXXX, however the visitor typed it.
