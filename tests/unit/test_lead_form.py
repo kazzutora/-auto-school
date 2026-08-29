@@ -147,11 +147,17 @@ def test_a_filled_honeypot_is_spam_and_tells_nobody(client: Client, queued: list
 
 def test_the_honeypot_is_not_a_hidden_input(client: Client) -> None:
     """type=hidden is the first thing a scraper skips, so it would never fill
-    it and the trap would catch nothing."""
+    it and the trap would catch nothing.
+
+    u-trap hides it by clipping instead, which leaves a real field in the form
+    for a bot to fill and nothing at all for a person to see.
+    """
     form = client.get(reverse("leads:enroll")).content.decode()
-    field = form[form.index('name="website"') - 200 : form.index('name="website"') + 200]
+    field = form[form.index('name="website"') - 300 : form.index('name="website"') + 300]
     assert 'type="hidden"' not in field
-    assert "sr-only" in field
+    assert "u-trap" in field
+    assert 'tabindex="-1"' in field
+    assert 'aria-hidden="true"' in field
 
 
 # --------------------------------------------------------------------------
