@@ -288,7 +288,14 @@ def test_nothing_on_the_page_comes_from_a_third_party(client: Client, site: Site
     # Everything is either relative or on our own host. The openstreetmap tiles
     # are fetched by leaflet at runtime, which the browser test watches.
     assert {urlsplit(url).netloc for url in sources} - {""} <= {"testserver"}
-    assert "leaflet.js" in " ".join(sources)
+
+    # Leaflet is still ours, it just arrives through the map's data attributes
+    # now rather than a tag in the head: it is fetched when the map comes into
+    # view, which is what keeps 157 KB off the first screen, A.11.
+    leaflet = re.findall(r'data-leaflet-(?:js|css)="([^"]+)"', body)
+    assert len(leaflet) == 2, "the map does not carry its own leaflet paths"
+    assert {urlsplit(url).netloc for url in leaflet} == {""}
+    assert any("leaflet.js" in url for url in leaflet)
 
 
 # --------------------------------------------------------------------------
