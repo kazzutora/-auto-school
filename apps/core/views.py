@@ -99,8 +99,14 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
             canonical=request.build_absolute_uri(),
             robots="noindex,nofollow",
         ),
-        "form": KitchenSinkForm(),
-        "bound_form": KitchenSinkForm(data={"first_name": "", "email": "nie-email"}),
+        # Distinct auto_id per rendering: this page shows three forms that share
+        # field names, and one id used twice makes a label focus the other copy.
+        "form": KitchenSinkForm(auto_id="ks_empty_%s"),
+        "bound_form": KitchenSinkForm(
+            data={"first_name": "", "email": "nie-email"}, auto_id="ks_bound_%s"
+        ),
+        # FRONTEND.md F7 wants all six form states on this page.
+        "lead_form": _lead_form(),
         "courses": courses,
         "intakes": intakes,
         "images": images,

@@ -195,6 +195,75 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
   </section>
 
   <section>
+    <c-heading level="2">Formularz zgłoszenia — sześć stanów</c-heading>
+    <p class="mt-4 text-small text-ink-500">
+      FRONTEND.md F7. Stany 4 i 6 są tu wymuszone atrybutem, żeby dało się je
+      zobaczyć bez czekania na sieć — to ta sama rozgrywka, którą htmx włącza sam.
+    </p>
+
+    <div class="mt-8 flex flex-col gap-12">
+      <div>
+        <p class="label text-ink-500">1 i 2 — spoczynek, a po tabulacji fokus</p>
+        <div class="mt-4">{% include "leads/_form.html" with form=lead_form form_id="ks-form-rest" %}</div>
+      </div>
+
+      <div>
+        <p class="label text-ink-500">3 — błąd pola i błąd zgody</p>
+        {# The two controls that carry an error, not a second whole form: the
+           same form twice would repeat every field id on one page, and a label
+           whose for= points at the other copy focuses the wrong box. #}
+        <div class="mt-4 flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <label for="id_demo_phone" class="font-semibold text-ink">Telefon <span class="text-state-err" aria-hidden="true">*</span></label>
+            <c-input name="demo_phone" type="tel" value="12" inputmode="tel"
+                     error="Podaj polski numer telefonu, np. 605 065 795." />
+          </div>
+          <c-checkbox name="demo_consent" error="Bez tej zgody nie możemy się z Tobą skontaktować.">
+            Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki
+            w celu kontaktu w sprawie kursu.
+          </c-checkbox>
+        </div>
+      </div>
+
+      <div>
+        <p class="label text-ink-500">4 — wysyłanie</p>
+        {# The class htmx adds for the duration of a request, set by hand so the
+           state is visible standing still. #}
+        <div class="htmx-request mt-4">
+          <c-button variant="primary" size="lg" disabled>
+            <span data-when-idle class="inline-flex items-center gap-2">Wyślij zgłoszenie</span>
+            <span data-when-sending class="items-center gap-2">Wysyłanie…</span>
+          </c-button>
+        </div>
+      </div>
+
+      <div>
+        <p class="label text-ink-500">5 — wysłane</p>
+        <div class="mt-4">{% include "leads/_form_result.html" with sent=1 form_id="ks-form-sent" %}</div>
+      </div>
+
+      <div>
+        <p class="label text-ink-500">6 — serwer nie odpowiedział, dane zostają w formularzu</p>
+        <div class="mt-4">
+          <c-alert tone="danger" title="Nie udało się wysłać zgłoszenia">
+            <p>Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń.</p>
+            <p class="mt-4">
+              <c-button variant="secondary" href="tel:438432911">
+                <c-icon name="phone" size="sm" /> <span class="data">43 843 29 11</span>
+              </c-button>
+            </p>
+          </c-alert>
+        </div>
+      </div>
+
+      <div>
+        <p class="label text-ink-500">Poza szóstką — limit zgłoszeń z jednego adresu</p>
+        <div class="mt-4">{% include "leads/_form_result.html" with rate_limited=1 form_id="ks-form-limited" %}</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <c-heading level="2">c-picture</c-heading>
     <div class="mt-6 grid gap-6 sm:grid-cols-4">
       <div><p class="label mb-2 text-ink-500">square</p><c-picture :image="images.0.image" alt="Plac manewrowy, kwadrat" ratio="square" loading="eager" /></div>
