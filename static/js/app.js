@@ -7,27 +7,55 @@
 (function () {
   "use strict";
 
-  /* Leaflet map, tech.md section 7. OpenStreetMap tiles, no google script. */
+  /* Leaflet map, tech.md section 7. OpenStreetMap tiles, no google script.
+   *
+   * Built when the map comes into view rather than on load. The tiles are the
+   * only third party request the site makes at all, and on the home page the
+   * map sits in the last section: fetching a dozen of them before the visitor
+   * has scrolled past the hero spends the first screen budget in A.11 on
+   * something nobody is looking at yet. rootMargin starts the work a screen
+   * early, so it is ready by the time it is on screen.
+   */
+  function buildMap(node) {
+    var lat = parseFloat(node.dataset.lat);
+    var lng = parseFloat(node.dataset.lng);
+    if (isNaN(lat) || isNaN(lng) || node.dataset.mapReady) {
+      return;
+    }
+    node.dataset.mapReady = "1";
+    var map = window.L.map(node).setView([lat, lng], parseInt(node.dataset.zoom, 10) || 16);
+    window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    var marker = window.L.marker([lat, lng]).addTo(map);
+    if (node.dataset.label) {
+      marker.bindPopup(node.dataset.label);
+    }
+  }
+
   function initMaps() {
     var nodes = document.querySelectorAll("[data-map]");
     if (!nodes.length || typeof window.L === "undefined") {
       return;
     }
-    nodes.forEach(function (node) {
-      var lat = parseFloat(node.dataset.lat);
-      var lng = parseFloat(node.dataset.lng);
-      if (isNaN(lat) || isNaN(lng)) {
-        return;
-      }
-      var map = window.L.map(node).setView([lat, lng], parseInt(node.dataset.zoom, 10) || 16);
-      window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
-      var marker = window.L.marker([lat, lng]).addTo(map);
-      if (node.dataset.label) {
-        marker.bindPopup(node.dataset.label);
-      }
+    if (typeof window.IntersectionObserver === "undefined") {
+      Array.prototype.forEach.call(nodes, buildMap);
+      return;
+    }
+    var observer = new window.IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            observer.unobserve(entry.target);
+            buildMap(entry.target);
+          }
+        });
+      },
+      { rootMargin: "100% 0px" }
+    );
+    Array.prototype.forEach.call(nodes, function (node) {
+      observer.observe(node);
     });
   }
 
