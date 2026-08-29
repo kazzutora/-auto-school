@@ -1,43 +1,29 @@
-{# HTMX partial, tech.md section 5. Also included by the full page, so the
-   markup a visitor without javascript sees is byte for byte the same.
+{% comment %}
+The schedule rows, tech.md section 5 and FRONTEND.md F6.
 
-   CONTRACT GAP: <c-intake-row> emits a closed five cell row with no slot, so
-   the "Zapisz się" button has nowhere to go, and its full/planned tones are the
-   reverse of the ones this task asks for. Rows are composed here from c-badge
-   and c-button until the component grows an action slot. #}
+Both the htmx endpoint and the full page render this, so the markup a visitor
+without javascript sees is byte for byte the one htmx swaps in. It answers with
+rows and nothing else — no document, no layout.
+
+The row itself is <c-intake-row>, the same component section 3 of the home page
+uses. F6 asks for that in as many words: one row, two places.
+{% endcomment %}
 {% if intakes %}
   {% for row in intakes %}
-    <tr>
-      <td class="whitespace-nowrap px-4 py-3 font-bold text-ink-900">{{ row.intake.start_date|date:"d.m.Y" }}</td>
-      <td class="px-4 py-3 text-ink-700">
-        <a href="{{ row.intake.course.get_absolute_url }}" class="hover:text-brand-700 hover:underline">{{ row.intake.course.title }}</a>
-      </td>
-      <td class="px-4 py-3 text-ink-700">{{ row.intake.get_mode_display }}</td>
-      <td class="px-4 py-3 text-ink-700">{{ row.intake.language|upper }}</td>
-      <td class="px-4 py-3">
-        {% if row.intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
-        {% elif row.intake.status == 'full' %}<c-badge tone="neutral">Brak miejsc</c-badge>
-        {% else %}<c-badge tone="warning">Planowany</c-badge>{% endif %}
-        {% if row.seats_left %}<span class="ml-2 text-sm text-ink-500">wolne miejsca: {{ row.seats_left }}</span>{% endif %}
-      </td>
-      <td class="whitespace-nowrap px-4 py-3 text-right">
-        {% if row.bookable %}
-          <c-button size="sm" href="{{ row.enrol_url }}">Zapisz się</c-button>
-        {% else %}
-          <c-button size="sm" variant="ghost" href="{{ row.enrol_url }}">Zapytaj</c-button>
-        {% endif %}
-      </td>
-    </tr>
+    <c-intake-row :intake="row.intake" data-testid="intake-row">
+      {% if row.seats_left %}wolne miejsca: <span class="data">{{ row.seats_left }}</span>{% endif %}
+    </c-intake-row>
   {% endfor %}
 {% else %}
-  <tr>
-    <td colspan="{{ headers|length }}" class="px-4 py-6">
-      <c-alert tone="info" title="Nic nie pasuje do tych filtrów">
-        <p>Dla wybranych kryteriów nie mamy jeszcze ogłoszonego terminu. Zadzwoń, podamy najbliższy start od ręki.</p>
-        {% if site_settings.phone_primary %}
-          <p class="mt-3"><c-button href="tel:{{ site_settings.phone_primary|cut:' ' }}">{{ site_settings.phone_primary }}</c-button></p>
-        {% endif %}
-      </c-alert>
-    </td>
-  </tr>
+  {# F6: a human sentence and a number, never an empty table. #}
+  <c-alert tone="info" title="Nic nie pasuje do tych filtrów">
+    <p>Dla wybranych kryteriów nie mamy jeszcze ogłoszonego terminu. Zadzwoń, podamy najbliższy start od ręki.</p>
+    {% if site_settings.phone_primary %}
+      <p class="mt-4">
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      </p>
+    {% endif %}
+  </c-alert>
 {% endif %}
