@@ -414,3 +414,69 @@ def test_the_listing_carries_no_filter(client: Client) -> None:
     section = html[html.index("<main") : html.index("</main>")]
     assert "<form" not in section
     assert "<select" not in section
+
+
+# --------------------------------------------------------------------------
+# the detail card, FRONTEND.md F5
+
+
+def card_of(html: str) -> str:
+    """The sticky card in the right column."""
+    aside = re.search(r"<aside\b.*?</aside>", html, re.S)
+    assert aside, "the detail page lost its card"
+    return aside.group()
+
+
+def test_the_card_offers_to_agree_a_term_when_there_is_none(client: Client) -> None:
+    """F5: never an empty slot where a date belongs."""
+    make_course()
+    card = card_of(body_of(client, "/kursy/kat-b/"))
+    assert "Zadzwoń, ustalimy termin" in card
+
+
+def test_the_card_shows_the_nearest_start_when_there_is_one(client: Client) -> None:
+    course = make_course()
+    CourseIntake.objects.create(
+        course=course,
+        start_date=timezone.localdate() + timedelta(days=9),
+        mode=CourseIntake.Mode.STATIONARY,
+        status=CourseIntake.Status.OPEN,
+    )
+
+    card = card_of(body_of(client, "/kursy/kat-b/"))
+    assert "Zadzwoń, ustalimy termin" not in card
+    assert (timezone.localdate() + timedelta(days=9)).strftime("%d.%m") in card
+
+
+def test_the_card_asks_for_the_price_when_there_is_none(client: Client) -> None:
+    make_course(price_gross=None)
+    card = card_of(body_of(client, "/kursy/kat-b/"))
+    assert "Zapytaj o cenę" in card
+    assert "Zapisz się" not in card
+
+
+def test_a_price_note_alone_never_fills_the_figure_slot(client: Client) -> None:
+    """format_price returns the note on its own when there is no amount.
+
+    So the template has to decide on course.price_gross, not on the formatted
+    string — otherwise a note like "cena do potwierdzenia" lands in the slot
+    sized for a number and the page claims to have a price it does not have.
+    """
+    make_course(price_gross=None, price_note="cena do potwierdzenia")
+
+    card = card_of(body_of(client, "/kursy/kat-b/"))
+    assert "Zapytaj o cenę" in card
+    assert "cena do potwierdzenia" not in card
+
+
+def test_the_card_only_sticks_from_lg(client: Client) -> None:
+    """F5: it unsticks on mobile, where it belongs in the flow rather than on
+    top of what the reader came for."""
+    make_course()
+    aside = re.search(r'<aside\b[^>]*class="([^"]*)"', body_of(client, "/kursy/kat-b/"))
+    assert aside
+    classes = aside.group(1).split()
+    assert "lg:sticky" in classes
+    assert "lg:self-start" in classes, "a stretched grid item has nothing to stick against"
+    # Bare and unprefixed would stick it on a phone too.
+    assert "sticky" not in classes
