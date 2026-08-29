@@ -9,6 +9,13 @@ rows arrive through the slot, so a header may be either a plain string or an
 object carrying title and numeric. That keeps the section 7 prop as a list and
 lets the caller line the header up with cells it wrote itself.
 
+CONTRACT GAP: a caller whose view hands over plain strings — the price page —
+has no way to say which column holds figures, so its header sits left over a
+right aligned column of złoty. Closing it is either the view marking the column
+(python, which F6 rules out) or a `numeric` prop here (drift the section 7 row
+does not allow outside LEAD). Owner's call; the figures themselves already
+align, which is what F6 asks for.
+
 Wide tables scroll inside their own box: the page never moves sideways, A.4.
 {% endcomment %}
 <c-vars headers="" class="" />

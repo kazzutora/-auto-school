@@ -7,7 +7,12 @@ hard right — a shape a <tr> cannot hold and keep readable when it stacks on a
 phone. /terminy/ in A.10 uses the same row, so there is one of these, not two.
 
 The enrol link carries the intake id so the form arrives with the term already
-chosen. tech.md section 5 freezes that url as a string until leads.urls ships.
+chosen — /zapisz-sie/?intake=<id>, which S3.1 now answers.
+
+CONTRACT GAP: the section 7 row lists one prop and no slot. The default slot
+here is an addition, so a page can hand the row something it cannot work out
+from the intake alone — free seats come from services.seats_left and are not on
+the model. Needs ratifying in tech.md the next time the core version moves.
 {% endcomment %}
 <c-vars intake="" class="" />
 <div class="flex flex-col gap-4 border-b border-line-soft py-6 last:border-b-0 md:flex-row md:items-center md:gap-8 {{ class }}" {{ attrs }}>
@@ -21,15 +26,27 @@ chosen. tech.md section 5 freezes that url as a string until leads.urls ships.
     <p class="mt-2 flex flex-wrap gap-2">
       <c-badge tone="neutral">{{ intake.get_mode_display }}</c-badge>
       <c-badge tone="neutral">{{ intake.language|upper }}</c-badge>
+      {# Tones fixed by F6: open is the green outline, a full group goes quiet
+         rather than shouting, and planned is the warning — it is a date nobody
+         can book yet. #}
       {% if intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
-      {% elif intake.status == 'full' %}<c-badge tone="warning">Brak miejsc</c-badge>
+      {% elif intake.status == 'full' %}<c-badge tone="neutral">Brak miejsc</c-badge>
       {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
-      {% else %}<c-badge tone="accent">Nowy termin</c-badge>{% endif %}
+      {% else %}<c-badge tone="warning">Planowany</c-badge>{% endif %}
     </p>
     {% if intake.note %}<p class="mt-2 text-small text-ink-500">{{ intake.note }}</p>{% endif %}
+    {# Anything the page knows and the row does not: free seats on /terminy/,
+       nothing on the home page. #}
+    {% if slot %}<div class="mt-2 text-small text-ink-500">{{ slot }}</div>{% endif %}
   </div>
 
-  {% if intake.status == 'open' or intake.status == 'planned' %}
-    <div class="shrink-0"><c-button size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapisz się</c-button></div>
-  {% endif %}
+  <div class="shrink-0">
+    {% if intake.status == 'open' or intake.status == 'planned' %}
+      <c-button size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapisz się</c-button>
+    {% else %}
+      {# Full or closed: nothing to join, but somebody who wanted this date is
+         exactly who should be told about the next one. #}
+      <c-button variant="ghost" size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapytaj</c-button>
+    {% endif %}
+  </div>
 </div>
