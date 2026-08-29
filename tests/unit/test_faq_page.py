@@ -200,3 +200,32 @@ def test_one_group_for_everything_is_still_one_heading(client: Client) -> None:
         make_question(number, group="Egzamin", order=number)
 
     assert re.findall(r"<h2[^>]*>(.*?)</h2>", page(client)) == ["Egzamin"]
+
+
+# --------------------------------------------------------------------------
+# FRONTEND.md F10
+
+
+def test_the_structured_data_matches_what_is_on_the_page(
+    client: Client, questions: list[Faq]
+) -> None:
+    """F10: as many questions in the json-ld as a reader can actually see.
+
+    Marking up an answer that is not on the page is hidden content, and the
+    fastest way to lose the rich result altogether.
+    """
+    body = page(client)
+
+    blocks = [
+        json.loads(raw)
+        for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', body, re.S)
+    ]
+    faq_page = next(block for block in blocks if block["@type"] == "FAQPage")
+
+    visible = body.count("<details")
+    assert visible == len(questions)
+    assert len(faq_page["mainEntity"]) == visible
+
+    for entry in faq_page["mainEntity"]:
+        assert entry["name"].strip()
+        assert entry["acceptedAnswer"]["text"].strip()

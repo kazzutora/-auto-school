@@ -340,3 +340,65 @@ def test_every_picture_reserves_its_own_box(live_server, page: Page) -> None:
         ".map(i => i.alt)"
     )
     assert missing == []
+
+
+def test_a_long_legal_page_gets_a_contents_list(live_server, page: Page) -> None:
+    """F10: a contents list past five sections, and nothing under six.
+
+    Built in the browser rather than by the renderer, so this is the only place
+    it can be checked. A reader without javascript loses a shortcut, not text.
+    """
+    from apps.core.models import Page as FlatPage
+
+    def publish(sections: int) -> None:
+        # One hash, not two: render_markdown shifts headings down a level, so a
+        # page owns exactly one h1 and it comes from the template. A top level
+        # section in the source is "#" and arrives as an h2.
+        FlatPage.objects.all().delete()
+        body = "\n\n".join(f"# Sekcja {n}\n\nTreść {n}." for n in range(1, sections + 1))
+        FlatPage.objects.create(slug="rodo", title="RODO", body=body, is_published=True)
+
+    publish(4)
+    page.goto(f"{live_server.url}/rodo/")
+    page.wait_for_function("() => window.htmx !== undefined")
+    assert page.locator("[data-toc]").is_hidden(), "four sections do not need an index"
+
+    publish(7)
+    page.goto(f"{live_server.url}/rodo/")
+    toc = page.locator("[data-toc]")
+    toc.wait_for(state="visible")
+
+    links = toc.locator("a")
+    assert links.count() == 7
+
+    # Every entry actually lands on its heading.
+    first = links.first
+    target = first.get_attribute("href")
+    assert target and target.startswith("#")
+    assert page.locator(f"h2{target}").count() == 1
+
+    first.click()
+    assert page.evaluate("() => location.hash") == target
+
+
+def test_a_long_url_in_a_policy_never_pushes_the_page_sideways(live_server, page: Page) -> None:
+    """F10, checked at 390px where it would actually happen."""
+    from apps.core.models import Page as FlatPage
+
+    FlatPage.objects.all().delete()
+    FlatPage.objects.create(
+        slug="rodo",
+        title="RODO",
+        body=(
+            "# Klauzula\n\nSzczegóły: "
+            "https://uodo.gov.pl/pl/file/bardzo-dluga-nazwa-dokumentu-informacyjnego-"
+            "o-przetwarzaniu-danych-osobowych-kandydatow-na-kierowcow-2024.pdf"
+        ),
+        is_published=True,
+    )
+
+    page.goto(f"{live_server.url}/rodo/")
+    overflow = page.evaluate(
+        "() => document.documentElement.scrollWidth - document.documentElement.clientWidth"
+    )
+    assert overflow <= 0, f"the policy scrolls {overflow}px sideways"

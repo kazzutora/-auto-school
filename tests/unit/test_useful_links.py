@@ -257,3 +257,35 @@ def test_a_link_knows_whether_the_last_check_failed(
     link = UsefulLink(last_status=status, last_error=error)
 
     assert link.is_broken is broken
+
+
+# --------------------------------------------------------------------------
+# FRONTEND.md F10
+
+
+def test_no_bare_url_is_printed_anywhere(client: Client, links: None) -> None:
+    """F10: the name and one line of description, never the address itself.
+
+    A wall of https://info-car.pl/... tells a reader nothing the name does not,
+    and a url with no spaces in it is what pushes a phone screen sideways.
+    """
+    body = page(client)
+    region = body[body.index('data-testid="groups"') :]
+    region = region[: region.index("</section>")]
+
+    for url in UsefulLink.objects.values_list("url", flat=True):
+        assert f'href="{url}"' in region, "the link itself must still be there"
+        # ...but the address is never printed as text.
+        assert f">{url}<" not in region
+        assert f"> {url}" not in region
+
+
+def test_the_external_mark_sits_on_every_row(client: Client, links: None) -> None:
+    """F10: the icon says the row leaves the site before the click does."""
+    body = page(client)
+    region = body[body.index('data-testid="groups"') :]
+    region = region[: region.index("</section>")]
+
+    rows = region.count('rel="noopener noreferrer"')
+    assert rows == UsefulLink.objects.filter(is_active=True).count()
+    assert region.count("#i-external") == rows
