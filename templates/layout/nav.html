@@ -1,2 +1,12 @@
-{# The menu is data, rendered by the nav primitive from apps/core/navigation.py. #}
-<c-nav />
+{% comment %}
+Desktop navigation, FRONTEND.md F2 point 3.
+
+The menu is data, never markup: c-nav renders apps/core/navigation.py and
+nothing here names an item. Submenus open on click rather than hover, the
+active item takes the 3px yellow underline A.9 point 0 asks for, and the whole
+row hides itself below lg, where layout/mobile_menu.html takes over.
+
+This file exists so the header includes a name rather than a component, and so
+the two menus stay one route apart in the tree.
+{% endcomment %}
+<c-nav class="min-w-0" />

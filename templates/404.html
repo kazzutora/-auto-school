@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% comment %}
+404, FRONTEND.md A.10. Large type, the way back to the sections that matter, and
+the phone — because someone who lands here from an old link is usually trying to
+reach the school rather than to browse.
+
+django renders this through page_not_found, which passes the request, so the
+context processors run and the header, the footer and site_settings are all
+here. 500.html cannot say the same and stands on its own.
+{% endcomment %}
+
+{% block content %}
+<div class="u-container u-section">
+  <p class="label text-ink-500">Błąd 404</p>
+  <h1 class="mt-4">Nie ma takiej strony</h1>
+  <p class="u-narrow mt-6 text-body-lg text-ink-700">
+    Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca.
+  </p>
+
+  <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <li><c-card href="{% url 'courses:list' %}"><c-slot name="title">Kursy</c-slot>Kategorie prawa jazdy i ceny.</c-card></li>
+    <li><c-card href="{% url 'courses:intakes' %}"><c-slot name="title">Terminy</c-slot>Najbliższe starty kursów.</c-card></li>
+    <li><c-card href="{% url 'courses:pricing' %}"><c-slot name="title">Cennik</c-slot>Pełna lista cen.</c-card></li>
+    <li><c-card href="{% url 'core:contact' %}"><c-slot name="title">Kontakt</c-slot>Adres, godziny, dojazd.</c-card></li>
+  </ul>
+
+  {% if site_settings.phone_primary %}
+    <div class="mt-12 flex flex-wrap items-center gap-4">
+      <c-button variant="primary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+        <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+      </c-button>
+      <c-button variant="secondary" href="/">Strona główna</c-button>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -5,15 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% seo_meta %}
   {% jsonld %}
+
+  {# The three faces A.3 names are the first paint on every page, so the two a
+     polish page always needs are fetched alongside the stylesheet instead of
+     after it. crossorigin is not optional on a font preload: without it the
+     browser fetches the file twice, once anonymously for the preload and once
+     credentialed for the @font-face. #}
+  <link rel="preload" href="{% static 'fonts/archivo-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/public-sans-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block head %}{% endblock %}
+
   {# Self hosted, tech.md section 2 bans third party scripts on public pages. #}
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/app.js' %}" defer></script>
 </head>
-<body class="flex min-h-screen flex-col bg-paper-0 text-ink-900">
-  <a href="#content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded focus:bg-brand-900 focus:px-4 focus:py-2 focus:text-paper-0">Przejdź do treści</a>
+<body class="flex min-h-screen flex-col bg-paper text-ink">
+  {# First focusable thing on the page, FRONTEND.md F2 point 1. Off screen until
+     it takes focus, then it lands in the top left corner where a keyboard user
+     expects it. #}
+  <a href="#content"
+     class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:h-12 focus:items-center focus:rounded focus:border-2 focus:border-ink focus:bg-paper focus:px-6 focus:font-semibold focus:text-ink">
+    Przejdź do treści
+  </a>
+
+  {# The header watches this, not the scroll position. It is one pixel tall and
+     sits above the header, so the moment it leaves the viewport the page has
+     moved and the hairline turns into the ink rule, A.9 point 0. #}
+  <div data-header-sentinel aria-hidden="true" class="h-px"></div>
 
   {% include "layout/header.html" %}
 

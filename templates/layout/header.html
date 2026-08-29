@@ -1,17 +1,52 @@
-<header class="sticky top-0 z-30 border-b border-paper-100 bg-paper-0/95 backdrop-blur">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-    <a href="/" class="font-display text-xl font-bold tracking-tight text-brand-900">
+{% load i18n %}
+{% comment %}
+Header, FRONTEND.md A.9 point 0.
+
+Sticky, 72px, paper ground, a line.soft hairline underneath that turns into the
+heavy ink rule once the page has moved. The height is fixed rather than derived
+from the contents, so the rule sits in the same place on every page.
+
+Three clusters: the lettering, the menu in the middle, and the two things a
+visitor reaches for. The logo is type, not an image — Archivo at the expanded
+width, A.9 point 0 is explicit that no picture is involved.
+
+The phone is a secondary button in the data face, because a phone number is a
+fact and A.3 puts facts in the mono.
+
+The whole right hand cluster and the menu appear together at xl and are replaced
+by the burger below it — see the CONTRACT GAP in templates/cotton/nav.html. The
+row is all of it or none of it on purpose: a header that keeps the phone but
+drops the language switcher to buy 110px is a header that has started deciding
+which half of A.9 point 0 to honour.
+{% endcomment %}
+<header class="u-header">
+  <div class="u-container flex h-[72px] items-center justify-between gap-2">
+    <a href="/" class="font-display shrink-0 text-h3 font-extrabold uppercase leading-none tracking-tight text-ink [font-stretch:125%]">
       {{ site_settings.short_name|default:"OSK Nawrocki" }}
     </a>
 
-    <div class="flex items-center gap-2">
-      <c-nav class="order-2 lg:order-1" />
-      <c-lang-switcher class="order-1 lg:order-2" />
+    {% include "layout/nav.html" %}
+
+    <div class="flex shrink-0 items-center gap-3">
+      <c-lang-switcher class="hidden xl:flex" />
+
       {% if site_settings.phone_primary %}
-        <c-button size="sm" href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="hidden sm:inline-flex">
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="data hidden xl:inline-flex">
           {{ site_settings.phone_primary }}
         </c-button>
       {% endif %}
+
+      {# The burger is one of the two icons A.7 lets stand without a word beside
+         it, so it carries the label instead. aria-expanded is kept in step with
+         the panel by static/js/app.js, which is the only thing that knows
+         whether the dialog is open. #}
+      <button type="button" data-modal-open="main-menu" aria-controls="main-menu" aria-expanded="false"
+              aria-label="Menu"
+              class="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded text-ink transition hover:bg-paper-100 xl:hidden">
+        <c-icon name="menu" />
+      </button>
     </div>
   </div>
+
+  {% include "layout/mobile_menu.html" %}
 </header>

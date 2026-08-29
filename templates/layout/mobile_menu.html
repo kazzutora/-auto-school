@@ -1,0 +1,70 @@
+{% load core_ui i18n %}
+{% comment %}
+Mobile menu, FRONTEND.md F2 point 4.
+
+A native dialog opened with showModal(), for the same reason c-modal is one: the
+focus lock, Esc and the focus restore are the browser's job and it does them
+right. A panel built out of a div and a boolean has to re-implement all three,
+and the shift-tab wrap is the part that always ends up wrong.
+
+Full screen, because a menu that only covers half the page leaves the reader
+looking at two things at once. The dialog's own margin and max-width are reset
+to nothing; without that the ua stylesheet centres it in a box.
+
+Kontakt is a first level item here exactly as it is on the desktop. Hiding it in
+a submenu was the main defect of the old site, tech.md section 7, and a mobile
+panel is the easiest place to lose it again.
+
+Below the links sit the two things the header gives up on a phone: the language
+switcher and the phone number.
+{% endcomment %}
+{% nav_items as items %}
+<dialog id="main-menu" data-modal aria-label="Menu"
+        class="m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
+  <div class="flex h-full flex-col">
+    <div class="u-container flex h-[72px] shrink-0 items-center justify-between border-b border-line-soft">
+      <p class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight [font-stretch:125%]">
+        {{ site_settings.short_name|default:"OSK Nawrocki" }}
+      </p>
+      <button type="button" data-modal-close aria-label="Zamknij menu"
+              class="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded text-ink transition hover:bg-paper-100">
+        <c-icon name="close" />
+      </button>
+    </div>
+
+    <nav aria-label="Główna nawigacja" class="u-container grow overflow-y-auto py-6">
+      <ul class="flex flex-col">
+        {% for item in items %}
+          {% nav_url item as url %}
+          <li class="border-b border-line-soft last:border-b-0">
+            <a href="{% if url %}{{ url }}{% else %}#{% endif %}"
+               {% if request.path == url %}aria-current="page"{% endif %}
+               class="flex min-h-[56px] items-center text-h3 font-bold transition hover:text-ink-700{% if request.path == url %} border-l-4 border-accent pl-4{% endif %}">
+              {{ item.title }}
+            </a>
+            {% if item.children %}
+              <ul class="pb-3 pl-4">
+                {% for child in item.children %}
+                  {% nav_url child as child_url %}
+                  <li>
+                    <a href="{% if child_url %}{{ child_url }}{% else %}#{% endif %}"
+                       class="flex min-h-[48px] items-center text-ink-700 transition hover:text-ink">{{ child.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div class="u-container flex shrink-0 flex-col gap-4 border-t border-line-soft py-6">
+      {% if site_settings.phone_primary %}
+        <c-button variant="primary" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+      <c-lang-switcher />
+    </div>
+  </div>
+</dialog>
