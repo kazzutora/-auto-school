@@ -50,7 +50,7 @@ def no_js_page(browser: Browser) -> Iterator[Page]:
 
 
 def visible_courses(page: Page) -> str:
-    return page.locator("#intake-table tbody").inner_text()
+    return page.locator("#intake-rows").inner_text()
 
 
 def test_htmx_swaps_only_the_rows(live_server, page: Page, schedule: None) -> None:
@@ -62,11 +62,11 @@ def test_htmx_swaps_only_the_rows(live_server, page: Page, schedule: None) -> No
 
     page.select_option("#id_language", "ru")
     page.wait_for_function(
-        "() => !document.querySelector('#intake-table tbody').innerText.includes('Kategoria B')"
+        "() => !document.querySelector('#intake-rows').innerText.includes('Kategoria B')"
     )
 
     assert "Kategoria C" in visible_courses(page)
-    # The page itself never reloaded, only the tbody changed.
+    # The page itself never reloaded, only the rows changed.
     assert page.locator("h1").inner_text() == "Terminy"
 
 

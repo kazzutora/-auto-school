@@ -40,19 +40,39 @@ def make_intake(course: Course, **overrides: object) -> CourseIntake:
     return CourseIntake.objects.create(**values)
 
 
+# The rows are <c-intake-row>, the same component the home page uses, and they
+# carry a test hook rather than a class the design system may restyle.
+ROW = 'data-testid="intake-row"'
+
+
 def table(body: str) -> str:
-    """Just the table body.
+    """Just the rows.
 
     The whole page also carries the course titles in the filter select and a
-    "Zapisz się" label on the sticky bar, and the table head has a <tr> of its
-    own. Matching against the page would pass on any of those.
+    "Zapisz się" label on the sticky bar, so matching against the page would
+    pass on either of those.
     """
-    found = re.search(r"<tbody[^>]*>(.*?)</tbody>", body, re.S)
-    return found.group(1) if found else body  # the partial is already rows
+    start = body.find('id="intake-rows"')
+    if start == -1:
+        return body  # the htmx partial is already nothing but rows
+    return body[start : body.index("</section>", start)]
 
 
 def rows(body: str) -> list[str]:
-    return re.findall(r"<tr>(.*?)</tr>", table(body), re.S)
+    """One string per listed group, comparable between the page and the partial.
+
+    Whitespace is collapsed and the trailing closing tags are dropped: on the
+    full page the last row is followed by the close of the container it sits
+    in, and the partial has no container. What has to match is the rows.
+    """
+    parts = table(body).split(ROW)[1:]
+    normalised = []
+    for part in parts:
+        text = " ".join(part.split())
+        while text.endswith("</div>"):
+            text = text[: -len("</div>")].rstrip()
+        normalised.append(text)
+    return normalised
 
 
 def page(client: Client, **params: str) -> str:
@@ -219,7 +239,7 @@ def test_the_htmx_endpoint_returns_a_partial(client: Client, offer: dict[str, Co
     body = partial(client)
 
     assert "<html" not in body
-    assert "<tr>" in body
+    assert ROW in body
     assert "Kategoria B" in body
 
 
@@ -229,7 +249,7 @@ def test_the_plain_page_returns_a_whole_document(client: Client, offer: dict[str
     body = page(client)
 
     assert "<html" in body
-    assert "<tr>" in body
+    assert ROW in body
 
 
 def test_the_form_gives_the_same_rows_as_htmx(client: Client, offer: dict[str, Course]) -> None:
@@ -269,13 +289,18 @@ def test_a_full_group_does_not_offer_enrolment(client: Client, offer: dict[str, 
 
     body = table(page(client))
     assert "Zapisz się" not in body
+    # Still a way to ask: whoever wanted this date is exactly who should hear
+    # about the next one.
     assert "Zapytaj" in body
 
 
 def test_free_seats_are_shown_when_known(client: Client, offer: dict[str, Course]) -> None:
     make_intake(offer["b"], seats_total=20, seats_taken=17)
 
-    assert "wolne miejsca: 3" in table(page(client))
+    body = table(page(client))
+    assert "wolne miejsca" in body
+    # The figure is in the data face, so it arrives in a span of its own.
+    assert re.search(r"wolne miejsca:\s*<span[^>]*>3</span>", body)
 
 
 def test_the_schedule_holds_its_query_count(

@@ -252,3 +252,50 @@ def test_the_price_query_count_does_not_grow_with_the_offer(
 
     with django_assert_num_queries(6):
         client.get("/cennik/")
+
+
+# --------------------------------------------------------------------------
+# how the table is built, FRONTEND.md F6
+
+
+def test_the_price_column_is_a_column_of_figures(client: Client) -> None:
+    """A.5: the data face, tabular figures, right aligned.
+
+    Digits under digits is the whole reason the mono is in the design at all —
+    a proportional 1 is narrower than a 0 and the place values wander from row
+    to row.
+    """
+    make_course(price_gross=Decimal("3200"))
+    make_item()
+
+    body = body_of(client)
+    cells = re.findall(r"<td[^>]*>[^<]*zł[^<]*</td>", body)
+    assert cells, "no price cell on the price page"
+    for cell in cells:
+        assert "data" in cell, cell
+        assert "text-right" in cell, cell
+
+
+def test_the_table_still_has_a_header_row(client: Client) -> None:
+    """The header itself is not right aligned yet.
+
+    c-table can only align a header it was told is numeric, and the view hands
+    over plain strings. Closing it is either python, which F6 rules out, or a
+    new prop on a component whose row in tech.md section 7 is frozen outside
+    LEAD. The figures align, which is the criterion; see the CONTRACT GAP in
+    templates/cotton/table.html.
+    """
+    make_item()
+    headers = [
+        text.strip() for text in re.findall(r"<th scope=\"col\"[^>]*>([^<]*)", body_of(client))
+    ]
+    assert "Cena Brutto" in headers
+
+
+def test_the_table_never_stripes_its_rows(client: Client) -> None:
+    """A.5 parts rows with a hairline and nothing else."""
+    make_course(price_gross=Decimal("3200"))
+    body = body_of(client)
+    assert "odd:" not in body
+    assert "even:" not in body
+    assert "divide-y" not in body
