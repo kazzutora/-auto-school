@@ -8,12 +8,12 @@ from django.conf import settings
 
 COTTON = Path(settings.BASE_DIR) / "templates" / "cotton"
 
-# tech.md section 7 at core v3: component file -> the props its row declares.
+# tech.md section 7 at core v4: component file -> the props its row declares.
 # Slot only components carry an empty set. Cotton maps <c-gallery-grid> to
 # gallery_grid and <c-accordion.item> to accordion/item.
 TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "button": {"variant", "size", "href", "type", "full"},
-    "card": {"href", "padded"},
+    "card": {"href", "padded", "level"},
     "badge": {"tone"},
     "section": {"id", "tone"},
     "heading": {"level", "eyebrow"},
@@ -33,7 +33,7 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "lightbox": {"images"},
     "cta_bar": {"title", "phone", "href"},
     "price_tile": {"title", "price", "note", "href"},
-    "course_card": {"course"},
+    "course_card": {"course", "level"},
     "intake_row": {"intake"},
     "hours_table": {"department"},
     "map": {"lat", "lng", "zoom", "label", "height"},

@@ -10,6 +10,8 @@ The tile is c-course-card and is a link in its own right, so nothing here wraps
 it in a second anchor.
 
 Takes:
+  level          heading level for each title, 3 by default. A grid sitting
+                straight under the page h1 passes 2.
   courses        the tiles to draw.
   ask_for_price  optional. Adds the price question under a tile that has no
                  price. The listing turns it on, because that is where someone
@@ -20,7 +22,7 @@ Takes:
 <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
   {% for course in courses %}
     <li class="flex flex-col">
-      <c-course-card :course="course" class="w-full" />
+      <c-course-card :course="course" level="{{ level|default:3 }}" class="w-full" />
       {% if ask_for_price and not course.price_gross %}
         {% include "courses/_ask_for_price.html" with compact=1 %}
       {% endif %}

@@ -24,9 +24,9 @@ one file is the only way to hold it.
       {% if show_other_kinds %}
         {# show_other_kinds is the view's way of saying "this is the licence
            page", and the licence page is the one that draws category tiles. #}
-        {% include "courses/_category_grid.html" with ask_for_price=1 %}
+        {% include "courses/_category_grid.html" with ask_for_price=1 level=2 %}
       {% else %}
-        {% include "courses/_pro_grid.html" %}
+        {% include "courses/_pro_grid.html" with level=2 %}
       {% endif %}
     {% else %}
       <c-alert tone="info" title="Oferta w przygotowaniu">

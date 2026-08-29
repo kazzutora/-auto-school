@@ -15,10 +15,18 @@ min-w-0 because a card holds whatever it is given, and as a grid or flex item it
 would otherwise refuse to shrink below that content and take the page sideways
 with it — which is what a card wrapping the opening hours did at 320px.
 {% endcomment %}
-<c-vars href="" padded="1" class="" />
+<c-vars href="" padded="1" level="3" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
   class="block min-w-0 rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:border-ink hover:shadow-card{% endif %} {{ class }}"
   {{ attrs }}>
-  {% if title %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
+  {# The level is the page's to choose: a card sitting straight under the h1
+     is a level 2 item, and one inside a section that already has an h2 is a
+     level 3. Guessing wrong skips a level, which is what a screen reader
+     reads out as a missing section. #}
+  {% if title %}
+    {% if level == '2' or level == 2 %}<h2 class="text-h3">{{ title }}</h2>
+    {% elif level == '4' or level == 4 %}<h4 class="text-h3">{{ title }}</h4>
+    {% else %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
+  {% endif %}
   <div class="{% if title %}mt-3 {% endif %}text-ink-700">{{ slot }}</div>
 {% if href %}</a>{% else %}</article>{% endif %}
