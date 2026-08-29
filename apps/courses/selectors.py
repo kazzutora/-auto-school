@@ -54,6 +54,19 @@ def filtered_intakes(
     return intakes
 
 
+def joinable_intakes() -> QuerySet[CourseIntake]:
+    """The groups a visitor could still sign up for, FRONTEND.md A.9 point 3.
+
+    Narrower than the schedule at /terminy/, which keeps a full group so it can
+    say brak miejsc. The home page has room for three rows and each one carries
+    a Zapisz się button, so a group nobody can join has no business taking one
+    of them.
+    """
+    return _upcoming_intakes().filter(
+        status__in=(CourseIntake.Status.OPEN, CourseIntake.Status.PLANNED)
+    )
+
+
 def courses_with_upcoming_intakes() -> QuerySet[Course]:
     """Only courses a visitor could actually pick in the filter."""
     return active_courses().filter(intakes__in=_upcoming_intakes()).distinct()
