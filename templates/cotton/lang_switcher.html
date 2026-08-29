@@ -11,11 +11,16 @@ The row appears in the header and again in the footer, and the footer is deep
 purple, so the inactive codes take their colour from the ground rather than
 naming ink-500 — which is a page colour and reads at 1.6:1 on the deep. The
 active one is the yellow chip, and near black on it in both themes.
+
+Each code is a 44px square, A.11. Two letters need nowhere near that much room,
+but a finger does, and the gap between them goes rather than the target: two
+44px targets touching are still two targets, while two 30px ones with air
+between them are two misses.
 {% endcomment %}
 {% language_links as links %}
-<nav aria-label="{% translate 'Language' %}" class="flex items-center gap-1 {{ class }}" {{ attrs }}>
-  <c-icon name="globe" size="sm" class="u-muted-on-ground mr-1" />
+<nav aria-label="{% translate 'Language' %}" class="flex items-center {{ class }}" {{ attrs }}>
+  <c-icon name="globe" size="sm" class="u-muted-on-ground mr-2 shrink-0" />
   {% for link in links %}<a href="{{ link.url }}" hreflang="{{ link.code }}" lang="{{ link.code }}"
     {% if link.is_active %}aria-current="true"{% endif %}
-    class="label rounded px-1.5 py-2 transition{% if link.is_active %} bg-accent u-fixed-ink{% else %} u-muted-on-ground hover:opacity-100{% endif %}">{{ link.code }}</a>{% endfor %}
+    class="label inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded transition{% if link.is_active %} bg-accent u-fixed-ink{% else %} u-muted-on-ground hover:opacity-100{% endif %}">{{ link.code }}</a>{% endfor %}
 </nav>

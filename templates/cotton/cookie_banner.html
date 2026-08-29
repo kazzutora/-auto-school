@@ -20,8 +20,10 @@ these two buttons.
       <a href="/polityka-prywatnosci/" class="underline underline-offset-4 hover:text-ink">Polityka prywatności</a>.
     </p>
     <div class="flex shrink-0 gap-3">
-      <c-button variant="secondary" size="sm" data-cookie-reject="1">Odrzuć</c-button>
-      <c-button variant="primary" size="sm" data-cookie-accept="1">Akceptuję</c-button>
+      {# md, not sm: A.5 fixes sm at 40px and A.11 wants 44 of anything a
+         finger has to hit. Consent is the last place to save four pixels. #}
+      <c-button variant="secondary" data-cookie-reject="1">Odrzuć</c-button>
+      <c-button variant="primary" data-cookie-accept="1">Akceptuję</c-button>
     </div>
   </div>
 </div>

@@ -34,7 +34,11 @@ still must not move sideways, A.4.
                 <tr class="border-b border-line-soft last:border-b-0">
                   <th scope="row" class="py-4 pr-6 text-left font-normal">
                     {% if row.url %}
-                      <a href="{{ row.url }}" class="font-semibold text-ink underline-offset-4 hover:underline">{{ row.label }}</a>
+                      {# The row is already tall enough; the link fills it so the
+                         target is the 44px A.11 asks for rather than the 19px
+                         the text happens to occupy. #}
+                      <a href="{{ row.url }}"
+                         class="inline-flex min-h-[44px] items-center font-semibold text-ink underline-offset-4 hover:underline">{{ row.label }}</a>
                     {% else %}
                       <span class="text-ink">{{ row.label }}</span>
                     {% endif %}
