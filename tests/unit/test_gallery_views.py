@@ -263,7 +263,8 @@ def test_a_certificate_card_carries_everything_the_owner_filled_in(client: Clien
     body = certificates_page(client)
 
     # The title is a heading, whatever the design system dresses it in.
-    assert re.search(r"<h3[^>]*>\s*Certyfikat ADR\s*</h3>", body)
+    # h2 since core v4: the grid sits straight under the page h1.
+    assert re.search(r"<h2[^>]*>\s*Certyfikat ADR\s*</h2>", body)
     meta = re.search(r'data-testid="certificate-meta".*?</p>', body, re.S)
     assert meta
     assert "Urząd Marszałkowski" in meta.group()

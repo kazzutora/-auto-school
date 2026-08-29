@@ -381,6 +381,12 @@ def test_the_tile_is_the_same_markup_as_on_the_home_page(client: Client) -> None
     Both pages include courses/_category_grid.html, so this passes by
     construction — and fails the moment someone copies the grid into one of
     them and edits it there.
+
+    The heading tag is the one thing allowed to differ, and it has to: on the
+    listing the grid sits straight under the h1, so its titles are h2, while on
+    the home page they sit inside a section that already has one and stay h3.
+    Identical there would mean a skipped level on one of the two pages. Nothing
+    visual changes — the tag carries no styling of its own.
     """
     make_course()
 
@@ -388,7 +394,15 @@ def test_the_tile_is_the_same_markup_as_on_the_home_page(client: Client) -> None
     on_listing = category_tiles(body_of(client, "/kursy/"))
 
     assert len(on_home) == len(on_listing) == 1
-    assert on_home[0].split() == on_listing[0].split()
+
+    def without_heading_level(tile: str) -> list[str]:
+        return re.sub(r"</?h[1-6]([ >])", r"<h", tile).split()
+
+    assert without_heading_level(on_home[0]) == without_heading_level(on_listing[0])
+
+    # And the levels really are the ones each page needs.
+    assert re.search(r"<h3[^>]*>\s*Kategoria B", on_home[0])
+    assert re.search(r"<h2[^>]*>\s*Kategoria B", on_listing[0])
 
 
 def test_the_listing_never_prints_a_zero_price(client: Client) -> None:
