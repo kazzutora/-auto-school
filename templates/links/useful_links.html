@@ -1,27 +1,46 @@
 {% extends "base.html" %}
 
+{% comment %}
+Useful links, FRONTEND.md A.10 and F10.
+
+Groups with a heading, and inside each a list. A row is the name, one line of
+description under it, and the external mark on the right.
+
+No bare urls, F10 says so outright and it is right: a wall of
+https://info-car.pl/... tells a reader nothing they cannot get from the name,
+and it is the thing that pushes the page sideways on a phone.
+{% endcomment %}
+
 {% block content %}
 <c-section>
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">Przydatne linki</c-heading>
-  <p class="mt-3 max-w-2xl text-lg text-ink-500">Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy.</p>
-
-  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
+  <c-breadcrumbs :items="breadcrumbs" />
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Przydatne linki</c-heading>
+  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu,
+    punkty karne, testy i urzędy.
+  </p>
 
   {% if groups %}
-    <div class="mt-10 space-y-12" data-testid="groups">
+    <div class="mt-12 flex flex-col gap-12" data-testid="groups">
       {% for group in groups %}
         <div>
           <c-heading level="2">{{ group.label }}</c-heading>
-          <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+          <ul class="mt-6 flex flex-col">
             {% for link in group.links %}
               <li>
-                {# Every link leaves the site: new tab, and rel guards the
-                   opener against the target rewriting it. #}
-                <c-card href="{{ link.url }}" target="_blank" rel="noopener noreferrer">
-                  <c-slot name="title">{{ link.title }}<span aria-hidden="true" class="ml-1 text-brand-500">&#8599;</span></c-slot>
-                  <p>{{ link.description }}</p>
-                  <p class="mt-2 break-all text-sm text-ink-500">{{ link.url }}<span class="sr-only">, otwiera się w nowej karcie</span></p>
-                </c-card>
+                {# Every one of these leaves the site: a new tab, and rel guards
+                   the opener against the target rewriting it. #}
+                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                   class="flex items-start justify-between gap-6 border-b border-line-soft py-5 transition hover:bg-paper-50">
+                  <span class="min-w-0">
+                    <span class="block font-semibold text-ink">{{ link.title }}</span>
+                    {% if link.description %}
+                      <span class="mt-1 block text-small text-ink-500">{{ link.description }}</span>
+                    {% endif %}
+                  </span>
+                  <c-icon name="external" size="sm" class="mt-1 shrink-0 text-ink-500" />
+                  <span class="sr-only">otwiera się w nowej karcie</span>
+                </a>
               </li>
             {% endfor %}
           </ul>
@@ -29,14 +48,22 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="mt-8">
-      <c-alert tone="info" title="Lista w przygotowaniu">Linki pojawią się wkrótce. W razie pytań zadzwoń: <a href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="font-bold text-brand-700 hover:underline">{{ site_settings.phone_primary }}</a>.</c-alert>
+    <div class="mt-12">
+      <c-alert tone="info" title="Lista w przygotowaniu">
+        <p>Linki pojawią się wkrótce.</p>
+        {% if site_settings.phone_primary %}
+          <p class="mt-4">
+            <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+              <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+            </c-button>
+          </p>
+        {% endif %}
+      </c-alert>
     </div>
   {% endif %}
-
-  {# pb-24 reserves the room the sticky bar takes on a phone. #}
-  <div class="mt-12 pb-24 sm:pb-0">
-    <c-cta-bar title="Nie wiesz, od czego zacząć?" phone="{{ site_settings.phone_primary }}" href="/zapisz-sie/" />
-  </div>
 </c-section>
+
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+<c-cta-bar title="Nie wiesz, od czego zacząć?"
+           phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

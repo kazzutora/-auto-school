@@ -27,7 +27,16 @@ nothing.
   {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
      full container width is a page nobody reads to the end. #}
   {% if body %}
-    <div class="mt-12">{% include "courses/_prose.html" with html=body %}</div>
+    {# F10: a contents list on a long legal page. Filled by static/js/app.js,
+       which counts the headings and gives up under six — a list over three
+       sections is longer than the thing it indexes. Hidden until then, so a
+       reader without javascript sees the text and no empty box. #}
+    <nav data-toc="[data-prose]" hidden aria-label="Spis treści"
+         class="u-narrow mt-12 flex flex-col gap-3 border-l-2 border-line-soft py-1 pl-6 text-ink-700">
+      <p class="label text-ink-500">Na tej stronie</p>
+    </nav>
+
+    <div class="mt-12" data-prose>{% include "courses/_prose.html" with html=body %}</div>
   {% endif %}
 </c-section>
 
