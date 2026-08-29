@@ -343,26 +343,46 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Focus, A.2: yellow ring 2px with a 2px offset. On a yellow ground the
-   * ring itself would vanish, so there it turns near black.
+   * Focus, A.2: a yellow ring, 2px, with a 2px offset.
    *
-   * CONTRACT GAP: the same vanishing act happens on every other light ground
-   * and A.2 does not cover it. The yellow measures 1.6:1 against white paper,
-   * which is the whole light theme, and 1.3:1 against the inverted hero in the
-   * dark theme, where the ink ground is near white. WCAG 1.4.11 wants 3:1 for
-   * a focus indicator against what is next to it, and A.11 asks for a visible
-   * focus everywhere plus Lighthouse accessibility at 95. Implemented literally
-   * as A.2 writes it, because the palette is frozen; closing it means either a
-   * ring that follows the ground the way the yellow ground already does, or a
-   * two tone ring, and both are edits to A.2. Owner's call.
+   * The yellow alone does not carry it. Measured against the grounds it has to
+   * sit on, #FFD400 is 1.6:1 on white paper — the whole light theme — and
+   * 1.3:1 on the inverted hero once the dark theme turns that near white. WCAG
+   * 1.4.11 asks 3:1 of a focus indicator against what surrounds it, and A.11
+   * asks for a visible focus everywhere and Lighthouse accessibility at 95.
+   * A ring nobody can see is the same as no ring.
+   *
+   * So the yellow keeps the ring, and a halo underneath gives it an edge. The
+   * halo is --on-ground, which every ground publishes: white on the inverted
+   * hero, near black on the page, near black on the yellow strip. Whatever the
+   * yellow is sitting on, one of the two edges reads.
+   *
+   * This closes the CONTRACT GAP F0 opened here and F11 point 2 found again.
    * ------------------------------------------------------------------ */
   :focus-visible {
     outline: 2px solid rgb(var(--accent));
     outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgb(var(--on-ground));
   }
 
+  /* A field wants A.5's second pixel of ink from the inside as well, and the
+   * two cannot be split across a utility and this rule: a `focus:shadow-field`
+   * class is a class plus a pseudo class and outranks :focus-visible, so it
+   * replaced the halo instead of joining it. Both live here, in one
+   * declaration, and the components carry neither. */
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    box-shadow:
+      inset 0 0 0 1px rgb(var(--ink)),
+      0 0 0 4px rgb(var(--on-ground));
+  }
+
+  /* On the yellow itself there is no yellow ring to see, so the ring becomes
+   * the near black and the halo the yellow it stands on. */
   .u-ground-accent :focus-visible {
     outline-color: rgb(var(--fixed-ink));
+    box-shadow: 0 0 0 4px rgb(var(--accent));
   }
 
   /* ------------------------------------------------------------------ *

@@ -12,6 +12,6 @@ aria-describedby, so a screen reader reads the reason and not just "invalid".
 <input type="{{ type }}" name="{{ name }}" id="id_{{ name }}" value="{{ value }}"
   {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
   {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
+  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
   {{ attrs }}>
 {% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

@@ -8,7 +8,7 @@ costs more accessibility than it buys.
 <c-vars name="" options="" value="" error="" class="" />
 <select name="{{ name }}" id="id_{{ name }}"
   {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
+  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
   {{ attrs }}>
   {% for option in options %}<option value="{{ option.0 }}" {% if option.0|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ option.1 }}</option>{% endfor %}
 </select>

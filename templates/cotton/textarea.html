@@ -6,6 +6,6 @@ so a stacked form lines up.
 <c-vars name="" rows="5" value="" error="" class="" />
 <textarea name="{{ name }}" id="id_{{ name }}" rows="{{ rows }}"
   {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-  class="w-full rounded border bg-paper px-4 py-3 text-ink transition focus:border-ink focus:shadow-field disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
+  class="w-full rounded border bg-paper px-4 py-3 text-ink transition focus:border-ink disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
   {{ attrs }}>{{ value }}</textarea>
 {% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

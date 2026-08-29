@@ -26,12 +26,10 @@ HONEYPOT = "website"
 # alternative — styling bare inputs in the base layer — would reach into the
 # shared stylesheet from a feature slice.
 FIELD_CLASS = (
-    "h-12 w-full rounded border border-line-soft bg-paper px-4 text-ink transition "
-    "focus:border-ink focus:shadow-field"
+    "h-12 w-full rounded border border-line-soft bg-paper px-4 text-ink transition focus:border-ink"
 )
 TEXTAREA_CLASS = (
-    "w-full rounded border border-line-soft bg-paper px-4 py-3 text-ink transition "
-    "focus:border-ink focus:shadow-field"
+    "w-full rounded border border-line-soft bg-paper px-4 py-3 text-ink transition focus:border-ink"
 )
 ERROR_CLASS = "border-state-err"
 

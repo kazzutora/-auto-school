@@ -150,15 +150,16 @@ module.exports = {
       2: "2px",
     },
 
-    // A.1: borders instead of shadows. Two exceptions, and neither is an
-    // elevation effect. `card` is the hard 2px offset a clickable card grows on
-    // hover, no blur. `field` is the second pixel of a focused field's frame:
-    // A.5 asks for a 2px ink border on focus that does not move the layout, and
-    // growing the border itself would shove everything beside it over.
+    // A.1: borders instead of shadows. The one exception is the hard 2px offset
+    // a clickable card grows on hover, and it has no blur.
+    //
+    // The focused field's second pixel of ink used to be a `field` token here.
+    // It moved into the base layer: a `focus:shadow-field` class outranks
+    // :focus-visible, so it replaced the focus halo rather than joining it, and
+    // the two have to be one declaration.
     boxShadow: {
       none: "none",
       card: "0 2px 0 0 rgb(var(--ink))",
-      field: "inset 0 0 0 1px rgb(var(--ink))",
     },
 
     extend: {
