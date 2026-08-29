@@ -78,11 +78,10 @@ comes from templates/cotton/, tech.md section 7.
 <c-section id="kategorie">
   <c-slot name="heading">Kategorie prawa jazdy</c-slot>
   {% if categories %}
-    <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-      {% for course in categories %}
-        <li class="flex"><c-course-card :course="course" class="w-full" /></li>
-      {% endfor %}
-    </ul>
+    {# The same file /kursy/ includes, so the tile cannot drift between the two
+       pages. The price question stays off here: nine of them would be nine
+       buttons in the second section of the most important page. #}
+    {% include "courses/_category_grid.html" with courses=categories %}
   {% else %}
     <c-alert tone="info" title="Oferta w przygotowaniu">
       Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne.
@@ -115,45 +114,16 @@ comes from templates/cotton/, tech.md section 7.
     <c-slot name="heading">Kierowca zawodowy</c-slot>
 
     {% if professional %}
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {% for course in professional %}
-          <li class="flex">
-            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
-              <c-slot name="title">{{ course.title }}</c-slot>
-              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
-              <p class="mt-6 flex items-center justify-between gap-3">
-                {% if course.total_hours %}
-                  <span class="data text-ink">{{ course.total_hours }} h</span>
-                {% else %}
-                  <span class="text-small text-ink-500">program indywidualny</span>
-                {% endif %}
-                <c-icon name="arrow-right" size="sm" class="text-ink-500" />
-              </p>
-            </c-card>
-          </li>
-        {% endfor %}
-      </ul>
+      {% include "courses/_pro_grid.html" with courses=professional %}
     {% endif %}
 
-    {% if psychotests or operator_courses %}
-      <ul class="mt-4 grid gap-4 sm:grid-cols-2">
-        {% for course in psychotests %}
-          <li class="flex">
-            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
-              <c-slot name="title">{{ course.title }}</c-slot>
-              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
-            </c-card>
-          </li>
-        {% endfor %}
-        {% for course in operator_courses %}
-          <li class="flex">
-            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
-              <c-slot name="title">{{ course.title }}</c-slot>
-              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
-            </c-card>
-          </li>
-        {% endfor %}
-      </ul>
+    {# A.9 point 4 puts these two on a row of their own, narrower than the four
+       above. Same card, two columns. #}
+    {% if psychotests %}
+      <div class="mt-4">{% include "courses/_pro_grid.html" with courses=psychotests narrow=1 %}</div>
+    {% endif %}
+    {% if operator_courses %}
+      <div class="mt-4">{% include "courses/_pro_grid.html" with courses=operator_courses narrow=1 %}</div>
     {% endif %}
   </c-section>
 {% endif %}

@@ -1,0 +1,30 @@
+{% comment %}
+Professional course cards, FRONTEND.md A.9 point 4.
+
+The other half of the offer: these have no category code to carry a tile, so
+they are cards with a title, a lead and the hours. Shared by the home page and
+/kierowca-zawodowy/ for the same reason the category grid is.
+
+Takes:
+  courses  the cards to draw.
+  narrow   optional. Two columns instead of four, for the pair A.9 point 4 puts
+           on a row of their own — psychotests and forklifts.
+{% endcomment %}
+<ul class="grid gap-4 sm:grid-cols-2{% if not narrow %} lg:grid-cols-4{% endif %}">
+  {% for course in courses %}
+    <li class="flex">
+      <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
+        <c-slot name="title">{{ course.title }}</c-slot>
+        {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
+        <p class="mt-6 flex items-center justify-between gap-3">
+          {% if course.total_hours %}
+            <span class="data text-ink">{{ course.total_hours }} h</span>
+          {% else %}
+            <span class="text-small text-ink-500">program indywidualny</span>
+          {% endif %}
+          <c-icon name="arrow-right" size="sm" class="text-ink-500" />
+        </p>
+      </c-card>
+    </li>
+  {% endfor %}
+</ul>

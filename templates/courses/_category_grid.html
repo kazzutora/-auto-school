@@ -1,0 +1,29 @@
+{% comment %}
+The licence category tiles, FRONTEND.md A.9 point 2.
+
+Shared by the home page and /kursy/ rather than written twice. F4 asks for the
+tile to look identical in both places and for the markup not to be duplicated,
+and one file is the only way that stays true after the next edit.
+
+Two columns on a phone, three from md, five from lg — the breakpoints in A.4.
+The tile is c-course-card and is a link in its own right, so nothing here wraps
+it in a second anchor.
+
+Takes:
+  courses        the tiles to draw.
+  ask_for_price  optional. Adds the price question under a tile that has no
+                 price. The listing turns it on, because that is where someone
+                 is comparing and has not opened a course yet; the home page
+                 leaves it off, where nine of them would be nine yellow-adjacent
+                 buttons in the second section of the most important page.
+{% endcomment %}
+<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+  {% for course in courses %}
+    <li class="flex flex-col">
+      <c-course-card :course="course" class="w-full" />
+      {% if ask_for_price and not course.price_gross %}
+        {% include "courses/_ask_for_price.html" with compact=1 %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
