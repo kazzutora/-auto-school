@@ -44,22 +44,6 @@ LIGHT = {
 
 # A.2, dark theme. Only the roles that move; the rest inherit from light, and
 # the yellow does not move at all because it reads better on black than white.
-DARK_OVERRIDES = {
-    "paper": (14, 14, 16),
-    "paper-50": (21, 21, 24),
-    "paper-100": (28, 28, 33),
-    "paper-200": (38, 38, 44),
-    "ink": (245, 245, 244),
-    "ink-700": (201, 201, 198),
-    "ink-500": (154, 154, 152),
-    "ink-300": (110, 110, 112),
-    "line": (245, 245, 244),
-    "line-soft": (46, 46, 52),
-    "deep": (26, 20, 64),
-    "state-ok": (79, 191, 143),
-    "state-warn": (224, 169, 58),
-    "state-err": (240, 112, 95),
-}
 
 # A.3. The three families and the exact weights the woff2 subsets are cut to.
 FAMILIES = {
@@ -163,46 +147,46 @@ def contrast(fore: tuple[int, ...], back: tuple[int, ...]) -> float:
 
 @pytest.fixture(scope="module")
 def themes() -> dict[str, dict[str, tuple[int, ...]]]:
-    light = declarations(block("  :root {"))
-    dark = light | declarations(block(":root[data-theme='dark']"))
-    system = light | declarations(block(":root:not([data-theme='light'])"))
-    return {"light": light, "dark": dark, "system dark": system}
+    """One theme now. The key stays so the pairs below read as they did."""
+    return {"light": declarations(block("  :root {"))}
 
 
 def test_light_palette_matches_the_contract(themes: dict) -> None:
     assert {k: v for k, v in themes["light"].items() if k in LIGHT} == LIGHT
 
 
-def test_dark_palette_matches_the_contract(themes: dict) -> None:
-    assert {k: v for k, v in themes["dark"].items() if k in LIGHT} == LIGHT | DARK_OVERRIDES
+def test_there_is_one_theme_and_it_is_the_light_one() -> None:
+    """The owner's call, and the reason for it.
 
-
-def test_the_two_dark_doors_agree(themes: dict) -> None:
-    """The system preference and the explicit choice must land on one palette.
-
-    A.2 asks for both, and the second has to win over the first, which it does
-    by coming later in the file. Nothing else about them may differ.
+    The design swapped roles on prefers-color-scheme, which put a near black
+    page under a near black header on every page but the home one: the two
+    grounds were the same colour and the hairline between them measured 1.4:1,
+    so the header dissolved into the page. A dark band over a light page
+    replaced it. This is what stops a second palette creeping back in.
     """
-    assert themes["dark"] == themes["system dark"]
+    # Uncommented, for the reason the helper exists: the comment above this
+    # test names both strings, and so does the stylesheet's own.
+    text = uncommented(css())
+    assert "prefers-color-scheme" not in text
+    assert "data-theme" not in text
 
 
-def test_no_colour_is_defined_only_in_a_media_block(themes: dict) -> None:
-    """F0 acceptance criterion 4.
+def test_no_colour_is_defined_inside_a_media_block() -> None:
+    """F0 acceptance criterion 4, and now the stronger form of it.
 
-    A value that exists only under prefers-color-scheme leaves the explicit
-    theme with nothing to fall back to.
+    A token that exists only under a media query is a token something else has
+    no value for. With one theme there is no reason for any of them to sit in
+    one.
     """
-    assert set(themes["system dark"]) - set(themes["light"]) == set()
-    assert set(themes["dark"]) - set(themes["light"]) == set()
+    tokens = re.findall(r"--[a-z0-9-]+:\s*\d+ \d+ \d+", css())
+    in_root = re.findall(r"--[a-z0-9-]+:\s*\d+ \d+ \d+", block("  :root {"))
+    assert tokens, "no colour tokens found at all"
+    assert len(tokens) == len(in_root), (
+        "a colour is declared outside :root — with one theme there is nowhere "
+        "else for one to belong"
+    )
 
 
-def test_the_accent_does_not_move_between_themes(themes: dict) -> None:
-    """A.2: the yellow reads better on black than on white, so it stays put."""
-    for name in ("accent", "accent-600", "accent-100"):
-        assert themes["light"][name] == themes["dark"][name]
-
-
-@pytest.mark.parametrize("theme", ["light", "dark"])
 @pytest.mark.parametrize(
     ("fore", "back", "floor"),
     [
@@ -219,28 +203,25 @@ def test_the_accent_does_not_move_between_themes(themes: dict) -> None:
         ("line", "paper", 3.0),
     ],
 )
-def test_contrast_holds_in_both_themes(
-    themes: dict, theme: str, fore: str, back: str, floor: float
+def test_contrast_holds_across_the_palette(
+    themes: dict, fore: str, back: str, floor: float
 ) -> None:
-    """A.2: body text at 4.5:1, large text and non text at 3:1, in both themes."""
-    ratio = contrast(themes[theme][fore], themes[theme][back])
-    assert ratio >= floor, f"{fore} on {back} is {ratio:.2f}:1 in the {theme} theme"
+    """A.2: body text at 4.5:1, large text and anything non text at 3:1."""
+    ratio = contrast(themes["light"][fore], themes["light"][back])
+    assert ratio >= floor, f"{fore} on {back} is {ratio:.2f}:1"
 
 
 def test_the_grounds_that_do_not_swap_carry_a_fixed_pair(themes: dict) -> None:
     """A.2 forbids white on yellow outright: 1.4:1.
 
-    The yellow and the deep purple are the same colour in both themes, so text
-    that followed --ink or --paper would invert underneath them and land on
-    that pair. Both grounds take the fixed pair instead.
+    The pair exists because these two grounds never swap. It outlived the dark
+    theme: the header is an ink ground now, and the machinery that lets a
+    ground carry its own foreground is what makes that work without a single
+    component naming a colour.
     """
-    for theme in ("light", "dark"):
-        tokens = themes[theme]
-        assert contrast(tokens["fixed-ink"], tokens["accent"]) >= 4.5
-        assert contrast(tokens["fixed-paper"], tokens["deep"]) >= 4.5
-        # The fixed pair is fixed: it is the same in both themes by definition.
-        assert tokens["fixed-ink"] == themes["light"]["fixed-ink"]
-        assert tokens["fixed-paper"] == themes["light"]["fixed-paper"]
+    tokens = themes["light"]
+    assert contrast(tokens["fixed-ink"], tokens["accent"]) >= 4.5
+    assert contrast(tokens["fixed-paper"], tokens["deep"]) >= 4.5
 
     grounds = (("u-ground-accent", "--fixed-ink"), ("u-ground-deep", "--fixed-paper"))
     for ground, variable in grounds:

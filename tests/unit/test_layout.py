@@ -149,14 +149,17 @@ def test_the_footer_sits_on_the_deep_ground(client: Client, settings_row: SiteSe
     assert "u-ground-deep" in footer.group()
 
 
-def test_the_header_is_sticky_and_watches_a_sentinel(
-    client: Client, settings_row: SiteSettings
-) -> None:
-    """A.9 point 0: the hairline becomes the ink rule once the page has moved."""
+def test_the_header_is_a_sticky_dark_band(client: Client, settings_row: SiteSettings) -> None:
+    """A.9 point 0, as the owner settled it.
+
+    The header used to take the page ground with a hairline underneath that
+    thickened once the page moved — which needed a sentinel above it to know
+    when that was. It is an ink band over a light page now, so the edge is the
+    colour change and there is nothing to observe.
+    """
     html = body(client)
     assert re.search(r'<header class="[^"]*u-header', html)
-    assert "data-header-sentinel" in html
-    assert html.index("data-header-sentinel") < html.index("u-header")
+    assert "data-header-sentinel" not in html
 
 
 @override_settings(DEBUG=False)

@@ -60,15 +60,38 @@ def test_the_page_has_no_serious_accessibility_violations(
 
 
 @pytest.mark.a11y
-def test_the_dark_theme_is_audited_too(live_server, site: SiteSettings, page: Page) -> None:
-    """A.2: the dark theme is a swap of roles, and it has to hold the same bar.
+@pytest.mark.parametrize("path", ["/", "/kursy/kat-b/", "/kontakt/", "/cennik/"])
+def test_the_header_never_becomes_the_page(
+    live_server, site: SiteSettings, page: Page, path: str
+) -> None:
+    """The defect that ended the dark theme, kept from coming back.
 
-    Contrast is the rule most likely to break in one theme and not the other,
-    and axe measures it against what is actually painted.
+    The header used to take the page ground, and a dark theme turned both near
+    black — so on every page but the home one the band dissolved into the page
+    and the only thing between them was a hairline at 1.4:1. It is an ink band
+    over a light page now, and these two must stay far apart.
     """
-    page.emulate_media(color_scheme="dark")
-    for path in ("/", "/kursy/kat-b/", "/kontakt/", "/cennik/"):
-        violations = audit(page, f"{live_server.url}{path}")
-        assert not violations, (
-            f"dark {path}\n{json.dumps(violations, indent=2, ensure_ascii=False)}"
-        )
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    found = page.evaluate(
+        """() => {
+            const lum = (colour) => {
+                const [r, g, b] = colour.match(/[0-9.]+/g).map(Number);
+                const ch = (v) => {
+                    v /= 255;
+                    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+                };
+                return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+            };
+            const header = getComputedStyle(document.querySelector('.u-header')).backgroundColor;
+            const body = getComputedStyle(document.body).backgroundColor;
+            const a = lum(header), b = lum(body);
+            return {
+                header: header,
+                body: body,
+                ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05),
+            };
+        }"""
+    )
+    assert found["ratio"] >= 3.0, f"{path}: header {found['header']} on page {found['body']}"
