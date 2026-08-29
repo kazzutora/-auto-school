@@ -141,6 +141,12 @@ def declarations(body: str) -> dict[str, tuple[int, ...]]:
     }
 
 
+def hex_to_rgb(value: str) -> tuple[int, ...]:
+    """#RRGGBB to the channel triplet the contrast maths wants."""
+    text = value.lstrip("#")
+    return tuple(int(text[index : index + 2], 16) for index in (0, 2, 4))
+
+
 def luminance(rgb: tuple[int, ...]) -> float:
     def channel(value: int) -> float:
         srgb = value / 255
@@ -397,3 +403,57 @@ def test_sprite_symbols_travel_with_their_own_stroke() -> None:
         assert 'stroke="currentColor"' in symbol
         assert 'stroke-width="1.75"' in symbol
     assert "<style" not in svg
+
+
+# --------------------------------------------------------------------------
+# email, DESIGN-REVIEW point 3
+
+EMAIL_TEMPLATES = Path(settings.BASE_DIR) / "templates" / "leads" / "email"
+
+# A mail client cannot read a css variable and many strip <style> outright, so
+# inline hex is the only way to colour an email. What it may not do is invent
+# colours: these are the A.2 values, written out.
+EMAIL_PALETTE = {
+    "#FFFFFF",  # paper
+    "#FAFAFA",  # paper-50
+    "#D9D9D6",  # line.soft
+    "#0E0E10",  # ink
+    "#5C5C66",  # ink-500
+    "#2A2060",  # deep
+    "#FFD400",  # accent
+}
+
+
+def test_the_emails_use_the_site_palette() -> None:
+    """The confirmation should look like the site that sent it.
+
+    They were still painted in the tech.md section 7 sketch that core v2
+    replaced, so the mail and the page disagreed on every colour.
+    """
+    strays: dict[str, set[str]] = {}
+    for path in sorted(EMAIL_TEMPLATES.glob("*.html")):
+        found = re.findall(r"#[0-9A-Fa-f]{6}", path.read_text("utf-8"))
+        used = {value.upper() for value in found}
+        if used - EMAIL_PALETTE:
+            strays[path.name] = used - EMAIL_PALETTE
+    assert not strays, f"colours that are not in A.2: {strays}"
+
+
+def test_the_emails_keep_their_text_readable(themes: dict) -> None:
+    """4.5:1 on every pair the mail actually puts together.
+
+    An email has no dark theme to swap into, so these are the light values and
+    they have to carry it on their own.
+    """
+    pairs = [
+        ("#0E0E10", "#FFFFFF", "body on the card"),
+        ("#5C5C66", "#FFFFFF", "quiet text on the card"),
+        ("#5C5C66", "#FAFAFA", "quiet text on the ground"),
+        ("#2A2060", "#FFFFFF", "the name and the links"),
+    ]
+    for fore, back, what in pairs:
+        found = contrast(hex_to_rgb(fore), hex_to_rgb(back))
+        assert found >= 4.5, f"{what} is {found:.2f}:1"
+
+    # A.2's banned pair, in case anyone paints a button here.
+    assert contrast(hex_to_rgb("#FFFFFF"), hex_to_rgb("#FFD400")) < 2.0
