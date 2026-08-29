@@ -16,11 +16,6 @@ Leaflet rides on this page only. base.html stays free of it: the mobile
 performance gate is 90 and one page carries a map, tech.md section 7.
 {% endcomment %}
 
-{% block head %}
-  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
-{% endblock %}
-
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />

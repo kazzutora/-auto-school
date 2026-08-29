@@ -13,13 +13,6 @@ Nothing here writes its own button, card, badge or field. Every one of those
 comes from templates/cotton/, tech.md section 7.
 {% endcomment %}
 
-{% block head %}
-  {# Leaflet rides on this one page rather than base.html: the mobile
-     performance gate is 90 and no other page carries a map. #}
-  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
-{% endblock %}
-
 {% block content %}
 
 {# ------------------------------------------------------------------ 1. Hero

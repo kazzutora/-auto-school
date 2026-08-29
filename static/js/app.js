@@ -16,6 +16,37 @@
    * something nobody is looking at yet. rootMargin starts the work a screen
    * early, so it is ready by the time it is on screen.
    */
+  /* Fetch leaflet the first time a map is about to be seen, and only then.
+   *
+   * defer delays execution, not the download: the tags in the page head cost
+   * 157 KB on load for a map that sits below the fold on both pages that have
+   * one, and that is what took the home page past the 400 KB first screen
+   * budget in A.11.
+   */
+  var leafletPromise = null;
+
+  function loadLeaflet(node) {
+    if (window.L) {
+      return Promise.resolve();
+    }
+    if (leafletPromise) {
+      return leafletPromise;
+    }
+    leafletPromise = new Promise(function (resolve, reject) {
+      var styles = document.createElement("link");
+      styles.rel = "stylesheet";
+      styles.href = node.dataset.leafletCss;
+      document.head.appendChild(styles);
+
+      var script = document.createElement("script");
+      script.src = node.dataset.leafletJs;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return leafletPromise;
+  }
+
   function buildMap(node) {
     var lat = parseFloat(node.dataset.lat);
     var lng = parseFloat(node.dataset.lng);
@@ -34,13 +65,19 @@
     }
   }
 
+  function reveal(node) {
+    loadLeaflet(node).then(function () {
+      buildMap(node);
+    });
+  }
+
   function initMaps() {
     var nodes = document.querySelectorAll("[data-map]");
-    if (!nodes.length || typeof window.L === "undefined") {
+    if (!nodes.length) {
       return;
     }
     if (typeof window.IntersectionObserver === "undefined") {
-      Array.prototype.forEach.call(nodes, buildMap);
+      Array.prototype.forEach.call(nodes, reveal);
       return;
     }
     var observer = new window.IntersectionObserver(
@@ -48,7 +85,7 @@
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             observer.unobserve(entry.target);
-            buildMap(entry.target);
+            reveal(entry.target);
           }
         });
       },
