@@ -1,73 +1,95 @@
 {% extends "base.html" %}
 
+{% comment %}
+A flat page, FRONTEND.md A.10. Serves o-nas, polityka-prywatnosci and rodo.
+
+CONTRACT GAP: F9 names templates/pages/page_detail.html. The skeleton's view has
+rendered core/page_detail.html since S0, and moving it is a python change that
+F9 also forbids, so the composition lands where the view looks — the same
+mismatch the contact page carries.
+
+o-nas gets more than its own text: the url map hands it the instructors and the
+fleet too, so the page runs text, then facts, then people, then cars. The two
+legal pages have none of those and render as the text alone, which is what they
+should be — a privacy policy with a photo gallery underneath is a privacy
+policy nobody finishes.
+
+Every list here disappears when it is empty rather than printing a heading over
+nothing.
+{% endcomment %}
+
 {% block content %}
 <c-section>
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">{{ page.title }}</c-heading>
-  {% if page.lead %}<p class="mt-3 max-w-2xl text-lg text-ink-500">{{ page.lead }}</p>{% endif %}
+  <c-breadcrumbs :items="breadcrumbs" />
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">{{ page.title }}</c-heading>
+  {% if page.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ page.lead }}</p>{% endif %}
 
-  <div class="mt-4"><c-breadcrumbs :items="breadcrumbs" /></div>
-
-  {% if about %}
-    {# The six lines of the old site said none of this. Numbers come from the
-       database, so they cannot drift away from the offer. #}
-    <dl class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="facts">
-      <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-        <dt class="text-sm text-ink-500">Na rynku</dt>
-        <dd class="font-display text-2xl font-bold text-brand-900">od {{ site_settings.founded_year }} roku</dd>
-      </div>
-      {# A tile reading zero is not a fact worth printing. #}
-      {% if instructors %}
-        <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-          <dt class="text-sm text-ink-500">Instruktorzy</dt>
-          <dd class="font-display text-2xl font-bold text-brand-900">{{ instructors|length }}</dd>
-        </div>
-      {% endif %}
-      {% if category_count %}
-        <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-          <dt class="text-sm text-ink-500">Kategorie prawa jazdy</dt>
-          <dd class="font-display text-2xl font-bold text-brand-900">{{ category_count }}</dd>
-        </div>
-      {% endif %}
-      <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-        <dt class="text-sm text-ink-500">Plac manewrowy</dt>
-        <dd class="font-display text-2xl font-bold text-brand-900">własny</dd>
-      </div>
-      <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-        <dt class="text-sm text-ink-500">Sale wykładowe</dt>
-        <dd class="font-display text-2xl font-bold text-brand-900">własne</dd>
-      </div>
-      <div class="rounded-xl border border-paper-100 bg-paper-0 p-5">
-        <dt class="text-sm text-ink-500">Zajęcia</dt>
-        <dd class="font-display text-2xl font-bold text-brand-900">także po rosyjsku</dd>
-      </div>
-    </dl>
-  {% endif %}
-
+  {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
+     full container width is a page nobody reads to the end. #}
   {% if body %}
-    <div class="prose mt-10 max-w-3xl text-ink-700 [&_h2]:mt-8 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-6 [&_h3]:font-display [&_h3]:text-xl [&_h3]:font-bold [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-3 [&_ul]:mt-3">{{ body }}</div>
+    <div class="mt-12">{% include "courses/_prose.html" with html=body %}</div>
   {% endif %}
 </c-section>
 
+{% if about %}
+  {# The facts, laid out as section 6 of the home page: big figures, no circle
+     icons, hairlines between them. The numbers are counted rather than written
+     down, so they cannot drift away from the offer. #}
+  <c-section id="fakty" tone="muted">
+    <c-slot name="heading">W liczbach</c-slot>
+    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
+      <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
+        <p class="data text-data-xl text-ink">{{ site_settings.founded_year }}</p>
+        <p class="mt-2 text-ink-700">rok założenia, działamy nieprzerwanie</p>
+      </li>
+      {# A tile reading zero is not a fact worth printing. #}
+      {% if instructors %}
+        <li class="lg:border-l lg:border-line-soft lg:px-8">
+          <p class="data text-data-xl text-ink">{{ instructors|length }}</p>
+          <p class="mt-2 text-ink-700">instruktorów prowadzi zajęcia i jazdy</p>
+        </li>
+      {% endif %}
+      {% if category_count %}
+        <li class="lg:border-l lg:border-line-soft lg:px-8">
+          <p class="data text-data-xl text-ink">{{ category_count }}</p>
+          <p class="mt-2 text-ink-700">kategorii prawa jazdy w ofercie</p>
+        </li>
+      {% endif %}
+      <li class="lg:border-l lg:border-line-soft lg:px-8">
+        <p class="font-display text-h2 font-bold text-ink">własny</p>
+        <p class="mt-2 text-ink-700">plac manewrowy i sale wykładowe</p>
+      </li>
+    </ul>
+  </c-section>
+{% endif %}
+
 {% if instructors %}
-  <c-section id="instruktorzy" tone="muted" heading="Instruktorzy" sub="Ludzie, z którymi jeździsz i którzy prowadzą wykłady.">
+  <c-section id="instruktorzy">
+    <c-slot name="heading">Instruktorzy</c-slot>
+    <c-slot name="sub">Ludzie, z którymi jeździsz i którzy prowadzą wykłady.</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
       {% for instructor in instructors %}
-        <li>
-          <c-card padded="">
+        <li class="flex">
+          <c-card padded="" class="flex w-full flex-col">
             {% if instructor.photo %}
-              {# alt carries the name: the person on the photo is the content. #}
-              <c-picture :image="instructor.photo" alt="{{ instructor.full_name }}" ratio="portrait" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" class="rounded-t-xl" />
+              {# 1:1, A.8. alt carries the name: the person is the content. #}
+              <c-picture :image="instructor.photo" alt="{{ instructor.full_name }}" ratio="square"
+                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
             {% endif %}
-            <div class="p-6">
-              <h3 class="font-display text-xl font-bold text-brand-900">{{ instructor.full_name }}</h3>
+            <div class="flex grow flex-col p-6">
+              <h3 class="text-h3">{{ instructor.full_name }}</h3>
               {% if instructor.role %}<p class="mt-1 text-ink-500">{{ instructor.role }}</p>{% endif %}
-              {% if instructor.since_year %}<p class="mt-2 text-sm text-ink-500">Szkoli od {{ instructor.since_year }} roku</p>{% endif %}
+              {% if instructor.since_year %}
+                <p class="mt-3 text-small text-ink-500">Szkoli od <span class="data">{{ instructor.since_year }}</span> roku</p>
+              {% endif %}
               {% if instructor.categories.all %}
-                <p class="mt-3 flex flex-wrap gap-1">
-                  {% for category in instructor.categories.all %}<c-badge tone="neutral">{{ category.code|default:category.title }}</c-badge>{% endfor %}
+                <p class="mt-4 flex flex-wrap gap-2">
+                  {% for category in instructor.categories.all %}
+                    <c-badge tone="neutral">{{ category.code|default:category.title }}</c-badge>
+                  {% endfor %}
                 </p>
               {% endif %}
-              {% if instructor.bio %}<p class="mt-3 text-ink-700">{{ instructor.bio }}</p>{% endif %}
+              {% if instructor.bio %}<p class="mt-4 text-ink-700">{{ instructor.bio }}</p>{% endif %}
             </div>
           </c-card>
         </li>
@@ -77,26 +99,30 @@
 {% endif %}
 
 {% if vehicle_groups %}
-  <c-section id="pojazdy" heading="Nasze pojazdy" sub="Uczysz się na aucie, na którym potem zdajesz.">
-    <div class="space-y-10" data-testid="vehicles">
+  <c-section id="pojazdy" tone="muted">
+    <c-slot name="heading">Nasze pojazdy</c-slot>
+    <c-slot name="sub">Uczysz się na aucie, na którym potem zdajesz.</c-slot>
+    <div class="flex flex-col gap-12" data-testid="vehicles">
       {% for group in vehicle_groups %}
         <div>
           <c-heading level="3">{{ group.course.title }}</c-heading>
-          <ul class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {% for vehicle in group.vehicles %}
-              <li>
-                <c-card padded="">
+              <li class="flex">
+                <c-card padded="" class="flex w-full flex-col">
                   {% if vehicle.photo %}
-                    <c-picture :image="vehicle.photo" alt="{{ vehicle.make }} {{ vehicle.model }}" ratio="video" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" class="rounded-t-xl" />
+                    {# 3:2, A.8: the proportion a car actually looks like. #}
+                    <c-picture :image="vehicle.photo" alt="{{ vehicle.make }} {{ vehicle.model }}" ratio="card"
+                               sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
                   {% endif %}
-                  <div class="p-6">
-                    <h4 class="font-display text-lg font-bold text-brand-900">{{ vehicle.make }} {{ vehicle.model }}</h4>
-                    <p class="mt-2 flex flex-wrap gap-2">
+                  <div class="flex grow flex-col p-6">
+                    <h4 class="text-h3">{{ vehicle.make }} {{ vehicle.model }}</h4>
+                    <p class="mt-3 flex flex-wrap gap-2">
                       {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
                       <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
                       {% if vehicle.is_exam_spec %}<c-badge tone="success">Zgodny z egzaminem</c-badge>{% endif %}
                     </p>
-                    {% if vehicle.note %}<p class="mt-2 text-sm text-ink-500">{{ vehicle.note }}</p>{% endif %}
+                    {% if vehicle.note %}<p class="mt-3 text-small text-ink-500">{{ vehicle.note }}</p>{% endif %}
                   </div>
                 </c-card>
               </li>
@@ -108,7 +134,7 @@
   </c-section>
 {% endif %}
 
-<div class="pb-24 sm:pb-0">
-  <c-cta-bar data-testid="call-bar" title="Chcesz zacząć kurs?" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
-</div>
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+<c-cta-bar data-testid="call-bar" title="Chcesz zacząć kurs?"
+           phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}
