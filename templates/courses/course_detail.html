@@ -1,106 +1,185 @@
 {% extends "base.html" %}
+
+{% comment %}
+Course page, FRONTEND.md A.10 and F5. Serves every kind: licence categories,
+professional courses, psychotests and the forklift page all come through
+courses.views.course_detail.
+
+The shape is a decision funnel. The facts row answers "does this apply to me"
+in one line, the left column answers "what do I get and what do I need", and
+the card on the right stays in view the whole way down because it carries the
+only action on the page.
+{% endcomment %}
+
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
 
-  <div class="mt-4 flex flex-wrap items-center gap-3">
-    {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
-    {% for language in course.languages %}<c-badge tone="success">{{ language|upper }}</c-badge>{% endfor %}
-  </div>
-
-  <div class="mt-2">
-    <c-heading level="1">{{ course.title }}</c-heading>
-  </div>
-
-  {% if course.lead %}<p class="mt-3 max-w-2xl text-lg text-ink-500">{{ course.lead }}</p>{% endif %}
-
-  {% if course.hero_image %}
-    <div class="mt-6 overflow-hidden rounded-xl border border-paper-100">
-      <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}" ratio="video" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
-    </div>
+  {% if course.code or course.languages %}
+    <p class="mt-6 flex flex-wrap gap-2">
+      {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
+      {% for language in course.languages %}<c-badge tone="neutral">{{ language|upper }}</c-badge>{% endfor %}
+    </p>
   {% endif %}
 
-  <div class="mt-10 grid gap-10 lg:grid-cols-3">
-    <div class="lg:col-span-2">
+  <c-heading level="1" class="mt-4">{{ course.title }}</c-heading>
+  {% if course.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ course.lead }}</p>{% endif %}
+
+  {# The facts row, A.10: age, hours and price in the data face, because every
+     one of them is a figure and A.3 puts figures in the mono. It is a dl so the
+     label belongs to its value even when the row wraps on a phone. #}
+  <dl class="mt-10 flex flex-wrap gap-x-12 gap-y-6 border-y border-line-soft py-6">
+    {% if course.min_age %}
+      <div>
+        <dt class="label text-ink-500">Wiek od</dt>
+        <dd class="data mt-1 text-data-lg text-ink">{{ course.min_age }} lat</dd>
+        {% if start_age %}
+          <dd class="mt-1 text-small text-ink-500">kurs od {{ start_age.0 }} lat {{ start_age.1 }} mies.</dd>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if course.theory_hours %}
+      <div>
+        <dt class="label text-ink-500">Teoria</dt>
+        <dd class="data mt-1 text-data-lg text-ink">{{ course.theory_hours }} h</dd>
+      </div>
+    {% endif %}
+    {% if course.practice_hours %}
+      <div>
+        <dt class="label text-ink-500">Praktyka</dt>
+        <dd class="data mt-1 text-data-lg text-ink">{{ course.practice_hours }} h</dd>
+      </div>
+    {% endif %}
+    {% if course.total_hours %}
+      <div>
+        <dt class="label text-ink-500">Razem</dt>
+        <dd class="data mt-1 text-data-lg text-ink">{{ course.total_hours }} h</dd>
+      </div>
+    {% endif %}
+    {# course.price_gross, not price: format_price returns the note on its own
+       when there is no amount, so `price` is truthy for a course that has none
+       and the figure slot would fill with a sentence. #}
+    <div>
+      <dt class="label text-ink-500">Cena</dt>
+      {% if course.price_gross %}
+        <dd class="data mt-1 text-data-lg text-ink">{{ price }}</dd>
+      {% else %}
+        <dd class="mt-1 text-ink-500">ustalana indywidualnie</dd>
+      {% endif %}
+    </div>
+  </dl>
+
+  <div class="mt-12 grid gap-12 lg:grid-cols-3">
+    <div class="min-w-0 lg:col-span-2">
+      {% if course.hero_image %}
+        <div class="mb-10 overflow-hidden rounded border border-line-soft">
+          <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}"
+                     ratio="card" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
+        </div>
+      {% endif %}
+
       {% if entitlements %}
         <c-heading level="2">Uprawnia do kierowania</c-heading>
-        <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ entitlements }}</div>
+        <div class="mt-6">{% include "courses/_prose.html" with html=entitlements %}</div>
       {% endif %}
 
       {% if requirements %}
-        <div class="mt-8">
+        <div class="mt-12">
           <c-heading level="2">Wymagania</c-heading>
-          <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ requirements }}</div>
+          <div class="mt-6">{% include "courses/_prose.html" with html=requirements %}</div>
         </div>
       {% endif %}
 
       {% if body %}
-        <div class="mt-8">
+        <div class="mt-12">
           <c-heading level="2">O kursie</c-heading>
-          <div class="prose mt-3 text-ink-700 [&_li]:ml-5 [&_li]:list-disc [&_p]:mt-2 [&_ul]:mt-2">{{ body }}</div>
+          <div class="mt-6">{% include "courses/_prose.html" with html=body %}</div>
         </div>
       {% endif %}
     </div>
 
-    <aside>
-      <c-heading level="2">W skrócie</c-heading>
-      <div class="mt-3">
-        <c-table :headers="fact_headers">
-          {% if course.min_age %}
-            <tr>
-              <th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Wiek</th>
-              <td class="px-4 py-3 font-bold text-ink-900">
-                od {{ course.min_age }} lat
-                {% if start_age %}<span class="block text-sm font-normal text-ink-500">kurs od {{ start_age.0 }} lat {{ start_age.1 }} mies.</span>{% endif %}
-              </td>
-            </tr>
-          {% endif %}
-          {% if course.theory_hours %}
-            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Teoria</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.theory_hours }} h</td></tr>
-          {% endif %}
-          {% if course.practice_hours %}
-            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Praktyka</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.practice_hours }} h</td></tr>
-          {% endif %}
-          {% if course.total_hours %}
-            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Razem</th><td class="px-4 py-3 font-bold text-ink-900">{{ course.total_hours }} h</td></tr>
-          {% endif %}
-          {% if price %}
-            <tr><th scope="row" class="px-4 py-3 text-left font-normal text-ink-700">Cena</th><td class="px-4 py-3 font-bold text-brand-700">{{ price }}</td></tr>
-          {% endif %}
-        </c-table>
-      </div>
+    {# self-start, or the grid stretches the column to the row height and there
+       is nothing left for sticky to slide against. It sticks below the 72px
+       header and only from lg: on a phone the card belongs in the flow, where
+       the reader meets it after the text rather than on top of it. #}
+    <aside class="min-w-0 lg:sticky lg:top-[88px] lg:self-start">
+      <c-card class="flex flex-col">
+        <c-slot name="title">{{ course.title }}</c-slot>
 
-      {% if not course.price_gross %}
-        <div class="mt-4">{% include "courses/_ask_for_price.html" %}</div>
-      {% endif %}
+        <dl class="mt-2 flex flex-col gap-4">
+          <div>
+            <dt class="label text-ink-500">Cena</dt>
+            {% if course.price_gross %}
+              <dd class="data mt-1 text-data-xl text-ink">{{ price }}</dd>
+            {% else %}
+              <dd class="mt-2 text-ink-700">
+                Cenę tego kursu ustalamy indywidualnie — podamy ją od ręki.
+              </dd>
+            {% endif %}
+          </div>
+
+          <div>
+            <dt class="label text-ink-500">Najbliższy start</dt>
+            {% if intakes %}
+              <dd class="mt-1 flex items-baseline gap-2">
+                <span class="data text-data-lg text-ink">{{ intakes.0.start_date|date:"d.m" }}</span>
+                <span class="data text-small text-ink-500">{{ intakes.0.start_date|date:"Y" }}</span>
+              </dd>
+              <dd class="mt-2 flex flex-wrap gap-2">
+                <c-badge tone="neutral">{{ intakes.0.get_mode_display }}</c-badge>
+                <c-badge tone="neutral">{{ intakes.0.language|upper }}</c-badge>
+              </dd>
+            {% else %}
+              {# F5: never an empty slot where a date belongs. #}
+              <dd class="mt-2 text-ink-700">Zadzwoń, ustalimy termin.</dd>
+            {% endif %}
+          </div>
+        </dl>
+
+        <div class="mt-8 flex flex-col gap-3">
+          {% if course.price_gross %}
+            <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">Zapisz się</c-button>
+          {% else %}
+            <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">Zapytaj o cenę</c-button>
+          {% endif %}
+          {% if site_settings.phone_primary %}
+            <c-button variant="secondary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+              <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+            </c-button>
+          {% endif %}
+        </div>
+      </c-card>
     </aside>
   </div>
 
   {% if intakes %}
-    <div class="mt-14">
+    <div class="mt-16">
       <c-heading level="2">Najbliższe terminy</c-heading>
-      <div class="mt-4">
-        <c-table :headers="intake_headers">
-          {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
-        </c-table>
+      <div class="mt-6">
+        {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
       </div>
+      <p class="mt-8">
+        <c-button variant="ghost" href="{% url 'courses:intakes' %}">
+          Wszystkie terminy <c-icon name="arrow-right" size="sm" />
+        </c-button>
+      </p>
     </div>
   {% endif %}
 
   {% if vehicles %}
-    <div class="mt-14">
+    <div class="mt-16">
       <c-heading level="2">Pojazdy szkoleniowe</c-heading>
-      <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {% for vehicle in vehicles %}
-          <li>
-            <c-card>
+          <li class="flex">
+            <c-card class="flex w-full flex-col">
               <c-slot name="title">{{ vehicle.make }} {{ vehicle.model }}</c-slot>
               <p class="flex flex-wrap gap-2">
                 {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
                 <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
                 {% if vehicle.is_exam_spec %}<c-badge tone="success">Zgodny z egzaminem</c-badge>{% endif %}
               </p>
-              {% if vehicle.note %}<p class="mt-2 text-sm text-ink-500">{{ vehicle.note }}</p>{% endif %}
+              {% if vehicle.note %}<p class="mt-3 text-small text-ink-500">{{ vehicle.note }}</p>{% endif %}
             </c-card>
           </li>
         {% endfor %}
@@ -109,8 +188,35 @@
   {% endif %}
 </c-section>
 
-{# Sticky at the bottom on mobile, so calling never needs a scroll. #}
-<div class="pb-24 sm:pb-0">
-  <c-cta-bar data-testid="call-bar" title="Zapisz się na {{ course.title }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
-</div>
+{# ------------------------------------------------------------ enrolment
+   CONTRACT GAP: A.10 and F5 both end this page with a lead form carrying the
+   course already chosen, and there is no form to put here. apps/leads has its
+   model, services and tasks but no forms.py, no views.py and no urls.py, so
+   LeadForm does not exist and /zapisz-sie/ answers nothing — tech.md section 5
+   lists both and DEV.md ships them in S3. The same gap ends the home page.
+
+   Until then this carries the two actions that do work, and enrol_url stays the
+   frozen string the rest of the site points at.
+   ------------------------------------------------------------ #}
+<c-section tone="muted">
+  <div class="u-narrow">
+    <c-heading level="2">Zapisz się na {{ course.title }}</c-heading>
+    <p class="mt-4 text-body-lg text-ink-700">
+      Zapisy przyjmujemy telefonicznie i w biurze. Powiedz, że chodzi o
+      {{ course.title }} — dobierzemy najbliższy termin.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      {% if site_settings.phone_primary %}
+        <c-button variant="primary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+      <c-button variant="secondary" size="lg" href="{% url 'core:contact' %}">Dane kontaktowe i dojazd</c-button>
+    </div>
+  </div>
+</c-section>
+
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+<c-cta-bar data-testid="call-bar" title="Zapisz się na {{ course.title }}"
+           phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

@@ -1,0 +1,21 @@
+{% comment %}
+Rendered markdown from a course field, FRONTEND.md A.3.
+
+The base layer styles headings and paragraphs, but a bullet list arriving as
+html from markdown has no class of its own to hang anything on. Rather than
+repeating the same wall of arbitrary variants at each of the three call sites,
+it lives here once.
+
+68ch, because A.3 caps a line of text at 60 to 75 characters. Hyphenation comes
+from the base layer through lang="pl" on the document, which is what stops
+kwalifikacja and psychologiczne from pushing the column at 320px.
+
+Takes: html — already rendered and marked safe by the view.
+{% endcomment %}
+<div class="u-narrow text-ink-700
+            [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-ink
+            [&_li]:ml-5 [&_li]:mt-2 [&_li]:list-disc
+            [&_ol]:mt-4 [&_ol_li]:list-decimal
+            [&_p]:mt-4 [&_p:first-child]:mt-0
+            [&_strong]:font-semibold [&_strong]:text-ink
+            [&_ul]:mt-4">{{ html }}</div>
