@@ -214,12 +214,75 @@
     );
   }
 
+  /* Table of contents on a long legal page, FRONTEND.md F10.
+   *
+   * Built here rather than by the renderer because the renderer is python and
+   * this is a frontend change, but also because it is genuinely an
+   * enhancement: the policy is complete without it, and a reader with no
+   * javascript loses a shortcut rather than any of the text.
+   *
+   * Only past the threshold F10 sets. A contents list over three headings is
+   * longer than the thing it indexes.
+   */
+  var TOC_THRESHOLD = 5;
+
+  function slugify(text, taken) {
+    var base =
+      text
+        .toLowerCase()
+        .replace(/[ąćęłńóśźż]/g, function (letter) {
+          return { ą: "a", ć: "c", ę: "e", ł: "l", ń: "n", ó: "o", ś: "s", ź: "z", ż: "z" }[letter];
+        })
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "sekcja";
+    var slug = base;
+    var suffix = 2;
+    while (taken[slug]) {
+      slug = base + "-" + suffix++;
+    }
+    taken[slug] = true;
+    return slug;
+  }
+
+  function initTableOfContents() {
+    var holder = document.querySelector("[data-toc]");
+    if (!holder) {
+      return;
+    }
+    var scope = document.querySelector(holder.dataset.toc);
+    var headings = scope ? scope.querySelectorAll("h2") : [];
+    if (headings.length <= TOC_THRESHOLD) {
+      return;
+    }
+
+    var taken = {};
+    var list = document.createElement("ol");
+    list.className = "flex flex-col gap-2";
+
+    Array.prototype.forEach.call(headings, function (heading) {
+      if (!heading.id) {
+        heading.id = slugify(heading.textContent || "", taken);
+      }
+      var item = document.createElement("li");
+      var link = document.createElement("a");
+      link.href = "#" + heading.id;
+      link.textContent = heading.textContent;
+      link.className = "underline underline-offset-4 hover:text-ink";
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+
+    holder.appendChild(list);
+    holder.hidden = false;
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initMaps();
     initCookieBanner();
     initModals();
     linkFieldErrors();
     initHeaderRule();
+    initTableOfContents();
   });
 
   /* htmx replaces the enrolment form with a version carrying its errors, and

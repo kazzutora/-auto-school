@@ -10,9 +10,13 @@ it lives here once.
 from the base layer through lang="pl" on the document, which is what stops
 kwalifikacja and psychologiczne from pushing the column at 320px.
 
+overflow-wrap:anywhere for the same reason one step further: a privacy policy
+cites urls, and hyphenation will not break a word with no vowels in it. A single
+long link is enough to push the whole page sideways, F10.
+
 Takes: html — already rendered and marked safe by the view.
 {% endcomment %}
-<div class="u-narrow text-ink-700
+<div class="u-narrow text-ink-700 [overflow-wrap:anywhere]
             [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-ink
             [&_li]:ml-5 [&_li]:mt-2 [&_li]:list-disc
             [&_ol]:mt-4 [&_ol_li]:list-decimal

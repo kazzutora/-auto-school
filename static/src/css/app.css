@@ -395,6 +395,17 @@
   [x-cloak] {
     display: none !important;
   }
+
+  /* The hidden attribute means hidden.
+   *
+   * The ua stylesheet says [hidden] { display: none }, and any author display
+   * declaration outranks it — so an element carrying both `hidden` and a
+   * utility like `flex` renders anyway. That is one specificity lesson away
+   * from shipping a panel nobody asked to see, and it already had: the table
+   * of contents on a legal page showed up with four headings on it. */
+  [hidden] {
+    display: none !important;
+  }
 }
 
 @layer components {
