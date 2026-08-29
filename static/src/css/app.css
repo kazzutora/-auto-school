@@ -550,6 +550,39 @@
     border-bottom-color: rgb(var(--line));
   }
 
+  /* The honeypot, DEV.md S3.1 and FRONTEND.md F7.
+   *
+   * Gone for a person, still there for a bot. Deliberately not display:none
+   * and not visibility:hidden on the container: those are the first two things
+   * a scraper skips, and a trap nothing falls into catches nothing. The field
+   * carries aria-hidden and tabindex=-1 of its own, so a screen reader and the
+   * tab order both pass it by.
+   */
+  .u-trap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* While htmx has a request in flight it puts .htmx-request on the element
+   * that made it. That is the whole submitting state, F7 point 4: the idle
+   * label goes, the sending one arrives, and the button stops being pressable
+   * through hx-disabled-elt on the form. */
+  [data-when-sending] {
+    display: none;
+  }
+
+  .htmx-request [data-when-sending] {
+    display: inline-flex;
+  }
+
+  .htmx-request [data-when-idle] {
+    display: none;
+  }
+
   /* Anything wide scrolls inside its own box. The page never moves sideways,
    * A.4. */
   .u-scroll-x {

@@ -230,4 +230,52 @@
   document.body.addEventListener("htmx:afterSwap", function () {
     linkFieldErrors();
   });
+
+  /* The rate limit answers 429 and htmx swaps 2xx only, so the message the
+   * server took the trouble to render was being dropped on the floor and the
+   * visitor saw a button that did nothing. 429 carries a body meant to be
+   * read: let it through. */
+  var SWAPPABLE_ERRORS = [429];
+
+  document.body.addEventListener("htmx:beforeSwap", function (event) {
+    if (SWAPPABLE_ERRORS.indexOf(event.detail.xhr.status) !== -1) {
+      event.detail.shouldSwap = true;
+      event.detail.isError = false;
+    }
+  });
+
+  /* F7 point 6: the server did not answer.
+   *
+   * htmx swaps nothing on a failed response, which is the behaviour we want —
+   * everything the visitor typed is still in the form. All that is missing is
+   * telling them, and giving them a number, so the submission is not simply
+   * lost in silence.
+   */
+  function formErrorRegion(source) {
+    var form = source && source.closest ? source.closest("form") : null;
+    return form ? form.querySelector("[data-form-error]") : null;
+  }
+
+  document.body.addEventListener("htmx:responseError", function (event) {
+    var region = formErrorRegion(event.detail.elt);
+    if (region) {
+      region.hidden = false;
+      region.scrollIntoView({ block: "nearest" });
+    }
+  });
+
+  document.body.addEventListener("htmx:sendError", function (event) {
+    var region = formErrorRegion(event.detail.elt);
+    if (region) {
+      region.hidden = false;
+    }
+  });
+
+  /* A fresh attempt starts without the last one's failure on screen. */
+  document.body.addEventListener("htmx:beforeRequest", function (event) {
+    var region = formErrorRegion(event.detail.elt);
+    if (region) {
+      region.hidden = true;
+    }
+  });
 })();
