@@ -19,10 +19,13 @@ env:
 
 jobs:
   lint:
-    name: ruff and mypy
+    name: ruff, mypy and the commit log
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The commit message check reads the range this pull request adds.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -38,6 +41,36 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy apps/
+
+      - name: Commit messages
+        # tech.md section 12: type(scope): summary, one of a fixed set of
+        # types, imperative, lower case, no full stop, about 50 characters.
+        # Only the commits this pull request adds are judged — history is not
+        # rewritten to satisfy a rule added later.
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          fail=0
+          while IFS= read -r subject; do
+            [ -z "$subject" ] && continue
+            case "$subject" in
+              Merge*|Revert*) continue ;;
+            esac
+            if ! printf '%s' "$subject"               | grep -qE '^(feat|fix|test|refactor|chore|docs|perf|ci)(\([a-z0-9-]+\))?: [a-z]'; then
+              echo "::error::not type(scope): summary — $subject"
+              fail=1
+            fi
+            case "$subject" in
+              *.) echo "::error::ends with a full stop — $subject"; fail=1 ;;
+            esac
+            if [ "${#subject}" -gt 52 ]; then
+              echo "::error::${#subject} characters, the limit is about 50 — $subject"
+              fail=1
+            fi
+          done <<< "$(git log --format=%s "$BASE..$HEAD")"
+          exit $fail
 
   test:
     name: migrations and pytest
@@ -100,8 +133,6 @@ jobs:
         # built file, FRONTEND.md A.11. Without this step it has nothing to
         # measure and skips, which is a gate that does not gate. Same standalone
         # binary the tailwind stage of the Dockerfile uses: no node in CI either.
-        env:
-          TAILWIND_VERSION: "3.4.17"
         run: |
           RELEASE="https://github.com/tailwindlabs/tailwindcss/releases/download"
           curl -fsSL -o ./tailwindcss "$RELEASE/v$TAILWIND_VERSION/tailwindcss-linux-x64"
