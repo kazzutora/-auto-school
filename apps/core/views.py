@@ -9,6 +9,7 @@ from django import forms
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.core.markdown import render_markdown
 from apps.core.models import Page, SiteSettings
@@ -129,6 +130,97 @@ CONTACT_DESCRIPTION = (
     "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. "
     "Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
 )
+
+# FRONTEND.md A.9: three rows of terms, five questions, and the reviews strip.
+UPCOMING_ON_HOME = 3
+FAQS_ON_HOME = 5
+TESTIMONIALS_ON_HOME = 3
+# A.9 point 7: fewer than two and the section does not render at all.
+TESTIMONIALS_MINIMUM = 2
+
+# tech.md section 8 fixes the suffix as "— OSK Nawrocki Wieluń", so the subject
+# does not repeat the town: "Prawo jazdy — OSK Nawrocki Wieluń" carries the same
+# two keywords FRONTEND.md F3 asks for without saying Wieluń twice.
+HOME_SUBJECT = "Prawo jazdy"
+HOME_DESCRIPTION = (
+    "Ośrodek szkolenia kierowców w Wieluniu od 1996 roku. Kategorie AM–D, "
+    "kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, "
+    "rosyjsku i ukraińsku."
+)
+
+
+def faq_jsonld(faqs: list[Any]) -> dict[str, Any]:
+    """schema.org FAQPage, tech.md section 8 and FRONTEND.md A.9 point 8.
+
+    Only the questions actually on the page. Marking up answers a reader cannot
+    see is what the guideline calls hidden content, and it is the fastest way to
+    lose the rich result entirely.
+    """
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": faq.question,
+                "acceptedAnswer": {"@type": "Answer", "text": faq.answer},
+            }
+            for faq in faqs
+        ],
+    }
+
+
+def home(request: HttpRequest) -> HttpResponse:
+    """The home page, tech.md section 5 and FRONTEND.md A.9.
+
+    Eleven sections in a fixed order, and three of them decide for themselves
+    whether they exist at all: no joinable group, fewer than two verifiable
+    reviews or no published questions, and the section is simply absent. An
+    empty block that says nothing is worse than one section fewer.
+
+    The slice selectors are imported inside the function on purpose, the same
+    way page_detail does it: apps/core is shared and must not depend on a
+    feature slice at import time.
+    """
+    from apps.courses import selectors as courses
+    from apps.courses.models import Course
+    from apps.links.selectors import published_faqs
+    from apps.reviews.selectors import published_testimonials
+
+    site = SiteSettings.get_solo()
+    faqs = list(published_faqs()[:FAQS_ON_HOME])
+    testimonials = list(published_testimonials()[:TESTIMONIALS_ON_HOME])
+
+    # Two numbers the page prints as facts. Counted rather than written down:
+    # A.9 point 1 says fifteen courses and A.9 point 6 says years on the market,
+    # and both are wrong the moment the owner adds a course or the year turns.
+    course_count = courses.active_courses().count()
+    years_on_market = timezone.localdate().year - site.founded_year
+
+    return render(
+        request,
+        "pages/home.html",
+        {
+            "seo": page_seo(
+                request,
+                subject=HOME_SUBJECT,
+                description=HOME_DESCRIPTION,
+                extra_jsonld=[faq_jsonld(faqs)] if faqs else None,
+            ),
+            "course_count": course_count,
+            "years_on_market": years_on_market,
+            "categories": list(courses.active_courses(Course.Kind.LICENSE)),
+            "intakes": list(courses.joinable_intakes()[:UPCOMING_ON_HOME]),
+            "professional": list(courses.active_courses(Course.Kind.PROFESSIONAL)),
+            "psychotests": list(courses.active_courses(Course.Kind.PSYCHOTEST)),
+            "operator_courses": list(courses.active_courses(Course.Kind.OPERATOR)),
+            # A.9 point 7: two is the floor, and one review is not a strip.
+            "testimonials": testimonials if len(testimonials) >= TESTIMONIALS_MINIMUM else [],
+            "faqs": faqs,
+            "directions": directions(site),
+            "enrol_url": ENROL_URL,
+        },
+    )
 
 
 def directions(site: SiteSettings) -> dict[str, str]:

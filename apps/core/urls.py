@@ -16,6 +16,9 @@ app_name = "core"
 FLAT_PAGES = "|".join(views.FLAT_PAGE_SLUGS)
 
 urlpatterns = [
+    # tech.md section 5 puts the home page on core.views.home. It is first so a
+    # bare "" never reaches the flat page pattern below.
+    path("", views.home, name="home"),
     path("kontakt/", views.contact, name="contact"),
     re_path(rf"^(?P<slug>{FLAT_PAGES})/$", views.page_detail, name="page"),
 ]
