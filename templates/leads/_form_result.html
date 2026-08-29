@@ -1,0 +1,36 @@
+{% comment %}
+What htmx swaps in after a submit, tech.md section 5.
+
+Three answers through one template: the confirmation, the form again with its
+errors, and the rate limit. Each replaces #lead-form in place, so the visitor
+never loses their place on the page.
+{% endcomment %}
+{% if sent %}
+  <div id="lead-form" role="status">
+    <c-alert tone="success" title="Zgłoszenie przyjęte">
+      <p>Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń do nas.</p>
+      {% if site_settings.phone_primary %}
+        <p class="mt-4">
+          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        </p>
+      {% endif %}
+    </c-alert>
+  </div>
+{% elif rate_limited %}
+  <div id="lead-form">
+    <c-alert tone="warning" title="Za dużo zgłoszeń">
+      <p>Z tego połączenia wysłano już kilka zgłoszeń. Spróbuj za godzinę albo po prostu zadzwoń.</p>
+      {% if site_settings.phone_primary %}
+        <p class="mt-4">
+          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        </p>
+      {% endif %}
+    </c-alert>
+  </div>
+{% else %}
+  {% include "leads/_form.html" %}
+{% endif %}

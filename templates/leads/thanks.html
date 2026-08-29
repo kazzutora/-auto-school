@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% comment %}
+Where a submission without javascript lands, tech.md section 5. Noindex: it has
+nothing to offer a search engine and everything to lose by outranking the form.
+{% endcomment %}
+
+{% block content %}
+<c-section>
+  <div class="u-narrow">
+    <p class="label text-ink-500">Zgłoszenie przyjęte</p>
+    <c-heading level="1" class="mt-4">Dziękujemy</c-heading>
+    <p class="mt-6 text-body-lg text-ink-700">
+      Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń — odbierzemy od razu.
+    </p>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      {% if site_settings.phone_primary %}
+        <c-button variant="primary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+      <c-button variant="secondary" size="lg" href="{% url 'courses:list' %}">Zobacz kursy</c-button>
+    </div>
+  </div>
+</c-section>
+{% endblock %}

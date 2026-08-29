@@ -221,4 +221,13 @@
     linkFieldErrors();
     initHeaderRule();
   });
+
+  /* htmx replaces the enrolment form with a version carrying its errors, and
+   * that markup never went through DOMContentLoaded. Without this the fields
+   * come back marked aria-invalid while pointing at their help text, so a
+   * screen reader announces "invalid" and never says why — which is exactly
+   * the criterion in DEV.md S3.1. */
+  document.body.addEventListener("htmx:afterSwap", function () {
+    linkFieldErrors();
+  });
 })();

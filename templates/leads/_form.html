@@ -1,0 +1,61 @@
+{% comment %}
+The enrolment form, DEV.md S3.1.
+
+One template for all three places it appears: its own page, the contact page
+and every course page. Everything is a cotton primitive — tech.md section 7
+forbids a page writing its own field markup, and a form is exactly where that
+temptation is strongest.
+
+htmx swaps the answer into #lead-form. Without javascript the same POST goes
+through normally and lands on the thank you page, so the form works either way.
+
+Takes:
+  form        the bound or unbound LeadForm.
+  compact     optional. Drops the heading, for embedding under one that already
+              says what this is.
+{% endcomment %}
+<form id="lead-form" method="post" action="{% url 'leads:submit' %}"
+      hx-post="{% url 'leads:submit' %}" hx-target="#lead-form" hx-swap="outerHTML"
+      class="flex flex-col gap-6">
+  {% csrf_token %}
+
+  {# The honeypot. sr-only rather than type=hidden: a scraper skips hidden
+     inputs and fills everything else, DEV.md S3.1. #}
+  <div class="sr-only" aria-hidden="true">
+    <label for="{{ form.website.id_for_label }}">{{ form.website.label }}</label>
+    {{ form.website }}
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    <c-field :field="form.first_name" />
+    <c-field :field="form.last_name" />
+    <c-field :field="form.phone" />
+    <c-field :field="form.email" />
+  </div>
+
+  <c-field :field="form.course" />
+  {{ form.intake }}
+  <c-field :field="form.message" />
+
+  <div class="flex flex-col gap-3">
+    <c-checkbox name="consent_rodo" checked="{% if form.consent_rodo.value %}1{% endif %}"
+                error="{{ form.consent_rodo.errors.0|default:'' }}">
+      Zgadzam się na przetwarzanie moich danych w celu kontaktu w sprawie kursu.
+      <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4">RODO</a>.
+    </c-checkbox>
+
+    <c-checkbox name="consent_marketing" checked="{% if form.consent_marketing.value %}1{% endif %}">
+      Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe.
+    </c-checkbox>
+  </div>
+
+  {% if form.non_field_errors %}
+    <c-alert tone="danger" title="Nie udało się wysłać">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </c-alert>
+  {% endif %}
+
+  <div>
+    <c-button variant="primary" size="lg" type="submit">Wyślij zgłoszenie</c-button>
+  </div>
+</form>

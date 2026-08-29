@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% comment %}
+The enrolment page, tech.md section 5.
+
+The old site had no form at all. This is the page that fixes it, so it carries
+nothing but the form and the two things somebody who would rather talk needs:
+the number, and what happens after they press send.
+{% endcomment %}
+
+{% block content %}
+<c-section>
+  <c-breadcrumbs :items="breadcrumbs" />
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Zapisz się na kurs</c-heading>
+  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz.
+  </p>
+
+  <div class="mt-12 grid gap-12 lg:grid-cols-3">
+    <div class="min-w-0 lg:col-span-2">
+      {% include "leads/_form.html" %}
+    </div>
+
+    <aside class="min-w-0">
+      <c-card class="flex flex-col">
+        <c-slot name="title">Wolisz zadzwonić?</c-slot>
+        <p>Zapisy przyjmujemy też telefonicznie i w biurze na ul. Zielonej 45.</p>
+        <div class="mt-6 flex flex-col gap-3">
+          {% for phone in site_settings.phones %}
+            <c-button variant="{% if forloop.first %}primary{% else %}secondary{% endif %}" full="1"
+                      href="tel:{{ phone|cut:' ' }}">
+              <c-icon name="phone" size="sm" /> <span class="data">{{ phone }}</span>
+            </c-button>
+          {% endfor %}
+        </div>
+        <div class="mt-8">
+          <p class="label text-ink-500">Godziny biura</p>
+          <div class="mt-3"><c-hours-table department="office" /></div>
+        </div>
+      </c-card>
+    </aside>
+  </div>
+</c-section>
+
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+<c-cta-bar title="Zapisz się na kurs" phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
+{% endblock %}
