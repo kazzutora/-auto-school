@@ -64,7 +64,9 @@ def test_a_wide_table_scrolls_inside_its_own_container(
     """The table may overflow. The document may not."""
     narrow_page.goto(f"{live_server.url}/cennik/")
 
-    scrollers = narrow_page.locator("div.overflow-x-auto:has(table)")
+    # c-table wraps every table in the design system's scroll container,
+    # FRONTEND.md A.4, which carries the overflow and a min-width of 0.
+    scrollers = narrow_page.locator("div.u-scroll-x:has(table)")
     assert scrollers.count() >= 1
 
     for index in range(scrollers.count()):

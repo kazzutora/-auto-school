@@ -344,3 +344,73 @@ def test_a_longer_offer_does_not_add_queries(client: Client, django_assert_num_q
 
     with django_assert_num_queries(3):
         client.get("/kursy/")
+
+
+# --------------------------------------------------------------------------
+# the listing composition, FRONTEND.md F4
+
+
+def category_tiles(html: str) -> list[str]:
+    """Every licence tile in the grid, markup and all."""
+    grid = re.search(
+        r'<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">(.*?)</ul>',
+        html,
+        re.S,
+    )
+    if not grid:
+        return []
+    return re.findall(
+        r'<a href="/kursy/[^"]*"[^>]*class="group[^"]*"[^>]*>.*?</a>', grid.group(1), re.S
+    )
+
+
+def test_the_listing_draws_one_tile_per_active_course(client: Client) -> None:
+    for number in range(4):
+        make_course(slug=f"kat-{number}", code=str(number), title=f"Kategoria {number}")
+    make_course(slug="kat-x", code="X", title="Kategoria X", is_active=False)
+
+    tiles = category_tiles(body_of(client, "/kursy/"))
+    assert len(tiles) == Course.objects.filter(is_active=True).count() == 4
+
+
+def test_the_tile_is_the_same_markup_as_on_the_home_page(client: Client) -> None:
+    """F4's first acceptance criterion, checked the only way that settles it.
+
+    Both pages include courses/_category_grid.html, so this passes by
+    construction — and fails the moment someone copies the grid into one of
+    them and edits it there.
+    """
+    make_course()
+
+    on_home = category_tiles(body_of(client, reverse("core:home")))
+    on_listing = category_tiles(body_of(client, "/kursy/"))
+
+    assert len(on_home) == len(on_listing) == 1
+    assert on_home[0].split() == on_listing[0].split()
+
+
+def test_the_listing_never_prints_a_zero_price(client: Client) -> None:
+    """F4: cena na zapytanie, never 0 zł."""
+    make_course(price_gross=None)
+
+    html = body_of(client, "/kursy/")
+    assert "cena na zapytanie" in html
+    assert not re.search(r">\s*(od\s*)?0([,.]00)?\s*zł", html)
+
+
+def test_the_listing_title_names_the_town(client: Client) -> None:
+    """tech.md section 8 fixes the suffix, so the town is always in the title."""
+    make_course()
+    title = re.search(r"<title>(.*?)</title>", body_of(client, "/kursy/"), re.S)
+    assert title
+    assert "Wieluń" in title.group(1)
+
+
+def test_the_listing_carries_no_filter(client: Client) -> None:
+    """F4: fifteen courses, and a filter over fifteen rows costs more than it
+    saves."""
+    make_course()
+    html = body_of(client, "/kursy/")
+    section = html[html.index("<main") : html.index("</main>")]
+    assert "<form" not in section
+    assert "<select" not in section

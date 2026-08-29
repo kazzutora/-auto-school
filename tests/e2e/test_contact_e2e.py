@@ -55,11 +55,32 @@ def watched_page(page: Page) -> Iterator[tuple[Page, list[str]]]:
     yield page, hosts
 
 
+def scroll_to_map(page: Page) -> None:
+    """The map is built when it comes into view, not on load.
+
+    The tiles are the only third party the site touches, so fetching them before
+    anyone has scrolled to the map spends the first screen budget in A.11 on
+    something nobody is looking at. Every assertion about the map therefore has
+    to put it on screen first, exactly as a visitor would.
+    """
+    page.locator("[data-testid='map']").scroll_into_view_if_needed()
+
+
 def test_the_map_draws_a_marker(live_server, office: SiteSettings, page: Page) -> None:
     page.goto(f"{live_server.url}/kontakt/")
+    scroll_to_map(page)
 
     page.wait_for_selector("[data-testid='map'].leaflet-container")
     assert page.locator(".leaflet-marker-icon").count() == 1
+
+
+def test_the_map_is_not_built_before_anyone_scrolls_to_it(
+    live_server, office: SiteSettings, page: Page
+) -> None:
+    page.goto(f"{live_server.url}/kontakt/")
+    page.wait_for_selector("h1")
+
+    assert page.locator("[data-testid='map'].leaflet-container").count() == 0
 
 
 def test_the_page_talks_to_nobody_but_the_tile_server(
@@ -68,6 +89,7 @@ def test_the_page_talks_to_nobody_but_the_tile_server(
     """The acceptance criterion: no analytics host, no google script."""
     page, hosts = watched_page
     page.goto(f"{live_server.url}/kontakt/")
+    scroll_to_map(page)
     page.wait_for_selector(".leaflet-tile")
 
     allowed = {urlsplit(live_server.url).netloc, TILE_HOST}
