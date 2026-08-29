@@ -11,9 +11,9 @@ lets the caller line the header up with cells it wrote itself.
 
 Wide tables scroll inside their own box: the page never moves sideways, A.4.
 {% endcomment %}
-<c-vars headers="" />
+<c-vars headers="" class="" />
 <div class="u-scroll-x">
-  <table class="w-full border-collapse text-left" {{ attrs }}>
+  <table class="w-full border-collapse text-left {{ class }}" {{ attrs }}>
     {% if headers %}<thead>
       <tr class="border-b-2 border-ink">
         {% for header in headers %}

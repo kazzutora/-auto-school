@@ -1,3 +1,4 @@
+<c-vars class="" />
 {% comment %}
 Cookie banner, tech.md section 7, FRONTEND.md F2 point 6.
 
@@ -11,7 +12,7 @@ z-50 puts it above the sticky CTA, A.5. The bar underneath must never cover
 these two buttons.
 {% endcomment %}
 <div data-cookie-banner hidden
-  class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper pb-[env(safe-area-inset-bottom)]"
+  class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper pb-[env(safe-area-inset-bottom)] {{ class }}"
   role="region" aria-label="Zgoda na pliki cookie" {{ attrs }}>
   <div class="u-container flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
     <p class="text-small text-ink-700">

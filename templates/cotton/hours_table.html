@@ -1,4 +1,4 @@
-<c-vars department="office" />{% load core_ui %}
+<c-vars department="office" class="" />{% load core_ui %}
 {% comment %}
 Opening hours, tech.md section 7, FRONTEND.md A.9 point 9.
 
@@ -10,7 +10,7 @@ The open-now badge answers the question before the table does.
 {% endcomment %}
 {% opening_hours department as rows %}
 {% is_open_now department as open_now %}
-<div class="min-w-0" {{ attrs }}>
+<div class="min-w-0 {{ class }}" {{ attrs }}>
   <p class="mb-4">{% if open_now %}<c-badge tone="success">Otwarte teraz</c-badge>{% else %}<c-badge tone="neutral">Zamknięte</c-badge>{% endif %}</p>
   {# Three columns and a free text note: on a 320px screen the note is wider
      than the column it sits in, and A.4 says a wide block scrolls inside its

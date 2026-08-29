@@ -10,10 +10,14 @@ needs the heading to be the anchor and the card to stretch it, which the title
 slot cannot express on its own, so the href form is a plain anchor wrapper and
 the heading inside it stays a heading. The focus ring lands on the card, which
 is the same rectangle either way.
+
+min-w-0 because a card holds whatever it is given, and as a grid or flex item it
+would otherwise refuse to shrink below that content and take the page sideways
+with it — which is what a card wrapping the opening hours did at 320px.
 {% endcomment %}
-<c-vars href="" padded="1" />
+<c-vars href="" padded="1" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
-  class="block rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:border-ink hover:shadow-card{% endif %}"
+  class="block min-w-0 rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:border-ink hover:shadow-card{% endif %} {{ class }}"
   {{ attrs }}>
   {% if title %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
   <div class="{% if title %}mt-3 {% endif %}text-ink-700">{{ slot }}</div>

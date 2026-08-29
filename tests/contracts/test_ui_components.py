@@ -49,11 +49,18 @@ def source(name: str) -> str:
     return (COTTON / f"{name}.html").read_text(encoding="utf-8")
 
 
+# Not a prop: the html attribute every element has. A component declares it so
+# cotton hands it over as a variable instead of leaving it in attrs, where it
+# would be emitted as a second class attribute on a tag that already has one and
+# be dropped on the floor by the parser.
+ATTRIBUTE_HOOKS = {"class"}
+
+
 def declared_vars(name: str) -> set[str]:
     match = re.search(r"<c-vars([^/>]*)/?>", source(name))
     if not match:
         return set()
-    return set(re.findall(r'([\w-]+)=\s*"', match.group(1)))
+    return set(re.findall(r'([\w-]+)=\s*"', match.group(1))) - ATTRIBUTE_HOOKS
 
 
 @pytest.mark.parametrize("name", TECH_MD_COMPONENTS)
@@ -76,6 +83,29 @@ def test_no_component_invents_props_outside_tech_md() -> None:
         if declared_vars(name) - props
     }
     assert not extra, f"props not in tech.md section 7: {extra}"
+
+
+def test_a_component_never_emits_two_class_attributes() -> None:
+    """A class handed to a component has to reach the element, not vanish.
+
+    Cotton puts undeclared attributes into attrs. If the component's own tag
+    already carries class="...", attrs adds a second one and the parser keeps
+    the first, so the caller's class is silently lost. A component whose tag has
+    a class must therefore declare class and merge it in by hand.
+    """
+    offenders = []
+    for name in TECH_MD_COMPONENTS:
+        body = re.sub(
+            r"\{#.*?#\}|\{% comment %\}.*?\{% endcomment %\}", "", source(name), flags=re.S
+        )
+        for hit in re.finditer(r"\{\{ attrs \}\}", body):
+            start = body.rfind("<", 0, hit.start())
+            if start == -1:
+                continue
+            tag = body[start : hit.start()]
+            if 'class="' in tag and "{{ class }}" not in tag:
+                offenders.append(name)
+    assert not offenders, f"these drop an incoming class: {sorted(set(offenders))}"
 
 
 def test_picture_forces_a_lazy_default_and_an_alt() -> None:

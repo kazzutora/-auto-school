@@ -10,14 +10,14 @@ role=alert only for danger. status for everything else: an assertive live
 region interrupts a screen reader mid sentence, which a success message has no
 business doing.
 {% endcomment %}
-<c-vars tone="info" title="" />
+<c-vars tone="info" title="" class="" />
 <div role="{% if tone == 'danger' %}alert{% else %}status{% endif %}"
   class="rounded border border-l-2 p-4
 {% if tone == 'success' %} border-line-soft border-l-state-ok
 {% elif tone == 'warning' %} border-line-soft border-l-state-warn
 {% elif tone == 'danger' %} border-line-soft border-l-state-err
 {% else %} border-line-soft border-l-ink
-{% endif %}" {{ attrs }}>
+{% endif %} {{ class }}" {{ attrs }}>
   {% if title %}<p class="font-semibold
 {% if tone == 'success' %}text-state-ok{% elif tone == 'warning' %}text-state-warn{% elif tone == 'danger' %}text-state-err{% else %}text-ink{% endif %}">{{ title }}</p>{% endif %}
   <div class="{% if title %}mt-1 {% endif %}text-ink-700">{{ slot }}</div>

@@ -9,8 +9,8 @@ phone. /terminy/ in A.10 uses the same row, so there is one of these, not two.
 The enrol link carries the intake id so the form arrives with the term already
 chosen. tech.md section 5 freezes that url as a string until leads.urls ships.
 {% endcomment %}
-<c-vars intake="" />
-<div class="flex flex-col gap-4 border-b border-line-soft py-6 last:border-b-0 md:flex-row md:items-center md:gap-8" {{ attrs }}>
+<c-vars intake="" class="" />
+<div class="flex flex-col gap-4 border-b border-line-soft py-6 last:border-b-0 md:flex-row md:items-center md:gap-8 {{ class }}" {{ attrs }}>
   <p class="flex shrink-0 items-baseline gap-2 md:w-28 md:flex-col md:items-start md:gap-0">
     <span class="data text-data-xl text-ink">{{ intake.start_date|date:"d.m" }}</span>
     <span class="data text-small text-ink-500">{{ intake.start_date|date:"Y" }}</span>

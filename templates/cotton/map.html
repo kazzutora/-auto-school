@@ -18,7 +18,7 @@ performance gate is 90.
 Init data rides on data attributes, which static/js/app.js reads. That keeps
 the page free of inline script under the production CSP.
 {% endcomment %}
-<c-vars lat="" lng="" zoom="16" label="" height="md" />
+<c-vars lat="" lng="" zoom="16" label="" height="md" class="" />
 <div data-map data-lat="{{ lat }}" data-lng="{{ lng }}" data-zoom="{{ zoom }}" data-label="{{ label }}"
-  class="w-full border-2 border-ink{% if height == 'sm' %} h-60{% elif height == 'lg' %} h-[420px]{% else %} h-80{% endif %}"
+  class="w-full border-2 border-ink{% if height == 'sm' %} h-60{% elif height == 'lg' %} h-[420px]{% else %} h-80{% endif %} {{ class }}"
   role="img" aria-label="{% if label %}{{ label }}{% else %}Mapa dojazdu{% endif %}" {{ attrs }}></div>

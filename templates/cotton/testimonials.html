@@ -8,8 +8,8 @@ check it does not belong here.
 The rating is drawn from the sprite, filled up to the score and outlined past
 it, with the number spelled out for anyone not seeing the stars.
 {% endcomment %}
-<c-vars items="" />
-<ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" {{ attrs }}>
+<c-vars items="" class="" />
+<ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 {{ class }}" {{ attrs }}>
   {% for item in items %}<li class="flex h-full flex-col rounded border border-line-soft bg-paper p-6">
     <p class="flex gap-1 text-accent-600" role="img" aria-label="Ocena {{ item.rating }} na 5">
       {% for _ in "12345"|make_list %}

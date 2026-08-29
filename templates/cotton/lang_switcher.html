@@ -1,3 +1,4 @@
+<c-vars class="" />
 {% load core_ui i18n %}
 {% comment %}
 Language switcher, tech.md section 7.
@@ -5,11 +6,16 @@ Language switcher, tech.md section 7.
 Every link carries hreflang and lang, so a screen reader switches voice on the
 code itself rather than reading UK as english. The globe names what the row is
 for without a word of chrome around it.
+
+The row appears in the header and again in the footer, and the footer is deep
+purple, so the inactive codes take their colour from the ground rather than
+naming ink-500 — which is a page colour and reads at 1.6:1 on the deep. The
+active one is the yellow chip, and near black on it in both themes.
 {% endcomment %}
 {% language_links as links %}
-<nav aria-label="{% translate 'Language' %}" class="flex items-center gap-1" {{ attrs }}>
-  <c-icon name="globe" size="sm" class="mr-1 text-ink-500" />
+<nav aria-label="{% translate 'Language' %}" class="flex items-center gap-1 {{ class }}" {{ attrs }}>
+  <c-icon name="globe" size="sm" class="u-muted-on-ground mr-1" />
   {% for link in links %}<a href="{{ link.url }}" hreflang="{{ link.code }}" lang="{{ link.code }}"
     {% if link.is_active %}aria-current="true"{% endif %}
-    class="label rounded px-2 py-2 transition{% if link.is_active %} bg-accent u-fixed-ink{% else %} text-ink-500 hover:text-ink{% endif %}">{{ link.code }}</a>{% endfor %}
+    class="label rounded px-1.5 py-2 transition{% if link.is_active %} bg-accent u-fixed-ink{% else %} u-muted-on-ground hover:opacity-100{% endif %}">{{ link.code }}</a>{% endfor %}
 </nav>

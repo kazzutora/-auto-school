@@ -19,7 +19,7 @@ same specificity and the winner is whichever tailwind happened to emit last.
 
 A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej.
 {% endcomment %}
-<c-vars variant="primary" size="md" type="button" href="" full="" />
+<c-vars variant="primary" size="md" type="button" href="" full="" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %}
   class="inline-flex items-center justify-center gap-2 rounded border-2 px-6 text-center font-semibold leading-none transition active:translate-y-px
 {% if full %} w-full{% endif %}
@@ -28,5 +28,5 @@ A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej
 {% elif variant == 'ghost' %} border-transparent bg-transparent px-0 underline-offset-4 hover:underline disabled:text-ink-300 disabled:no-underline
 {% else %} border-accent bg-accent u-fixed-ink hover:border-accent-600 hover:bg-accent-600 disabled:border-paper-200 disabled:bg-paper-200 disabled:text-ink-300
 {% endif %}
-disabled:cursor-not-allowed disabled:active:translate-y-0"
+disabled:cursor-not-allowed disabled:active:translate-y-0 {{ class }}"
   {{ attrs }}>{{ slot }}{% if href %}</a>{% else %}</button>{% endif %}

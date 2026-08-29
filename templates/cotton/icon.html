@@ -1,4 +1,4 @@
-<c-vars name="" size="md" label="" />{% load static %}
+<c-vars name="" size="md" label="" class="" />{% load static %}
 {% comment %}
 Icon, FRONTEND.md A.7. Not in the tech.md section 7 table: A.7 mandates a local
 sprite, and every component that shows an icon would otherwise repeat the same
@@ -16,7 +16,7 @@ never sees and therefore never generates.
 Decorative by default. A.7 lets an icon stand alone only for the burger and the
 close button, and both of those pass a label instead.
 {% endcomment %}
-<svg class="shrink-0{% if size == 'sm' %} h-4 w-4{% elif size == 'lg' %} h-8 w-8{% else %} h-6 w-6{% endif %}" viewBox="0 0 24 24"
+<svg class="shrink-0{% if size == 'sm' %} h-4 w-4{% elif size == 'lg' %} h-8 w-8{% else %} h-6 w-6{% endif %} {{ class }}" viewBox="0 0 24 24"
   {% if label %}role="img" aria-label="{{ label }}"{% else %}aria-hidden="true" focusable="false"{% endif %} {{ attrs }}>
   <use href="{% static 'icons/sprite.svg' %}#i-{{ name }}"></use>
 </svg>

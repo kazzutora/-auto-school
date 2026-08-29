@@ -14,9 +14,9 @@ also keeps it inside the production CSP where an inline handler is blocked.
 
 Ground is ink at 60%, panel is paper with a 2px ink frame, up to 560px.
 {% endcomment %}
-<c-vars id="" title="" />
+<c-vars id="" title="" class="" />
 <dialog id="{{ id }}" data-modal aria-labelledby="{{ id }}_title"
-  class="w-full max-w-[560px] rounded border-2 border-ink bg-paper p-6 text-ink backdrop:bg-ink/60"
+  class="w-full max-w-[560px] rounded border-2 border-ink bg-paper p-6 text-ink backdrop:bg-ink/60 {{ class }}"
   {{ attrs }}>
   <div class="flex items-start justify-between gap-4">
     <h2 id="{{ id }}_title" class="text-h3">{{ title }}</h2>

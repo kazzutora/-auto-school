@@ -1,5 +1,6 @@
+<c-vars class="" />
 {% comment %}
 Accordion, tech.md section 7. Native details/summary, FRONTEND.md A.5.
 The group is a bordered stack; each item draws its own divider.
 {% endcomment %}
-<div class="rounded border border-line-soft" {{ attrs }}>{{ slot }}</div>
+<div class="rounded border border-line-soft {{ class }}" {{ attrs }}>{{ slot }}</div>
