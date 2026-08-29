@@ -1,7 +1,11 @@
-"""End to end pass over the gallery, DEV.md S0.9.
+"""End to end pass over the gallery, DEV.md S0.9 and FRONTEND.md F9.
 
 This is the only test that runs the real javascript. It is what proves Alpine is
 actually loaded and self hosted, which no server side assertion can show.
+
+The lightbox is a native <dialog>, so it carries the dialog role implicitly and
+there is no [role="dialog"] to select on. The selector is the element itself,
+scoped to the grid that owns it — the header's mobile menu is a <dialog> too.
 
 Needs a browser: `playwright install chromium`. Run with `make e2e`.
 """
@@ -47,7 +51,7 @@ def test_alpine_is_running_and_the_lightbox_opens(
     page.goto(f"{live_server.url}/galeria/")
     page.wait_for_function("() => window.Alpine !== undefined")
 
-    dialog = page.locator('[role="dialog"]')
+    dialog = page.locator("[data-testid] > dialog")
     assert dialog.is_hidden()
 
     page.locator("button:has(picture)").first.click()
@@ -110,10 +114,10 @@ def test_the_focus_comes_back_to_the_tile(
 
     second = page.locator("button:has(picture)").nth(1)
     second.click()
-    page.locator('[role="dialog"]').wait_for(state="visible")
+    page.locator("[data-testid] > dialog").wait_for(state="visible")
 
     page.keyboard.press("Escape")
-    page.locator('[role="dialog"]').wait_for(state="hidden")
+    page.locator("[data-testid] > dialog").wait_for(state="hidden")
 
     # Alpine hands the focus back on the next tick, so wait for it rather than
     # reading document.activeElement the instant the dialog disappears.
@@ -128,7 +132,7 @@ def test_the_arrows_walk_through_the_photos(
     page.wait_for_function("() => window.Alpine !== undefined")
 
     page.locator("button:has(picture)").first.click()
-    dialog = page.locator('[role="dialog"]')
+    dialog = page.locator("[data-testid] > dialog")
     dialog.wait_for(state="visible")
 
     shown = dialog.locator("figure:visible img")
@@ -164,7 +168,7 @@ def test_no_original_is_downloaded_before_the_lightbox_opens(
     assert not originals, f"originals downloaded before anyone asked: {originals}"
 
     page.locator("button:has(picture)").first.click()
-    page.locator('[role="dialog"]').wait_for(state="visible")
+    page.locator("[data-testid] > dialog").wait_for(state="visible")
     page.wait_for_function(
         "() => performance.getEntriesByType('resource')"
         ".some(entry => entry.name.includes('/media/gallery/'))"
@@ -229,7 +233,7 @@ def test_a_certificate_scan_opens_and_gives_the_focus_back(live_server, page: Pa
     page.goto(f"{live_server.url}/certyfikaty/")
     page.wait_for_function("() => window.Alpine !== undefined")
 
-    dialog = page.locator('[role="dialog"]')
+    dialog = page.locator("[data-testid] > dialog")
     assert dialog.is_hidden()
 
     second = page.locator("button:has(picture)").nth(1)
@@ -255,3 +259,84 @@ def test_the_certificate_page_does_not_preload_the_scans(live_server, page: Page
 
     originals = [url for url in fetched if "/media/certificates/" in url]
     assert not originals, f"scans downloaded before anyone asked: {originals}"
+
+
+# --------------------------------------------------------------------------
+# FRONTEND.md F9
+
+
+def test_the_lightbox_is_reachable_with_a_keyboard_alone(
+    live_server, page: Page, images: list[GalleryImage]
+) -> None:
+    """F9: open, walk, close, and land back where you started — no mouse.
+
+    A gallery that only answers a click is a gallery half the people who need
+    the big version cannot open.
+    """
+    page.goto(f"{live_server.url}/galeria/")
+
+    first = page.locator("[data-testid=gallery-grid] button[aria-haspopup=dialog]").first
+    first.focus()
+    page.keyboard.press("Enter")
+
+    dialog = page.locator("[data-testid] > dialog")
+    dialog.wait_for(state="visible")
+    assert page.evaluate("() => document.querySelector('dialog[open]').matches(':modal')")
+
+    # expect(), not evaluate(): alpine updates on the next tick, so reading the
+    # dom the instant the key goes down reads the frame before the change.
+    shown = dialog.locator("figure:visible img")
+    expect(shown).to_have_attribute("alt", "Zdjęcie 1")
+
+    page.keyboard.press("ArrowRight")
+    expect(shown).to_have_attribute("alt", "Zdjęcie 2")
+
+    page.keyboard.press("ArrowLeft")
+    expect(shown).to_have_attribute("alt", "Zdjęcie 1")
+
+    page.keyboard.press("Escape")
+    dialog.wait_for(state="hidden")
+
+    # Back on the tile that opened it, which is where the reader was.
+    assert page.evaluate(
+        "() => document.activeElement === "
+        "document.querySelector('[data-testid=gallery-grid] button[aria-haspopup=dialog]')"
+    )
+
+
+@pytest.mark.a11y
+def test_no_picture_anywhere_ships_an_empty_alt(live_server, page: Page) -> None:
+    """F9: every image here is content, so every one of them says what it shows.
+
+    A decorative image would carry alt="" and aria-hidden, and there are none —
+    the school's own photographs are the whole point of these three pages.
+    """
+    GalleryImageFactory(section=GalleryImage.Section.SCHOOL, alt="Plac manewrowy")
+    CertificateFactory(title="Certyfikat ADR")
+
+    for path in ("/galeria/", "/certyfikaty/"):
+        page.goto(f"{live_server.url}{path}")
+        bad = page.evaluate(
+            "() => [...document.querySelectorAll('main img')]"
+            ".filter(i => !(i.getAttribute('alt') || '').trim())"
+            ".map(i => i.currentSrc || i.src)"
+        )
+        assert bad == [], f"{path} ships {len(bad)} image(s) with no alt"
+
+
+@pytest.mark.a11y
+def test_every_picture_reserves_its_own_box(live_server, page: Page) -> None:
+    """F9: width and height on every image, so nothing jumps as they land.
+
+    That is the CLS budget in A.11: a grid that reflows while the photos arrive
+    moves whatever the reader was about to tap.
+    """
+    GalleryImageFactory(section=GalleryImage.Section.SCHOOL, alt="Plac manewrowy")
+    page.goto(f"{live_server.url}/galeria/")
+
+    missing = page.evaluate(
+        "() => [...document.querySelectorAll('main img')]"
+        ".filter(i => !i.getAttribute('width') || !i.getAttribute('height'))"
+        ".map(i => i.alt)"
+    )
+    assert missing == []

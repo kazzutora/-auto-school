@@ -26,6 +26,17 @@ def template_files() -> list[Path]:
     return sorted({path for root in roots for path in root.rglob("*.html")})
 
 
+# Both comment forms django understands. A tag named in prose is documentation,
+# not markup: without this, explaining why a template does something with
+# <c-picture> is enough to fail the gate.
+COMMENTS = re.compile(r"\{#.*?#\}|\{%\s*comment\s*%\}.*?\{%\s*endcomment\s*%\}", re.S)
+
+
+def markup_of(path: Path) -> str:
+    """The template with its comments taken out."""
+    return COMMENTS.sub("", path.read_text(encoding="utf-8"))
+
+
 def alt_of(tag: str) -> str | None:
     """The alt value as written, or None when the attribute is absent."""
     found = ALT_ATTRIBUTE.search(tag)
@@ -36,7 +47,7 @@ def offenders_for(pattern: re.Pattern[str]) -> list[str]:
     return [
         f"{path.relative_to(settings.BASE_DIR)}: {tag}"
         for path in template_files()
-        for tag in pattern.findall(path.read_text(encoding="utf-8"))
+        for tag in pattern.findall(markup_of(path))
         if not alt_of(tag)
     ]
 

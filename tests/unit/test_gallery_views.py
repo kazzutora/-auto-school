@@ -262,8 +262,12 @@ def test_a_certificate_card_carries_everything_the_owner_filled_in(client: Clien
     )
     body = certificates_page(client)
 
-    assert '<h3 class="font-display text-xl font-bold text-brand-900">Certyfikat ADR</h3>' in body
-    assert "Urząd Marszałkowski, 12.04.2021" in re.sub(r"\s+", " ", body)
+    # The title is a heading, whatever the design system dresses it in.
+    assert re.search(r"<h3[^>]*>\s*Certyfikat ADR\s*</h3>", body)
+    meta = re.search(r'data-testid="certificate-meta".*?</p>', body, re.S)
+    assert meta
+    assert "Urząd Marszałkowski" in meta.group()
+    assert "12.04.2021" in meta.group()
     assert "Uprawnienia do szkolenia kierowców ADR." in body
 
 
@@ -291,8 +295,11 @@ def test_every_scan_opens_the_lightbox(client: Client) -> None:
     body = certificates_page(client)
 
     assert body.count('x-on:click="show(') == 3
-    # One dialog for the page, not one per card.
-    assert body.count('role="dialog"') == 1
+    # One dialog for the cards, not one per card. Counted inside the block: the
+    # header's mobile menu is a <dialog> too, and a native one carries the role
+    # implicitly so there is no attribute to count instead.
+    cards = body[body.index('data-testid="certificates"') :]
+    assert cards.count("<dialog") == 1
     assert 'aria-label="Podgląd skanu"' in body
 
 

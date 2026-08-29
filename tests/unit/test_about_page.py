@@ -75,10 +75,20 @@ def page(client: Client, url: str = ABOUT) -> str:
     return response.content.decode()
 
 
-def tile(facts: str, label: str) -> str:
-    """The number a fact tile carries, so a label cannot pass for its value."""
-    found = re.search(rf"{label}</dt>\s*<dd[^>]*>(.*?)</dd>", facts, re.S)
-    assert found, f"no fact tile labelled {label}"
+def tile(facts: str, description: str) -> str:
+    """The figure whose description says this, so a label cannot pass for its
+    value.
+
+    A.9 point 6 lays a fact out as the number first and what it means under it,
+    which is the shape the about page borrows.
+    """
+    found = re.search(
+        rf"<p[^>]*>(?:<[^>]+>)*\s*([^<]+?)\s*(?:</[^>]+>)*</p>\s*"
+        rf"<p[^>]*>[^<]*{re.escape(description)}",
+        facts,
+        re.S,
+    )
+    assert found, f"no fact described as {description!r}"
     return found.group(1).strip()
 
 
@@ -204,11 +214,13 @@ def test_the_facts_come_from_the_database(
 
     facts = block(page(client), "facts")
 
-    assert "od 1996 roku" in facts
-    assert tile(facts, "Instruktorzy") == "3"
-    assert tile(facts, "Kategorie prawa jazdy") == "2"
-    assert "Plac manewrowy" in facts
-    assert "Sale wykładowe" in facts
+    # The year is the figure now, with what it means underneath, A.9 point 6.
+    assert "1996" in facts
+    assert "rok założenia" in facts
+    assert tile(facts, "instruktorów") == "3"
+    assert tile(facts, "kategorii prawa jazdy") == "2"
+    assert "plac manewrowy" in facts
+    assert "sale wykładowe" in facts
 
 
 def test_the_facts_stay_off_the_other_flat_pages(client: Client) -> None:
