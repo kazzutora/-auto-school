@@ -35,6 +35,9 @@ htmlcov/
 # Tooling caches
 # Playwright browsers, downloaded into the bind mounted workdir
 .cache/
+# The headless chromium the e2e run spawns writes its certificate store here,
+# because HOME inside the container is the bind mounted workdir.
+.local/
 .mypy_cache/
 .ruff_cache/
 
