@@ -95,6 +95,19 @@ jobs:
       - name: No unmade migrations
         run: python manage.py makemigrations --check --dry-run
 
+      - name: Build the stylesheet
+        # The size budget in tests/contracts/test_asset_budgets.py measures the
+        # built file, FRONTEND.md A.11. Without this step it has nothing to
+        # measure and skips, which is a gate that does not gate. Same standalone
+        # binary the tailwind stage of the Dockerfile uses: no node in CI either.
+        env:
+          TAILWIND_VERSION: "3.4.17"
+        run: |
+          RELEASE="https://github.com/tailwindlabs/tailwindcss/releases/download"
+          curl -fsSL -o ./tailwindcss "$RELEASE/v$TAILWIND_VERSION/tailwindcss-linux-x64"
+          chmod +x ./tailwindcss
+          ./tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
+
       - name: Tests
         # e2e runs against the built image in its own job.
         run: pytest -q --cov=apps --cov-fail-under=80 --ignore=tests/e2e
