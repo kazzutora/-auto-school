@@ -1,24 +1,36 @@
-{# One certificate: the scan opens in the lightbox, the metadata stays on the
-   card. The old site showed eleven of these as bare images with no captions,
-   tech.md section 4.5, so every row here carries its title. #}
-<c-card padded="">
-  <button type="button" x-on:click="show({{ position }}, $event.currentTarget)" aria-haspopup="dialog" class="block w-full overflow-hidden rounded-t-xl border-b border-paper-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-    <c-picture :image="item.image" alt="{{ item.alt }}" ratio="portrait" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+{# One certificate. The scan opens in the lightbox, the metadata stays on the
+   card, FRONTEND.md A.10.
+
+   A4, A.8: a certificate is a sheet of paper and cropping it to a square makes
+   it look like something else. The old site showed eleven of these as bare
+   images with no captions, tech.md section 4.5, so every one here says what it
+   is, who issued it and when. #}
+<c-card padded="" class="flex w-full flex-col">
+  <button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
+          class="block w-full overflow-hidden border-b border-line-soft transition hover:opacity-90">
+    <c-picture :image="item.image" alt="{{ item.alt }}" ratio="a4"
+               sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+    <span class="sr-only">Powiększ skan: {{ item.title }}</span>
   </button>
 
-  <div class="p-6">
-    <h3 class="font-display text-xl font-bold text-brand-900">{{ item.title }}</h3>
+  <div class="flex grow flex-col p-6">
+    <h3 class="text-h3">{{ item.title }}</h3>
 
     {% if item.issuer or item.issued_on %}
-      <p class="mt-1 text-sm text-ink-500" data-testid="certificate-meta">
-        {{ item.issuer }}{% if item.issuer and item.issued_on %}, {% endif %}{% if item.issued_on %}{{ item.issued_on|date:"d.m.Y" }}{% endif %}
+      <p class="mt-2 text-small text-ink-500" data-testid="certificate-meta">
+        {{ item.issuer }}{% if item.issuer and item.issued_on %} &middot; {% endif %}
+        {% if item.issued_on %}<span class="data">{{ item.issued_on|date:"d.m.Y" }}</span>{% endif %}
       </p>
     {% endif %}
 
     {% if item.description %}<p class="mt-3 text-ink-700">{{ item.description }}</p>{% endif %}
 
     {% if item.file %}
-      <p class="mt-4"><c-button variant="secondary" size="sm" href="{{ item.file.url }}">Pobierz PDF</c-button></p>
+      <p class="mt-auto pt-6">
+        <c-button variant="secondary" size="sm" href="{{ item.file.url }}">
+          <c-icon name="download" size="sm" /> Pobierz PDF
+        </c-button>
+      </p>
     {% endif %}
   </div>
 </c-card>

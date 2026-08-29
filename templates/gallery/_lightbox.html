@@ -1,60 +1,83 @@
-{# A grid of triggers plus the dialog they open, one Alpine scope for both.
+{% comment %}
+A grid of triggers plus the dialog they open, FRONTEND.md F9.
 
-   items    rows carrying .image, .alt and optionally .caption
-   tile     template rendering one item, it gets `item` and `position`
-   grid     css classes for the list
-   testid   hook for the tests
-   label    what a screen reader hears when the dialog opens
+  items    rows carrying .image, .alt and optionally .caption
+  tile     template rendering one item, it gets `item` and `position`
+  grid     css classes for the list
+  testid   hook for the tests
+  label    what a screen reader hears when the dialog opens
 
-   CONTRACT GAP: this is a local copy of <c-lightbox>, DEV.md S6.1 and S6.2
-   cannot be closed with the component as it stands.
-     - the modal renders every original with no loading attribute, so a browser
-       fetches all of them on page load. Twelve photos came to 16 MB, against
-       the 400 KB the task allows above the fold. loading="lazy" on an element
-       that is display:none defers the fetch until the modal shows it.
-     - closing the modal leaves the focus on <body>, and the acceptance
-       criterion asks for it back on the tile that opened it.
-     - the component owns its grid, so a certificate card cannot be the thing
-       that opens it. The tile template is the seam that allows that.
-   Everything else is the component markup, unchanged. #}
+Native <dialog>, opened with showModal(), for the same reason c-modal is one:
+the focus lock, Esc and the focus restore are the browser's job and it does
+them right. F9 asks for the lightbox to work from the keyboard end to end and
+for focus to come back to the tile that opened it — showModal() gives both, and
+a hand rolled trap gets the shift-tab wrap wrong every time.
+
+Alpine carries the one thing <dialog> has no opinion about: which image is
+showing. The arrow keys are bound on the dialog rather than the window, so they
+do nothing while it is shut.
+
+CONTRACT GAP: this is still a local copy of <c-lightbox> rather than the
+component. Two of the three reasons DEV.md S6 gave are gone — the component is
+a native dialog now and its images are lazy — but the third stands: c-lightbox
+owns its own grid and renders <c-picture> itself, so a certificate card cannot
+be the thing that opens it. Closing it means a tile slot on the component,
+which is drift on the section 7 row and belongs to a LEAD session.
+{% endcomment %}
 <div
   x-data="{
-    open: false,
-    index: 0,
+    i: 0,
     total: {{ items|length }},
-    trigger: null,
-    show(position, element) {
-      this.index = position;
-      this.trigger = element;
-      this.open = true;
-      this.$nextTick(() => this.$refs.dialog.focus());
-    },
-    close() {
-      this.open = false;
-      {# The tile is where the visitor was, so that is where the focus goes. #}
-      this.$nextTick(() => this.trigger && this.trigger.focus());
-    },
-    move(step) { this.index = (this.index + step + this.total) % this.total; }
+    show(position) { this.i = position; this.$refs.dlg.showModal() },
+    next() { this.i = (this.i + 1) % this.total },
+    prev() { this.i = (this.i - 1 + this.total) % this.total }
   }"
-  x-on:keydown.escape.window="if (open) close()"
-  x-on:keydown.arrow-right.window="if (open) move(1)"
-  x-on:keydown.arrow-left.window="if (open) move(-1)"
   data-testid="{{ testid|default:'gallery-grid' }}"
 >
-  <ul class="{{ grid|default:'grid grid-cols-2 gap-4 sm:grid-cols-3' }}">
-    {% for item in items %}<li>
+  <ul class="{{ grid|default:'grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4' }}">
+    {% for item in items %}<li class="flex">
       {% include tile|default:"gallery/_photo_tile.html" with item=item position=forloop.counter0 %}
     </li>{% endfor %}
   </ul>
 
-  <div x-cloak x-show="open" x-ref="dialog" tabindex="-1" x-on:click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/90 p-4 focus:outline-none" role="dialog" aria-modal="true" aria-label="{{ label|default:'Podgląd zdjęcia' }}">
-    <button type="button" x-on:click="close()" aria-label="Zamknij" class="absolute right-4 top-4 text-3xl text-paper-0">&times;</button>
-    <button type="button" x-on:click="move(-1)" aria-label="Poprzednie" class="absolute left-4 text-4xl text-paper-0">&lsaquo;</button>
-    {% for item in items %}<figure x-cloak x-show="index === {{ forloop.counter0 }}" class="max-h-full max-w-4xl">
-      {# lazy, so a hidden original is not downloaded before anyone asks for it #}
-      <img src="{{ item.image.url }}" alt="{{ item.alt }}" loading="lazy" decoding="async" class="max-h-[80vh] w-auto rounded-lg">
-      {% if item.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ item.caption }}</figcaption>{% endif %}
-    </figure>{% endfor %}
-    <button type="button" x-on:click="move(1)" aria-label="Następne" class="absolute right-4 text-4xl text-paper-0">&rsaquo;</button>
-  </div>
+  <dialog x-ref="dlg"
+          x-on:keydown.arrow-right.prevent="next()"
+          x-on:keydown.arrow-left.prevent="prev()"
+          aria-label="{{ label|default:'Podgląd zdjęcia' }}"
+          class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 text-ink backdrop:bg-ink/90">
+    <div class="flex items-center justify-between gap-4">
+      <p class="label text-ink-500"><span x-text="i + 1"></span> / {{ items|length }}</p>
+      <button type="button" x-on:click="$refs.dlg.close()" aria-label="Zamknij"
+              class="-m-2 p-2 text-ink-500 transition hover:text-ink">
+        <c-icon name="close" />
+      </button>
+    </div>
+
+    {% for item in items %}
+      <figure x-cloak x-show="i === {{ forloop.counter0 }}" class="mt-3">
+        {# lazy: a hidden original is not worth fetching before anyone asks to
+           see it, and twelve of them is the first screen budget in A.11 spent
+           on pictures nobody has opened. #}
+        <img src="{{ item.image.url }}" alt="{{ item.alt }}" loading="lazy" decoding="async"
+             {% if item.image.width %}width="{{ item.image.width }}" height="{{ item.image.height }}"{% endif %}
+             class="mx-auto max-h-[70vh] w-auto">
+        {% if item.caption %}
+          <figcaption class="mt-3 text-center text-small text-ink-500">{{ item.caption }}</figcaption>
+        {% endif %}
+      </figure>
+    {% endfor %}
+
+    {% if items|length > 1 %}
+      <div class="mt-3 flex justify-between gap-4">
+        <button type="button" x-on:click="prev()"
+                class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+          <span class="rotate-180"><c-icon name="arrow-right" /></span> Poprzednie
+        </button>
+        <button type="button" x-on:click="next()"
+                class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+          Następne <c-icon name="arrow-right" />
+        </button>
+      </div>
+    {% endif %}
+  </dialog>
 </div>

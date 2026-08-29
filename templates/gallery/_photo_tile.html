@@ -1,4 +1,11 @@
-{# One gallery tile: the thing that opens the lightbox at `position`. #}
-<button type="button" x-on:click="show({{ position }}, $event.currentTarget)" aria-haspopup="dialog" class="block w-full overflow-hidden rounded-xl border border-paper-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500">
-  <c-picture :image="item.image" alt="{{ item.alt }}" ratio="square" sizes="(min-width: 640px) 33vw, 50vw" />
+{# One gallery tile: the thing that opens the lightbox at `position`.
+
+   4:3, FRONTEND.md A.8. The photo is the whole tile, so the button is the
+   frame — an ink border and the hard 2px offset on hover, the same treatment
+   every other clickable card gets. #}
+<button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
+        class="block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
+  <c-picture :image="item.image" alt="{{ item.alt }}" ratio="tile"
+             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" />
+  <span class="sr-only">Powiększ: {{ item.alt }}</span>
 </button>
