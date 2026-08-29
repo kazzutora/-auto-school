@@ -26,10 +26,9 @@ switcher and the phone number.
       <p class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight [font-stretch:125%]">
         {{ site_settings.short_name|default:"OSK Nawrocki" }}
       </p>
-      <button type="button" data-modal-close aria-label="Zamknij menu"
-              class="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded text-ink transition hover:bg-paper-100">
+      <c-button variant="ghost" size="icon" data-modal-close aria-label="Zamknij menu" class="-mr-2">
         <c-icon name="close" />
-      </button>
+      </c-button>
     </div>
 
     <nav aria-label="Główna nawigacja" class="u-container grow overflow-y-auto py-6">

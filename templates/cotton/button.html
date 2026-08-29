@@ -17,13 +17,20 @@ on the inverted hero, and a near black one on the yellow strip. Overriding the
 colour with a utility from outside does not work: two text- utilities have the
 same specificity and the winner is whichever tailwind happened to emit last.
 
+size="icon" is a 44px square with no horizontal padding, for the handful of
+controls A.7 lets stand without a word beside them — a close, a burger. It is
+44 rather than 48 because that is the number A.11 asks of a touch target, and a
+square that size is the smallest honest one. Such a button has no visible text,
+so it must carry an aria-label; there is nothing else for a screen reader to
+read.
+
 A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej.
 {% endcomment %}
 <c-vars variant="primary" size="md" type="button" href="" full="" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %}
   class="inline-flex items-center justify-center gap-2 rounded border-2 px-6 text-center font-semibold leading-none transition active:translate-y-px
 {% if full %} w-full{% endif %}
-{% if size == 'sm' %} h-10 text-small{% elif size == 'lg' %} h-14 text-body-lg{% else %} h-12 text-body{% endif %}
+{% if size == 'sm' %} h-10 text-small{% elif size == 'lg' %} h-14 text-body-lg{% elif size == 'icon' %} h-11 w-11 !px-0 text-body{% else %} h-12 text-body{% endif %}
 {% if variant == 'secondary' %} u-btn-secondary bg-transparent
 {% elif variant == 'ghost' %} border-transparent bg-transparent px-0 underline-offset-4 hover:underline disabled:text-ink-300 disabled:no-underline
 {% else %} border-accent bg-accent u-fixed-ink hover:border-accent-600 hover:bg-accent-600 disabled:border-paper-200 disabled:bg-paper-200 disabled:text-ink-300

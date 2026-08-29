@@ -47,10 +47,9 @@ which is drift on the section 7 row and belongs to a LEAD session.
           class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 text-ink backdrop:bg-ink/90">
     <div class="flex items-center justify-between gap-4">
       <p class="label text-ink-500"><span x-text="i + 1"></span> / {{ items|length }}</p>
-      <button type="button" x-on:click="$refs.dlg.close()" aria-label="Zamknij"
-              class="-m-2 p-2 text-ink-500 transition hover:text-ink">
+      <c-button variant="ghost" size="icon" x-on:click="$refs.dlg.close()" aria-label="Zamknij">
         <c-icon name="close" />
-      </button>
+      </c-button>
     </div>
 
     {% for item in items %}
@@ -69,14 +68,12 @@ which is drift on the section 7 row and belongs to a LEAD session.
 
     {% if items|length > 1 %}
       <div class="mt-3 flex justify-between gap-4">
-        <button type="button" x-on:click="prev()"
-                class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+        <c-button variant="ghost" x-on:click="prev()">
           <span class="rotate-180"><c-icon name="arrow-right" /></span> Poprzednie
-        </button>
-        <button type="button" x-on:click="next()"
-                class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+        </c-button>
+        <c-button variant="ghost" x-on:click="next()">
           Następne <c-icon name="arrow-right" />
-        </button>
+        </c-button>
       </div>
     {% endif %}
   </dialog>

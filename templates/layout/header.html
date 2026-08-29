@@ -42,11 +42,11 @@ which half of A.9 point 0 to honour.
          it, so it carries the label instead. aria-expanded is kept in step with
          the panel by static/js/app.js, which is the only thing that knows
          whether the dialog is open. #}
-      <button type="button" data-modal-open="main-menu" aria-controls="main-menu" aria-expanded="false"
-              aria-label="Menu"
-              class="-mr-2 inline-flex h-12 w-12 items-center justify-center rounded text-ink transition hover:bg-paper-100 xl:hidden">
+      <c-button variant="ghost" size="icon" data-modal-open="main-menu"
+                aria-controls="main-menu" aria-expanded="false" aria-label="Menu"
+                class="-mr-2 xl:hidden">
         <c-icon name="menu" />
-      </button>
+      </c-button>
     </div>
   </div>
 
