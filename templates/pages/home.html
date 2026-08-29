@@ -221,12 +221,8 @@ comes from templates/cotton/, tech.md section 7.
    A.9 point 9: two columns on lg, the details on the left with the map under
    them, the way to sign up on the right.
 
-   CONTRACT GAP: A.9 puts a short lead form in the right column, posted over
-   htmx, and there is no form to put there. apps/leads has its model, services
-   and tasks but no forms.py, no views.py and no urls.py, so LeadForm does not
-   exist and /zapisz-sie/ answers nothing — tech.md section 5 lists both and
-   DEV.md ships them in S3. Until then the column carries the two actions that
-   do work, and enrol_url stays the frozen string the rest of the site uses.
+   The form on the right is the one from S3.1, posted over htmx: the answer
+   swaps in place and the reader never loses the map they were looking at.
    ------------------------------------------------------------- #}
 <c-section id="kontakt" tone="muted">
   <c-slot name="heading">Kontakt i zapisy</c-slot>
@@ -286,23 +282,8 @@ comes from templates/cotton/, tech.md section 7.
     </div>
 
     <div class="min-w-0">
-      <c-card class="flex h-full flex-col">
-        <c-slot name="title">Zapisz się na kurs</c-slot>
-        <p>
-          Zapisy przyjmujemy telefonicznie i w biurze. Powiedz, która kategoria Cię
-          interesuje — dobierzemy najbliższy termin.
-        </p>
-        <div class="mt-8 flex flex-col gap-4">
-          {% if site_settings.phone_primary %}
-            <c-button variant="primary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-              <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-            </c-button>
-          {% endif %}
-          <c-button variant="secondary" size="lg" full="1" href="{% url 'core:contact' %}">
-            Dane kontaktowe i dojazd
-          </c-button>
-        </div>
-      </c-card>
+      <c-heading level="3">Zostaw numer, oddzwonimy</c-heading>
+      <div class="mt-6">{% include "leads/_form.html" with form=lead_form %}</div>
     </div>
   </div>
 </c-section>

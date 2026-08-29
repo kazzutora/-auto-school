@@ -160,8 +160,18 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
             "intakes": selectors.prefetched_intakes(course),
             "vehicles": selectors.prefetched_vehicles(course),
             "enrol_url": ENROL_URL,
+            # The form ends the page with this course already chosen, DEV.md
+            # S3.1. Imported inside the function: apps/courses must not depend
+            # on another slice at import time.
+            "lead_form": _lead_form(course),
         },
     )
+
+
+def _lead_form(course: Course) -> Any:
+    from apps.leads.forms import LeadForm
+
+    return LeadForm(initial={"course": course.pk})
 
 
 # tech.md section 4.2 kinds, in the order the price page reads best.

@@ -219,6 +219,7 @@ def home(request: HttpRequest) -> HttpResponse:
             "faqs": faqs,
             "directions": directions(site),
             "enrol_url": ENROL_URL,
+            "lead_form": _lead_form(),
         },
     )
 
@@ -259,8 +260,20 @@ def contact(request: HttpRequest) -> HttpResponse:
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "directions": directions(site),
             "enrol_url": ENROL_URL,
+            "lead_form": _lead_form(),
         },
     )
+
+
+def _lead_form() -> Any:
+    """The enrolment form, DEV.md S3.1.
+
+    Imported inside the call rather than at module level: apps/core is shared
+    and must not depend on a feature slice at import time.
+    """
+    from apps.leads.forms import LeadForm
+
+    return LeadForm()
 
 
 # tech.md section 4.1 names the flat pages: o-nas, polityka-prywatnosci, rodo.

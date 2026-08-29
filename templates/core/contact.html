@@ -51,10 +51,9 @@
       {# The form itself ships with S3.1 (leads.forms.LeadForm), and this is the
          slot it drops into. Until then the page sends people the same two ways
          the course pages do: the enrolment route and the phone. #}
-      <div class="mt-4 flex flex-wrap gap-3">
-        <c-button href="{{ enrol_url }}">Zapisz się</c-button>
-        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">Zadzwoń</c-button>
-      </div>
+      {# DEV.md S3.1: the form embeds here too, so nobody has to leave the
+         contact page to reach the school. #}
+      <div class="mt-6">{% include "leads/_form.html" with form=lead_form %}</div>
     </c-card>
   </div>
 </c-section>

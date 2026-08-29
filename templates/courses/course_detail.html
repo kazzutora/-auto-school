@@ -189,30 +189,20 @@ only action on the page.
 </c-section>
 
 {# ------------------------------------------------------------ enrolment
-   CONTRACT GAP: A.10 and F5 both end this page with a lead form carrying the
-   course already chosen, and there is no form to put here. apps/leads has its
-   model, services and tasks but no forms.py, no views.py and no urls.py, so
-   LeadForm does not exist and /zapisz-sie/ answers nothing — tech.md section 5
-   lists both and DEV.md ships them in S3. The same gap ends the home page.
-
-   Until then this carries the two actions that do work, and enrol_url stays the
-   frozen string the rest of the site points at.
+   A.10 and F5 end the page with the form, and it arrives with this course
+   already chosen — the visitor has just read about it and should not have to
+   say so again. DEV.md S3.1.
    ------------------------------------------------------------ #}
 <c-section tone="muted">
   <div class="u-narrow">
     <c-heading level="2">Zapisz się na {{ course.title }}</c-heading>
     <p class="mt-4 text-body-lg text-ink-700">
-      Zapisy przyjmujemy telefonicznie i w biurze. Powiedz, że chodzi o
-      {{ course.title }} — dobierzemy najbliższy termin.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-4">
+      Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Wolisz zadzwonić?
       {% if site_settings.phone_primary %}
-        <c-button variant="primary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-        </c-button>
+        <a href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="data underline underline-offset-4">{{ site_settings.phone_primary }}</a>
       {% endif %}
-      <c-button variant="secondary" size="lg" href="{% url 'core:contact' %}">Dane kontaktowe i dojazd</c-button>
-    </div>
+    </p>
+    <div class="mt-8">{% include "leads/_form.html" with form=lead_form %}</div>
   </div>
 </c-section>
 
