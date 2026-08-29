@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% load static l10n %}
+
+{% comment %}
+Home page, FRONTEND.md A.9. Eleven sections in the order A.9 fixes them.
+
+Three of them decide whether they exist at all: no joinable group, fewer than
+two verifiable reviews, no published questions — and the section is absent
+rather than empty. A block that says nothing is worse than one section fewer,
+and A.9 says so for the terms and the reviews in as many words.
+
+Nothing here writes its own button, card, badge or field. Every one of those
+comes from templates/cotton/, tech.md section 7.
+{% endcomment %}
+
+{% block head %}
+  {# Leaflet rides on this one page rather than base.html: the mobile
+     performance gate is 90 and no other page carries a map. #}
+  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+{# ------------------------------------------------------------------ 1. Hero
+   The only inverted block on the page, A.9 point 1. No background image and no
+   stock photograph of anyone holding car keys, A.1.
+
+   78vh, not more: the boundary with the categories below has to land inside the
+   first screen so the page reads as having something to scroll to. At 1440x900
+   that puts it at 774px, header included.
+   ------------------------------------------------------------------ #}
+<section class="u-ground-ink flex min-h-[78vh] items-center py-16">
+  <div class="u-container">
+    <h1 class="display max-w-[16ch]">
+      Prawo jazdy w
+      {# The yellow slab sits behind the baseline rather than under it, so the
+         descenders cut through it the way a marker would. #}
+      <span class="relative inline-block">
+        <span aria-hidden="true" class="absolute inset-x-0 bottom-[0.04em] h-[0.18em] bg-accent"></span>
+        <span class="relative">Wieluniu</span>
+      </span>
+    </h1>
+
+    <p class="u-narrow mt-8 text-body-lg">
+      Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne.
+      Zajęcia po polsku, rosyjsku i ukraińsku.
+    </p>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      <c-button variant="primary" size="lg" href="{{ enrol_url }}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> Zadzwoń <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </div>
+
+    <ul class="label mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
+      {% if site_settings.founded_year %}
+        <li>od {{ site_settings.founded_year }} roku</li>
+        <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
+      {% endif %}
+      {% if course_count %}
+        <li><span class="data">{{ course_count }}</span> kursów</li>
+        <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
+      {% endif %}
+      <li>zajęcia po pl / ru / ua</li>
+    </ul>
+  </div>
+</section>
+
+{# --------------------------------------------------- 2. Licence categories
+   The main navigation node of the page, A.9 point 2. Two columns on a phone,
+   three from md, five from lg. The tile is c-course-card, the same one /kursy/
+   uses — there is one of these, not two.
+   --------------------------------------------------- #}
+<c-section id="kategorie">
+  <c-slot name="heading">Kategorie prawa jazdy</c-slot>
+  {% if categories %}
+    <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      {% for course in categories %}
+        <li class="flex"><c-course-card :course="course" class="w-full" /></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <c-alert tone="info" title="Oferta w przygotowaniu">
+      Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne.
+    </c-alert>
+  {% endif %}
+</c-section>
+
+{# ------------------------------------------------------- 3. Nearest starts
+   A.9 point 3: no joinable group and the section does not render at all.
+   ------------------------------------------------------- #}
+{% if intakes %}
+  <c-section id="terminy" tone="muted">
+    <c-slot name="heading">Najbliższe terminy</c-slot>
+    <div>
+      {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
+    </div>
+    <p class="mt-8">
+      <c-button variant="ghost" href="{% url 'courses:intakes' %}">
+        Wszystkie terminy <c-icon name="arrow-right" size="sm" />
+      </c-button>
+    </p>
+  </c-section>
+{% endif %}
+
+{# -------------------------------------------------- 4. Professional courses
+   A.9 point 4: four cards, then the two narrower ones underneath.
+   -------------------------------------------------- #}
+{% if professional or psychotests or operator_courses %}
+  <c-section id="zawodowy">
+    <c-slot name="heading">Kierowca zawodowy</c-slot>
+
+    {% if professional %}
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {% for course in professional %}
+          <li class="flex">
+            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
+              <c-slot name="title">{{ course.title }}</c-slot>
+              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
+              <p class="mt-6 flex items-center justify-between gap-3">
+                {% if course.total_hours %}
+                  <span class="data text-ink">{{ course.total_hours }} h</span>
+                {% else %}
+                  <span class="text-small text-ink-500">program indywidualny</span>
+                {% endif %}
+                <c-icon name="arrow-right" size="sm" class="text-ink-500" />
+              </p>
+            </c-card>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if psychotests or operator_courses %}
+      <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+        {% for course in psychotests %}
+          <li class="flex">
+            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
+              <c-slot name="title">{{ course.title }}</c-slot>
+              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
+            </c-card>
+          </li>
+        {% endfor %}
+        {% for course in operator_courses %}
+          <li class="flex">
+            <c-card href="{{ course.get_absolute_url }}" class="flex w-full flex-col">
+              <c-slot name="title">{{ course.title }}</c-slot>
+              {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
+            </c-card>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </c-section>
+{% endif %}
+
+{# ------------------------------------------------------- 5. Russian strip
+   The single yellow block on the page, A.9 point 5. It is the school's
+   competitive advantage and the old site buried it in a paragraph.
+
+   CONTRACT GAP: A.9 sends the button to /kursy-po-rosyjsku/, which is in
+   neither the url map in tech.md section 5 nor the routes that exist. Shipping
+   a link to a 404 is worse than shipping the wrong one, so it points at the
+   russian version of the course list, which is a real page saying the same
+   thing. Owner's call whether the landing page joins the url map.
+   ------------------------------------------------------- #}
+<c-section tone="accent">
+  <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="u-narrow">
+      <h2>Zajęcia po rosyjsku i ukraińsku</h2>
+      <p class="mt-4 text-body-lg">
+        Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku,
+        ale uczysz się tak, żeby wszystko rozumieć.
+      </p>
+    </div>
+    <div class="shrink-0">
+      <c-button variant="secondary" size="lg" href="/ru/kursy/">Смотреть курсы</c-button>
+    </div>
+  </div>
+</c-section>
+
+{# ------------------------------------------------------------ 6. Why us
+   A.9 point 6: four facts, big figures, no circle icons, vertical hairlines
+   between them.
+   ------------------------------------------------------------ #}
+<c-section id="dlaczego" tone="muted">
+  <c-slot name="heading">Dlaczego OSK Nawrocki</c-slot>
+  <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+    <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
+      <p class="data text-data-xl text-ink">{{ years_on_market }}</p>
+      <p class="mt-2 text-ink-700">lat na rynku, nieprzerwanie od {{ site_settings.founded_year|default:1996 }} roku</p>
+    </li>
+    <li class="lg:border-l lg:border-line-soft lg:px-8">
+      <p class="font-display text-h2 font-bold text-ink">własny</p>
+      <p class="mt-2 text-ink-700">plac manewrowy, ćwiczysz tam, gdzie zdajesz</p>
+    </li>
+    <li class="lg:border-l lg:border-line-soft lg:px-8">
+      <p class="font-display text-h2 font-bold text-ink">własne</p>
+      <p class="mt-2 text-ink-700">sale wykładowe w centrum Wielunia</p>
+    </li>
+    <li class="lg:border-l lg:border-line-soft lg:px-8">
+      <p class="font-display text-h2 font-bold text-ink">zgodne</p>
+      <p class="mt-2 text-ink-700">pojazdy spełniające wymogi egzaminacyjne</p>
+    </li>
+  </ul>
+</c-section>
+
+{# ---------------------------------------------------------- 7. Testimonials
+   A.9 point 7: fewer than two and the section does not render. The view has
+   already emptied the list in that case, and every one of them carries a link
+   to its source — no invented reviews under any circumstances.
+   ---------------------------------------------------------- #}
+{% if testimonials %}
+  <c-section id="opinie">
+    <c-slot name="heading">Co mówią kursanci</c-slot>
+    <c-testimonials :items="testimonials" />
+  </c-section>
+{% endif %}
+
+{# ------------------------------------------------------------------ 8. FAQ
+   Five questions, A.9 point 8. The same five go into the FAQPage json-ld the
+   view builds: marking up an answer that is not on the page is hidden content.
+   ------------------------------------------------------------------ #}
+{% if faqs %}
+  {# Paper rather than muted, and the contact block below takes the muted tone
+     instead. The reviews section between them is the one that disappears when
+     there is nothing verifiable to show, and two muted sections meeting where
+     it used to be read as one very long block. #}
+  <c-section id="faq">
+    <c-slot name="heading">Częste pytania</c-slot>
+    <div class="u-narrow">
+      <c-accordion>
+        {% for faq in faqs %}
+          <c-accordion.item title="{{ faq.question }}">{{ faq.answer|linebreaks }}</c-accordion.item>
+        {% endfor %}
+      </c-accordion>
+      <p class="mt-8">
+        <c-button variant="ghost" href="{% url 'links:faq' %}">
+          Wszystkie pytania <c-icon name="arrow-right" size="sm" />
+        </c-button>
+      </p>
+    </div>
+  </c-section>
+{% endif %}
+
+{# ------------------------------------------------------------- 9. Contact
+   A.9 point 9: two columns on lg, the details on the left with the map under
+   them, the way to sign up on the right.
+
+   CONTRACT GAP: A.9 puts a short lead form in the right column, posted over
+   htmx, and there is no form to put there. apps/leads has its model, services
+   and tasks but no forms.py, no views.py and no urls.py, so LeadForm does not
+   exist and /zapisz-sie/ answers nothing — tech.md section 5 lists both and
+   DEV.md ships them in S3. Until then the column carries the two actions that
+   do work, and enrol_url stays the frozen string the rest of the site uses.
+   ------------------------------------------------------------- #}
+<c-section id="kontakt" tone="muted">
+  <c-slot name="heading">Kontakt i zapisy</c-slot>
+  <div class="grid gap-12 lg:grid-cols-2">
+
+    <div class="flex min-w-0 flex-col gap-8">
+      <address class="flex flex-col gap-4 not-italic">
+        <p class="flex items-start gap-3">
+          <c-icon name="pin" size="sm" class="mt-1 text-ink-500" />
+          <span>{{ site_settings.street }}<br><span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}</span>
+        </p>
+        {% for phone in site_settings.phones %}
+          <p class="flex items-center gap-3">
+            <c-icon name="phone" size="sm" class="text-ink-500" />
+            <a href="tel:{{ phone|cut:' ' }}" class="data text-data-lg underline-offset-4 hover:underline">{{ phone }}</a>
+          </p>
+        {% endfor %}
+        {% if site_settings.email %}
+          <p class="flex items-center gap-3">
+            <c-icon name="mail" size="sm" class="text-ink-500" />
+            <a href="mailto:{{ site_settings.email }}" class="underline-offset-4 hover:underline">{{ site_settings.email }}</a>
+          </p>
+        {% endif %}
+      </address>
+
+      <div class="grid gap-8 sm:grid-cols-2">
+        <div class="min-w-0">
+          <p class="label mb-3 text-ink-500">Biuro</p>
+          <c-hours-table department="office" />
+        </div>
+        <div class="min-w-0">
+          <p class="label mb-3 text-ink-500">Pracownia psychologiczna</p>
+          <c-hours-table department="psychology" />
+        </div>
+      </div>
+
+      {% if site_settings.map_lat and site_settings.map_lng %}
+        <div>
+          {# unlocalize: the polish locale writes a decimal with a comma, and
+             parseFloat stops at it — 51,2206 becomes 51 and the marker lands in
+             the Atlantic. #}
+          <c-map lat="{{ site_settings.map_lat|unlocalize }}" lng="{{ site_settings.map_lng|unlocalize }}"
+                 zoom="16" height="md"
+                 label="{{ site_settings.short_name }}, {{ site_settings.street }}" />
+          {% if directions.geo or directions.osm %}
+            <p class="mt-4 flex flex-wrap gap-4">
+              {% if directions.geo %}<c-button variant="ghost" href="{{ directions.geo }}">Nawiguj</c-button>{% endif %}
+              {% if directions.osm %}
+                <c-button variant="ghost" href="{{ directions.osm }}">
+                  Wyznacz trasę <c-icon name="external" size="sm" />
+                </c-button>
+              {% endif %}
+            </p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="min-w-0">
+      <c-card class="flex h-full flex-col">
+        <c-slot name="title">Zapisz się na kurs</c-slot>
+        <p>
+          Zapisy przyjmujemy telefonicznie i w biurze. Powiedz, która kategoria Cię
+          interesuje — dobierzemy najbliższy termin.
+        </p>
+        <div class="mt-8 flex flex-col gap-4">
+          {% if site_settings.phone_primary %}
+            <c-button variant="primary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+              <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+            </c-button>
+          {% endif %}
+          <c-button variant="secondary" size="lg" full="1" href="{% url 'core:contact' %}">
+            Dane kontaktowe i dojazd
+          </c-button>
+        </div>
+      </c-card>
+    </div>
+  </div>
+</c-section>
+
+{# 10. The footer is layout, built in F2, and this page does not touch it. #}
+
+{# ------------------------------------------------------------ 11. Sticky CTA
+   Below md only, and always under the cookie banner, A.5. The padding below
+   keeps the bar off the last section instead of on top of it.
+   ------------------------------------------------------------ #}
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+<c-cta-bar title="Zapisz się na kurs" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+{% endblock %}
