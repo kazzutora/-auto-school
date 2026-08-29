@@ -173,6 +173,13 @@ module.exports = {
         // A.3: a line of text is 60 to 75 characters.
         narrow: "68ch",
       },
+      // A.6 names what may move: colour, border and background. Tailwind's own
+      // `transition` also carries box-shadow, transform, filter and opacity,
+      // so the bare class was animating four things the contract does not
+      // allow — including the focus halo, which should never fade in.
+      transitionProperty: {
+        DEFAULT: "color, background-color, border-color, outline-color",
+      },
       transitionDuration: {
         // A.6: the only three durations in the design.
         DEFAULT: "120ms",

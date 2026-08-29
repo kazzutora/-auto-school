@@ -396,7 +396,12 @@
   select,
   textarea,
   [role='button'] {
-    transition-property: color, background-color, border-color, outline-color, box-shadow;
+    /* A.6 allows colour, border and background, and nothing else. box-shadow
+     * was in this list and is neither — it also meant the focus halo faded in
+     * over 120ms instead of arriving with the ring, which is the one thing on
+     * the page that should never be gradual. Dropping it makes the card's
+     * hover offset snap too, which suits A.1 rather better than a fade. */
+    transition-property: color, background-color, border-color, outline-color;
     transition-duration: theme('transitionDuration.DEFAULT');
     transition-timing-function: theme('transitionTimingFunction.DEFAULT');
   }
