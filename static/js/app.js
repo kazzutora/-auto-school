@@ -90,6 +90,7 @@
         if (dialog && typeof dialog.showModal === "function") {
           event.preventDefault();
           dialog.showModal();
+          syncExpanded(opener, dialog);
         }
         return;
       }
@@ -144,10 +145,52 @@
     });
   }
 
+  /* Header rule, FRONTEND.md A.9 point 0.
+   *
+   * The hairline under the header turns into the heavy ink rule once the page
+   * has moved. The question is only ever "is the top of the document still in
+   * view", so it is answered by an observer on a one pixel sentinel above the
+   * header rather than by a scroll handler that fires on every frame.
+   */
+  function initHeaderRule() {
+    var sentinel = document.querySelector("[data-header-sentinel]");
+    var header = document.querySelector(".u-header");
+    if (!sentinel || !header || typeof window.IntersectionObserver === "undefined") {
+      return;
+    }
+    new window.IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          header.removeAttribute("data-stuck");
+        } else {
+          header.setAttribute("data-stuck", "");
+        }
+      });
+    }).observe(sentinel);
+  }
+
+  /* The burger says whether the panel it controls is open. <dialog> fires close
+   * for every way out — Esc, the button, a click on the backdrop — so one
+   * listener per opener covers all of them. */
+  function syncExpanded(opener, dialog) {
+    if (!opener.hasAttribute("aria-expanded")) {
+      return;
+    }
+    opener.setAttribute("aria-expanded", "true");
+    dialog.addEventListener(
+      "close",
+      function () {
+        opener.setAttribute("aria-expanded", "false");
+      },
+      { once: true }
+    );
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initMaps();
     initCookieBanner();
     initModals();
     linkFieldErrors();
+    initHeaderRule();
   });
 })();

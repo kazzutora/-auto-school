@@ -239,6 +239,10 @@
     font-family: theme('fontFamily.sans');
     font-size: 100%;
     -webkit-text-size-adjust: 100%;
+    /* The gutter is reserved whether or not the page scrolls, so a short page
+     * and a long one lay out at the same width and the sticky header does not
+     * jump sideways the moment content grows past the fold. */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -490,6 +494,21 @@
     border-color: rgb(var(--fixed-ink));
   }
 
+  /* A hairline drawn on a ground rather than on the page. --on-ground is what
+   * reads against the block, so a quarter of it is a divider that works on the
+   * footer's deep purple, on the inverted hero and on the page alike. Naming a
+   * token instead would mean border-paper, which flips with the theme and
+   * disappears into the footer the moment the reader is in the dark. */
+  .u-rule-on-ground {
+    border-color: rgb(var(--on-ground) / 0.25);
+  }
+
+  /* Text that sits back on a ground without naming a colour of its own. Same
+   * reason: ink-500 is a page colour and has no contrast on deep. */
+  .u-muted-on-ground {
+    color: rgb(var(--on-ground) / 0.75);
+  }
+
   /* The outlined button, FRONTEND.md A.5. Written against the ground rather
    * than against the palette: on the page it is the ink frame A.5 describes,
    * on the inverted hero it is the paper frame A.9 point 1 asks for, and on the
@@ -513,6 +532,22 @@
     border-color: rgb(var(--line-soft));
     color: rgb(var(--ink-300));
     background-color: transparent;
+  }
+
+  /* The header, A.9 point 0. 72px, paper ground, a hairline underneath that
+   * turns into the heavy ink rule once the page has moved.
+   *
+   * data-stuck is set by an IntersectionObserver watching a sentinel above the
+   * header rather than by a scroll handler: the question is only ever "has the
+   * top of the page left the viewport", and that is one callback instead of one
+   * per scroll event. */
+  .u-header {
+    @apply sticky top-0 z-30 bg-paper;
+    border-bottom: 1px solid rgb(var(--line-soft));
+  }
+
+  .u-header[data-stuck] {
+    border-bottom-color: rgb(var(--line));
   }
 
   /* Anything wide scrolls inside its own box. The page never moves sideways,
