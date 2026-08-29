@@ -212,7 +212,10 @@ def test_a_failing_mail_client_is_retried_and_the_lead_survives(
 
     # The task asked for another attempt instead of swallowing the outage.
     assert isinstance(cause(raised.value), error)
-    assert client.attempts == 1
+    # Eager mode runs the retries inline rather than handing them to a worker,
+    # so one apply() reaches the client once per attempt the policy allows. The
+    # number is the point: it proves autoretry is wired and that it stops.
+    assert client.attempts == 1 + BaseTask.max_retries
     assert sent(outbox) == []
     lead.refresh_from_db()
     # The lead stays in the admin as unfinished work, DEV.md S3.2.
