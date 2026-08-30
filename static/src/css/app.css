@@ -386,8 +386,17 @@
     summary:hover svg,
     .u-photo:hover img,
     .u-card:hover,
-    .u-tile:hover {
+    .u-card:hover p,
+    .u-tile:hover,
+    .u-menurow:hover {
       transform: none !important;
+    }
+
+    /* The menu bar is the exception: it is a state, not a decoration, so it
+     * still appears — it simply appears at once. Resetting its transform would
+     * leave every item underlined at full width. */
+    .u-navlink::after {
+      transition: none !important;
     }
   }
 
@@ -573,6 +582,83 @@
 
   summary svg {
     transition: transform 120ms ease-out;
+  }
+
+  /* The map keeps its stacking to itself.
+   *
+   * Leaflet numbers its own layers from 400 for the panes up to 1000 for the
+   * controls, and those are absolute figures in whatever context they land in.
+   * Dropped straight onto the page they beat the sticky header at z-30, so
+   * scrolling pushed the map straight over the menu.
+   *
+   * isolate makes the container a stacking context of its own: everything
+   * leaflet numbers is now numbered inside the map, and the map as a whole
+   * sits where the page puts it — under the header, like any other content.
+   */
+  [data-map] {
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
+  }
+
+  /* A.6 point 2 allows the mobile menu 180ms to arrive, and nothing had ever
+   * used it: a native <dialog> opened by showModal appears in one frame. The
+   * keyframe runs on open only — there is no closing animation, because
+   * <dialog> is removed from the top layer the moment close() is called and
+   * anything on the way out is cut off mid step.
+   *
+   * A hand's width of travel, not a slide across the screen: the panel comes
+   * from the header it was opened from.
+   */
+  @keyframes u-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  dialog[open] {
+    animation: u-panel-in 180ms ease-out;
+  }
+
+  dialog[open]::backdrop {
+    animation: u-fade-in 180ms ease-out;
+  }
+
+  @keyframes u-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* The menu underline sweeps out from the left rather than fading in at full
+   * width. A border-colour transition told you the item was hovered; it did
+   * not feel like anything moved, because nothing did.
+   *
+   * The bar is a pseudo element so the item reserves no space for it and the
+   * row keeps its height whether an item is current or not. aria-current is
+   * the hook for the current page — the attribute is already there for screen
+   * readers, so nothing extra has to be kept in step.
+   */
+  .u-navlink {
+    position: relative;
+  }
+
+  .u-navlink::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 3px;
+    background-color: rgb(var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 120ms ease-out;
+  }
+
+  .u-navlink:hover::after,
+  .u-navlink[aria-current="page"]::after {
+    transform: scaleX(1);
   }
 
   /* A photograph leans in a little inside its frame. The frame is clipped, so
