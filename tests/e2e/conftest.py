@@ -110,6 +110,18 @@ def site(db: None) -> SiteSettings:
         price_gross=Decimal("3200"),
         is_active=True,
     )
+    # A licence course with no price, which is what puts the quote tiles on the
+    # price page. Without one the axe sweep never saw that block at all — and
+    # it was the block where a white card on the purple band printed white on
+    # white, invisible to the eye and to the gate alike.
+    Course.objects.create(
+        kind=Course.Kind.LICENSE,
+        slug="kat-am",
+        code="AM",
+        title="Kategoria AM",
+        lead="Motorower.",
+        is_active=True,
+    )
     Course.objects.create(
         kind=Course.Kind.PROFESSIONAL,
         slug="adr",

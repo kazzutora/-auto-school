@@ -139,3 +139,48 @@ def test_no_purple_band_touches_the_purple_footer(
         }"""
     )
     assert not clash, f"{path} ends on purple, straight above a purple footer"
+
+
+@pytest.mark.a11y
+def test_a_card_on_a_dark_band_takes_the_page_back(
+    live_server, site: SiteSettings, page: Page
+) -> None:
+    """A white card sitting on an inverted band is the page, not the band.
+
+    Without that it kept the band's white foreground and printed white on
+    white: the tile title vanished and the outlined button became an empty
+    rectangle. The heading rule was the other half — it reached into the card
+    and it outranks a text-ink utility, a class plus an element beating a
+    class on its own.
+    """
+    page.goto(f"{live_server.url}/cennik/")
+    page.wait_for_selector("h1")
+
+    tile = page.locator(".u-ground-deep .u-tile, .u-ground-ink .u-card").first
+    tile.scroll_into_view_if_needed()
+
+    measured = tile.evaluate(
+        """(el) => {
+            const lum = (colour) => {
+                const [r, g, b] = colour.match(/[0-9.]+/g).map(Number);
+                const ch = (v) => {
+                    v /= 255;
+                    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+                };
+                return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+            };
+            const ratio = (a, b) => {
+                const x = lum(a), y = lum(b);
+                return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+            };
+            const bg = getComputedStyle(el).backgroundColor;
+            const heading = el.querySelector('h2, h3, h4');
+            return {
+                heading: heading ? ratio(getComputedStyle(heading).color, bg) : null,
+                onGround: getComputedStyle(el).getPropertyValue('--on-ground').trim(),
+            };
+        }"""
+    )
+    assert measured["heading"] is not None, "the tile has no heading to check"
+    assert measured["heading"] >= 4.5, f"the heading reads {measured['heading']:.2f}:1 on its card"
+    assert measured["onGround"] == "14 14 16", "the card did not take the page ground back"
