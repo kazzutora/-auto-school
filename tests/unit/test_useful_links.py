@@ -3,6 +3,7 @@
 import json
 import re
 from typing import Any
+from urllib.parse import urlsplit
 
 import pytest
 from django.core.exceptions import ValidationError
@@ -63,7 +64,13 @@ def page(client: Client) -> str:
 
 
 def headings(body: str) -> list[str]:
-    return re.findall(r"<h2[^>]*>(.*?)</h2>", body)
+    """The group headings.
+
+    The page closes on an invitation with an h2 of its own, and that is not a
+    group — a question mark is enough to tell the two apart here.
+    """
+    found = re.findall(r"<h2[^>]*>(.*?)</h2>", body)
+    return [heading for heading in found if "?" not in heading]
 
 
 def anchors(body: str) -> list[tuple[str, str]]:
@@ -270,8 +277,7 @@ def test_no_bare_url_is_printed_anywhere(client: Client, links: None) -> None:
     and a url with no spaces in it is what pushes a phone screen sideways.
     """
     body = page(client)
-    region = body[body.index('data-testid="groups"') :]
-    region = region[: region.index("</section>")]
+    region = body[body.index("<main") : body.index("</main>")]
 
     for url in UsefulLink.objects.values_list("url", flat=True):
         assert f'href="{url}"' in region, "the link itself must still be there"
@@ -283,9 +289,42 @@ def test_no_bare_url_is_printed_anywhere(client: Client, links: None) -> None:
 def test_the_external_mark_sits_on_every_row(client: Client, links: None) -> None:
     """F10: the icon says the row leaves the site before the click does."""
     body = page(client)
-    region = body[body.index('data-testid="groups"') :]
-    region = region[: region.index("</section>")]
+    region = body[body.index("<main") : body.index("</main>")]
 
     rows = region.count('rel="noopener noreferrer"')
     assert rows == UsefulLink.objects.filter(is_active=True).count()
     assert region.count("#i-external") == rows
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X4
+
+
+def test_a_link_is_a_card_not_a_row(client: Client, links: None) -> None:
+    """X4 point 1, finding 16.
+
+    The flat list ran the full 1240px: the text sat in the left 40% and the
+    external mark was pinned to the far right, a screen away from the name it
+    belonged to. A card holds the two together and stops at 400px.
+    """
+    body = page(client)
+    assert "u-card" in body
+    assert "max-w-[400px]" in body
+    assert "md:grid-cols-2" in body and "lg:grid-cols-3" in body
+
+
+def test_every_card_says_where_it_goes(client: Client, links: None) -> None:
+    """The host, not the address: F10 keeps bare urls off the page and a path
+    says nothing the title has not."""
+    body = page(client)
+    for url in UsefulLink.objects.values_list("url", flat=True):
+        host = urlsplit(url).netloc.removeprefix("www.")
+        assert host in body
+        assert f">{url}<" not in body
+
+
+def test_the_page_ends_on_an_invitation(client: Client, links: None) -> None:
+    body = page(client)
+    inside = body[body.index("<main") : body.index("</main>")]
+    last = inside.rindex("<section")
+    assert "u-ground-ink" in inside[last : last + 400]

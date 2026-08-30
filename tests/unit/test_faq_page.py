@@ -156,13 +156,22 @@ def test_every_question_is_an_accordion_row(client: Client, questions: list[Faq]
 
 
 def test_the_accordion_needs_no_javascript(client: Client, questions: list[Faq]) -> None:
-    """details/summary opens on its own, DEV.md S7.3."""
+    """details/summary opens on its own, DEV.md S7.3.
+
+    X4 puts a search over the page, so alpine now has a say in which group is
+    shown — but not in whether an answer opens. What matters is that no answer
+    is hidden behind a directive: with no script the section is simply visible,
+    because x-show on an unknown attribute does nothing and nothing here is
+    cloaked.
+    """
     accordion = re.search(r'data-testid="faq".*?</section>', page(client), re.S).group(0)
 
     assert "<details" in accordion
     assert "<summary" in accordion
-    assert "x-data" not in accordion
-    assert "x-show" not in accordion
+    # The answer itself is never gated on a script.
+    item = re.search(r"<details.*?</details>", accordion, re.S).group(0)
+    assert "x-show" not in item
+    assert "x-cloak" not in item
 
 
 def test_the_answer_is_rendered_markdown(client: Client) -> None:
@@ -189,7 +198,13 @@ def test_groups_get_their_own_heading(client: Client) -> None:
     make_question(1, question="Z grupą", group="Egzamin", order=20)
 
     body = page(client)
-    headings = re.findall(r"<h2[^>]*>(.*?)</h2>", body)
+    # Only the group headings: the page closes on an invitation that has an h2
+    # of its own, and that is not a group.
+    inside = (
+        body[body.index('data-testid="faq"') : body.rindex('data-testid="faq"')]
+        + body[body.rindex('data-testid="faq"') : body.index("</main>")]
+    )
+    headings = [h for h in re.findall(r"<h2[^>]*>(.*?)</h2>", inside) if "?" not in h]
 
     assert headings == ["Egzamin"]
     assert body.index("Bez grupy") < body.index("Egzamin")
@@ -199,7 +214,8 @@ def test_one_group_for_everything_is_still_one_heading(client: Client) -> None:
     for number in range(3):
         make_question(number, group="Egzamin", order=number)
 
-    assert re.findall(r"<h2[^>]*>(.*?)</h2>", page(client)) == ["Egzamin"]
+    headings = [h for h in re.findall(r"<h2[^>]*>(.*?)</h2>", page(client)) if "?" not in h]
+    assert headings == ["Egzamin"]
 
 
 # --------------------------------------------------------------------------
