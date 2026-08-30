@@ -210,6 +210,73 @@
     });
   }
 
+  /* Section reveal, FRONTEND.md A.6 point 3.
+   *
+   * Hides a section only when it starts watching it, and only when it is below
+   * the fold: what is already on screen is left alone, so there is no flash of
+   * content being taken away and handed back. A section is revealed once and
+   * then let go — a reveal that can play twice is a flicker on the way back up
+   * the page.
+   *
+   * The hiding lives here rather than in the stylesheet on purpose. Hidden by
+   * css and revealed by script means a script that fails to arrive leaves a
+   * blank page, which is the worst failure a marketing site has.
+   */
+  function initReveal() {
+    var nodes = document.querySelectorAll("[data-reveal]");
+    var reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!nodes.length || typeof window.IntersectionObserver === "undefined" || reduced) {
+      return;
+    }
+
+    var pending = [];
+    var observer;
+
+    /* Reveal everything that has reached the fold, not only what triggered the
+     * callback. Watching each section on its own leaves the skipped ones
+     * hidden for good when the viewport jumps rather than scrolls — an anchor,
+     * the End key, a link from the contents list. Ask any of those for the
+     * bottom of a page and seven sections above it stay blank. */
+    function flush() {
+      pending = pending.filter(function (node) {
+        if (node.getBoundingClientRect().top >= window.innerHeight) {
+          return true;
+        }
+        observer.unobserve(node);
+        node.classList.remove("is-waiting");
+        return false;
+      });
+      if (!pending.length) {
+        observer.disconnect();
+        window.removeEventListener("scroll", flush);
+      }
+    }
+
+    /* The observer alone is not enough. Jump to the very bottom of a page and
+     * the last thing on screen is the footer, which nothing is watching — so
+     * no callback fires and every section above stays hidden. The listener is
+     * passive, does nothing but walk a list that only shrinks, and takes
+     * itself off the moment that list is empty. */
+    window.addEventListener("scroll", flush, { passive: true });
+
+    observer = new window.IntersectionObserver(flush, {
+      // A little before the edge, so a section has finished arriving by the
+      // time it is properly in view.
+      rootMargin: "0px 0px -10% 0px",
+      threshold: 0.01,
+    });
+
+    Array.prototype.forEach.call(nodes, function (node) {
+      if (node.getBoundingClientRect().top < window.innerHeight) {
+        return;
+      }
+      node.classList.add("is-waiting");
+      pending.push(node);
+      observer.observe(node);
+    });
+  }
+
   /* The burger says whether the panel it controls is open. <dialog> fires close
    * for every way out — Esc, the button, a click on the backdrop — so one
    * listener per opener covers all of them. */
@@ -295,6 +362,7 @@
     initModals();
     linkFieldErrors();
     initTableOfContents();
+    initReveal();
   });
 
   /* htmx replaces the enrolment form with a version carrying its errors, and

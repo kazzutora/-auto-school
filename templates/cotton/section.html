@@ -11,7 +11,7 @@ deep is deliberately absent. A.1 allows it for inverted blocks and the footer,
 and the footer is layout, not a section.
 {% endcomment %}
 <c-vars id="" tone="default" class="" />
-<section {% if id %}id="{{ id }}"{% endif %}
+<section data-reveal {% if id %}id="{{ id }}"{% endif %}
   class="u-section{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container">

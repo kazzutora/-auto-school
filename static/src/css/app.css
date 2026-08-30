@@ -602,3 +602,38 @@
     min-width: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Section reveal, A.6 point 3.
+ *
+ * Outside every @layer on purpose. Tailwind tree shakes what it finds in a
+ * layer against the templates, and is-waiting appears in none of them — it is
+ * added by javascript at runtime. Inside @layer components the rule was
+ * dropped from the build silently, so sections were being marked and never
+ * hidden, and in the first version never revealed either. Plain css in this
+ * file is emitted verbatim.
+ *
+ * opacity 0 to 1 over 300ms, once, and nothing moves: no parallax, no sliding
+ * in, no stagger. A page that reassembles itself while you read it is a page
+ * you cannot skim.
+ *
+ * Nothing is hidden by default, which is the other half of the lesson. The
+ * first attempt hid every section here and had javascript hand them back, one
+ * failed script away from a blank page. Now javascript hides a section only as
+ * it starts watching it, and only below the fold.
+ * ------------------------------------------------------------------------- */
+[data-reveal] {
+  transition: opacity 300ms ease-out;
+}
+
+[data-reveal].is-waiting {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal].is-waiting {
+    opacity: 1;
+    transition: none;
+  }
+}
