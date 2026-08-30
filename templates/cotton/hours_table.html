@@ -30,7 +30,7 @@ The open-now badge answers the question before the table does.
       {% for entry in rows %}<tr class="border-b border-line-soft last:border-b-0{% if entry.is_today %} font-semibold text-ink{% else %} text-ink-700{% endif %}">
         <th scope="row" class="py-3 pr-6 font-normal{% if entry.is_today %} font-semibold{% endif %}">{{ entry.label }}</th>
         <td class="data py-3 text-ink">{% if entry.row and not entry.row.is_closed %}{{ entry.row.opens|time:"H:i" }}&ndash;{{ entry.row.closes|time:"H:i" }}{% else %}<span class="font-sans text-ink-500">Nieczynne</span>{% endif %}</td>
-        <td class="py-3 pl-6 text-small text-ink-500">{% if entry.row.note %}{{ entry.row.note }}{% endif %}</td>
+        <td class="py-3 pl-6 text-small text-ink-500">{{ entry.row.note|owner_ready }}</td>
       </tr>{% endfor %}
     </tbody>
   </table>

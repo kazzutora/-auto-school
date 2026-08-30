@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_ui %}
 
 {% comment %}
 The price list, FRONTEND.md A.10 and F6.
@@ -44,7 +45,7 @@ still must not move sideways, A.4.
                     {% endif %}
                   </th>
                   <td class="data whitespace-nowrap py-4 pr-6 text-right text-ink">{{ row.price }}</td>
-                  <td class="py-4 text-small text-ink-500">{{ row.note }}</td>
+                  <td class="py-4 text-small text-ink-500">{{ row.note|owner_ready }}</td>
                 </tr>
               {% endfor %}
             </c-table>
@@ -84,7 +85,7 @@ still must not move sideways, A.4.
             {# No price prop: c-price-tile prints "Cena ustalana indywidualnie"
                itself when it has no figure, rather than a blank where a number
                belongs. #}
-            <c-price-tile title="{{ course.title }}" note="{{ course.price_note }}"
+            <c-price-tile title="{{ course.title }}" note="{{ course.price_note|owner_ready }}"
                           href="{{ course.get_absolute_url }}" class="w-full" />
           </li>
         {% endfor %}

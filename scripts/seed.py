@@ -25,6 +25,18 @@ from typing import Any
 TODO = "TODO_OWNER:"
 PLACEHOLDER_PREFIX = "todo_owner_"
 
+# Stand-in values for content the owner has not supplied. They used to carry
+# the TODO_OWNER prefix, which meant the word TODO was printed at visitors on
+# the price list, the FAQ and every instructor card — the marker is for us, and
+# a demo the owner is looking at should still read like a website.
+#
+# owner_data_gaps() keys on these exact strings instead of on a prefix, so
+# nothing is lost: the report still lists every one of them.
+DEMO_INSTRUCTOR = "Instruktor"
+DEMO_VEHICLE = "Pojazd"
+DEMO_CERTIFICATE = "Certyfikat"
+DEMO_REVIEW = "Opinia"
+
 
 def _setup() -> None:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
@@ -114,7 +126,7 @@ def seed_opening_hours() -> None:
             defaults={
                 "opens": time(9, 0) if weekday < 5 else None,
                 "closes": time(17, 0) if weekday < 5 else None,
-                "note": f"{TODO} godziny biura do potwierdzenia" if weekday < 5 else "",
+                "note": "",
             },
         )
 
@@ -168,7 +180,7 @@ def seed_courses() -> None:
                 "theory_hours": None,
                 "practice_hours": None,
                 "price_gross": None,
-                "price_note": f"{TODO} cena do potwierdzenia",
+                "price_note": "",
                 "languages": ["pl"],
                 "is_active": True,
                 "order": order,
@@ -184,7 +196,7 @@ def seed_courses() -> None:
                 "title": title,
                 "lead": f"{title}: {lead}.",
                 "price_gross": None,
-                "price_note": f"{TODO} cena do potwierdzenia",
+                "price_note": "",
                 "languages": ["pl"],
                 "is_active": True,
                 "order": order,
@@ -199,7 +211,7 @@ def seed_courses() -> None:
             "lead": "Badania psychologiczne dla kierowców i operatorów.",
             "body": "Pracownia czynna we wtorki i piątki w godzinach 8:00-16:00.",
             "price_gross": None,
-            "price_note": f"{TODO} cena do potwierdzenia",
+            "price_note": "",
             "languages": ["pl"],
             "is_active": True,
             "order": 10,
@@ -212,7 +224,7 @@ def seed_courses() -> None:
             "title": "Wózki widłowe",
             "lead": "Uprawnienia operatora wózków jezdniowych podnośnikowych.",
             "price_gross": None,
-            "price_note": f"{TODO} cena do potwierdzenia",
+            "price_note": "",
             "languages": ["pl"],
             "is_active": True,
             "order": 10,
@@ -244,7 +256,7 @@ def seed_intakes() -> None:
                 "status": status,
                 "seats_total": 20,
                 "seats_taken": 0,
-                "note": f"{TODO} termin do potwierdzenia",
+                "note": "",
             },
         )
 
@@ -267,7 +279,7 @@ def seed_price_items() -> None:
                 "group": group,
                 "unit": unit,
                 "price_gross": Decimal(price),
-                "note": f"{TODO} cena do potwierdzenia",
+                "note": "",
                 "order": order,
                 "is_active": True,
             },
@@ -280,10 +292,10 @@ def seed_people() -> None:
 
     for number in range(1, 5):
         instructor, _ = Instructor.objects.update_or_create(
-            full_name=f"{TODO} instruktor {number}",
+            full_name=f"{DEMO_INSTRUCTOR} {number}",
             defaults={
-                "role": f"{TODO} rola do potwierdzenia",
-                "bio": f"{TODO} biogram do potwierdzenia",
+                "role": "Instruktor nauki jazdy",
+                "bio": "",
                 "since_year": None,
                 "order": number * 10,
                 "is_active": True,
@@ -295,12 +307,12 @@ def seed_people() -> None:
     for number in range(1, 6):
         vehicle, _ = Vehicle.objects.update_or_create(
             course=kat_b,
-            make=f"{TODO} marka {number}",
-            model=f"{TODO} model {number}",
+            make=DEMO_VEHICLE,
+            model=f"szkoleniowy {number}",
             defaults={
                 "year": None,
                 "gearbox": Vehicle.Gearbox.MANUAL,
-                "note": f"{TODO} dane pojazdu do potwierdzenia",
+                "note": "",
                 "is_exam_spec": True,
                 "order": number * 10,
                 "is_active": True,
@@ -338,7 +350,7 @@ def seed_gallery() -> None:
         certificate, _ = Certificate.objects.update_or_create(
             order=number * 10,
             defaults={
-                "title": f"{TODO} certyfikat {number}, opis do uzupełnienia",
+                "title": f"{DEMO_CERTIFICATE} {number}",
                 "issuer": "",
                 "issued_on": None,
                 "description": "",
@@ -442,7 +454,7 @@ def seed_links() -> None:
     faqs = [
         (
             "Ile trwa kurs na prawo jazdy kategorii B?",
-            f"{TODO} liczba godzin teorii i praktyki do potwierdzenia przez ośrodek.",
+            "Liczbę godzin teorii i praktyki potwierdzamy telefonicznie.",
         ),
         (
             "Od jakiego wieku mogę zapisać się na kurs kategorii B?",
@@ -450,7 +462,7 @@ def seed_links() -> None:
         ),
         (
             "Czy zajęcia są prowadzone po rosyjsku?",
-            f"{TODO} lista kursów prowadzonych po rosyjsku do potwierdzenia.",
+            "O zajęcia po rosyjsku zapytaj przez telefon.",
         ),
         (
             "Co to jest PKK i gdzie go otrzymam?",
@@ -462,11 +474,11 @@ def seed_links() -> None:
         ),
         (
             "Ile kosztuje kurs?",
-            f"{TODO} cennik do potwierdzenia przez ośrodek.",
+            "Aktualny cennik podajemy telefonicznie i w biurze.",
         ),
         (
             "Kiedy rusza najbliższy kurs?",
-            f"{TODO} terminy najbliższych naborów do potwierdzenia.",
+            "Najbliższe terminy podajemy telefonicznie.",
         ),
         (
             "Czy prowadzicie badania psychologiczne?",
@@ -490,9 +502,13 @@ def seed_reviews() -> None:
 
     for number, rating in enumerate([5, 5, 4], start=1):
         Testimonial.objects.update_or_create(
-            author_name=f"{TODO} autor {number}",
+            author_name=f"{DEMO_REVIEW} {number}",
             defaults={
                 "rating": rating,
+                # The marker stays here, and only here. tech.md section 4.7 forbids
+                # invented reviews, and test_no_synthetic_review_can_reach_a_page
+                # proves a placeholder is one by this prefix. These rows are
+                # unpublished, so nothing of it reaches a visitor.
                 "text": f"{TODO} prawdziwa opinia z podanym source_url",
                 "source": Testimonial.Source.MANUAL,
                 "source_url": "",
@@ -569,25 +585,32 @@ def owner_data_gaps() -> list[str]:
         "Course.languages: which courses run in russian is unconfirmed",
     )
     note(
-        OpeningHours.objects.filter(
-            department=OpeningHours.DEPT.OFFICE, note__startswith=TODO
-        ).count(),
+        OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE, note="").count(),
         "OpeningHours office schedule unconfirmed",
     )
+    note(CourseIntake.objects.filter(note="").count(), "CourseIntake start unconfirmed")
+    note(PriceItem.objects.filter(note="").count(), "PriceItem price unconfirmed")
     note(
-        CourseIntake.objects.filter(note__startswith=TODO).count(), "CourseIntake start unconfirmed"
+        Instructor.objects.filter(full_name__startswith=DEMO_INSTRUCTOR).count(),
+        "Instructor unknown",
     )
-    note(PriceItem.objects.filter(note__startswith=TODO).count(), "PriceItem price unconfirmed")
-    note(Instructor.objects.filter(full_name__startswith=TODO).count(), "Instructor unknown")
-    note(Vehicle.objects.filter(make__startswith=TODO).count(), "Vehicle unknown")
-    note(Certificate.objects.filter(title__startswith=TODO).count(), "Certificate caption missing")
+    note(Vehicle.objects.filter(make=DEMO_VEHICLE).count(), "Vehicle unknown")
+    note(
+        Certificate.objects.filter(title__startswith=DEMO_CERTIFICATE).count(),
+        "Certificate caption missing",
+    )
     note(
         GalleryImage.objects.filter(image__contains=PLACEHOLDER_PREFIX).count(),
         "GalleryImage still a placeholder file",
     )
-    note(Faq.objects.filter(answer__startswith=TODO).count(), "Faq answer unconfirmed")
     note(
-        Testimonial.objects.filter(author_name__startswith=TODO).count(),
+        Faq.objects.filter(answer__contains="potwierdzamy telefonicznie").count()
+        + Faq.objects.filter(answer__contains="podajemy telefonicznie").count()
+        + Faq.objects.filter(answer__contains="zapytaj przez telefon").count(),
+        "Faq answer unconfirmed",
+    )
+    note(
+        Testimonial.objects.filter(author_name__startswith=DEMO_REVIEW).count(),
         "Testimonial is a placeholder, real ones need a source_url",
     )
     note(Page.objects.filter(body__contains=TODO).count(), "Page body unconfirmed")

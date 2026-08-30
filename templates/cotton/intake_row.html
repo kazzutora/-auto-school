@@ -1,3 +1,4 @@
+{% load core_ui %}
 {% comment %}
 Intake row, tech.md section 7, layout from FRONTEND.md A.9 point 3.
 
@@ -34,7 +35,7 @@ the model. Needs ratifying in tech.md the next time the core version moves.
       {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
       {% else %}<c-badge tone="warning">Planowany</c-badge>{% endif %}
     </p>
-    {% if intake.note %}<p class="mt-2 text-small text-ink-500">{{ intake.note }}</p>{% endif %}
+    {% with shown=intake.note|owner_ready %}{% if shown %}<p class="mt-2 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
     {# Anything the page knows and the row does not: free seats on /terminy/,
        nothing on the home page. #}
     {% if slot %}<div class="mt-2 text-small text-ink-500">{{ slot }}</div>{% endif %}

@@ -95,3 +95,22 @@ def language_links(context: template.Context) -> list[dict[str, str | bool]]:
         }
         for code, label in settings.LANGUAGES
     ]
+
+
+# The seed marks every value the owner still owes with this prefix, tech.md
+# section 16, and `pytest -m owner_data` lists them. The marker is for us, not
+# for the visitor: whatever the state of the data, a page must never print the
+# word TODO at somebody who came to book a driving lesson.
+OWNER_TODO = "TODO_OWNER:"
+
+
+@register.filter
+def owner_ready(value: Any) -> str:
+    """The text, or nothing at all if it is still a placeholder.
+
+    Empty rather than a stand-in, because every caller already guards on the
+    field being empty — a placeholder for a placeholder would just be a second
+    thing to explain.
+    """
+    text = str(value or "").strip()
+    return "" if text.startswith(OWNER_TODO) else text
