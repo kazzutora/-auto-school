@@ -40,6 +40,29 @@ def _is_htmx(request: HttpRequest) -> bool:
     return request.headers.get("HX-Request") == "true"
 
 
+# BLOCKS.md B3. Numbered because the order genuinely matters here: PKK comes
+# from the county office and takes days, so somebody who signs up first and
+# discovers that second has lost a week.
+ENROLMENT_STEPS = (
+    {
+        "title": "Wybierz kategorię",
+        "text": "Nie wiesz którą? Zadzwoń, dobierzemy pod to, co chcesz prowadzić.",
+    },
+    {
+        "title": "Wyrób PKK w starostwie",
+        "text": "Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu.",
+    },
+    {
+        "title": "Zapisz się",
+        "text": "Przez formularz obok albo telefonicznie — potwierdzimy termin grupy.",
+    },
+    {
+        "title": "Zacznij zajęcia",
+        "text": "Teoria i jazdy ruszają w terminie, który wybrałeś.",
+    },
+)
+
+
 def enroll(request: HttpRequest) -> HttpResponse:
     """The form on a page of its own, tech.md section 5."""
     return render(
@@ -57,6 +80,7 @@ def enroll(request: HttpRequest) -> HttpResponse:
                 {"title": "Zapisz się", "url": reverse("leads:enroll")},
             ],
             "form": LeadForm(initial=initial_from_query(request.GET)),
+            "steps": ENROLMENT_STEPS,
         },
     )
 

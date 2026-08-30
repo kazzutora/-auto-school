@@ -45,6 +45,11 @@ the number, and what happens after they press send.
   </div>
 </c-section>
 
+<c-section size="compact">
+  <c-slot name="heading">Jak zapisać się na kurs</c-slot>
+  <c-steps :steps="steps" />
+</c-section>
+
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 <c-cta-bar title="Zapisz się na kurs" phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

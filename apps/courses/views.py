@@ -148,6 +148,14 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
         {
             "seo": seo,
             "course": course,
+            # BLOCKS.md B10: the other categories, at the end of the page. The
+            # same tile the home page draws — the component is reused, not the
+            # markup copied.
+            "other_courses": [
+                other
+                for other in selectors.active_courses().filter(kind=course.kind)
+                if other.pk != course.pk
+            ][:5],
             "breadcrumbs": _crumbs(trail),
             "price": format_price(course.price_gross, course.price_note),
             "start_age": split_age(months) if (months := min_start_age(course)) else None,

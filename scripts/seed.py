@@ -22,6 +22,16 @@ from decimal import Decimal
 from io import BytesIO
 from typing import Any
 
+# What a licence course asks for before anything else. Seeded only when the
+# course is new: the real list comes from data/legacy through import_legacy.
+# The about page opens on one section; what it offers is a card grid now,
+# BLOCKS.md B5, so the bulleted copy of the same navigation has gone.
+HEADING_ABOUT = "# Kim jesteśmy" + chr(10) + chr(10)
+
+BASIC_REQUIREMENTS = chr(10).join(
+    ("- ukończone {age} lat", "- orzeczenie lekarskie", "- numer PKK")
+)
+
 TODO = "TODO_OWNER:"
 PLACEHOLDER_PREFIX = "todo_owner_"
 
@@ -172,9 +182,6 @@ def seed_courses() -> None:
                 "kind": Course.Kind.LICENSE,
                 "code": code,
                 "title": title,
-                "lead": f"Kurs prawa jazdy {title.lower()} w Wieluniu.",
-                "entitlements": f"Uprawnia do kierowania:\n\n- {entitlement}",
-                "requirements": f"- ukończone {min_age} lat\n- orzeczenie lekarskie\n- numer PKK",
                 "min_age": min_age,
                 # Hours and prices are owner data, tech.md section 16.
                 "theory_hours": None,
@@ -184,6 +191,18 @@ def seed_courses() -> None:
                 "languages": ["pl"],
                 "is_active": True,
                 "order": order,
+            },
+            create_defaults={
+                # Written only when the course does not exist yet.
+                #
+                # These three belong to import_legacy, which reads the real
+                # text out of data/legacy. In `defaults` they were rewritten on
+                # every seed run, so an imported list of four entitlements came
+                # back as one templated line — which is exactly what the review
+                # found on kat-b and blamed on the importer.
+                "lead": f"Kurs prawa jazdy {title.lower()} w Wieluniu.",
+                "entitlements": f"- {entitlement}",
+                "requirements": BASIC_REQUIREMENTS.format(age=min_age),
             },
         )
 
@@ -527,10 +546,9 @@ def seed_pages() -> None:
             "o-nas",
             "O nas",
             "Jesteśmy firmą rodzinną, szkolimy kierowców w Wieluniu od 1996 roku.",
-            "# Kim jesteśmy\n\nOśrodek szkolenia kierowców w Wieluniu, działamy od 1996 roku.\n\n"
-            "# Co oferujemy\n\n- kursy prawa jazdy wszystkich kategorii\n"
-            "- szkolenia dla kierowców zawodowych\n- badania psychologiczne\n"
-            "- uprawnienia operatora wózków widłowych",
+            HEADING_ABOUT
+            + "Rodzinny ośrodek szkolenia kierowców w Wieluniu. "
+            + "Uczymy od 1996 roku, zajęcia prowadzimy także po rosyjsku.",
         ),
         (
             "polityka-prywatnosci",

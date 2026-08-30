@@ -11,30 +11,43 @@ here is decorative: every image is content, so every alt says what it shows.
 
 {% block content %}
 <c-section>
-  <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Ośrodek" class="mt-6">Galeria</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć.
-  </p>
+  {# The right half of a page header was empty on every inner page.
+     BLOCKS.md A4 puts a graphic figure there rather than inventing a
+     fact to fill the space with. #}
+  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
+    <div>
+    <c-breadcrumbs :items="breadcrumbs" />
+    <c-heading level="1" eyebrow="Ośrodek" class="mt-6">Galeria</c-heading>
+    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+      Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć.
+    </p>
+  
+    {# Plain links, so the filter works with javascript switched off and every
+       section keeps a url a visitor can share. #}
+    {% if filters %}
+      <nav aria-label="Filtr sekcji" class="mt-10 flex flex-wrap gap-3" data-testid="filters">
+        {% for filter in filters %}
+          <a href="{{ filter.url }}"{% if filter.is_active %} aria-current="page"{% endif %}
+             class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-semibold transition
+  {% if filter.is_active %} border-accent bg-accent u-fixed-ink{% else %} border-line-soft text-ink hover:border-ink{% endif %}">
+            {{ filter.label }}
+            <span class="data text-small {% if filter.is_active %}u-fixed-ink{% else %}text-ink-500{% endif %}">{{ filter.total }}</span>
+          </a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+  
+    {% if images %}
+      {# The groups leave the section below, so the ground can alternate under
+         them — see after
+    </div>
 
-  {# Plain links, so the filter works with javascript switched off and every
-     section keeps a url a visitor can share. #}
-  {% if filters %}
-    <nav aria-label="Filtr sekcji" class="mt-10 flex flex-wrap gap-3" data-testid="filters">
-      {% for filter in filters %}
-        <a href="{{ filter.url }}"{% if filter.is_active %} aria-current="page"{% endif %}
-           class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-semibold transition
-{% if filter.is_active %} border-accent bg-accent u-fixed-ink{% else %} border-line-soft text-ink hover:border-ink{% endif %}">
-          {{ filter.label }}
-          <span class="data text-small {% if filter.is_active %}u-fixed-ink{% else %}text-ink-500{% endif %}">{{ filter.total }}</span>
-        </a>
-      {% endfor %}
-    </nav>
-  {% endif %}
-
-  {% if images %}
-    {# The groups leave the section below, so the ground can alternate under
-       them — see after </c-section>. #}
+    <div class="hidden lg:block">
+      <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
+      <p class="label mt-2 text-right text-ink-500">Rok założenia</p>
+    </div>
+  </div>
+</c-section>. #}
   {% elif chosen %}
     <div class="mt-12">
       <c-alert tone="info" title="Nic w tej sekcji">
@@ -54,6 +67,13 @@ here is decorative: every image is content, so every alt says what it shows.
       <c-alert tone="info" title="Galeria w przygotowaniu">Zdjęcia pojawią się wkrótce.</c-alert>
     </div>
   {% endif %}
+    </div>
+
+    <div class="hidden lg:block">
+      <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
+      <p class="label mt-2 text-right text-ink-500">Rok założenia</p>
+    </div>
+  </div>
 </c-section>
 
 {% for section in sections %}

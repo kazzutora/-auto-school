@@ -18,11 +18,28 @@ still must not move sideways, A.4.
 
 {% block content %}
 <c-section size="compact">
-  <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Oferta" class="mt-6">Cennik</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie.
-  </p>
+  {# The right half of a page header was empty on every inner page.
+     BLOCKS.md section A fills it with the one thing somebody here is
+     most likely to want. #}
+  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
+    <div>
+    <c-breadcrumbs :items="breadcrumbs" />
+    <c-heading level="1" eyebrow="Oferta" class="mt-6">Cennik</c-heading>
+    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+      Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie.
+    </p>
+    </div>
+
+    <div class="lg:pt-2">
+      <c-fact-card label="Zadzwoń po wycenę" value="{{ site_settings.phone_primary }}"
+                   href="tel:{{ site_settings.phone_primary|cut:' ' }}"
+                   note="Podamy kwotę od ręki, w godzinach pracy biura.">
+        <c-slot name="action">
+          <c-button variant="primary" full="1" href="{% url 'leads:enroll' %}">Zapytaj o cenę</c-button>
+        </c-slot>
+      </c-fact-card>
+    </div>
+  </div>
 </c-section>
 
 {% if groups %}
@@ -33,9 +50,13 @@ still must not move sideways, A.4.
       <c-heading level="2">{{ label|default:"Pozostałe usługi" }}</c-heading>
       {# 900px, not the full 1240: a line whose ends are further apart than
          that stops reading as one line. #}
-      <ul class="mt-6 max-w-[640px]">
+      {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
+         stops reading as one line. #}
+      <ul class="mt-6 max-w-[900px]">
         {% for row in rows %}
-          <c-price-row :row="row" featured="{% if row.code == 'B' %}1{% endif %}" />
+          <c-price-row title="{{ row.label }}" price="{{ row.price }}" note="{{ row.note }}"
+                       href="{{ row.url }}"
+                       badge="{% if row.code == 'B' %}Najczęściej wybierany{% endif %}" />
         {% endfor %}
       </ul>
     </c-section>

@@ -14,12 +14,24 @@ and it is the thing that pushes the page sideways on a phone.
 
 {% block content %}
 <c-section size="compact">
-  <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Dla kursanta" class="mt-6">Przydatne linki</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu,
-    punkty karne, testy i urzędy.
-  </p>
+  {# The right half of a page header was empty on every inner page.
+     BLOCKS.md A4 puts a graphic figure there rather than inventing a
+     fact to fill the space with. #}
+  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
+    <div>
+    <c-breadcrumbs :items="breadcrumbs" />
+    <c-heading level="1" eyebrow="Dla kursanta" class="mt-6">Przydatne linki</c-heading>
+    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+      Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu,
+      punkty karne, testy i urzędy.
+    </p>
+    </div>
+
+    <div class="hidden lg:block">
+      <p aria-hidden="true" class="u-bignum">{{ groups|length }}</p>
+      <p class="label mt-2 text-right text-ink-500">Grupy odnośników</p>
+    </div>
+  </div>
 </c-section>
 
 {% if groups %}

@@ -7,12 +7,23 @@ and when, and a download beside the scan wherever there is a pdf.
 
 {% block content %}
 <c-section>
-  <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Uprawnienia" class="mt-6">Certyfikaty</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu.
-  </p>
+  {# The right half of a page header was empty on every inner page.
+     BLOCKS.md A4 puts a graphic figure there rather than inventing a
+     fact to fill the space with. #}
+  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
+    <div>
+    <c-breadcrumbs :items="breadcrumbs" />
+    <c-heading level="1" eyebrow="Uprawnienia" class="mt-6">Certyfikaty</c-heading>
+    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+      Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu.
+    </p>
+    </div>
 
+    <div class="hidden lg:block">
+      <p aria-hidden="true" class="u-bignum">{{ certificates|length }}</p>
+      <p class="label mt-2 text-right text-ink-500">Dokumentów ośrodka</p>
+    </div>
+  </div>
 </c-section>
 
 {% if certificates %}

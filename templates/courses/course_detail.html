@@ -219,6 +219,13 @@ only action on the page.
   </div>
 </c-section>
 
+{% if other_courses %}
+  <c-section tone="muted" size="compact">
+    <c-slot name="heading">Inne kategorie</c-slot>
+    {% include "courses/_category_grid.html" with courses=other_courses %}
+  </c-section>
+{% endif %}
+
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>

@@ -320,6 +320,35 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "body": render_markdown(page.body),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "about": about,
+            # BLOCKS.md B5: what the school sells, as four places to go. Built
+            # here rather than parsed out of the page body, so the cards cannot
+            # promise something the offer no longer has.
+            "offer": (
+                [
+                    {
+                        "title": "Prawo jazdy",
+                        "note": "kategorie AM, A1, A2, A, B, B+E, C, C+E, D",
+                        "url": "/kursy/",
+                    },
+                    {
+                        "title": "Kierowca zawodowy",
+                        "note": "kwalifikacja wstępna i szkolenia okresowe",
+                        "url": "/kierowca-zawodowy/",
+                    },
+                    {
+                        "title": "Badania psychologiczne",
+                        "note": "kierowcy i operatorzy maszyn",
+                        "url": "/cennik/",
+                    },
+                    {
+                        "title": "Wózki widłowe",
+                        "note": "uprawnienia operatora",
+                        "url": "/kursy/wozki-widlowe/",
+                    },
+                ]
+                if about
+                else []
+            ),
             "instructors": people.active_instructors() if about else [],
             "vehicle_groups": fleet,
             # Counted from what is already loaded rather than asked for again:

@@ -27,6 +27,14 @@ nothing.
 
   {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
      full container width is a page nobody reads to the end. #}
+  {% if about %}
+    {# B6: one quote between the two halves of the text. #}
+    <div class="mt-12">
+      <c-quote text="Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku."
+               author="{{ site_settings.short_name }}" role="Wieluń" />
+    </div>
+  {% endif %}
+
   {% if body %}
     {# F10: a contents list on a long legal page. Filled by static/js/app.js,
        which counts the headings and gives up under six — a list over three
@@ -42,6 +50,23 @@ nothing.
 </c-section>
 
 {% if about %}
+  {# B5: the list under "Co oferujemy" is navigation written as bullets, so it
+     is cards that go where they point. Built from the offer itself rather than
+     by parsing the body, so it cannot drift from what the site sells. #}
+  <c-section id="oferta" size="compact">
+    <c-slot name="heading">Co oferujemy</c-slot>
+    <ul class="grid gap-4 md:grid-cols-2">
+      {% for item in offer %}
+        <li class="flex">
+          <c-card href="{{ item.url }}" class="flex w-full flex-col">
+            <c-slot name="title">{{ item.title }}</c-slot>
+            <p class="text-small text-ink-500">{{ item.note }}</p>
+          </c-card>
+        </li>
+      {% endfor %}
+    </ul>
+  </c-section>
+
   {# The facts, laid out as section 6 of the home page: big figures, no circle
      icons, hairlines between them. The numbers are counted rather than written
      down, so they cannot drift away from the offer. #}
