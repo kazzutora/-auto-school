@@ -279,13 +279,30 @@ def test_asking_for_less_motion_hides_nothing(
         context.close()
 
 
+READERS = {
+    "self": "el => getComputedStyle(el).transform",
+    "svg": "el => getComputedStyle(el.querySelector('svg')).transform",
+    "img": "el => getComputedStyle(el.querySelector('img')).transform",
+}
+
 # What is hovered, what is measured, and what it should become. The card moves
 # itself; the button moves the icon inside it, so the two cannot share a reader
 # — "the svg in here, or failing that the element" quietly measured the arrow
 # inside a card and reported that nothing had moved.
 HOVER_MOVES = [
-    ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -2)"),
-    ("/kontakt/", ".u-btn:has(svg)", "svg", "matrix(1.08, 0, 0, 1.08, 0, 0)"),
+    # A card and a price tile rise; the tile had no answer to a pointer at all
+    # before, and neither did a schedule row or the accordion's own indicator.
+    ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -4)"),
+    ("/cennik/", ".u-tile", "self", "matrix(1, 0, 0, 1, 0, -4)"),
+    ("/galeria/", ".u-photo", "img", "matrix(1.04, 0, 0, 1.04, 0, 0)"),
+    ("/faq/", "summary", "svg", "matrix(1.15, 0, 0, 1.15, 0, 0)"),
+    # An arrow travels along its own axis rather than swelling in place.
+    (
+        "/kontakt/",
+        ".u-btn:has(svg[data-icon=external])",
+        "svg",
+        "matrix(1, 0, 0, 1, 2, -2)",
+    ),
 ]
 
 
@@ -310,11 +327,7 @@ def test_the_two_hover_moves_happen(
     target = page.locator(f"main {selector}:visible").first
     target.scroll_into_view_if_needed()
 
-    read = (
-        "el => getComputedStyle(el).transform"
-        if measure == "self"
-        else "el => getComputedStyle(el.querySelector('svg')).transform"
-    )
+    read = READERS[measure]
     assert target.evaluate(read) == "none", "it should be still until pointed at"
 
     target.hover()
@@ -345,11 +358,21 @@ def test_neither_hover_move_happens_under_reduced_motion(
         target.hover()
         page.wait_for_timeout(300)
 
-        read = (
-            "el => getComputedStyle(el).transform"
-            if measure == "self"
-            else "el => getComputedStyle(el.querySelector('svg')).transform"
-        )
-        assert target.evaluate(read) == "none"
+        assert target.evaluate(READERS[measure]) == "none"
     finally:
         context.close()
+
+
+def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, page: Page) -> None:
+    """A.6 point 1 — background, which needed no new permission and had simply
+    never been used on the one thing people scan straight down."""
+    page.goto(f"{live_server.url}/terminy/")
+    page.wait_for_selector("h1")
+
+    row = page.locator("main [data-testid=intake-row]:visible").first
+    row.scroll_into_view_if_needed()
+    assert row.evaluate("el => getComputedStyle(el).backgroundColor") == "rgba(0, 0, 0, 0)"
+
+    row.hover()
+    page.wait_for_timeout(300)
+    assert row.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(250, 250, 250)"
