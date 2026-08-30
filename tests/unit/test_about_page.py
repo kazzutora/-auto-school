@@ -219,8 +219,9 @@ def test_the_facts_come_from_the_database(
     assert "rok założenia" in facts
     assert tile(facts, "instruktorów") == "3"
     assert tile(facts, "kategorii prawa jazdy") == "2"
-    assert "plac manewrowy" in facts
-    assert "sale wykładowe" in facts
+    # The fourth tile is the fleet count, and it is only there when there are
+    # cars: a row of figures does not print a zero to keep its shape.
+    assert "plac manewrowy" not in facts
 
 
 def test_the_facts_stay_off_the_other_flat_pages(client: Client) -> None:
@@ -346,3 +347,81 @@ def test_more_people_and_more_cars_do_not_add_queries(
 
     with django_assert_num_queries(7):
         client.get(ABOUT)
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X2
+
+
+def test_every_figure_in_the_row_is_a_figure(client: Client, about_page: Page) -> None:
+    """X2 point 2, A.3 finding 13.
+
+    The fourth tile read "własny", a word among numbers, and a row of figures
+    stops being a row the moment one of them is a word. The sentence it carried
+    now sits under the count it belongs to.
+    """
+    from apps.people.models import Vehicle
+
+    make_instructor(full_name="Instruktor 1", photo=None)
+    course = Course.objects.create(
+        kind=Course.Kind.LICENSE, slug="kat-b", code="B", title="Kategoria B", is_active=True
+    )
+    Vehicle.objects.create(course=course, make="Pojazd", model="szkoleniowy 1", is_active=True)
+
+    facts = block(page(client), "facts")
+    figures = re.findall(r"<p[^>]*>\s*([^<]+?)\s*</p>\s*<p[^>]*>", facts)
+    assert figures, "the row of figures is gone"
+    for figure in figures:
+        assert figure.isdigit(), f"{figure!r} is not a number"
+
+
+def test_the_page_ends_on_an_inverted_invitation(client: Client, about_page: Page) -> None:
+    """X2 point 6: it used to end on a light section, with the dark block
+    stranded in the middle."""
+    body = page(client)
+    inside = body[body.index("<main") : body.index("</main>")]
+    last = inside.rindex("<section")
+    assert "u-ground-ink" in inside[last : last + 400]
+    assert "Chcesz zacząć kurs?" in inside[last:]
+
+
+def test_exactly_one_block_is_inverted(client: Client, about_page: Page) -> None:
+    """More than one and neither carries any weight.
+
+    Counted inside main: the footer is a deep ground of its own and is not one
+    of the page's blocks.
+    """
+    body = page(client)
+    inside = body[body.index("<main") : body.index("</main>")]
+    assert inside.count("u-ground-ink") + inside.count("u-ground-deep") == 1
+
+
+def test_the_body_headings_read_as_headings(client: Client, about_page: Page) -> None:
+    """A.1 finding 6, the main reason the page read as plain text.
+
+    render_markdown shifts headings down one, because the page owns its only h1
+    and the template writes it. A section inside a body is therefore a single
+    hash — written with two it arrived as an h3 and lost to the page lead above
+    it.
+    """
+    Page.objects.filter(slug="o-nas").update(body="# Kim jesteśmy\n\nTreść.")
+
+    body = page(client)
+    assert "<h2>Kim jesteśmy</h2>" in body
+    assert "u-prose" in body
+
+
+def test_a_legal_page_gets_no_invitation(client: Client) -> None:
+    """A privacy policy has nothing to invite anyone to.
+
+    The sticky call bar stays — it is the site's, not the page's, and it is how
+    somebody reaches the school from anywhere. What the page does not get is
+    the inverted block asking them to sign up in the middle of a privacy
+    notice.
+    """
+    Page.objects.create(slug="rodo", title="RODO", body="# Klauzula", is_published=True)
+
+    body = page(client, "/rodo/")
+    inside = body[body.index("<main") : body.index("</main>")]
+    assert "u-ground-ink" not in inside
+    assert "Zostaw numer albo zadzwoń" not in inside

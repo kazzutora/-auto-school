@@ -294,7 +294,9 @@ HOVER_MOVES = [
     # A card and a price tile rise; the tile had no answer to a pointer at all
     # before, and neither did a schedule row or the accordion's own indicator.
     ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -4)"),
-    ("/cennik/", ".u-tile", "self", "matrix(1, 0, 0, 1, 0, -4)"),
+    # c-price-tile lives on the kitchen sink now: X1 turned the price page
+    # into rows, and a row answers with a background rather than a lift.
+    ("/__kitchen-sink/", ".u-tile", "self", "matrix(1, 0, 0, 1, 0, -4)"),
     ("/galeria/", ".u-photo", "img", "matrix(1.04, 0, 0, 1.04, 0, 0)"),
     ("/faq/", "summary", "svg", "matrix(1.15, 0, 0, 1.15, 0, 0)"),
     # An arrow travels along its own axis rather than swelling in place.

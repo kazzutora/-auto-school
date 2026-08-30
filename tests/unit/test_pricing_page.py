@@ -45,8 +45,12 @@ def body_of(client: Client) -> str:
 
 
 def rows_of(body: str) -> str:
-    """Everything inside the tables, so the tiles below do not confuse a check."""
-    return "".join(re.findall(r"<tbody[^>]*>(.*?)</tbody>", body, re.S))
+    """Every price line on the page.
+
+    X1 replaced the three column table with rows, so there is no tbody to slice
+    any more — the lines are list items carrying a c-price-row.
+    """
+    return "".join(re.findall(r"<li[^>]*>(.*?)</li>", body, re.S))
 
 
 def test_the_route_matches_the_url_map() -> None:
@@ -147,13 +151,21 @@ def test_the_groups_are_labelled(client: Client) -> None:
 # courses with no price
 
 
-def test_a_course_without_a_price_stays_out_of_the_table(client: Client) -> None:
+def test_a_course_without_a_price_is_in_the_list_all_the_same(client: Client) -> None:
+    """Reversed on purpose, X1 point 1.
+
+    This test used to assert the opposite, and the opposite was the worst thing
+    the page did: the licence categories have no price_gross, so they were
+    filtered out of every group, the first group came out empty and was
+    dropped, and someone arriving to learn what category B costs found no line
+    about category B anywhere.
+    """
     make_course(price_gross=None)
 
     body = body_of(client)
 
-    assert "Kategoria B" not in rows_of(body)
-    assert "Cena ustalana indywidualnie" in body
+    assert "Kategoria B" in body
+    assert "wycena indywidualna" in body
 
 
 def test_a_course_without_a_price_never_reads_as_zero(client: Client) -> None:
@@ -204,23 +216,19 @@ def test_no_payments_page_is_not_an_error(client: Client) -> None:
 # layout and seo
 
 
-def test_each_table_scrolls_inside_its_own_container(client: Client) -> None:
-    """A wide row must scroll in place, not push the page sideways."""
-    make_course(price_gross=Decimal("3200"))
-    make_item()
+def test_a_long_name_does_not_push_the_page_sideways(client: Client) -> None:
+    """There is no table to scroll now, X1 point 2.
+
+    The three column table needed its own scroll box because it could not fit;
+    a row wraps instead, and what has to hold is that nothing sticks out.
+    """
+    make_course(title="Kwalifikacja wstępna przyspieszona dla kierowców zawodowych")
 
     body = body_of(client)
-    tables = body.count("<table")
-
-    assert tables >= 2
-    # c-table wraps every table in the design system's scroll container,
-    # FRONTEND.md A.4. The class carries overflow-x: auto and a min-width of 0,
-    # without which a grid or flex item refuses to shrink and the table drags
-    # the page sideways regardless of the overflow.
-    assert body.count("u-scroll-x") >= tables
+    assert "u-scroll-x" not in body
+    assert "Kwalifikacja wstępna" in rows_of(body)
 
 
-@pytest.mark.seo
 def test_the_page_meets_the_seo_contract(client: Client) -> None:
     make_course(price_gross=Decimal("3200"))
     body = body_of(client)
@@ -239,9 +247,10 @@ def test_the_price_query_count_does_not_grow_with_the_offer(
     make_item()
     client.get("/cennik/")
 
-    # priced courses, unpriced courses, price items, payments page, then
-    # site settings twice: the context processor and the DrivingSchool block.
-    with django_assert_num_queries(6):
+    # active courses, price items, payments page, then site settings twice:
+    # the context processor and the DrivingSchool block. One fewer than before
+    # — priced and unpriced are one query now, not two.
+    with django_assert_num_queries(5):
         client.get("/cennik/")
 
     for number in range(15):
@@ -250,7 +259,7 @@ def test_the_price_query_count_does_not_grow_with_the_offer(
         )
         make_item(title=f"Usługa {number}")
 
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(5):
         client.get("/cennik/")
 
 
@@ -258,38 +267,33 @@ def test_the_price_query_count_does_not_grow_with_the_offer(
 # how the table is built, FRONTEND.md F6
 
 
-def test_the_price_column_is_a_column_of_figures(client: Client) -> None:
-    """A.5: the data face, tabular figures, right aligned.
+def test_the_figures_are_still_set_as_figures(client: Client) -> None:
+    """A.5: the data face and tabular numerals, wherever the figure sits.
 
-    Digits under digits is the whole reason the mono is in the design at all —
-    a proportional 1 is narrower than a 0 and the place values wander from row
-    to row.
+    The column moved out of a table cell and into the end of a row, but the
+    reason for the mono is unchanged — a proportional 1 is narrower than a 0
+    and the place values wander.
     """
     make_course(price_gross=Decimal("3200"))
     make_item()
 
-    body = body_of(client)
-    cells = re.findall(r"<td[^>]*>[^<]*zł[^<]*</td>", body)
-    assert cells, "no price cell on the price page"
-    for cell in cells:
-        assert "data" in cell, cell
-        assert "text-right" in cell, cell
+    for row in re.findall(r'<span class="data[^"]*">[^<]*zł[^<]*</span>', body_of(client)):
+        assert "data" in row, row
 
 
-def test_the_table_still_has_a_header_row(client: Client) -> None:
-    """The header itself is not right aligned yet.
+def test_every_line_joins_its_name_to_its_figure(client: Client) -> None:
+    """X1 point 2 and finding A.2 number 10.
 
-    c-table can only align a header it was told is numeric, and the view hands
-    over plain strings. Closing it is either python, which F6 rules out, or a
-    new prop on a component whose row in tech.md section 7 is frozen outside
-    LEAD. The figures align, which is the criterion; see the CONTRACT GAP in
-    templates/cotton/table.html.
+    The old table put the figure at 63% of a 1240px page and a nearly empty
+    "Uwagi" column at 87%, so 700px of nothing separated a service from its
+    price. A row with a leader between the two replaced all three columns.
     """
-    make_item()
-    headers = [
-        text.strip() for text in re.findall(r"<th scope=\"col\"[^>]*>([^<]*)", body_of(client))
-    ]
-    assert "Cena Brutto" in headers
+    make_course(price_gross=Decimal("3200"))
+
+    body = body_of(client)
+    assert "<table" not in body
+    assert "Uwagi" not in body
+    assert "border-dotted" in body, "the leader joining name to figure is gone"
 
 
 def test_the_table_never_stripes_its_rows(client: Client) -> None:
@@ -299,3 +303,69 @@ def test_the_table_never_stripes_its_rows(client: Client) -> None:
     assert "odd:" not in body
     assert "even:" not in body
     assert "divide-y" not in body
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X1
+
+
+def test_a_category_without_a_price_still_has_a_line(client: Client) -> None:
+    """X1 point 1, and the worst finding of the review.
+
+    The groups were built from priced courses only, so the licence categories —
+    which have no price_gross yet — vanished from the page entirely. Somebody
+    arriving to find out what category B costs found no line about category B
+    at all, only a block at the very bottom saying some things are quoted
+    individually.
+    """
+    make_course(slug="kat-b", code="B", title="Kategoria B", price_gross=None)
+
+    body = body_of(client)
+    assert "Kategoria B (B)" in body
+    assert "wycena indywidualna" in body
+
+
+def test_the_licence_categories_come_first(client: Client) -> None:
+    """X1 point 1: it is the group most people open the page for."""
+    make_course(slug="kat-b", code="B", title="Kategoria B", price_gross=None)
+    PriceItem.objects.create(title="Badanie", group="Badania", price_gross=Decimal("150"))
+
+    headings = re.findall(r"<h2[^>]*>([^<]+)</h2>", body_of(client))
+    assert headings, "the page lost its group headings"
+    assert headings[0].strip() == "Kategorie prawa jazdy"
+
+
+def test_the_most_wanted_category_is_marked(client: Client) -> None:
+    """X1 point 3."""
+    make_course(slug="kat-b", code="B", title="Kategoria B", price_gross=None)
+    make_course(slug="kat-a", code="A", title="Kategoria A", price_gross=None)
+
+    body = body_of(client)
+    assert body.count("Najczęściej wybierany") == 1
+    marked = body[body.index("Najczęściej wybierany") - 400 : body.index("Najczęściej wybierany")]
+    assert "Kategoria B" in marked
+
+
+def test_the_page_ends_on_an_invitation(client: Client) -> None:
+    """X1 point 9: it used to end on a list of things with no price."""
+    make_course(slug="kat-b", code="B", title="Kategoria B", price_gross=None)
+
+    body = body_of(client)
+    tail = body[body.rindex("</main>") - 2000 : body.rindex("</main>")]
+    assert "Nie wiesz, którą kategorię wybrać?" in tail
+    assert "u-ground-ink" in tail
+
+
+def test_no_two_sections_share_a_ground(client: Client) -> None:
+    """X1 point 7: two of the same colour in a row read as one long block."""
+    for code in ("B", "A", "C"):
+        make_course(slug=f"kat-{code.lower()}", code=code, title=f"Kategoria {code}")
+    PriceItem.objects.create(title="Badanie", group="Badania", price_gross=Decimal("150"))
+
+    sections = re.findall(r'<section[^>]*class="([^"]*)"', body_of(client))
+    grounds = [
+        "muted" if "bg-paper-50" in cls else "ink" if "u-ground-ink" in cls else "paper"
+        for cls in sections
+    ]
+    repeats = [i for i in range(1, len(grounds)) if grounds[i] == grounds[i - 1]]
+    assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"

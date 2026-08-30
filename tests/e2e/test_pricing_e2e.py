@@ -58,21 +58,46 @@ def test_the_page_does_not_move_sideways_at_320px(
     assert overflow <= 0, f"page scrolls sideways by {overflow}px"
 
 
-def test_a_wide_table_scrolls_inside_its_own_container(
+def test_a_price_row_keeps_its_figure_beside_its_name(
     live_server, narrow_page: Page, offer: None
 ) -> None:
-    """The table may overflow. The document may not."""
+    """X1 point 2 replaced the table, so there is no table to scroll.
+
+    The three column table put a nearly empty "Uwagi" column at 87% of the page
+    and the figure at 63%, which left 700px between a service and its price. A
+    row cannot do that — but it can wrap badly at 320px, and the one thing that
+    must not happen is the price ending up on its own line away from what it is
+    the price of.
+    """
     narrow_page.goto(f"{live_server.url}/cennik/")
+    narrow_page.wait_for_selector("h1")
 
-    # c-table wraps every table in the design system's scroll container,
-    # FRONTEND.md A.4, which carries the overflow and a min-width of 0.
-    scrollers = narrow_page.locator("div.u-scroll-x:has(table)")
-    assert scrollers.count() >= 1
+    rows = narrow_page.locator("main li:has(.data), main li:has-text('wycena')")
+    assert rows.count() >= 1, "the price list has no rows"
 
-    for index in range(scrollers.count()):
-        box = scrollers.nth(index).bounding_box()
-        assert box is not None
-        assert box["width"] <= NARROW["width"], "a table container is wider than the screen"
+    overflow = narrow_page.evaluate(
+        "() => document.documentElement.scrollWidth - document.documentElement.clientWidth"
+    )
+    assert overflow <= 0, f"the price list pushes the page {overflow}px sideways"
+
+    # Name and figure share a line: the figure's top is inside the name's line
+    # box, not below it.
+    apart = narrow_page.evaluate(
+        """() => {
+            const rows = [...document.querySelectorAll('main li')];
+            const bad = [];
+            for (const row of rows) {
+                const name = row.querySelector('span.font-semibold');
+                const price = [...row.querySelectorAll('span')]
+                    .find(s => /zł|wycena/.test(s.textContent) && s !== name);
+                if (!name || !price) continue;
+                const a = name.getBoundingClientRect(), b = price.getBoundingClientRect();
+                if (b.top >= a.bottom) bad.push(name.textContent.trim().slice(0, 30));
+            }
+            return bad;
+        }"""
+    )
+    assert not apart, f"the price left its name behind on: {apart}"
 
 
 def test_the_price_and_the_ask_block_are_both_visible(

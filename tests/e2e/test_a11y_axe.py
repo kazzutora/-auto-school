@@ -153,10 +153,10 @@ def test_a_card_on_a_dark_band_takes_the_page_back(
     and it outranks a text-ink utility, a class plus an element beating a
     class on its own.
     """
-    page.goto(f"{live_server.url}/cennik/")
+    page.goto(f"{live_server.url}/certyfikaty/")
     page.wait_for_selector("h1")
 
-    tile = page.locator(".u-ground-deep .u-tile, .u-ground-ink .u-card").first
+    tile = page.locator(".u-ground-deep .u-card, .u-ground-ink .u-card").first
     tile.scroll_into_view_if_needed()
 
     measured = tile.evaluate(

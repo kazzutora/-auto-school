@@ -498,3 +498,44 @@ def test_the_card_only_sticks_from_lg(client: Client) -> None:
     assert "lg:self-start" in classes, "a stretched grid item has nothing to stick against"
     # Bare and unprefixed would stick it on a phone too.
     assert "sticky" not in classes
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X3
+
+
+def test_the_course_page_alternates_its_grounds(client: Client) -> None:
+    """X3 point 5: the whole page used to be one section, so nothing changed."""
+    course = make_course()
+
+    body = body_of(client, course.get_absolute_url())
+    sections = re.findall(r'<section[^>]*class="([^"]*)"', body)
+    grounds = [
+        "muted" if "bg-paper-50" in cls else "ink" if "u-ground-ink" in cls else "paper"
+        for cls in sections
+    ]
+    repeats = [i for i in range(1, len(grounds)) if grounds[i] == grounds[i - 1]]
+    assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"
+    assert grounds[-1] == "ink", "the page does not end on the invitation"
+
+
+def test_the_closing_words_follow_the_kind_of_course(client: Client) -> None:
+    """X3 point 8: a category and a professional qualification are not booked
+    for the same reason."""
+    category = make_course(slug="kat-b", code="B", title="Kategoria B")
+    assert "Nie wiesz, czy ta kategoria" in body_of(client, category.get_absolute_url())
+
+    pro = make_course(
+        slug="adr", code="", title="ADR", kind=Course.Kind.PROFESSIONAL, price_gross=None
+    )
+    assert "Potrzebujesz tych uprawnień do pracy?" in body_of(client, pro.get_absolute_url())
+
+
+def test_the_sticky_card_clears_the_header(client: Client) -> None:
+    """X3 keeps the sticky card as it is, but its offset was the header height
+    written out by hand. It reads the variable X0 introduced, so moving the
+    header moves the card with it."""
+    course = make_course()
+    body = body_of(client, course.get_absolute_url())
+    assert "lg:sticky" in body
+    assert "var(--header-h)" in body
