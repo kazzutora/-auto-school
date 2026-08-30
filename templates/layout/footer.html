@@ -12,7 +12,11 @@ read more, and the legal pages. The bank account is deliberately absent: A.9
 point 10 and tech.md section 1 both say it never appears on a public page.
 {% endcomment %}
 <footer class="u-ground-deep mt-auto">
-  <div class="u-container u-section">
+  {# The compact rhythm, not the normal one. A footer is the closing band, not
+     a section somebody reads: at py-24 the air above and below it came to 192px
+     against 396px of actual links, and the block read as empty rather than
+     calm. tech.md v11 added the compact scale for exactly this. #}
+  <div class="u-container u-section-compact">
     <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
       <div class="flex flex-col gap-4">
@@ -65,7 +69,7 @@ point 10 and tech.md section 1 both say it never appears on a public page.
       </div>
     </div>
 
-    <div class="u-rule-on-ground mt-16 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
+    <div class="u-rule-on-ground mt-10 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-small u-muted-on-ground">
         &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Nawrocki" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
       </p>
