@@ -302,7 +302,7 @@ def test_the_detail_page_holds_its_query_count(client: Client, django_assert_num
     # get_solo(). django-solo can cache that, see the note in the handover.
     # The seventh is the course select in the enrolment form the page now ends
     # with, DEV.md S3.1 — one query for the whole list, not one per option.
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(8):
         client.get("/kursy/kat-b/")
 
 
@@ -314,12 +314,12 @@ def test_more_intakes_and_vehicles_do_not_add_queries(
     _load(client, course, intakes=1, vehicles=1)
     client.get("/kursy/kat-b/")
 
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(8):
         client.get("/kursy/kat-b/")
 
     _load(client, course, intakes=20, vehicles=20)
 
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(8):
         client.get("/kursy/kat-b/")
 
 

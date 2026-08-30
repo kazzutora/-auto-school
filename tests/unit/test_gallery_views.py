@@ -148,7 +148,13 @@ def get_with(client: Client, **params: str) -> str:
 
 
 def headings(body: str) -> list[str]:
-    return re.findall(r"<h2[^>]*>(.*?)</h2>", body)
+    """The gallery group headings.
+
+    The page closes on an invitation with an h2 of its own, and that is not a
+    group of photographs — a question mark separates the two.
+    """
+    found = re.findall(r"<h2[^>]*>(.*?)</h2>", body)
+    return [heading for heading in found if "?" not in heading]
 
 
 def chips(body: str) -> list[tuple[str, str, str]]:

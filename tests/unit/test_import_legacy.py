@@ -1,5 +1,6 @@
 """Legacy import, DEV.md S1.1 acceptance criteria."""
 
+import re
 from pathlib import Path
 
 import pytest
@@ -153,3 +154,98 @@ def test_the_export_is_still_the_reconstruction() -> None:
     """Fails the day the real export lands, which is exactly when to revisit."""
     report = import_courses(LEGACY)
     assert len(report.reconstructed) == 15, "real export present, update data/legacy/README.md"
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X6
+
+
+def source_items(slug: str, heading: str) -> int:
+    """How many list items the legacy file holds under one heading."""
+    raw = (Path(settings.BASE_DIR) / "data" / "legacy" / f"{slug}.md").read_text("utf-8")
+    found = re.search(rf"^## {re.escape(heading)}\s*$(.*?)(?=^## |\Z)", raw, re.S | re.M)
+    body = found.group(1) if found else ""
+    return len([line for line in body.splitlines() if line.strip().startswith("- ")])
+
+
+def stored_items(text: str) -> int:
+    return len([line for line in (text or "").splitlines() if line.strip().startswith("- ")])
+
+
+def test_every_imported_list_is_whole() -> None:
+    """X6, and the review's finding 17 — though not for the reason it gave.
+
+    /kursy/kat-b/ showed one entitlement where its source has four, and the
+    review blamed the importer for reading only the first line. The importer
+    reads all of them: what truncated the list was scripts/seed.py, which wrote
+    a single templated line into `defaults` and so overwrote the imported text
+    on every run.
+
+    Counting against the source keeps this honest whichever way it breaks
+    again — a number written here would only say what today's files happen to
+    contain.
+    """
+    import_courses()
+
+    thin = []
+    for path in sorted((Path(settings.BASE_DIR) / "data" / "legacy").glob("*.md")):
+        if path.stem == "README":
+            continue
+        course = Course.objects.filter(slug=path.stem).first()
+        if course is None:
+            continue
+        for heading, field in (
+            ("Uprawnia do kierowania", "entitlements"),
+            ("Wymagania", "requirements"),
+        ):
+            wanted = source_items(path.stem, heading)
+            got = stored_items(getattr(course, field))
+            if wanted != got:
+                thin.append(f"{path.stem}.{field}: {got} of {wanted}")
+
+    assert not thin, f"imported lists lost items: {thin}"
+
+
+def test_a_seed_run_leaves_the_imported_text_alone() -> None:
+    """The defect itself, kept from coming back.
+
+    seed and import_legacy both write Course, and seed runs far more often. It
+    owns the scaffolding — kind, order, whether the course is active — and
+    import_legacy owns the words.
+    """
+    from scripts.seed import seed_courses
+
+    import_courses()
+    before = {
+        course.slug: (course.entitlements, course.requirements) for course in Course.objects.all()
+    }
+
+    seed_courses()
+
+    after = {
+        course.slug: (course.entitlements, course.requirements) for course in Course.objects.all()
+    }
+    clobbered = [slug for slug, text in before.items() if after.get(slug) != text]
+    assert not clobbered, f"a seed run rewrote imported text on: {clobbered}"
+
+
+def test_the_two_unread_fragments_are_named() -> None:
+    """tech.md section 15 marks two fragments the export could not read, and
+    they are still waiting: the tail of the first entitlement on kat-a2 and the
+    age range for category D in kwalifikacja-wstepna-przyspieszona.
+
+    This does not fail while they are open — it fails if a third appears, or if
+    one is quietly dropped rather than written.
+    """
+    import_courses()
+
+    pending = sorted(
+        f"{course.slug}.{field}"
+        for course in Course.objects.all()
+        for field in ("entitlements", "requirements", "body")
+        if NEEDS_WORK in (getattr(course, field) or "")
+    )
+    assert pending == [
+        "kat-a2.entitlements",
+        "kwalifikacja-wstepna-przyspieszona.body",
+    ], pending
