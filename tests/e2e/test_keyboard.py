@@ -7,12 +7,14 @@ keyboard traversal with the focus visible everywhere.
 """
 
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import Browser, Page
 
 from apps.core.models import SiteSettings
 from tests.e2e.conftest import PAGES
 
 pytestmark = pytest.mark.django_db
+
+MOBILE = {"width": 390, "height": 844}
 
 # Enough to clear the header, the whole of a short page, and well into a long
 # one. The pages that carry more stops are covered by the same rules.
@@ -195,3 +197,83 @@ def test_the_focus_ring_stands_out_from_what_is_behind_it(
             worst.append(found)
 
     assert not worst, f"{path}: focus rings under 3:1 against their ground: {worst[:3]}"
+
+
+# --------------------------------------------------------------------------
+# motion, FRONTEND.md A.6
+
+
+@pytest.mark.parametrize("path", ["/cennik/", "/galeria/", "/"])
+def test_a_section_below_the_fold_fades_in_when_reached(
+    live_server, site: SiteSettings, page: Page, path: str
+) -> None:
+    """A.6 point 3: opacity 0 to 1, once, and nothing moves."""
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    # How much waits depends on how tall the fixture's page comes out, so what
+    # is asserted is the rule rather than a count: anything below the fold
+    # waits, anything already on screen was never touched.
+    hidden_now = page.evaluate(
+        """() => [...document.querySelectorAll('[data-reveal]')].map(s => ({
+            below: s.getBoundingClientRect().top >= window.innerHeight,
+            waiting: s.classList.contains('is-waiting'),
+        }))"""
+    )
+    for section in hidden_now:
+        assert section["below"] == section["waiting"], f"{path}: {hidden_now}"
+
+    page.evaluate("() => window.scrollTo(0, document.documentElement.scrollHeight)")
+    page.wait_for_timeout(700)
+
+    left = page.evaluate(
+        "() => [...document.querySelectorAll('[data-reveal]')]"
+        ".filter(s => getComputedStyle(s).opacity !== '1').length"
+    )
+    assert left == 0, f"{path} left {left} section(s) invisible after scrolling to the bottom"
+
+
+@pytest.mark.parametrize("path", ["/cennik/", "/galeria/", "/kontakt/"])
+def test_nothing_is_hidden_when_the_script_never_arrives(
+    live_server, browser: Browser, site: SiteSettings, path: str
+) -> None:
+    """The failure this reveal is built to avoid.
+
+    Hiding every section in css and having javascript hand them back is one
+    stale cache from a blank page — it happened while this was being written.
+    The hiding is done by the script itself now, so with javascript off there
+    is nothing to hand back.
+    """
+    context = browser.new_context(viewport=MOBILE, java_script_enabled=False)
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}{path}")
+        page.wait_for_selector("h1")
+        invisible = page.evaluate(
+            "() => [...document.querySelectorAll('[data-reveal]')]"
+            ".filter(s => getComputedStyle(s).opacity !== '1').length"
+        )
+        assert invisible == 0, f"{path} hides {invisible} section(s) with no script to reveal them"
+        assert page.locator("h1").is_visible()
+    finally:
+        context.close()
+
+
+@pytest.mark.parametrize("path", ["/cennik/", "/"])
+def test_asking_for_less_motion_hides_nothing(
+    live_server, browser: Browser, site: SiteSettings, path: str
+) -> None:
+    """A.6: all of it switches off inside prefers-reduced-motion."""
+    context = browser.new_context(viewport=MOBILE, reduced_motion="reduce")
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}{path}")
+        page.wait_for_selector("h1")
+        page.wait_for_timeout(300)
+        invisible = page.evaluate(
+            "() => [...document.querySelectorAll('[data-reveal]')]"
+            ".filter(s => getComputedStyle(s).opacity !== '1').length"
+        )
+        assert invisible == 0, f"{path} still fades {invisible} section(s) under reduced motion"
+    finally:
+        context.close()
