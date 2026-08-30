@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-30 21:20+0200\n"
+"POT-Creation-Date: 2026-08-30 22:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,39 +37,37 @@ msgstr "Психологический кабинет"
 msgid "Opening hours"
 msgstr "Часы работы"
 
-#: apps/core/navigation.py:33 templates/404.html:22 templates/500.html:35
+#: apps/core/navigation.py:34 templates/404.html:22 templates/500.html:35
 #: templates/layout/footer.html:37
 msgid "Kursy"
 msgstr "Курсы"
 
-#: apps/core/navigation.py:34 apps/core/views.py:338 apps/courses/views.py:107
-#: apps/courses/views.py:113 templates/courses/course_list.html:43
-#: templates/layout/footer.html:40 templates/pages/home.html:89
+#: apps/core/navigation.py:40
+msgctxt "nav"
 msgid "Kierowca zawodowy"
-msgstr "Профессиональный водитель"
+msgstr "Проф. водитель"
 
-#: apps/core/navigation.py:35 apps/courses/views.py:209
+#: apps/core/navigation.py:41 apps/courses/views.py:209
 #: apps/courses/views.py:218 templates/404.html:24 templates/500.html:37
 #: templates/courses/pricing.html:26 templates/layout/footer.html:50
 msgid "Cennik"
 msgstr "Цены"
 
-#: apps/core/navigation.py:36 apps/courses/views.py:280 templates/404.html:23
-#: templates/500.html:36 templates/courses/intakes.html:16
-#: templates/layout/footer.html:51
+#: apps/core/navigation.py:42
+msgctxt "nav"
 msgid "Terminy"
-msgstr "Расписание"
+msgstr "Даты"
 
-#: apps/core/navigation.py:37 templates/layout/footer.html:49
+#: apps/core/navigation.py:43 templates/layout/footer.html:49
 msgid "O nas"
 msgstr "О нас"
 
-#: apps/core/navigation.py:38 apps/gallery/views.py:85 apps/gallery/views.py:89
+#: apps/core/navigation.py:44 apps/gallery/views.py:85 apps/gallery/views.py:89
 #: templates/gallery/gallery.html:20 templates/layout/footer.html:52
 msgid "Galeria"
 msgstr "Галерея"
 
-#: apps/core/navigation.py:39 apps/core/views.py:255 apps/core/views.py:263
+#: apps/core/navigation.py:45 apps/core/views.py:255 apps/core/views.py:263
 #: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
 #: templates/core/contact.html:23 templates/layout/footer.html:63
 msgid "Kontakt"
@@ -99,6 +97,12 @@ msgstr "Главная"
 #: apps/core/views.py:334
 msgid "kategorie AM, A1, A2, A, B, B+E, C, C+E, D"
 msgstr "категории AM, A1, A2, A, B, B+E, C, C+E, D"
+
+#: apps/core/views.py:338 apps/courses/views.py:107 apps/courses/views.py:113
+#: templates/courses/course_list.html:43 templates/layout/footer.html:40
+#: templates/pages/home.html:89
+msgid "Kierowca zawodowy"
+msgstr "Профессиональный водитель"
 
 #: apps/core/views.py:339
 msgid "kwalifikacja wstępna i szkolenia okresowe"
@@ -190,6 +194,11 @@ msgstr "Все языки"
 #: apps/courses/views.py:270
 msgid "Wszystkie tryby"
 msgstr "Все форматы"
+
+#: apps/courses/views.py:280 templates/404.html:23 templates/500.html:36
+#: templates/courses/intakes.html:16 templates/layout/footer.html:51
+msgid "Terminy"
+msgstr "Расписание"
 
 #: apps/courses/views.py:288
 msgid "Terminy kursów"
@@ -673,11 +682,11 @@ msgstr "Отклонить"
 msgid "Akceptuję"
 msgstr "Принимаю"
 
-#: templates/cotton/course_card.html:39 templates/courses/course_detail.html:33
+#: templates/cotton/course_card.html:40 templates/courses/course_detail.html:33
 msgid "Wiek od"
 msgstr "Возраст от"
 
-#: templates/cotton/course_card.html:39 templates/courses/course_detail.html:34
+#: templates/cotton/course_card.html:40 templates/courses/course_detail.html:34
 #, python-format
 msgid "%(years)s rok"
 msgid_plural "%(years)s lat"
@@ -686,12 +695,12 @@ msgstr[1] "%(years)s года"
 msgstr[2] "%(years)s лет"
 msgstr[3] "%(years)s года"
 
-#: templates/cotton/course_card.html:42 templates/courses/course_detail.html:60
+#: templates/cotton/course_card.html:43 templates/courses/course_detail.html:60
 #: templates/courses/course_detail.html:110
 msgid "Cena"
 msgstr "Цена"
 
-#: templates/cotton/course_card.html:44
+#: templates/cotton/course_card.html:45
 msgid "na zapytanie"
 msgstr "по запросу"
 

@@ -90,3 +90,54 @@ def test_the_language_row_is_reachable_at_every_width(
             assert panel.is_visible(), "the menu panel drops the language row too"
     finally:
         context.close()
+
+
+@pytest.mark.parametrize("prefix", ["", "/ru", "/uk"])
+def test_the_header_row_fits_in_every_language(
+    live_server, site: SiteSettings, browser: Browser, prefix: str
+) -> None:
+    """A translated word is a longer word.
+
+    "Kierowca zawodowy" became "Профессиональный водитель", 118px wider, and the
+    menu ran into the language switcher and the phone. The bar has no room to
+    give — it fits polish with three pixels to spare — so the menu carries its
+    own shorter wording through a message context while the headings keep the
+    full phrase.
+    """
+    context = browser.new_context(viewport={"width": 1280, "height": 800})
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}{prefix}/")
+        page.wait_for_selector("h1")
+
+        measured = page.evaluate(
+            """() => {
+                const bar = document.querySelector('.u-header .u-container');
+                const style = getComputedStyle(bar);
+                const content = bar.clientWidth
+                    - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                const gap = parseFloat(style.columnGap) || 0;
+                const kids = [...bar.children];
+                const need = kids.reduce((sum, el) => sum + el.scrollWidth, 0)
+                    + gap * (kids.length - 1);
+                const nav = bar.querySelector('nav[aria-label]');
+                const list = nav && nav.querySelector('ul');
+                return {
+                    content: Math.round(content),
+                    need: Math.round(need),
+                    spill: list
+                        ? Math.round(list.getBoundingClientRect().right
+                            - nav.getBoundingClientRect().right)
+                        : 0,
+                };
+            }"""
+        )
+        assert measured["spill"] <= 0, (
+            f"{prefix or '/pl'}: the menu runs {measured['spill']}px past its box"
+        )
+        assert measured["need"] <= measured["content"], (
+            f"{prefix or '/pl'}: the header row wants {measured['need']}px "
+            f"and has {measured['content']}px"
+        )
+    finally:
+        context.close()

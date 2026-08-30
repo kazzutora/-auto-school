@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from django.urls import reverse
 from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 
 @dataclass(frozen=True)
@@ -31,9 +32,14 @@ class NavItem:
 # the main defect of the old site, tech.md section 7.
 NAV: tuple[NavItem, ...] = (
     NavItem(_("Kursy"), "courses:list"),
-    NavItem(_("Kierowca zawodowy"), "courses:pro_hub"),
+    # pgettext, not gettext: the same polish words head a page and a section,
+    # where there is room for them, and sit in a menu bar that has none. In
+    # russian the full phrase is 118px wider than the polish and pushed the row
+    # into the language switcher. The heading keeps the full wording; only the
+    # menu gets the short one.
+    NavItem(pgettext_lazy("nav", "Kierowca zawodowy"), "courses:pro_hub"),
     NavItem(_("Cennik"), "courses:pricing"),
-    NavItem(_("Terminy"), "courses:intakes"),
+    NavItem(pgettext_lazy("nav", "Terminy"), "courses:intakes"),
     NavItem(_("O nas"), "core:page", kwargs={"slug": "o-nas"}),
     NavItem(_("Galeria"), "gallery:index"),
     NavItem(_("Kontakt"), "core:contact"),
