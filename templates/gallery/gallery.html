@@ -77,7 +77,7 @@ here is decorative: every image is content, so every alt says what it shows.
 </c-section>
 
 {% for section in sections %}
-  <c-section tone="{% cycle 'default' 'muted' %}">
+  <c-section tone="{% cycle 'muted' 'default' %}">
     <c-heading level="2">{{ section.label }}</c-heading>
     <div class="mt-6">{% include "gallery/_lightbox.html" with items=section.images testid="gallery-grid" %}</div>
   </c-section>

@@ -53,7 +53,7 @@ nothing.
   {# B5: the list under "Co oferujemy" is navigation written as bullets, so it
      is cards that go where they point. Built from the offer itself rather than
      by parsing the body, so it cannot drift from what the site sells. #}
-  <c-section id="oferta" size="compact">
+  <c-section id="oferta" tone="muted" size="compact">
     <c-slot name="heading">Co oferujemy</c-slot>
     <ul class="grid gap-4 md:grid-cols-2">
       {% for item in offer %}
@@ -70,7 +70,7 @@ nothing.
   {# The facts, laid out as section 6 of the home page: big figures, no circle
      icons, hairlines between them. The numbers are counted rather than written
      down, so they cannot drift away from the offer. #}
-  <c-section id="fakty" tone="muted">
+  <c-section id="fakty">
     <c-slot name="heading">W liczbach</c-slot>
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
       <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
@@ -101,7 +101,7 @@ nothing.
 {% endif %}
 
 {% if instructors %}
-  <c-section id="instruktorzy" size="compact">
+  <c-section id="instruktorzy" tone="muted" size="compact">
     <c-slot name="heading">Instruktorzy</c-slot>
     <c-slot name="sub">Ludzie, z którymi jeździsz i którzy prowadzą wykłady.</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
@@ -136,7 +136,7 @@ nothing.
 {% endif %}
 
 {% if vehicle_groups %}
-  <c-section id="pojazdy" tone="muted" size="compact">
+  <c-section id="pojazdy" size="compact">
     <c-slot name="heading">Nasze pojazdy</c-slot>
     <c-slot name="sub">Uczysz się na aucie, na którym potem zdajesz.</c-slot>
     <div class="flex flex-col gap-12" data-testid="vehicles">
