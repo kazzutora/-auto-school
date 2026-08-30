@@ -8,7 +8,7 @@ and when, and a download beside the scan wherever there is a pdf.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Certyfikaty</c-heading>
+  <c-heading level="1" eyebrow="Uprawnienia" class="mt-6">Certyfikaty</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
     Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu.
   </p>
@@ -18,7 +18,7 @@ and when, and a download beside the scan wherever there is a pdf.
 {% if certificates %}
   {# ink, not deep: the footer below is purple and two purples would run
      together into one band. #}
-  <c-section tone="brand">
+  <c-section tone="deep">
     {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label="Podgląd skanu" %}
   </c-section>
 {% else %}
@@ -26,6 +26,23 @@ and when, and a download beside the scan wherever there is a pdf.
     <c-alert tone="info" title="Certyfikaty w przygotowaniu">Skany pojawią się wkrótce.</c-alert>
   </c-section>
 {% endif %}
+
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <c-heading level="2">Masz pytanie o uprawnienia ośrodka?</c-heading>
+      <p class="mt-3 text-body-lg">Odpowiemy przez telefon albo pokażemy dokumenty w biurze.</p>
+    </div>
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
+  </div>
+</c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 <c-cta-bar title="Masz pytanie o uprawnienia ośrodka?"

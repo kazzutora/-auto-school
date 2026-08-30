@@ -89,3 +89,64 @@ def test_every_target_is_big_enough_for_a_finger(
 
     small = page.evaluate(TARGETS, MIN_TARGET)
     assert not small, f"{path} has targets under {MIN_TARGET}px: {small[:5]}"
+
+
+# --------------------------------------------------------------------------
+# FRONTEND_FIXES.md X5
+
+BANDED = ["/terminy/", "/kontakt/", "/galeria/", "/certyfikaty/", "/cennik/", "/o-nas/"]
+
+RHYTHM = """() => {
+    const sections = [...document.querySelectorAll('main section')];
+    const report = sections.map(s => ({
+        ground: s.classList.contains('bg-paper-50') ? 'muted'
+              : s.classList.contains('u-ground-ink') ? 'ink'
+              : s.classList.contains('u-ground-deep') ? 'deep' : 'paper',
+        height: Math.round(s.getBoundingClientRect().height),
+        chars: s.textContent.replace(/\s+/g, ' ').trim().length,
+    }));
+    let repeats = 0;
+    for (let i = 1; i < report.length; i++) {
+        if (report[i].ground === report[i - 1].ground) repeats++;
+    }
+    return {
+        count: report.length,
+        grounds: report.map(r => r.ground),
+        repeats: repeats,
+        last: report.length ? report[report.length - 1].ground : null,
+        airy: report.filter(r => r.height > 700 && r.chars < 400)
+                    .map(r => r.height + 'px for ' + r.chars + ' characters'),
+    };
+}"""
+
+
+@pytest.mark.parametrize("path", BANDED)
+def test_the_page_has_a_rhythm(live_server, site: SiteSettings, page: Page, path: str) -> None:
+    """X5's acceptance criteria, and X1 and X2's before it.
+
+    Every inner page used to be one or two sections of the same colour running
+    from the heading to the footer, which reads as an unfinished page however
+    good the words are.
+    """
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    found = page.evaluate(RHYTHM)
+    assert found["count"] >= 3, f"{path} has {found['count']} block(s): {found['grounds']}"
+    assert not found["repeats"], f"{path} repeats a ground: {found['grounds']}"
+    assert found["last"] == "ink", f"{path} ends on {found['last']}, not an invitation"
+    assert not found["airy"], f"{path} has air instead of rhythm: {found['airy']}"
+
+
+@pytest.mark.parametrize("path", BANDED)
+def test_the_eyebrow_says_where_you_are(
+    live_server, site: SiteSettings, page: Page, path: str
+) -> None:
+    """X0 point 3: it read OSK NAWROCKI WIELUŃ on every page, which the
+    breadcrumbs above it had already said."""
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    eyebrow = page.locator("main p.label").first
+    assert eyebrow.count() == 1
+    assert "NAWROCKI" not in eyebrow.inner_text().upper()

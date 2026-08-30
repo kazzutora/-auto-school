@@ -19,7 +19,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Kontakt</c-heading>
+  <c-heading level="1" eyebrow="Kontakt" class="mt-6">Kontakt</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
     Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy
     przez telefon i przez formularz.
@@ -120,7 +120,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
    larger step: c-map's enum has no responsive value, and every component
    merges an incoming class since F2.
    ------------------------------------------------------------------ #}
-<c-section id="dojazd" tone="brand">
+<c-section id="dojazd" tone="deep">
   <c-slot name="heading">Dojazd</c-slot>
   <c-slot name="sub">Wieluń, ul. Zielona 45. Parking przed budynkiem.</c-slot>
 
@@ -147,6 +147,23 @@ performance gate is 90 and one page carries a map, tech.md section 7.
       {{ site_settings.postal_code }} {{ site_settings.city }}.
     </c-alert>
   {% endif %}
+</c-section>
+
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <c-heading level="2">Wolisz porozmawiać?</c-heading>
+      <p class="mt-3 text-body-lg">Zadzwoń albo zostaw numer — oddzwonimy w godzinach pracy biura.</p>
+    </div>
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
+  </div>
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>

@@ -11,7 +11,7 @@ javascript never arrives, so the filter is not a javascript feature.
 {% block content %}
 <c-section tone="deep">
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Terminy</c-heading>
+  <c-heading level="1" eyebrow="Zapisy" class="mt-6">Terminy</c-heading>
   <p class="u-narrow mt-4 text-body-lg u-muted-on-ground">
     Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane.
   </p>
@@ -50,6 +50,23 @@ javascript never arrives, so the filter is not a javascript feature.
 <c-section>
   <div id="intake-rows">
     {% include "courses/_intake_rows.html" %}
+  </div>
+</c-section>
+
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <c-heading level="2">Nie ma pasującego terminu?</c-heading>
+      <p class="mt-3 text-body-lg">Zostaw numer — odezwiemy się, gdy ruszy najbliższa grupa.</p>
+    </div>
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
   </div>
 </c-section>
 
