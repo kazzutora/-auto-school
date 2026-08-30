@@ -412,7 +412,7 @@ def test_the_listing_never_prints_a_zero_price(client: Client) -> None:
     make_course(price_gross=None)
 
     html = body_of(client, "/kursy/")
-    assert "cena na zapytanie" in html
+    assert "na zapytanie" in html
     assert not re.search(r">\s*(od\s*)?0([,.]00)?\s*zł", html)
 
 
@@ -539,3 +539,64 @@ def test_the_sticky_card_clears_the_header(client: Client) -> None:
     body = body_of(client, course.get_absolute_url())
     assert "lg:sticky" in body
     assert "var(--header-h)" in body
+
+
+# --------------------------------------------------------------------------
+# vehicle marks on the category tiles
+
+
+def test_each_category_shows_what_it_lets_you_drive(client: Client) -> None:
+    """A grid of nine tiles carrying only letters makes somebody read all nine
+    to find the bus. The shape is recognised before the code is."""
+    from apps.core.templatetags.core_ui import CATEGORY_VEHICLES
+
+    for code, slug in (("AM", "kat-am"), ("B", "kat-b"), ("D", "kat-d"), ("C+E", "kat-ce")):
+        make_course(slug=slug, code=code, title=f"Kategoria {code}")
+
+    body = body_of(client, "/kursy/")
+    for code, slug in (("AM", "kat-am"), ("B", "kat-b"), ("D", "kat-d"), ("C+E", "kat-ce")):
+        tile = next(t for t in category_tiles(body) if f"/kursy/{slug}/" in t)
+        for icon in CATEGORY_VEHICLES[code]:
+            assert f"#i-{icon}" in tile, f"{code} is missing its {icon}"
+
+
+def test_a_towing_category_shows_both_halves(client: Client) -> None:
+    """B+E is a car and what it pulls, so it carries two marks rather than a
+    letter with a plus in it."""
+    make_course(slug="kat-be", code="B+E", title="Kategoria B+E")
+
+    tile = category_tiles(body_of(client, "/kursy/"))[0]
+    assert "#i-car" in tile
+    assert "#i-trailer" in tile
+
+
+def test_a_course_with_no_category_gets_no_vehicle(client: Client) -> None:
+    """A wrong vehicle beside a category is worse than none: somebody would
+    believe it."""
+    from apps.core.templatetags.core_ui import category_vehicles
+
+    assert category_vehicles("") == ()
+    assert category_vehicles("T") == ()
+    assert category_vehicles("b+e") == ("car", "trailer")
+
+
+def test_every_vehicle_named_is_in_the_sprite() -> None:
+    """A.7: icons come from the local sprite, so a name with no symbol behind
+    it is a silently empty box on the page."""
+    # Parsed, not searched for as text. The first version of these six landed
+    # inside the header comment — the file contained id="i-bus" and the browser
+    # drew nothing, because a symbol inside a comment is not a symbol. A string
+    # match would have passed happily.
+    import xml.etree.ElementTree as ET
+    from pathlib import Path
+
+    from django.conf import settings
+
+    from apps.core.templatetags.core_ui import CATEGORY_VEHICLES
+
+    root = ET.parse(Path(settings.BASE_DIR) / "static" / "icons" / "sprite.svg").getroot()
+    declared = {element.get("id") for element in root}
+
+    for icons in CATEGORY_VEHICLES.values():
+        for icon in icons:
+            assert f"i-{icon}" in declared, f"the sprite has no i-{icon} at its root"

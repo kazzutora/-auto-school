@@ -1,6 +1,8 @@
 {# Price not set yet. Never render an empty gap or a misleading 0 zl. #}
 {% if compact %}
-  <p class="mt-2">
+  {# Tight to the tile it belongs to: at mt-2 it read as a stray link under a
+     card rather than as part of it. #}
+  <p class="-mt-px">
     <c-button variant="ghost" size="sm" full="1" href="{{ enrol_url }}">Zapytaj o cenę</c-button>
   </p>
 {% else %}

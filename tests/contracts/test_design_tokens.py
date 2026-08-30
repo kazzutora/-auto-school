@@ -60,6 +60,17 @@ EXTRA_ICONS = (
     # is a dingbat character, which would be the one place in the interface
     # where an icon is text.
     "star",
+    # One vehicle per licence category, mapped in core_ui.CATEGORY_VEHICLES. A
+    # category tile that only says "A2" asks the reader to know the code
+    # already; the silhouette says motorcycle before the letter is read. They
+    # are drawn on the same 24 grid and the same 1.75 stroke as the rest, so
+    # they sit beside a clock or a pin without looking imported.
+    "moped",
+    "motorcycle",
+    "car",
+    "truck",
+    "bus",
+    "trailer",
 )
 
 ICONS = (

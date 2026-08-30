@@ -7,7 +7,9 @@ and one file is the only way that stays true after the next edit.
 
 Two columns on a phone, three from md, five from lg — the breakpoints in A.4.
 The tile is c-course-card and is a link in its own right, so nothing here wraps
-it in a second anchor.
+it in a second anchor. It grows into whatever height the row settles on, so a
+tile that carries no price question ends level with one that does instead of
+stopping short and leaving the row a sawtooth.
 
 Takes:
   level          heading level for each title, 3 by default. A grid sitting
@@ -22,7 +24,7 @@ Takes:
 <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
   {% for course in courses %}
     <li class="flex flex-col">
-      <c-course-card :course="course" level="{{ level|default:3 }}" class="w-full" />
+      <c-course-card :course="course" level="{{ level|default:3 }}" class="w-full grow" />
       {% if ask_for_price and not course.price_gross %}
         {% include "courses/_ask_for_price.html" with compact=1 %}
       {% endif %}

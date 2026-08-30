@@ -155,3 +155,32 @@ def domain(url: str) -> str:
     """
     host = urlsplit(str(url or "")).netloc
     return host[4:] if host.startswith("www.") else host
+
+
+# What each licence category actually lets you drive, as icons from the sprite.
+# A tile carrying its code alone made somebody read nine of them to find the
+# bus; the shape is recognised before the letters are.
+#
+# The trailing categories carry two marks — the vehicle and what it tows — so
+# B+E reads as a car with a trailer rather than as a letter with a plus in it.
+CATEGORY_VEHICLES = {
+    "AM": ("moped",),
+    "A1": ("motorcycle",),
+    "A2": ("motorcycle",),
+    "A": ("motorcycle",),
+    "B": ("car",),
+    "B+E": ("car", "trailer"),
+    "C": ("truck",),
+    "C+E": ("truck", "trailer"),
+    "D": ("bus",),
+}
+
+
+@register.filter
+def category_vehicles(code: str) -> tuple[str, ...]:
+    """The icons for a category code, or nothing for a course without one.
+
+    Unknown codes get nothing rather than a stand-in: a wrong vehicle beside a
+    category is worse than no vehicle, because somebody will believe it.
+    """
+    return CATEGORY_VEHICLES.get(str(code or "").strip().upper(), ())
