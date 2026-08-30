@@ -277,3 +277,79 @@ def test_asking_for_less_motion_hides_nothing(
         assert invisible == 0, f"{path} still fades {invisible} section(s) under reduced motion"
     finally:
         context.close()
+
+
+# What is hovered, what is measured, and what it should become. The card moves
+# itself; the button moves the icon inside it, so the two cannot share a reader
+# — "the svg in here, or failing that the element" quietly measured the arrow
+# inside a card and reported that nothing had moved.
+HOVER_MOVES = [
+    ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -2)"),
+    ("/kontakt/", ".u-btn:has(svg)", "svg", "matrix(1.08, 0, 0, 1.08, 0, 0)"),
+]
+
+
+@pytest.mark.parametrize(("path", "selector", "measure", "expected"), HOVER_MOVES)
+def test_the_two_hover_moves_happen(
+    live_server,
+    site: SiteSettings,
+    page: Page,
+    path: str,
+    selector: str,
+    measure: str,
+    expected: str,
+) -> None:
+    """A.6 point 4, added at the owner's request in core v7.
+
+    A card lifts 2px and an icon inside a button grows to 1.08. Both over the
+    same 120ms everything else uses, and neither moves anything but itself.
+    """
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    target = page.locator(f"main {selector}:visible").first
+    target.scroll_into_view_if_needed()
+
+    read = (
+        "el => getComputedStyle(el).transform"
+        if measure == "self"
+        else "el => getComputedStyle(el.querySelector('svg')).transform"
+    )
+    assert target.evaluate(read) == "none", "it should be still until pointed at"
+
+    target.hover()
+    page.wait_for_timeout(400)
+    assert target.evaluate(read) == expected
+
+
+@pytest.mark.parametrize(("path", "selector", "measure", "_expected"), HOVER_MOVES)
+def test_neither_hover_move_happens_under_reduced_motion(
+    live_server,
+    browser: Browser,
+    site: SiteSettings,
+    path: str,
+    selector: str,
+    measure: str,
+    _expected: str,
+) -> None:
+    """Zeroing the duration is not enough: it leaves the move happening in one
+    frame, which is a jump rather than an answer. Asked for less motion, both
+    get none — the border and the shadow still respond."""
+    context = browser.new_context(viewport={"width": 1280, "height": 900}, reduced_motion="reduce")
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}{path}")
+        page.wait_for_selector("h1")
+        target = page.locator(f"main {selector}:visible").first
+        target.scroll_into_view_if_needed()
+        target.hover()
+        page.wait_for_timeout(300)
+
+        read = (
+            "el => getComputedStyle(el).transform"
+            if measure == "self"
+            else "el => getComputedStyle(el.querySelector('svg')).transform"
+        )
+        assert target.evaluate(read) == "none"
+    finally:
+        context.close()
