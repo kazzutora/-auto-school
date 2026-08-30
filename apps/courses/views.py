@@ -9,18 +9,19 @@ from typing import Any
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.markdown import render_markdown
-from apps.core.seo import build_description, page_seo
+from apps.core.seo import Label, build_description, page_seo
 from apps.courses import selectors, services
 from apps.courses.models import Course, CourseIntake
 from apps.courses.services import format_price, min_start_age, split_age
 
 ENROL_URL = "/zapisz-sie/"  # frozen in tech.md section 5, ships with S3
-INTAKE_HEADERS = ["Start", "Kurs", "Tryb", "Język", "Status"]
+INTAKE_HEADERS = [_("Start"), _("Kurs"), _("Tryb"), _("Język"), _("Status")]
 
 
-def _crumbs(trail: list[tuple[str, str]]) -> list[dict[str, str]]:
+def _crumbs(trail: list[tuple[Label, str]]) -> list[dict[str, Label]]:
     return [{"title": name, "url": url} for name, url in trail]
 
 
@@ -58,11 +59,11 @@ def _grid(
     subject: str,
     description: str,
     route: str,
-    heading: str,
-    intro: str,
+    heading: Label,
+    intro: Label,
 ) -> HttpResponse:
     courses = list(selectors.active_courses(kind))
-    trail = [("Start", "/"), (heading, reverse(route))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), (heading, reverse(route))]
 
     return render(
         request,
@@ -87,14 +88,14 @@ def course_list(request: HttpRequest) -> HttpResponse:
     return _grid(
         request,
         kind=Course.Kind.LICENSE,
-        subject="Kursy prawa jazdy",
+        subject=_("Kursy prawa jazdy"),
         description=(
             "Kursy prawa jazdy wszystkich kategorii w Wieluniu: AM, A1, A2, A, B, "
             "B+E, C, C+E i D. Zajęcia także w języku rosyjskim."
         ),
         route="courses:list",
-        heading="Kursy prawa jazdy",
-        intro="Wybierz kategorię. Kurs możesz rozpocząć trzy miesiące przed osiągnięciem wieku.",
+        heading=_("Kursy prawa jazdy"),
+        intro=_("Wybierz kategorię. Kurs możesz rozpocząć trzy miesiące przed osiągnięciem wieku."),
     )
 
 
@@ -103,14 +104,14 @@ def pro_hub(request: HttpRequest) -> HttpResponse:
     return _grid(
         request,
         kind=Course.Kind.PROFESSIONAL,
-        subject="Kierowca zawodowy",
+        subject=_("Kierowca zawodowy"),
         description=(
             "Kwalifikacja wstępna, szkolenia okresowe i kurs ADR dla kierowców "
             "zawodowych w Wieluniu."
         ),
         route="courses:pro_hub",
-        heading="Kierowca zawodowy",
-        intro="Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych.",
+        heading=_("Kierowca zawodowy"),
+        intro=_("Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych."),
     )
 
 
@@ -127,7 +128,7 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
     else:
         parent = None
 
-    trail = [("Start", "/")]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/")]
     if parent:
         trail.append(parent)
     trail.append((course.title, course.get_absolute_url()))
@@ -205,7 +206,7 @@ def pricing(request: HttpRequest) -> HttpResponse:
     groups = [(label, rows) for label, rows in groups if rows]
     groups += services.group_price_items(selectors.active_price_items())
 
-    trail = [("Start", "/"), ("Cennik", reverse("courses:pricing"))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Cennik"), reverse("courses:pricing"))]
     payments = Page.objects.filter(slug="platnosci", is_published=True).first()
 
     return render(
@@ -214,7 +215,7 @@ def pricing(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Cennik",
+                subject=_("Cennik"),
                 description=(
                     "Cennik kursów prawa jazdy, szkoleń dla kierowców zawodowych i badań "
                     "psychologicznych w Wieluniu."
@@ -262,11 +263,11 @@ def _intake_context(request: HttpRequest) -> dict[str, Any]:
         ],
         "chosen": chosen,
         "headers": INTAKE_HEADERS_FULL,
-        "course_options": [(ANY, "Wszystkie kursy")]
+        "course_options": [(ANY, _("Wszystkie kursy"))]
         + [(course.slug, course.title) for course in selectors.courses_with_upcoming_intakes()],
-        "language_options": [(ANY, "Wszystkie języki")]
+        "language_options": [(ANY, _("Wszystkie języki"))]
         + [(code, label) for code, label in settings.LANGUAGES],
-        "mode_options": [(ANY, "Wszystkie tryby"), *CourseIntake.Mode.choices],
+        "mode_options": [(ANY, _("Wszystkie tryby")), *CourseIntake.Mode.choices],
     }
 
 
@@ -276,7 +277,7 @@ def intakes(request: HttpRequest) -> HttpResponse:
     The same filters answer here and on the htmx endpoint, so the plain GET form
     gives a visitor without javascript exactly the same result.
     """
-    trail = [("Start", "/"), ("Terminy", reverse("courses:intakes"))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Terminy"), reverse("courses:intakes"))]
 
     return render(
         request,
@@ -284,7 +285,7 @@ def intakes(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Terminy kursów",
+                subject=_("Terminy kursów"),
                 description=(
                     "Najbliższe terminy kursów prawa jazdy i szkoleń dla kierowców "
                     "zawodowych w Wieluniu."

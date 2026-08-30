@@ -1,3 +1,4 @@
+{% load i18n %}
 {# One gallery tile: the thing that opens the lightbox at `position`.
 
    4:3, FRONTEND.md A.8. The photo is the whole tile, so the button is the
@@ -7,5 +8,5 @@
         class="u-photo block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
   <c-picture :image="item.image" alt="{{ item.alt }}" ratio="tile"
              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" />
-  <span class="sr-only">Powiększ: {{ item.alt }}</span>
+  <span class="sr-only">{% blocktranslate with alt=item.alt %}Powiększ: {{ alt }}{% endblocktranslate %}</span>
 </button>

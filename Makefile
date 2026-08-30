@@ -33,6 +33,10 @@ fmt: ## format and autofix
 	ruff format .
 	ruff check --fix .
 
+messages: ## rebuild locale/*.po from the source and compile them
+	docker compose exec web python manage.py makemessages -l pl -l ru -l uk --no-obsolete --no-wrap
+	docker compose exec web python manage.py compilemessages
+
 css: ## build tailwind css
 	$(COMPOSE) run --rm tailwind tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
 

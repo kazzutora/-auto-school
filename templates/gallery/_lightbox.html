@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 A grid of triggers plus the dialog they open, FRONTEND.md F9.
 
@@ -47,7 +48,8 @@ which is drift on the section 7 row and belongs to a LEAD session.
           class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 text-ink backdrop:bg-ink/90">
     <div class="flex items-center justify-between gap-4">
       <p class="label text-ink-500"><span x-text="i + 1"></span> / {{ items|length }}</p>
-      <c-button variant="ghost" size="icon" x-on:click="$refs.dlg.close()" aria-label="Zamknij">
+      {% translate "Zamknij" as t_zamknij %}
+      <c-button variant="ghost" size="icon" x-on:click="$refs.dlg.close()" aria-label="{{ t_zamknij }}">
         <c-icon name="close" />
       </c-button>
     </div>
@@ -69,10 +71,10 @@ which is drift on the section 7 row and belongs to a LEAD session.
     {% if items|length > 1 %}
       <div class="mt-3 flex justify-between gap-4">
         <c-button variant="ghost" x-on:click="prev()">
-          <span class="rotate-180"><c-icon name="arrow-right" /></span> Poprzednie
+          <span class="rotate-180"><c-icon name="arrow-right" /></span> {% translate "Poprzednie" %}
         </c-button>
         <c-button variant="ghost" x-on:click="next()">
-          Następne <c-icon name="arrow-right" />
+          {% translate "Następne" %} <c-icon name="arrow-right" />
         </c-button>
       </div>
     {% endif %}

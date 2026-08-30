@@ -16,10 +16,11 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django_ratelimit.decorators import ratelimit
 
-from apps.core.seo import page_seo
+from apps.core.seo import Label, page_seo
 from apps.leads.forms import LeadForm, initial_from_query
 from apps.leads.models import Lead
 from apps.leads.services import client_ip, hash_ip
@@ -29,11 +30,11 @@ from apps.leads.tasks import notify_owner, send_confirmation
 RATE = "5/h"
 TOO_MANY_REQUESTS = 429
 
-ENROL_DESCRIPTION = (
+ENROL_DESCRIPTION = _(
     "Zapisz się na kurs prawa jazdy w OSK Nawrocki w Wieluniu. "
     "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin."
 )
-THANKS_DESCRIPTION = "Zgłoszenie przyjęte. Oddzwonimy w godzinach pracy biura."
+THANKS_DESCRIPTION = _("Zgłoszenie przyjęte. Oddzwonimy w godzinach pracy biura.")
 
 
 def _is_htmx(request: HttpRequest) -> bool:
@@ -45,22 +46,28 @@ def _is_htmx(request: HttpRequest) -> bool:
 # discovers that second has lost a week.
 ENROLMENT_STEPS = (
     {
-        "title": "Wybierz kategorię",
-        "text": "Nie wiesz którą? Zadzwoń, dobierzemy pod to, co chcesz prowadzić.",
+        "title": _("Wybierz kategorię"),
+        "text": _("Nie wiesz którą? Zadzwoń, dobierzemy pod to, co chcesz prowadzić."),
     },
     {
-        "title": "Wyrób PKK w starostwie",
-        "text": "Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu.",
+        "title": _("Wyrób PKK w starostwie"),
+        "text": _("Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu."),
     },
     {
-        "title": "Zapisz się",
-        "text": "Przez formularz obok albo telefonicznie — potwierdzimy termin grupy.",
+        "title": _("Zapisz się"),
+        "text": _("Przez formularz obok albo telefonicznie — potwierdzimy termin grupy."),
     },
     {
-        "title": "Zacznij zajęcia",
-        "text": "Teoria i jazdy ruszają w terminie, który wybrałeś.",
+        "title": _("Zacznij zajęcia"),
+        "text": _("Teoria i jazdy ruszają w terminie, który wybrałeś."),
     },
 )
+
+
+ENROL_TRAIL: list[tuple[Label, str]] = [
+    (_("Start"), "/"),
+    (_("Zapisz się"), "/zapisz-sie/"),
+]
 
 
 def enroll(request: HttpRequest) -> HttpResponse:
@@ -71,13 +78,13 @@ def enroll(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Zapisz się na kurs",
+                subject=_("Zapisz się na kurs"),
                 description=ENROL_DESCRIPTION,
-                breadcrumbs=[("Start", "/"), ("Zapisz się", reverse("leads:enroll"))],
+                breadcrumbs=ENROL_TRAIL,
             ),
             "breadcrumbs": [
-                {"title": "Start", "url": "/"},
-                {"title": "Zapisz się", "url": reverse("leads:enroll")},
+                {"title": _("Start"), "url": "/"},
+                {"title": _("Zapisz się"), "url": reverse("leads:enroll")},
             ],
             "form": LeadForm(initial=initial_from_query(request.GET)),
             "steps": ENROLMENT_STEPS,
@@ -93,7 +100,7 @@ def thanks(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Dziękujemy za zgłoszenie",
+                subject=_("Dziękujemy za zgłoszenie"),
                 description=THANKS_DESCRIPTION,
                 # A confirmation page has nothing to offer a search engine and
                 # everything to lose by being indexed instead of the form.

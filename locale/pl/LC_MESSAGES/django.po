@@ -1,0 +1,1346 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-30 21:20+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+#: apps/core/models.py:43
+msgid "comma separated"
+msgstr "oddzielone przecinkiem"
+
+#: apps/core/models.py:47
+msgid "Site settings"
+msgstr "Ustawienia strony"
+
+#: apps/core/models.py:66
+msgid "Office"
+msgstr "Biuro"
+
+#: apps/core/models.py:67
+msgid "Psychology lab"
+msgstr "Pracownia psychologiczna"
+
+#: apps/core/models.py:78
+msgid "Opening hours"
+msgstr "Godziny otwarcia"
+
+#: apps/core/navigation.py:33 templates/404.html:22 templates/500.html:35
+#: templates/layout/footer.html:37
+msgid "Kursy"
+msgstr ""
+
+#: apps/core/navigation.py:34 apps/core/views.py:338 apps/courses/views.py:107
+#: apps/courses/views.py:113 templates/courses/course_list.html:43
+#: templates/layout/footer.html:40 templates/pages/home.html:89
+msgid "Kierowca zawodowy"
+msgstr ""
+
+#: apps/core/navigation.py:35 apps/courses/views.py:209
+#: apps/courses/views.py:218 templates/404.html:24 templates/500.html:37
+#: templates/courses/pricing.html:26 templates/layout/footer.html:50
+msgid "Cennik"
+msgstr ""
+
+#: apps/core/navigation.py:36 apps/courses/views.py:280 templates/404.html:23
+#: templates/500.html:36 templates/courses/intakes.html:16
+#: templates/layout/footer.html:51
+msgid "Terminy"
+msgstr ""
+
+#: apps/core/navigation.py:37 templates/layout/footer.html:49
+msgid "O nas"
+msgstr ""
+
+#: apps/core/navigation.py:38 apps/gallery/views.py:85 apps/gallery/views.py:89
+#: templates/gallery/gallery.html:20 templates/layout/footer.html:52
+msgid "Galeria"
+msgstr ""
+
+#: apps/core/navigation.py:39 apps/core/views.py:255 apps/core/views.py:263
+#: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
+#: templates/core/contact.html:23 templates/layout/footer.html:63
+msgid "Kontakt"
+msgstr ""
+
+#: apps/core/views.py:137
+msgid "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
+msgstr ""
+
+#: apps/core/views.py:151 apps/core/views.py:333
+#: templates/layout/footer.html:39
+msgid "Prawo jazdy"
+msgstr ""
+
+#: apps/core/views.py:153
+msgid "Ośrodek szkolenia kierowców w Wieluniu od 1996 roku. Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku."
+msgstr ""
+
+#: apps/core/views.py:255 apps/core/views.py:307 apps/courses/views.py:21
+#: apps/courses/views.py:66 apps/courses/views.py:131 apps/courses/views.py:209
+#: apps/courses/views.py:280 apps/gallery/views.py:85 apps/gallery/views.py:116
+#: apps/leads/views.py:68 apps/leads/views.py:86 apps/links/views.py:47
+#: apps/links/views.py:103
+msgid "Start"
+msgstr ""
+
+#: apps/core/views.py:334
+msgid "kategorie AM, A1, A2, A, B, B+E, C, C+E, D"
+msgstr ""
+
+#: apps/core/views.py:339
+msgid "kwalifikacja wstępna i szkolenia okresowe"
+msgstr ""
+
+#: apps/core/views.py:343 templates/courses/course_list.html:67
+#: templates/layout/footer.html:41
+msgid "Badania psychologiczne"
+msgstr ""
+
+#: apps/core/views.py:344
+msgid "kierowcy i operatorzy maszyn"
+msgstr ""
+
+#: apps/core/views.py:348 templates/courses/course_list.html:74
+#: templates/layout/footer.html:42
+msgid "Wózki widłowe"
+msgstr ""
+
+#: apps/core/views.py:349
+msgid "uprawnienia operatora"
+msgstr ""
+
+#: apps/courses/models.py:70
+msgid "Stationary"
+msgstr "Stacjonarny"
+
+#: apps/courses/models.py:71
+msgid "E-learning"
+msgstr "E-learning"
+
+#: apps/courses/models.py:72
+msgid "Mixed"
+msgstr "Mieszany"
+
+#: apps/courses/models.py:75
+msgid "Planned"
+msgstr "Planowany"
+
+#: apps/courses/models.py:76
+msgid "Open"
+msgstr "Zapisy otwarte"
+
+#: apps/courses/models.py:77
+msgid "Full"
+msgstr "Brak miejsc"
+
+#: apps/courses/models.py:78
+msgid "Closed"
+msgstr "Zamknięty"
+
+#: apps/courses/views.py:21 apps/leads/admin.py:45 apps/leads/forms.py:93
+#: templates/courses/intakes.html:29
+msgid "Kurs"
+msgstr ""
+
+#: apps/courses/views.py:21 templates/courses/intakes.html:37
+msgid "Tryb"
+msgstr ""
+
+#: apps/courses/views.py:21 templates/courses/intakes.html:33
+msgid "Język"
+msgstr ""
+
+#: apps/courses/views.py:21
+msgid "Status"
+msgstr ""
+
+#: apps/courses/views.py:91 apps/courses/views.py:97
+msgid "Kursy prawa jazdy"
+msgstr ""
+
+#: apps/courses/views.py:98
+msgid "Wybierz kategorię. Kurs możesz rozpocząć trzy miesiące przed osiągnięciem wieku."
+msgstr ""
+
+#: apps/courses/views.py:114 templates/courses/course_list.html:44
+msgid "Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych."
+msgstr ""
+
+#: apps/courses/views.py:266
+msgid "Wszystkie kursy"
+msgstr ""
+
+#: apps/courses/views.py:268
+msgid "Wszystkie języki"
+msgstr ""
+
+#: apps/courses/views.py:270
+msgid "Wszystkie tryby"
+msgstr ""
+
+#: apps/courses/views.py:288
+msgid "Terminy kursów"
+msgstr ""
+
+#: apps/gallery/models.py:12
+msgid "School"
+msgstr "Ośrodek"
+
+#: apps/gallery/models.py:13
+msgid "Vehicles"
+msgstr "Pojazdy"
+
+#: apps/gallery/models.py:14
+msgid "Yard"
+msgstr "Plac manewrowy"
+
+#: apps/gallery/models.py:15
+msgid "Events"
+msgstr "Wydarzenia"
+
+#: apps/gallery/models.py:60
+msgid "Certyfikat musi mieć tytuł."
+msgstr ""
+
+#: apps/gallery/views.py:31
+msgctxt "gallery section"
+msgid "Ośrodek"
+msgstr ""
+
+#: apps/gallery/views.py:32
+msgid "Pojazdy"
+msgstr ""
+
+#: apps/gallery/views.py:33
+msgid "Plac manewrowy"
+msgstr ""
+
+#: apps/gallery/views.py:34
+msgid "Zajęcia"
+msgstr ""
+
+#: apps/gallery/views.py:62 apps/gallery/views.py:107
+msgid "Wszystkie"
+msgstr ""
+
+#: apps/gallery/views.py:117 apps/gallery/views.py:122
+#: templates/gallery/certificates.html:16
+msgid "Certyfikaty"
+msgstr ""
+
+#: apps/leads/admin.py:46
+msgid "Zgody"
+msgstr ""
+
+#: apps/leads/admin.py:48
+msgid "Skąd przyszło"
+msgstr ""
+
+#: apps/leads/admin.py:67
+msgid "Oznacz jako skontaktowane"
+msgstr ""
+
+#: apps/leads/admin.py:76
+#, python-format
+msgid "%(count)d zgłoszenie oznaczone jako skontaktowane."
+msgid_plural "%(count)d zgłoszeń oznaczonych jako skontaktowane."
+msgstr[0] "%(count)d zgłoszenie oznaczone jako skontaktowane."
+msgstr[1] "%(count)d zgłoszenia oznaczone jako skontaktowane."
+msgstr[2] "%(count)d zgłoszeń oznaczonych jako skontaktowane."
+msgstr[3] "%(count)d zgłoszenia oznaczonych jako skontaktowane."
+
+#: apps/leads/admin.py:84
+msgid "Eksportuj zaznaczone do CSV"
+msgstr ""
+
+#: apps/leads/forms.py:61
+msgid "Zostaw to pole puste"
+msgstr ""
+
+#: apps/leads/forms.py:89
+msgid "Imię"
+msgstr ""
+
+#: apps/leads/forms.py:90
+msgid "Nazwisko"
+msgstr ""
+
+#: apps/leads/forms.py:91 templates/core/contact.html:45
+msgid "Telefon"
+msgstr ""
+
+#: apps/leads/forms.py:92 templates/core/contact.html:61
+msgid "E-mail"
+msgstr ""
+
+#: apps/leads/forms.py:94
+msgid "Wiadomość"
+msgstr ""
+
+#: apps/leads/forms.py:97
+msgid "Nieobowiązkowo. Wyślemy na niego potwierdzenie."
+msgstr ""
+
+#: apps/leads/forms.py:98
+msgid "Oddzwonimy pod ten numer."
+msgstr ""
+
+#: apps/leads/forms.py:116
+msgid "Jeszcze nie wiem"
+msgstr ""
+
+#: apps/leads/forms.py:130
+msgid "Bez tej zgody nie możemy się z Tobą skontaktować."
+msgstr ""
+
+#: apps/leads/forms.py:176
+msgid "Podaj polski numer telefonu, np. 605 065 795."
+msgstr ""
+
+#: apps/leads/models.py:12
+msgid "New"
+msgstr "Nowe"
+
+#: apps/leads/models.py:13
+msgid "Contacted"
+msgstr "Skontaktowano"
+
+#: apps/leads/models.py:14
+msgid "Enrolled"
+msgstr "Zapisany"
+
+#: apps/leads/models.py:15
+msgid "Rejected"
+msgstr "Odrzucone"
+
+#: apps/leads/models.py:16
+msgid "Spam"
+msgstr "Spam"
+
+#: apps/leads/views.py:34
+msgid "Zapisz się na kurs prawa jazdy w OSK Nawrocki w Wieluniu. Zostaw numer, oddzwonimy i dobierzemy najbliższy termin."
+msgstr ""
+
+#: apps/leads/views.py:37
+msgid "Zgłoszenie przyjęte. Oddzwonimy w godzinach pracy biura."
+msgstr ""
+
+#: apps/leads/views.py:49
+msgid "Wybierz kategorię"
+msgstr ""
+
+#: apps/leads/views.py:50
+msgid "Nie wiesz którą? Zadzwoń, dobierzemy pod to, co chcesz prowadzić."
+msgstr ""
+
+#: apps/leads/views.py:53
+msgid "Wyrób PKK w starostwie"
+msgstr ""
+
+#: apps/leads/views.py:54
+msgid "Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu."
+msgstr ""
+
+#: apps/leads/views.py:57 apps/leads/views.py:69 apps/leads/views.py:87
+#: templates/core/contact.html:146 templates/core/page_detail.html:176
+#: templates/cotton/cta_bar.html:23 templates/cotton/intake_row.html:43
+#: templates/courses/course_detail.html:140
+#: templates/courses/course_detail.html:228 templates/courses/intakes.html:62
+#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:85
+#: templates/links/faq.html:95 templates/links/useful_links.html:87
+#: templates/pages/home.html:35
+msgid "Zapisz się"
+msgstr ""
+
+#: apps/leads/views.py:58
+msgid "Przez formularz obok albo telefonicznie — potwierdzimy termin grupy."
+msgstr ""
+
+#: apps/leads/views.py:61
+msgid "Zacznij zajęcia"
+msgstr ""
+
+#: apps/leads/views.py:62
+msgid "Teoria i jazdy ruszają w terminie, który wybrałeś."
+msgstr ""
+
+#: apps/leads/views.py:81 templates/leads/enroll.html:15
+#: templates/leads/enroll.html:55 templates/pages/home.html:238
+msgid "Zapisz się na kurs"
+msgstr ""
+
+#: apps/leads/views.py:103
+msgid "Dziękujemy za zgłoszenie"
+msgstr ""
+
+#: apps/links/models.py:15
+msgid "Exam"
+msgstr "Egzamin"
+
+#: apps/links/models.py:16
+msgid "Government"
+msgstr "Urzędy"
+
+#: apps/links/models.py:17
+msgid "Tests"
+msgstr "Testy"
+
+#: apps/links/models.py:18
+msgid "Local"
+msgstr "Lokalne"
+
+#: apps/links/models.py:46
+msgid "Link musi mieć opis."
+msgstr ""
+
+#: apps/links/models.py:73 apps/links/models.py:74
+msgid "FAQ"
+msgstr ""
+
+#: apps/links/views.py:31
+msgid "Egzamin"
+msgstr ""
+
+#: apps/links/views.py:32
+msgid "Urzędy i e-usługi"
+msgstr ""
+
+#: apps/links/views.py:33
+msgid "Testy i przepisy"
+msgstr ""
+
+#: apps/links/views.py:34
+msgid "Wieluń i okolice"
+msgstr ""
+
+#: apps/links/views.py:38
+msgid "Rezerwacja egzaminu, punkty karne, testy i urzędy w Wieluniu. Linki, których kandydat na kierowcę potrzebuje najczęściej."
+msgstr ""
+
+#: apps/links/views.py:48 apps/links/views.py:62
+#: templates/layout/footer.html:53 templates/links/useful_links.html:22
+msgid "Przydatne linki"
+msgstr ""
+
+#: apps/links/views.py:121 templates/links/faq.html:27
+msgid "Najczęstsze pytania"
+msgstr ""
+
+#: apps/people/models.py:31 apps/reviews/models.py:17
+msgid "Manual"
+msgstr "Manualna"
+
+#: apps/people/models.py:32
+msgid "Automatic"
+msgstr "Automatyczna"
+
+#: apps/people/models.py:42
+msgid "zgodny z wymogami egzaminacyjnymi"
+msgstr ""
+
+#: templates/404.html:15
+msgid "Błąd 404"
+msgstr ""
+
+#: templates/404.html:16
+msgid "Nie ma takiej strony"
+msgstr ""
+
+#: templates/404.html:18
+msgid "Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca."
+msgstr ""
+
+#: templates/404.html:22
+msgid "Kategorie prawa jazdy i ceny."
+msgstr ""
+
+#: templates/404.html:23
+msgid "Najbliższe starty kursów."
+msgstr ""
+
+#: templates/404.html:24
+msgid "Pełna lista cen."
+msgstr ""
+
+#: templates/404.html:25
+msgid "Adres, godziny, dojazd."
+msgstr ""
+
+#: templates/404.html:33 templates/500.html:34
+msgid "Strona główna"
+msgstr ""
+
+#: templates/500.html:21
+msgid "Błąd serwera"
+msgstr ""
+
+#: templates/500.html:27
+msgid "Błąd 500"
+msgstr ""
+
+#: templates/500.html:28
+msgid "Coś poszło nie tak"
+msgstr ""
+
+#: templates/500.html:30
+msgid "Strona chwilowo nie odpowiada. Spróbuj ponownie za chwilę albo zadzwoń — zapisy przyjmujemy też telefonicznie."
+msgstr ""
+
+#: templates/500.html:49
+msgid "Dane kontaktowe"
+msgstr ""
+
+#: templates/base.html:25
+msgid "Przejdź do treści"
+msgstr ""
+
+#: templates/core/contact.html:25
+msgid "Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy przez telefon i przez formularz."
+msgstr ""
+
+#: templates/core/contact.html:34
+msgid "Adres"
+msgstr ""
+
+#: templates/core/contact.html:73 templates/layout/footer.html:19
+msgid "Dane firmy"
+msgstr ""
+
+#: templates/core/contact.html:81
+msgid "Konto"
+msgstr ""
+
+#: templates/core/contact.html:90 templates/pages/home.html:198
+msgid "Biuro"
+msgstr ""
+
+#: templates/core/contact.html:94 templates/pages/home.html:202
+msgid "Pracownia psychologiczna"
+msgstr ""
+
+#: templates/core/contact.html:102
+msgid "Zapisy na kurs"
+msgstr ""
+
+#: templates/core/contact.html:104
+msgid "Zostaw numer, oddzwonimy w godzinach pracy biura — także po rosyjsku i po ukraińsku."
+msgstr ""
+
+#: templates/core/contact.html:113
+msgid "Dojazd"
+msgstr ""
+
+#: templates/core/contact.html:114
+msgid "Wieluń, ul. Zielona 45. Parking przed budynkiem."
+msgstr ""
+
+#: templates/core/contact.html:124 templates/pages/home.html:218
+msgid "Wyznacz trasę"
+msgstr ""
+
+#: templates/core/contact.html:128
+msgid "Otwórz w nawigacji"
+msgstr ""
+
+#: templates/core/contact.html:132
+msgid "Mapa nieskonfigurowana"
+msgstr ""
+
+#: templates/core/contact.html:134
+#, python-format
+msgid "Współrzędne biura nie są jeszcze ustawione. Adres: %(street)s, %(postal)s %(city)s."
+msgstr ""
+
+#: templates/core/contact.html:142
+msgid "Wolisz porozmawiać?"
+msgstr ""
+
+#: templates/core/contact.html:143
+msgid "Zadzwoń albo zostaw numer — oddzwonimy w godzinach pracy biura."
+msgstr ""
+
+#: templates/core/contact.html:157
+msgid "Masz pytanie o kurs albo o badania?"
+msgstr ""
+
+#: templates/core/page_detail.html:25
+msgid "O szkole"
+msgstr ""
+
+#: templates/core/page_detail.html:33
+msgid "Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku."
+msgstr ""
+
+#: templates/core/page_detail.html:41
+msgid "Spis treści"
+msgstr ""
+
+#: templates/core/page_detail.html:43
+msgid "Na tej stronie"
+msgstr ""
+
+#: templates/core/page_detail.html:53
+msgid "Co oferujemy"
+msgstr ""
+
+#: templates/core/page_detail.html:68
+msgid "W liczbach"
+msgstr ""
+
+#: templates/core/page_detail.html:72
+msgid "rok założenia, działamy nieprzerwanie"
+msgstr ""
+
+#: templates/core/page_detail.html:78
+msgid "instruktorów prowadzi zajęcia i jazdy"
+msgstr ""
+
+#: templates/core/page_detail.html:84
+msgid "kategorii prawa jazdy w ofercie"
+msgstr ""
+
+#: templates/core/page_detail.html:90
+msgid "pojazdów szkoleniowych, własny plac manewrowy"
+msgstr ""
+
+#: templates/core/page_detail.html:99
+msgid "Instruktorzy"
+msgstr ""
+
+#: templates/core/page_detail.html:100
+msgid "Ludzie, z którymi jeździsz i którzy prowadzą wykłady."
+msgstr ""
+
+#: templates/core/page_detail.html:114
+#, python-format
+msgid "Szkoli od %(year)s roku"
+msgstr ""
+
+#: templates/core/page_detail.html:134
+msgid "Nasze pojazdy"
+msgstr ""
+
+#: templates/core/page_detail.html:135
+msgid "Uczysz się na aucie, na którym potem zdajesz."
+msgstr ""
+
+#: templates/core/page_detail.html:154 templates/courses/course_detail.html:184
+msgid "Zgodny z egzaminem"
+msgstr ""
+
+#: templates/core/page_detail.html:172 templates/core/page_detail.html:188
+msgid "Chcesz zacząć kurs?"
+msgstr ""
+
+#: templates/core/page_detail.html:173
+msgid "Zostaw numer albo zadzwoń — dobierzemy najbliższy termin."
+msgstr ""
+
+#: templates/cotton/breadcrumbs.html:10
+msgid "Okruszki"
+msgstr ""
+
+#: templates/cotton/cookie_banner.html:17
+msgid "Zgoda na pliki cookie"
+msgstr ""
+
+#: templates/cotton/cookie_banner.html:20
+msgid "Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie."
+msgstr ""
+
+#: templates/cotton/cookie_banner.html:21 templates/layout/footer.html:60
+msgid "Polityka prywatności"
+msgstr ""
+
+#: templates/cotton/cookie_banner.html:25
+msgid "Odrzuć"
+msgstr ""
+
+#: templates/cotton/cookie_banner.html:26
+msgid "Akceptuję"
+msgstr ""
+
+#: templates/cotton/course_card.html:39 templates/courses/course_detail.html:33
+msgid "Wiek od"
+msgstr ""
+
+#: templates/cotton/course_card.html:39 templates/courses/course_detail.html:34
+#, python-format
+msgid "%(years)s rok"
+msgid_plural "%(years)s lat"
+msgstr[0] "%(years)s rok"
+msgstr[1] "%(years)s lata"
+msgstr[2] "%(years)s lat"
+msgstr[3] "%(years)s roku"
+
+#: templates/cotton/course_card.html:42 templates/courses/course_detail.html:60
+#: templates/courses/course_detail.html:110
+msgid "Cena"
+msgstr ""
+
+#: templates/cotton/course_card.html:44
+msgid "na zapytanie"
+msgstr ""
+
+#: templates/cotton/cta_bar.html:21 templates/pages/home.html:38
+msgid "Zadzwoń"
+msgstr ""
+
+#: templates/cotton/hours_table.html:17
+msgid "Otwarte teraz"
+msgstr ""
+
+#: templates/cotton/hours_table.html:19
+msgid "Zamknięte"
+msgstr ""
+
+#: templates/cotton/hours_table.html:28
+msgid "Nieczynne"
+msgstr ""
+
+#: templates/cotton/intake_row.html:31
+msgid "Zapisy otwarte"
+msgstr ""
+
+#: templates/cotton/intake_row.html:32
+msgid "Brak miejsc"
+msgstr ""
+
+#: templates/cotton/intake_row.html:33
+msgid "Zamknięty"
+msgstr ""
+
+#: templates/cotton/intake_row.html:34
+msgid "Planowany"
+msgstr ""
+
+#: templates/cotton/intake_row.html:46
+msgid "Zapytaj"
+msgstr ""
+
+#: templates/cotton/lang_switcher.html:21
+msgid "Language"
+msgstr "Język"
+
+#: templates/cotton/lightbox.html:23 templates/gallery/_photo_tile.html:7
+#, python-format
+msgid "Powiększ: %(alt)s"
+msgstr ""
+
+#: templates/cotton/lightbox.html:32 templates/cotton/modal.html:24
+#: templates/gallery/_lightbox.html:51
+msgid "Zamknij"
+msgstr ""
+
+#: templates/cotton/lightbox.html:44 templates/gallery/_lightbox.html:72
+msgid "Poprzednie"
+msgstr ""
+
+#: templates/cotton/lightbox.html:47 templates/gallery/_lightbox.html:75
+msgid "Następne"
+msgstr ""
+
+#: templates/cotton/nav.html:35 templates/layout/mobile_menu.html:36
+msgid "Główna nawigacja"
+msgstr ""
+
+#: templates/cotton/price_row.html:37
+msgid "wycena indywidualna"
+msgstr ""
+
+#: templates/cotton/price_tile.html:11
+msgid "Cena ustalana indywidualnie"
+msgstr ""
+
+#: templates/cotton/price_tile.html:14
+msgid "Szczegóły"
+msgstr ""
+
+#: templates/cotton/testimonials.html:24
+msgid "źródło"
+msgstr ""
+
+#: templates/courses/_ask_for_price.html:6
+#: templates/courses/_ask_for_price.html:9
+#: templates/courses/_ask_for_price.html:13
+#: templates/courses/course_detail.html:142 templates/courses/pricing.html:38
+#: templates/courses/pricing.html:85
+msgid "Zapytaj o cenę"
+msgstr ""
+
+#: templates/courses/_ask_for_price.html:11
+msgid "Cena tego kursu ustalana jest indywidualnie. Napisz do nas albo zadzwoń, podamy ją od ręki."
+msgstr ""
+
+#: templates/courses/_intake_rows.html:20
+msgid "Nic nie pasuje do tych filtrów"
+msgstr ""
+
+#: templates/courses/_intake_rows.html:22
+msgid "Dla wybranych kryteriów nie mamy jeszcze ogłoszonego terminu. Zadzwoń, podamy najbliższy start od ręki."
+msgstr ""
+
+#: templates/courses/_pro_grid.html:26
+msgid "program indywidualny"
+msgstr ""
+
+#: templates/courses/course_detail.html:36
+#, python-format
+msgid "kurs od %(years)s lat %(months)s mies."
+msgstr ""
+
+#: templates/courses/course_detail.html:42
+msgid "Teoria"
+msgstr ""
+
+#: templates/courses/course_detail.html:48
+msgid "Praktyka"
+msgstr ""
+
+#: templates/courses/course_detail.html:54
+msgid "Razem"
+msgstr ""
+
+#: templates/courses/course_detail.html:64
+msgid "ustalana indywidualnie"
+msgstr ""
+
+#: templates/courses/course_detail.html:79
+msgid "Uprawnia do kierowania"
+msgstr ""
+
+#: templates/courses/course_detail.html:88
+msgid "Wymagania"
+msgstr ""
+
+#: templates/courses/course_detail.html:97
+msgid "O kursie"
+msgstr ""
+
+#: templates/courses/course_detail.html:115
+msgid "Cenę tego kursu ustalamy indywidualnie — podamy ją od ręki."
+msgstr ""
+
+#: templates/courses/course_detail.html:121
+msgid "Najbliższy start"
+msgstr ""
+
+#: templates/courses/course_detail.html:133
+msgid "Zadzwoń, ustalimy termin."
+msgstr ""
+
+#: templates/courses/course_detail.html:159 templates/pages/home.html:74
+msgid "Najbliższe terminy"
+msgstr ""
+
+#: templates/courses/course_detail.html:165 templates/pages/home.html:80
+msgid "Wszystkie terminy"
+msgstr ""
+
+#: templates/courses/course_detail.html:175
+msgid "Pojazdy szkoleniowe"
+msgstr ""
+
+#: templates/courses/course_detail.html:198
+#: templates/courses/course_detail.html:239
+#, python-format
+msgid "Zapisz się na %(title)s"
+msgstr ""
+
+#: templates/courses/course_detail.html:200
+msgid "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Wolisz zadzwonić?"
+msgstr ""
+
+#: templates/courses/course_detail.html:211
+msgid "Inne kategorie"
+msgstr ""
+
+#: templates/courses/course_detail.html:220
+msgid "Nie wiesz, czy ta kategoria jest dla Ciebie?"
+msgstr ""
+
+#: templates/courses/course_detail.html:221
+msgid "Zadzwoń — powiemy, co daje i ile trwa w praktyce."
+msgstr ""
+
+#: templates/courses/course_detail.html:223
+msgid "Potrzebujesz tych uprawnień do pracy?"
+msgstr ""
+
+#: templates/courses/course_detail.html:224
+msgid "Powiemy, od czego zacząć i co trzeba mieć na starcie."
+msgstr ""
+
+#: templates/courses/course_list.html:32 templates/pages/home.html:64
+msgid "Oferta w przygotowaniu"
+msgstr ""
+
+#: templates/courses/course_list.html:34
+msgid "Kursy pojawią się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne."
+msgstr ""
+
+#: templates/courses/course_list.html:48
+msgid "Kwalifikacja i szkolenia okresowe"
+msgstr ""
+
+#: templates/courses/course_list.html:49
+msgid "Dla kierowców zawodowych kategorii C i D, wstępna i przyspieszona."
+msgstr ""
+
+#: templates/courses/course_list.html:56
+msgid "Przewóz towarów niebezpiecznych, kurs podstawowy i specjalistyczne."
+msgstr ""
+
+#: templates/courses/course_list.html:63
+msgid "Pozostałe uprawnienia"
+msgstr ""
+
+#: templates/courses/course_list.html:68
+msgid "Dla kierowców, instruktorów i operatorów maszyn."
+msgstr ""
+
+#: templates/courses/course_list.html:75
+msgid "Uprawnienia operatora wózków jezdniowych z napędem silnikowym."
+msgstr ""
+
+#: templates/courses/course_list.html:85 templates/courses/pricing.html:81
+msgid "Nie wiesz, którą kategorię wybrać?"
+msgstr ""
+
+#: templates/courses/intakes.html:15
+msgid "Zapisy"
+msgstr ""
+
+#: templates/courses/intakes.html:18
+msgid "Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane."
+msgstr ""
+
+#: templates/courses/intakes.html:42
+msgid "Pokaż terminy"
+msgstr ""
+
+#: templates/courses/intakes.html:58
+msgid "Nie ma pasującego terminu?"
+msgstr ""
+
+#: templates/courses/intakes.html:59
+msgid "Zostaw numer — odezwiemy się, gdy ruszy najbliższa grupa."
+msgstr ""
+
+#: templates/courses/intakes.html:73
+msgid "Nie widzisz pasującego terminu?"
+msgstr ""
+
+#: templates/courses/pricing.html:25
+msgid "Oferta"
+msgstr ""
+
+#: templates/courses/pricing.html:28
+msgid "Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie."
+msgstr ""
+
+#: templates/courses/pricing.html:33
+msgid "Zadzwoń po wycenę"
+msgstr ""
+
+#: templates/courses/pricing.html:36
+msgid "Podamy kwotę od ręki, w godzinach pracy biura."
+msgstr ""
+
+#: templates/courses/pricing.html:49
+msgid "Pozostałe usługi"
+msgstr ""
+
+#: templates/courses/pricing.html:56
+msgid "Najczęściej wybierany"
+msgstr ""
+
+#: templates/courses/pricing.html:63
+msgid "Cennik w przygotowaniu"
+msgstr ""
+
+#: templates/courses/pricing.html:65
+msgid "Ceny podamy telefonicznie od ręki."
+msgstr ""
+
+#: templates/courses/pricing.html:72
+msgid "Płatności i raty"
+msgstr ""
+
+#: templates/courses/pricing.html:82
+msgid "Powiemy, co się opłaca w Twojej sytuacji, i podamy cenę."
+msgstr ""
+
+#: templates/courses/pricing.html:96
+msgid "Masz pytanie o cenę?"
+msgstr ""
+
+#: templates/gallery/_certificate_card.html:8
+#, python-format
+msgid "Powiększ skan: %(title)s"
+msgstr ""
+
+#: templates/gallery/_certificate_card.html:27
+msgid "Pobierz PDF"
+msgstr ""
+
+#: templates/gallery/certificates.html:15
+msgid "Uprawnienia"
+msgstr ""
+
+#: templates/gallery/certificates.html:18
+msgid "Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu."
+msgstr ""
+
+#: templates/gallery/certificates.html:24
+msgid "Dokumentów ośrodka"
+msgstr ""
+
+#: templates/gallery/certificates.html:32
+msgid "Podgląd skanu"
+msgstr ""
+
+#: templates/gallery/certificates.html:37
+msgid "Certyfikaty w przygotowaniu"
+msgstr ""
+
+#: templates/gallery/certificates.html:38
+msgid "Skany pojawią się wkrótce."
+msgstr ""
+
+#: templates/gallery/certificates.html:45
+#: templates/gallery/certificates.html:60
+msgid "Masz pytanie o uprawnienia ośrodka?"
+msgstr ""
+
+#: templates/gallery/certificates.html:46
+msgid "Odpowiemy przez telefon albo pokażemy dokumenty w biurze."
+msgstr ""
+
+#: templates/gallery/gallery.html:19
+msgid "Ośrodek"
+msgstr ""
+
+#: templates/gallery/gallery.html:22
+msgid "Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć."
+msgstr ""
+
+#: templates/gallery/gallery.html:27
+msgid "Filtr sekcji"
+msgstr ""
+
+#: templates/gallery/gallery.html:43
+msgid "Nic w tej sekcji"
+msgstr ""
+
+#: templates/gallery/gallery.html:45
+#, python-format
+msgid "W sekcji „%(label)s” nie ma jeszcze zdjęć."
+msgstr ""
+
+#: templates/gallery/gallery.html:47
+msgid "Zobacz całą galerię"
+msgstr ""
+
+#: templates/gallery/gallery.html:58
+msgid "Galeria w przygotowaniu"
+msgstr ""
+
+#: templates/gallery/gallery.html:59
+msgid "Zdjęcia pojawią się wkrótce."
+msgstr ""
+
+#: templates/gallery/gallery.html:66
+msgid "Rok założenia"
+msgstr ""
+
+#: templates/gallery/gallery.html:81 templates/gallery/gallery.html:96
+msgid "Chcesz zobaczyć ośrodek na żywo?"
+msgstr ""
+
+#: templates/gallery/gallery.html:82
+msgid "Umów się — pokażemy plac, sale i pojazdy."
+msgstr ""
+
+#: templates/layout/footer.html:47
+msgid "Informacje"
+msgstr ""
+
+#: templates/layout/footer.html:58
+msgid "Formalności"
+msgstr ""
+
+#: templates/layout/footer.html:70
+msgid "na rynku od"
+msgstr ""
+
+#: templates/layout/header.html:49 templates/layout/mobile_menu.html:22
+msgid "Menu"
+msgstr ""
+
+#: templates/layout/mobile_menu.html:30
+msgid "Zamknij menu"
+msgstr ""
+
+#: templates/leads/_form.html:43
+msgid "Nie udało się wysłać zgłoszenia"
+msgstr ""
+
+#: templates/leads/_form.html:45
+msgid "Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń."
+msgstr ""
+
+#: templates/leads/_form.html:76
+msgid "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —"
+msgstr ""
+
+#: templates/leads/_form.html:77
+msgid "pełna informacja RODO"
+msgstr ""
+
+#: templates/leads/_form.html:81
+msgid "Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe."
+msgstr ""
+
+#: templates/leads/_form.html:86
+msgid "Nie udało się wysłać"
+msgstr ""
+
+#: templates/leads/_form.html:94
+msgid "Wyślij zgłoszenie"
+msgstr ""
+
+#: templates/leads/_form.html:95
+msgid "Wysyłanie…"
+msgstr ""
+
+#: templates/leads/_form_result.html:11 templates/leads/thanks.html:12
+msgid "Zgłoszenie przyjęte"
+msgstr ""
+
+#: templates/leads/_form_result.html:13
+msgid "Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń do nas."
+msgstr ""
+
+#: templates/leads/_form_result.html:25
+msgid "Za dużo zgłoszeń"
+msgstr ""
+
+#: templates/leads/_form_result.html:27
+msgid "Z tego połączenia wysłano już kilka zgłoszeń. Spróbuj za godzinę albo po prostu zadzwoń."
+msgstr ""
+
+#: templates/leads/enroll.html:17
+msgid "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz."
+msgstr ""
+
+#: templates/leads/enroll.html:30
+msgid "Wolisz zadzwonić?"
+msgstr ""
+
+#: templates/leads/enroll.html:31
+msgid "Zapisy przyjmujemy też telefonicznie i w biurze na ul. Zielonej 45."
+msgstr ""
+
+#: templates/leads/enroll.html:41
+msgid "Godziny biura"
+msgstr ""
+
+#: templates/leads/enroll.html:50
+msgid "Jak zapisać się na kurs"
+msgstr ""
+
+#: templates/leads/thanks.html:13
+msgid "Dziękujemy"
+msgstr ""
+
+#: templates/leads/thanks.html:15
+msgid "Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń — odbierzemy od razu."
+msgstr ""
+
+#: templates/leads/thanks.html:24
+msgid "Zobacz kursy"
+msgstr ""
+
+#: templates/links/faq.html:26
+msgid "Pytania"
+msgstr ""
+
+#: templates/links/faq.html:29
+msgid "To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki."
+msgstr ""
+
+#: templates/links/faq.html:34
+msgid "Szukaj w pytaniach"
+msgstr ""
+
+#: templates/links/faq.html:35
+msgid "np. PKK, cena, terminy"
+msgstr ""
+
+#: templates/links/faq.html:62
+msgid "Nic nie znaleźliśmy"
+msgstr ""
+
+#: templates/links/faq.html:64
+msgid "Zadaj pytanie przez telefon — odpowiemy od ręki."
+msgstr ""
+
+#: templates/links/faq.html:76
+msgid "Pytania w przygotowaniu"
+msgstr ""
+
+#: templates/links/faq.html:78
+msgid "Lista pojawi się wkrótce."
+msgstr ""
+
+#: templates/links/faq.html:86 templates/links/faq.html:102
+msgid "Nie znalazłeś odpowiedzi?"
+msgstr ""
+
+#: templates/links/faq.html:87
+msgid "Zadzwoń — odpowiemy od ręki, także po rosyjsku i po ukraińsku."
+msgstr ""
+
+#: templates/links/useful_links.html:21
+msgid "Dla kursanta"
+msgstr ""
+
+#: templates/links/useful_links.html:24
+msgid "Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy."
+msgstr ""
+
+#: templates/links/useful_links.html:30
+msgid "Grupy odnośników"
+msgstr ""
+
+#: templates/links/useful_links.html:57
+msgid "otwiera się w nowej karcie"
+msgstr ""
+
+#: templates/links/useful_links.html:66
+msgid "Lista w przygotowaniu"
+msgstr ""
+
+#: templates/links/useful_links.html:68
+msgid "Linki pojawią się wkrótce."
+msgstr ""
+
+#: templates/links/useful_links.html:83 templates/links/useful_links.html:98
+msgid "Nie wiesz, od czego zacząć?"
+msgstr ""
+
+#: templates/links/useful_links.html:84
+msgid "Powiemy, który dokument załatwić najpierw."
+msgstr ""
+
+#: templates/pages/home.html:22
+msgid "Prawo jazdy w"
+msgstr ""
+
+#: templates/pages/home.html:26
+msgid "Wieluniu"
+msgstr ""
+
+#: templates/pages/home.html:31
+msgid "Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku."
+msgstr ""
+
+#: templates/pages/home.html:45
+#, python-format
+msgid "od %(year)s roku"
+msgstr ""
+
+#: templates/pages/home.html:49
+msgid "kursów"
+msgstr ""
+
+#: templates/pages/home.html:52
+msgid "zajęcia po pl / ru / ua"
+msgstr ""
+
+#: templates/pages/home.html:59
+msgid "Kategorie prawa jazdy"
+msgstr ""
+
+#: templates/pages/home.html:66
+msgid "Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne."
+msgstr ""
+
+#: templates/pages/home.html:109
+msgid "Zajęcia po rosyjsku i ukraińsku"
+msgstr ""
+
+#: templates/pages/home.html:111
+msgid "Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku, ale uczysz się tak, żeby wszystko rozumieć."
+msgstr ""
+
+#: templates/pages/home.html:122
+msgid "Dlaczego OSK Nawrocki"
+msgstr ""
+
+#: templates/pages/home.html:126
+#, python-format
+msgid "lat na rynku, nieprzerwanie od %(year)s roku"
+msgstr ""
+
+#: templates/pages/home.html:129
+msgid "własny"
+msgstr ""
+
+#: templates/pages/home.html:130
+msgid "plac manewrowy, ćwiczysz tam, gdzie zdajesz"
+msgstr ""
+
+#: templates/pages/home.html:133
+msgid "własne"
+msgstr ""
+
+#: templates/pages/home.html:134
+msgid "sale wykładowe w centrum Wielunia"
+msgstr ""
+
+#: templates/pages/home.html:137
+msgid "zgodne"
+msgstr ""
+
+#: templates/pages/home.html:138
+msgid "pojazdy spełniające wymogi egzaminacyjne"
+msgstr ""
+
+#: templates/pages/home.html:146
+msgid "Co mówią kursanci"
+msgstr ""
+
+#: templates/pages/home.html:155
+msgid "Częste pytania"
+msgstr ""
+
+#: templates/pages/home.html:164
+msgid "Wszystkie pytania"
+msgstr ""
+
+#: templates/pages/home.html:173
+msgid "Kontakt i zapisy"
+msgstr ""
+
+#: templates/pages/home.html:215
+msgid "Nawiguj"
+msgstr ""
+
+#: templates/pages/home.html:228
+msgid "Zostaw numer, oddzwonimy"
+msgstr ""

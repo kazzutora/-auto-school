@@ -1,3 +1,4 @@
+{% load i18n %}
 {# One certificate. The scan opens in the lightbox, the metadata stays on the
    card, FRONTEND.md A.10.
 
@@ -10,7 +11,7 @@
           class="u-photo block w-full overflow-hidden border-b border-line-soft transition">
     <c-picture :image="item.image" alt="{{ item.alt }}" ratio="a4"
                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
-    <span class="sr-only">Powiększ skan: {{ item.title }}</span>
+    <span class="sr-only">{% blocktranslate with title=item.title %}Powiększ skan: {{ title }}{% endblocktranslate %}</span>
   </button>
 
   <div class="flex grow flex-col p-6">
@@ -30,7 +31,7 @@
     {% if item.file %}
       <p class="mt-auto pt-6">
         <c-button variant="secondary" size="sm" href="{{ item.file.url }}">
-          <c-icon name="download" size="sm" /> Pobierz PDF
+          <c-icon name="download" size="sm" /> {% translate "Pobierz PDF" %}
         </c-button>
       </p>
     {% endif %}

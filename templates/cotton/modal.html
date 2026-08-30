@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Modal, tech.md section 7, behaviour from FRONTEND.md A.5.
 
@@ -20,7 +21,8 @@ Ground is ink at 60%, panel is paper with a 2px ink frame, up to 560px.
   {{ attrs }}>
   <div class="flex items-start justify-between gap-4">
     <h2 id="{{ id }}_title" class="text-h3">{{ title }}</h2>
-    <c-button variant="ghost" size="icon" data-modal-close aria-label="Zamknij">
+    {% translate "Zamknij" as t_zamknij %}
+    <c-button variant="ghost" size="icon" data-modal-close aria-label="{{ t_zamknij }}">
       <c-icon name="close" />
     </c-button>
   </div>

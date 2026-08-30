@@ -34,6 +34,19 @@ COPY apps ./apps
 RUN tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
 
 
+FROM python:3.12-slim AS messages
+
+# The catalogues ship compiled, and gettext stays out of the runtime image:
+# msgfmt is a build tool, and a production container has no reason to carry a
+# compiler for files that were already compiled. Raw msgfmt rather than
+# compilemessages, so this stage needs neither django nor a settings module.
+RUN apt-get update  && apt-get install -y --no-install-recommends gettext  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY locale ./locale
+RUN find locale -name '*.po' -exec sh -c 'msgfmt -o "${0%.po}.mo" "$0"' {} \;
+
+
 FROM python:3.12-slim AS runtime
 
 ENV PYTHONUNBUFFERED=1 \
@@ -55,6 +68,7 @@ RUN groupadd --gid 1000 app \
 COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY --chown=app:app . /app
 COPY --from=css --chown=app:app /app/static/css/app.css /app/static/css/app.css
+COPY --from=messages --chown=app:app /app/locale /app/locale
 
 WORKDIR /app
 USER app

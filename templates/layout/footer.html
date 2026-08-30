@@ -16,7 +16,7 @@ point 10 and tech.md section 1 both say it never appears on a public page.
     <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
 
       <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">Dane firmy</p>
+        <p class="label u-muted-on-ground">{% translate "Dane firmy" %}</p>
         <p class="font-display text-h3 font-bold">{{ site_settings.legal_name|default:"OSK Nawrocki" }}</p>
         <address class="not-italic">
           {{ site_settings.street }}<br>
@@ -34,40 +34,40 @@ point 10 and tech.md section 1 both say it never appears on a public page.
       </div>
 
       <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">Kursy</p>
+        <p class="label u-muted-on-ground">{% translate "Kursy" %}</p>
         <ul class="flex flex-col gap-2">
-          <li><a href="{% url 'courses:list' %}" class="underline-offset-4 hover:underline">Prawo jazdy</a></li>
-          <li><a href="{% url 'courses:pro_hub' %}" class="underline-offset-4 hover:underline">Kierowca zawodowy</a></li>
-          <li><a href="{% url 'courses:psychotests' %}" class="underline-offset-4 hover:underline">Badania psychologiczne</a></li>
-          <li><a href="{% url 'courses:forklifts' %}" class="underline-offset-4 hover:underline">Wózki widłowe</a></li>
+          <li><a href="{% url 'courses:list' %}" class="underline-offset-4 hover:underline">{% translate "Prawo jazdy" %}</a></li>
+          <li><a href="{% url 'courses:pro_hub' %}" class="underline-offset-4 hover:underline">{% translate "Kierowca zawodowy" %}</a></li>
+          <li><a href="{% url 'courses:psychotests' %}" class="underline-offset-4 hover:underline">{% translate "Badania psychologiczne" %}</a></li>
+          <li><a href="{% url 'courses:forklifts' %}" class="underline-offset-4 hover:underline">{% translate "Wózki widłowe" %}</a></li>
         </ul>
       </div>
 
       <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">Informacje</p>
+        <p class="label u-muted-on-ground">{% translate "Informacje" %}</p>
         <ul class="flex flex-col gap-2">
-          <li><a href="{% url 'core:page' slug='o-nas' %}" class="underline-offset-4 hover:underline">O nas</a></li>
-          <li><a href="{% url 'courses:pricing' %}" class="underline-offset-4 hover:underline">Cennik</a></li>
-          <li><a href="{% url 'courses:intakes' %}" class="underline-offset-4 hover:underline">Terminy</a></li>
-          <li><a href="{% url 'gallery:index' %}" class="underline-offset-4 hover:underline">Galeria</a></li>
-          <li><a href="{% url 'links:useful' %}" class="underline-offset-4 hover:underline">Przydatne linki</a></li>
+          <li><a href="{% url 'core:page' slug='o-nas' %}" class="underline-offset-4 hover:underline">{% translate "O nas" %}</a></li>
+          <li><a href="{% url 'courses:pricing' %}" class="underline-offset-4 hover:underline">{% translate "Cennik" %}</a></li>
+          <li><a href="{% url 'courses:intakes' %}" class="underline-offset-4 hover:underline">{% translate "Terminy" %}</a></li>
+          <li><a href="{% url 'gallery:index' %}" class="underline-offset-4 hover:underline">{% translate "Galeria" %}</a></li>
+          <li><a href="{% url 'links:useful' %}" class="underline-offset-4 hover:underline">{% translate "Przydatne linki" %}</a></li>
         </ul>
       </div>
 
       <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">Formalności</p>
+        <p class="label u-muted-on-ground">{% translate "Formalności" %}</p>
         <ul class="flex flex-col gap-2">
-          <li><a href="{% url 'core:page' slug='polityka-prywatnosci' %}" class="underline-offset-4 hover:underline">Polityka prywatności</a></li>
+          <li><a href="{% url 'core:page' slug='polityka-prywatnosci' %}" class="underline-offset-4 hover:underline">{% translate "Polityka prywatności" %}</a></li>
           <li><a href="{% url 'core:page' slug='rodo' %}" class="underline-offset-4 hover:underline">RODO</a></li>
           <li><a href="{% url 'links:faq' %}" class="underline-offset-4 hover:underline">FAQ</a></li>
-          <li><a href="{% url 'core:contact' %}" class="underline-offset-4 hover:underline">Kontakt</a></li>
+          <li><a href="{% url 'core:contact' %}" class="underline-offset-4 hover:underline">{% translate "Kontakt" %}</a></li>
         </ul>
       </div>
     </div>
 
     <div class="u-rule-on-ground mt-16 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-small u-muted-on-ground">
-        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Nawrocki" }}{% if site_settings.founded_year %} &middot; na rynku od <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
+        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Nawrocki" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
       </p>
       <c-lang-switcher />
     </div>

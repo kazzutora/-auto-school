@@ -1,4 +1,4 @@
-{% load static %}<!doctype html>
+{% load static i18n %}<!doctype html>
 {% comment %}
 500, FRONTEND.md A.10.
 
@@ -18,24 +18,24 @@ it: /kontakt/ is a plain link and needs no database to resolve.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Błąd serwera — OSK Nawrocki</title>
+  <title>{% translate "Błąd serwera" %} — OSK Nawrocki</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="flex min-h-screen flex-col bg-paper text-ink">
   <main class="u-container u-section grow">
-    <p class="label text-ink-500">Błąd 500</p>
-    <h1 class="mt-4">Coś poszło nie tak</h1>
+    <p class="label text-ink-500">{% translate "Błąd 500" %}</p>
+    <h1 class="mt-4">{% translate "Coś poszło nie tak" %}</h1>
     <p class="u-narrow mt-6 text-body-lg text-ink-700">
-      Strona chwilowo nie odpowiada. Spróbuj ponownie za chwilę albo zadzwoń — zapisy przyjmujemy też telefonicznie.
+      {% translate "Strona chwilowo nie odpowiada. Spróbuj ponownie za chwilę albo zadzwoń — zapisy przyjmujemy też telefonicznie." %}
     </p>
 
     <ul class="mt-12 flex flex-wrap gap-x-8 gap-y-3">
-      <li><a href="/" class="font-semibold underline underline-offset-4 hover:text-ink-700">Strona główna</a></li>
-      <li><a href="/kursy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">Kursy</a></li>
-      <li><a href="/terminy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">Terminy</a></li>
-      <li><a href="/cennik/" class="font-semibold underline underline-offset-4 hover:text-ink-700">Cennik</a></li>
-      <li><a href="/kontakt/" class="font-semibold underline underline-offset-4 hover:text-ink-700">Kontakt</a></li>
+      <li><a href="/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Strona główna" %}</a></li>
+      <li><a href="/kursy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Kursy" %}</a></li>
+      <li><a href="/terminy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Terminy" %}</a></li>
+      <li><a href="/cennik/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Cennik" %}</a></li>
+      <li><a href="/kontakt/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Kontakt" %}</a></li>
     </ul>
 
     <div class="mt-12 flex flex-wrap gap-4">
@@ -46,7 +46,7 @@ it: /kontakt/ is a plain link and needs no database to resolve.
         </a>
       {% endif %}
       <a href="/kontakt/" class="u-btn-secondary inline-flex h-12 items-center justify-center rounded border-2 bg-transparent px-6 font-semibold">
-        Dane kontaktowe
+        {% translate "Dane kontaktowe" %}
       </a>
     </div>
   </main>

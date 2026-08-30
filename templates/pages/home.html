@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static l10n %}
+{% load static l10n i18n %}
 
 {% comment %}
 Home page, FRONTEND.md A.9. Eleven sections in the order A.9 fixes them.
@@ -26,39 +26,38 @@ comes from templates/cotton/, tech.md section 7.
 <section class="u-ground-ink flex min-h-[78vh] items-center py-16">
   <div class="u-container">
     <h1 class="display max-w-[16ch]">
-      Prawo jazdy w
+      {% translate "Prawo jazdy w" %}
       {# The yellow slab sits behind the baseline rather than under it, so the
          descenders cut through it the way a marker would. #}
       <span class="relative inline-block">
         <span aria-hidden="true" class="absolute inset-x-0 bottom-[0.04em] h-[0.18em] bg-accent"></span>
-        <span class="relative">Wieluniu</span>
+        <span class="relative">{% translate "Wieluniu" %}</span>
       </span>
     </h1>
 
     <p class="u-narrow mt-8 text-body-lg">
-      Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne.
-      Zajęcia po polsku, rosyjsku i ukraińsku.
+      {% translate "Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku." %}
     </p>
 
     <div class="mt-10 flex flex-wrap gap-4">
-      <c-button variant="primary" size="lg" href="{{ enrol_url }}">Zapisz się</c-button>
+      <c-button variant="primary" size="lg" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-          <c-icon name="phone" size="sm" /> Zadzwoń <span class="data">{{ site_settings.phone_primary }}</span>
+          <c-icon name="phone" size="sm" /> {% translate "Zadzwoń" %} <span class="data">{{ site_settings.phone_primary }}</span>
         </c-button>
       {% endif %}
     </div>
 
     <ul class="label mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
       {% if site_settings.founded_year %}
-        <li>od {{ site_settings.founded_year }} roku</li>
+        <li>{% blocktranslate with year=site_settings.founded_year %}od {{ year }} roku{% endblocktranslate %}</li>
         <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
       {% endif %}
       {% if course_count %}
-        <li><span class="data">{{ course_count }}</span> kursów</li>
+        <li><span class="data">{{ course_count }}</span> {% translate "kursów" %}</li>
         <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
       {% endif %}
-      <li>zajęcia po pl / ru / ua</li>
+      <li>{% translate "zajęcia po pl / ru / ua" %}</li>
     </ul>
   </div>
 </section>
@@ -69,15 +68,16 @@ comes from templates/cotton/, tech.md section 7.
    uses — there is one of these, not two.
    --------------------------------------------------- #}
 <c-section id="kategorie">
-  <c-slot name="heading">Kategorie prawa jazdy</c-slot>
+  <c-slot name="heading">{% translate "Kategorie prawa jazdy" %}</c-slot>
   {% if categories %}
     {# The same file /kursy/ includes, so the tile cannot drift between the two
        pages. The price question stays off here: nine of them would be nine
        buttons in the second section of the most important page. #}
     {% include "courses/_category_grid.html" with courses=categories %}
   {% else %}
-    <c-alert tone="info" title="Oferta w przygotowaniu">
-      Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne.
+    {% translate "Oferta w przygotowaniu" as t_oferta_w_przygotowaniu %}
+    <c-alert tone="info" title="{{ t_oferta_w_przygotowaniu }}">
+      {% translate "Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne." %}
     </c-alert>
   {% endif %}
 </c-section>
@@ -87,13 +87,13 @@ comes from templates/cotton/, tech.md section 7.
    ------------------------------------------------------- #}
 {% if intakes %}
   <c-section id="terminy" tone="muted">
-    <c-slot name="heading">Najbliższe terminy</c-slot>
+    <c-slot name="heading">{% translate "Najbliższe terminy" %}</c-slot>
     <div>
       {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
     </div>
     <p class="mt-8">
       <c-button variant="ghost" href="{% url 'courses:intakes' %}">
-        Wszystkie terminy <c-icon name="arrow-right" size="sm" />
+        {% translate "Wszystkie terminy" %} <c-icon name="arrow-right" size="sm" />
       </c-button>
     </p>
   </c-section>
@@ -104,7 +104,7 @@ comes from templates/cotton/, tech.md section 7.
    -------------------------------------------------- #}
 {% if professional or psychotests or operator_courses %}
   <c-section id="zawodowy">
-    <c-slot name="heading">Kierowca zawodowy</c-slot>
+    <c-slot name="heading">{% translate "Kierowca zawodowy" %}</c-slot>
 
     {% if professional %}
       {% include "courses/_pro_grid.html" with courses=professional %}
@@ -134,10 +134,9 @@ comes from templates/cotton/, tech.md section 7.
 <c-section tone="accent">
   <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
     <div class="u-narrow">
-      <h2>Zajęcia po rosyjsku i ukraińsku</h2>
+      <h2>{% translate "Zajęcia po rosyjsku i ukraińsku" %}</h2>
       <p class="mt-4 text-body-lg">
-        Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku,
-        ale uczysz się tak, żeby wszystko rozumieć.
+        {% translate "Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku, ale uczysz się tak, żeby wszystko rozumieć." %}
       </p>
     </div>
     <div class="shrink-0">
@@ -151,23 +150,23 @@ comes from templates/cotton/, tech.md section 7.
    between them.
    ------------------------------------------------------------ #}
 <c-section id="dlaczego" tone="muted">
-  <c-slot name="heading">Dlaczego OSK Nawrocki</c-slot>
+  <c-slot name="heading">{% translate "Dlaczego OSK Nawrocki" %}</c-slot>
   <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
     <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
       <p class="data text-data-xl text-ink">{{ years_on_market }}</p>
-      <p class="mt-2 text-ink-700">lat na rynku, nieprzerwanie od {{ site_settings.founded_year|default:1996 }} roku</p>
+      <p class="mt-2 text-ink-700">{% blocktranslate with year=site_settings.founded_year|default:1996 %}lat na rynku, nieprzerwanie od {{ year }} roku{% endblocktranslate %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">własny</p>
-      <p class="mt-2 text-ink-700">plac manewrowy, ćwiczysz tam, gdzie zdajesz</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "własny" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "plac manewrowy, ćwiczysz tam, gdzie zdajesz" %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">własne</p>
-      <p class="mt-2 text-ink-700">sale wykładowe w centrum Wielunia</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "własne" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "sale wykładowe w centrum Wielunia" %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">zgodne</p>
-      <p class="mt-2 text-ink-700">pojazdy spełniające wymogi egzaminacyjne</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "zgodne" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "pojazdy spełniające wymogi egzaminacyjne" %}</p>
     </li>
   </ul>
 </c-section>
@@ -179,7 +178,7 @@ comes from templates/cotton/, tech.md section 7.
    ---------------------------------------------------------- #}
 {% if testimonials %}
   <c-section id="opinie">
-    <c-slot name="heading">Co mówią kursanci</c-slot>
+    <c-slot name="heading">{% translate "Co mówią kursanci" %}</c-slot>
     <c-testimonials :items="testimonials" />
   </c-section>
 {% endif %}
@@ -194,7 +193,7 @@ comes from templates/cotton/, tech.md section 7.
      there is nothing verifiable to show, and two muted sections meeting where
      it used to be read as one very long block. #}
   <c-section id="faq">
-    <c-slot name="heading">Częste pytania</c-slot>
+    <c-slot name="heading">{% translate "Częste pytania" %}</c-slot>
     <div class="u-narrow">
       <c-accordion>
         {% for faq in faqs %}
@@ -203,7 +202,7 @@ comes from templates/cotton/, tech.md section 7.
       </c-accordion>
       <p class="mt-8">
         <c-button variant="ghost" href="{% url 'links:faq' %}">
-          Wszystkie pytania <c-icon name="arrow-right" size="sm" />
+          {% translate "Wszystkie pytania" %} <c-icon name="arrow-right" size="sm" />
         </c-button>
       </p>
     </div>
@@ -218,7 +217,7 @@ comes from templates/cotton/, tech.md section 7.
    swaps in place and the reader never loses the map they were looking at.
    ------------------------------------------------------------- #}
 <c-section id="kontakt" tone="muted">
-  <c-slot name="heading">Kontakt i zapisy</c-slot>
+  <c-slot name="heading">{% translate "Kontakt i zapisy" %}</c-slot>
   <div class="grid gap-12 lg:grid-cols-2">
 
     <div class="flex min-w-0 flex-col gap-8">
@@ -243,11 +242,11 @@ comes from templates/cotton/, tech.md section 7.
 
       <div class="grid gap-8 sm:grid-cols-2">
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">Biuro</p>
+          <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
           <c-hours-table department="office" />
         </div>
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">Pracownia psychologiczna</p>
+          <p class="label mb-3 text-ink-500">{% translate "Pracownia psychologiczna" %}</p>
           <c-hours-table department="psychology" />
         </div>
       </div>
@@ -262,10 +261,10 @@ comes from templates/cotton/, tech.md section 7.
                  label="{{ site_settings.short_name }}, {{ site_settings.street }}" />
           {% if directions.geo or directions.osm %}
             <p class="mt-4 flex flex-wrap gap-4">
-              {% if directions.geo %}<c-button variant="ghost" href="{{ directions.geo }}">Nawiguj</c-button>{% endif %}
+              {% if directions.geo %}<c-button variant="ghost" href="{{ directions.geo }}">{% translate "Nawiguj" %}</c-button>{% endif %}
               {% if directions.osm %}
                 <c-button variant="ghost" href="{{ directions.osm }}">
-                  Wyznacz trasę <c-icon name="external" size="sm" />
+                  {% translate "Wyznacz trasę" %} <c-icon name="external" size="sm" />
                 </c-button>
               {% endif %}
             </p>
@@ -275,7 +274,7 @@ comes from templates/cotton/, tech.md section 7.
     </div>
 
     <div class="min-w-0">
-      <c-heading level="3">Zostaw numer, oddzwonimy</c-heading>
+      <c-heading level="3">{% translate "Zostaw numer, oddzwonimy" %}</c-heading>
       <div class="mt-6">{% include "leads/_form.html" with form=lead_form %}</div>
     </div>
   </div>
@@ -288,5 +287,6 @@ comes from templates/cotton/, tech.md section 7.
    keeps the bar off the last section instead of on top of it.
    ------------------------------------------------------------ #}
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Zapisz się na kurs" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+{% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
+<c-cta-bar title="{{ t_zapisz_sie_na }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

@@ -657,6 +657,11 @@ def run() -> None:
     seed_links()
     seed_reviews()
     seed_pages()
+    # Last: it writes only the _ru and _uk columns of rows the steps above
+    # created, so it has nothing to work on until they have run.
+    from scripts import seed_translations
+
+    seed_translations.run()
 
 
 def main() -> None:

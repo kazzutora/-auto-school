@@ -1,3 +1,4 @@
+{% load i18n %}
 <c-vars class="" />
 {% load core_ui %}
 {% comment %}
@@ -31,7 +32,7 @@ labels or fewer items, and NAV is a contract in tech.md section 7. Owner's
 call — this is the second time the width has been the binding constraint.
 {% endcomment %}
 {% nav_items as items %}
-<nav aria-label="Główna nawigacja" class="hidden xl:block {{ class }}" {{ attrs }}>
+<nav aria-label="{% translate 'Główna nawigacja' %}" class="hidden xl:block {{ class }}" {{ attrs }}>
   <ul class="flex items-center">
     {% for item in items %}
       {% nav_url item as url %}

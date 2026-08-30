@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 Certificates, FRONTEND.md A.10 and F9. A4 cards with the title, who issued it
@@ -13,15 +14,16 @@ and when, and a download beside the scan wherever there is a pdf.
   <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
     <div>
     <c-breadcrumbs :items="breadcrumbs" />
-    <c-heading level="1" eyebrow="Uprawnienia" class="mt-6">Certyfikaty</c-heading>
+    {% translate "Uprawnienia" as t_uprawnienia %}
+    <c-heading level="1" eyebrow="{{ t_uprawnienia }}" class="mt-6">{% translate "Certyfikaty" %}</c-heading>
     <p class="u-narrow mt-4 text-body-lg text-ink-700">
-      Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu.
+      {% translate "Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu." %}
     </p>
     </div>
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum">{{ certificates|length }}</p>
-      <p class="label mt-2 text-right text-ink-500">Dokumentów ośrodka</p>
+      <p class="label mt-2 text-right text-ink-500">{% translate "Dokumentów ośrodka" %}</p>
     </div>
   </div>
 </c-section>
@@ -30,22 +32,24 @@ and when, and a download beside the scan wherever there is a pdf.
   {# ink, not deep: the footer below is purple and two purples would run
      together into one band. #}
   <c-section tone="deep">
-    {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label="Podgląd skanu" %}
+    {% translate "Podgląd skanu" as scan_label %}
+    {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label=scan_label %}
   </c-section>
 {% else %}
   <c-section tone="muted">
-    <c-alert tone="info" title="Certyfikaty w przygotowaniu">Skany pojawią się wkrótce.</c-alert>
+    {% translate "Certyfikaty w przygotowaniu" as t_certyfikaty_w_przygotowaniu %}
+    <c-alert tone="info" title="{{ t_certyfikaty_w_przygotowaniu }}">{% translate "Skany pojawią się wkrótce." %}</c-alert>
   </c-section>
 {% endif %}
 
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
-      <c-heading level="2">Masz pytanie o uprawnienia ośrodka?</c-heading>
-      <p class="mt-3 text-body-lg">Odpowiemy przez telefon albo pokażemy dokumenty w biurze.</p>
+      <c-heading level="2">{% translate "Masz pytanie o uprawnienia ośrodka?" %}</c-heading>
+      <p class="mt-3 text-body-lg">{% translate "Odpowiemy przez telefon albo pokażemy dokumenty w biurze." %}</p>
     </div>
     <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -56,6 +60,7 @@ and when, and a download beside the scan wherever there is a pdf.
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Masz pytanie o uprawnienia ośrodka?"
+{% translate "Masz pytanie o uprawnienia ośrodka?" as t_masz_pytanie_o %}
+<c-cta-bar title="{{ t_masz_pytanie_o }}"
            phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

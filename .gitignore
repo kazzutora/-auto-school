@@ -20,6 +20,9 @@ celerybeat-schedule*
 /media/
 /staticfiles/
 /static/css/app.css
+# Compiled catalogues: built from the .po by the entrypoint in dev and by the
+# messages stage in the production image, so the binary never enters a diff.
+*.mo
 db.sqlite3
 
 # Tests and coverage

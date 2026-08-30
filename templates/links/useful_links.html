@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load core_ui %}
+{% load core_ui i18n %}
 
 {% comment %}
 Useful links, FRONTEND.md A.10 and F10.
@@ -20,16 +20,16 @@ and it is the thing that pushes the page sideways on a phone.
   <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
     <div>
     <c-breadcrumbs :items="breadcrumbs" />
-    <c-heading level="1" eyebrow="Dla kursanta" class="mt-6">Przydatne linki</c-heading>
+    {% translate "Dla kursanta" as t_dla_kursanta %}
+    <c-heading level="1" eyebrow="{{ t_dla_kursanta }}" class="mt-6">{% translate "Przydatne linki" %}</c-heading>
     <p class="u-narrow mt-4 text-body-lg text-ink-700">
-      Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu,
-      punkty karne, testy i urzędy.
+      {% translate "Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy." %}
     </p>
     </div>
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum">{{ groups|length }}</p>
-      <p class="label mt-2 text-right text-ink-500">Grupy odnośników</p>
+      <p class="label mt-2 text-right text-ink-500">{% translate "Grupy odnośników" %}</p>
     </div>
   </div>
 </c-section>
@@ -58,7 +58,7 @@ and it is the thing that pushes the page sideways on a phone.
                 <p class="text-small text-ink-500">{{ link.description }}</p>
               {% endif %}
               <p class="label mt-auto pt-6 text-ink-500">{{ link.url|domain }}</p>
-              <span class="sr-only">otwiera się w nowej karcie</span>
+              <span class="sr-only">{% translate "otwiera się w nowej karcie" %}</span>
             </c-card>
           </li>
         {% endfor %}
@@ -67,8 +67,9 @@ and it is the thing that pushes the page sideways on a phone.
   {% endfor %}
 {% else %}
   <c-section>
-    <c-alert tone="info" title="Lista w przygotowaniu">
-      <p>Linki pojawią się wkrótce.</p>
+    {% translate "Lista w przygotowaniu" as t_lista_w_przygotowaniu %}
+    <c-alert tone="info" title="{{ t_lista_w_przygotowaniu }}">
+      <p>{% translate "Linki pojawią się wkrótce." %}</p>
       {% if site_settings.phone_primary %}
         <p class="mt-4">
           <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
@@ -83,11 +84,11 @@ and it is the thing that pushes the page sideways on a phone.
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
-      <c-heading level="2">Nie wiesz, od czego zacząć?</c-heading>
-      <p class="mt-3 text-body-lg">Powiemy, który dokument załatwić najpierw.</p>
+      <c-heading level="2">{% translate "Nie wiesz, od czego zacząć?" %}</c-heading>
+      <p class="mt-3 text-body-lg">{% translate "Powiemy, który dokument załatwić najpierw." %}</p>
     </div>
     <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -98,6 +99,7 @@ and it is the thing that pushes the page sideways on a phone.
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Nie wiesz, od czego zacząć?"
+{% translate "Nie wiesz, od czego zacząć?" as t_nie_wiesz_od %}
+<c-cta-bar title="{{ t_nie_wiesz_od }}"
            phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

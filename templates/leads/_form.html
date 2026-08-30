@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 The enrolment form, DEV.md S3.1 and FRONTEND.md F7.
 
@@ -40,8 +41,9 @@ Takes:
   {# F7 point 6. Empty and hidden until app.js has something to say: a person
      whose submission just failed needs a number, not a spinner that stopped. #}
   <div data-form-error hidden role="alert">
-    <c-alert tone="danger" title="Nie udało się wysłać zgłoszenia">
-      <p>Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń.</p>
+    {% translate "Nie udało się wysłać zgłoszenia" as t_nie_udao_sie %}
+    <c-alert tone="danger" title="{{ t_nie_udao_sie }}">
+      <p>{% translate "Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń." %}</p>
       {% if site_settings.phone_primary %}
         <p class="mt-4">
           <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
@@ -73,27 +75,26 @@ Takes:
   <div class="flex flex-col gap-3">
     <c-checkbox name="consent_rodo" checked="{% if form.consent_rodo.value %}1{% endif %}"
                 error="{{ form.consent_rodo.errors.0|default:'' }}">
-      Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki
-      w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo
-      wglądu, poprawienia i usunięcia ich w każdej chwili —
-      <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4 hover:text-ink">pełna informacja RODO</a>.
+      {% translate "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —" %}
+      <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4 hover:text-ink">{% translate "pełna informacja RODO" %}</a>.
     </c-checkbox>
 
     <c-checkbox name="consent_marketing" checked="{% if form.consent_marketing.value %}1{% endif %}">
-      Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe.
+      {% translate "Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe." %}
     </c-checkbox>
   </div>
 
   {% if form.non_field_errors %}
-    <c-alert tone="danger" title="Nie udało się wysłać">
+    {% translate "Nie udało się wysłać" as t_nie_udao_sie_2 %}
+    <c-alert tone="danger" title="{{ t_nie_udao_sie_2 }}">
       {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
     </c-alert>
   {% endif %}
 
   <div>
     <c-button variant="primary" size="lg" type="submit">
-      <span data-when-idle class="inline-flex items-center gap-2">Wyślij zgłoszenie</span>
-      <span data-when-sending class="items-center gap-2" aria-live="polite">Wysyłanie…</span>
+      <span data-when-idle class="inline-flex items-center gap-2">{% translate "Wyślij zgłoszenie" %}</span>
+      <span data-when-sending class="items-center gap-2" aria-live="polite">{% translate "Wysyłanie…" %}</span>
     </c-button>
   </div>
 </form>

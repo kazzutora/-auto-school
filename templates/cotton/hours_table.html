@@ -1,4 +1,4 @@
-<c-vars department="office" class="" />{% load core_ui %}
+<c-vars department="office" class="" />{% load core_ui i18n %}
 {% comment %}
 Opening hours, tech.md section 7, FRONTEND.md A.9 point 9.
 
@@ -16,9 +16,9 @@ The open-now badge answers the question before the table does.
      green from grey, which is the commonest sight difference there is. #}
   <p class="mb-4">
     {% if open_now %}
-      <c-badge tone="success"><c-icon name="check" size="sm" class="mr-1" />Otwarte teraz</c-badge>
+      <c-badge tone="success"><c-icon name="check" size="sm" class="mr-1" />{% translate "Otwarte teraz" %}</c-badge>
     {% else %}
-      <c-badge tone="neutral"><c-icon name="clock" size="sm" class="mr-1" />Zamknięte</c-badge>
+      <c-badge tone="neutral"><c-icon name="clock" size="sm" class="mr-1" />{% translate "Zamknięte" %}</c-badge>
     {% endif %}
   </p>
   {# Three columns and a free text note: on a 320px screen the note is wider
@@ -29,7 +29,7 @@ The open-now badge answers the question before the table does.
     <tbody>
       {% for entry in rows %}<tr class="border-b border-line-soft last:border-b-0{% if entry.is_today %} font-semibold text-ink{% else %} text-ink-700{% endif %}">
         <th scope="row" class="py-3 pr-6 font-normal{% if entry.is_today %} font-semibold{% endif %}">{{ entry.label }}</th>
-        <td class="data py-3 text-ink">{% if entry.row and not entry.row.is_closed %}{{ entry.row.opens|time:"H:i" }}&ndash;{{ entry.row.closes|time:"H:i" }}{% else %}<span class="font-sans text-ink-500">Nieczynne</span>{% endif %}</td>
+        <td class="data py-3 text-ink">{% if entry.row and not entry.row.is_closed %}{{ entry.row.opens|time:"H:i" }}&ndash;{{ entry.row.closes|time:"H:i" }}{% else %}<span class="font-sans text-ink-500">{% translate "Nieczynne" %}</span>{% endif %}</td>
         <td class="py-3 pl-6 text-small text-ink-500">{{ entry.row.note|owner_ready }}</td>
       </tr>{% endfor %}
     </tbody>

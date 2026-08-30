@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 FAQ, FRONTEND.md A.10 and F10.
@@ -27,15 +28,17 @@ the fastest way to lose the rich result altogether.
 
   <c-section size="compact">
     <c-breadcrumbs :items="breadcrumbs" />
-    <c-heading level="1" eyebrow="Pytania" class="mt-6">Najczęstsze pytania</c-heading>
+    {% translate "Pytania" as t_pytania %}
+    <c-heading level="1" eyebrow="{{ t_pytania }}" class="mt-6">{% translate "Najczęstsze pytania" %}</c-heading>
     <p class="u-narrow mt-4 text-body-lg text-ink-700">
-      To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki.
+      {% translate "To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki." %}
     </p>
 
     {% if groups %}
       <div class="u-narrow mt-8 flex flex-col gap-2">
-        <label for="faq-search" class="font-semibold text-ink">Szukaj w pytaniach</label>
-        <c-input name="faq-search" type="search" placeholder="np. PKK, cena, terminy"
+        <label for="faq-search" class="font-semibold text-ink">{% translate "Szukaj w pytaniach" %}</label>
+        {% translate "np. PKK, cena, terminy" as t_np_pkk_cena %}
+        <c-input name="faq-search" type="search" placeholder="{{ t_np_pkk_cena }}"
                  x-model="q" autocomplete="off" />
       </div>
     {% endif %}
@@ -61,8 +64,9 @@ the fastest way to lose the rich result altogether.
     {% endfor %}
 
     <c-section x-cloak x-show="empty" size="compact">
-      <c-alert tone="info" title="Nic nie znaleźliśmy">
-        <p>Zadaj pytanie przez telefon — odpowiemy od ręki.</p>
+      {% translate "Nic nie znaleźliśmy" as t_nic_nie_znalezlismy %}
+      <c-alert tone="info" title="{{ t_nic_nie_znalezlismy }}">
+        <p>{% translate "Zadaj pytanie przez telefon — odpowiemy od ręki." %}</p>
         {% if site_settings.phone_primary %}
           <p class="mt-4">
             <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
@@ -74,8 +78,9 @@ the fastest way to lose the rich result altogether.
     </c-section>
   {% else %}
     <c-section>
-      <c-alert tone="info" title="Pytania w przygotowaniu">
-        <p>Lista pojawi się wkrótce.</p>
+      {% translate "Pytania w przygotowaniu" as t_pytania_w_przygotowaniu %}
+      <c-alert tone="info" title="{{ t_pytania_w_przygotowaniu }}">
+        <p>{% translate "Lista pojawi się wkrótce." %}</p>
       </c-alert>
     </c-section>
   {% endif %}
@@ -83,8 +88,8 @@ the fastest way to lose the rich result altogether.
   <c-section tone="brand" size="compact">
     <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div>
-        <c-heading level="2">Nie znalazłeś odpowiedzi?</c-heading>
-        <p class="mt-3 text-body-lg">Zadzwoń — odpowiemy od ręki, także po rosyjsku i po ukraińsku.</p>
+        <c-heading level="2">{% translate "Nie znalazłeś odpowiedzi?" %}</c-heading>
+        <p class="mt-3 text-body-lg">{% translate "Zadzwoń — odpowiemy od ręki, także po rosyjsku i po ukraińsku." %}</p>
       </div>
       <p class="flex shrink-0 flex-wrap gap-4">
         {% if site_settings.phone_primary %}
@@ -92,13 +97,14 @@ the fastest way to lose the rich result altogether.
             <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
           </c-button>
         {% endif %}
-        <c-button variant="secondary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+        <c-button variant="secondary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       </p>
     </div>
   </c-section>
 </div>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Nie znalazłeś odpowiedzi?"
+{% translate "Nie znalazłeś odpowiedzi?" as t_nie_znalazes_odpowiedzi %}
+<c-cta-bar title="{{ t_nie_znalazes_odpowiedzi }}"
            phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

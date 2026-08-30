@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 The schedule, FRONTEND.md A.10 and F6.
@@ -11,9 +12,10 @@ javascript never arrives, so the filter is not a javascript feature.
 {% block content %}
 <c-section tone="deep">
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Zapisy" class="mt-6">Terminy</c-heading>
+  {% translate "Zapisy" as t_zapisy %}
+  <c-heading level="1" eyebrow="{{ t_zapisy }}" class="mt-6">{% translate "Terminy" %}</c-heading>
   <p class="u-narrow mt-4 text-body-lg u-muted-on-ground">
-    Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane.
+    {% translate "Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane." %}
   </p>
 
   <form method="get" action="{% url 'courses:intakes' %}"
@@ -24,21 +26,21 @@ javascript never arrives, so the filter is not a javascript feature.
         hx-push-url="true"
         class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <div class="flex flex-col gap-2">
-      <label for="id_course" class="font-semibold">Kurs</label>
+      <label for="id_course" class="font-semibold">{% translate "Kurs" %}</label>
       <c-select name="course" :options="course_options" value="{{ chosen.course }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_language" class="font-semibold">Język</label>
+      <label for="id_language" class="font-semibold">{% translate "Język" %}</label>
       <c-select name="language" :options="language_options" value="{{ chosen.language }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_mode" class="font-semibold">Tryb</label>
+      <label for="id_mode" class="font-semibold">{% translate "Tryb" %}</label>
       <c-select name="mode" :options="mode_options" value="{{ chosen.mode }}" />
     </div>
     {# Only reached without javascript: with htmx the change trigger has
        already fired by the time a thumb gets here. #}
     <div class="flex items-end">
-      <c-button type="submit" full="1">Pokaż terminy</c-button>
+      <c-button type="submit" full="1">{% translate "Pokaż terminy" %}</c-button>
     </div>
   </form>
 
@@ -56,11 +58,11 @@ javascript never arrives, so the filter is not a javascript feature.
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
-      <c-heading level="2">Nie ma pasującego terminu?</c-heading>
-      <p class="mt-3 text-body-lg">Zostaw numer — odezwiemy się, gdy ruszy najbliższa grupa.</p>
+      <c-heading level="2">{% translate "Nie ma pasującego terminu?" %}</c-heading>
+      <p class="mt-3 text-body-lg">{% translate "Zostaw numer — odezwiemy się, gdy ruszy najbliższa grupa." %}</p>
     </div>
     <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -71,6 +73,7 @@ javascript never arrives, so the filter is not a javascript feature.
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar data-testid="call-bar" title="Nie widzisz pasującego terminu?"
+{% translate "Nie widzisz pasującego terminu?" as t_nie_widzisz_pasujacego %}
+<c-cta-bar data-testid="call-bar" title="{{ t_nie_widzisz_pasujacego }}"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

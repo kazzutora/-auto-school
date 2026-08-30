@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Testimonials, tech.md section 7, FRONTEND.md A.9 point 7.
 
@@ -20,7 +21,7 @@ it, with the number spelled out for anyone not seeing the stars.
     <blockquote class="mt-4 grow text-ink-700">{{ item.text }}</blockquote>
     <footer class="mt-6 text-small text-ink-500">
       <span class="font-semibold text-ink">{{ item.author_name }}</span>{% if item.published_on %}<span class="data">, {{ item.published_on|date:"m.Y" }}</span>{% endif %}
-      {% if item.source_url %}<a href="{{ item.source_url }}" rel="nofollow noopener" target="_blank" class="ml-2 inline-flex items-center gap-1 underline underline-offset-4 hover:text-ink">źródło<c-icon name="external" size="sm" /></a>{% endif %}
+      {% if item.source_url %}<a href="{{ item.source_url }}" rel="nofollow noopener" target="_blank" class="ml-2 inline-flex items-center gap-1 underline underline-offset-4 hover:text-ink">{% translate "źródło" %}<c-icon name="external" size="sm" /></a>{% endif %}
     </footer>
   </li>{% endfor %}
 </ul>

@@ -10,9 +10,10 @@ from typing import Any
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.markdown import render_markdown
-from apps.core.seo import build_description, page_seo
+from apps.core.seo import Label, build_description, page_seo
 from apps.links import selectors, services
 from apps.links.models import Faq, UsefulLink
 
@@ -26,14 +27,14 @@ GROUP_ORDER = (
 
 # Page copy, not data. The choice labels on the model are english until the
 # locale catalogs are compiled, and this page is polish today.
-GROUP_LABELS: dict[str, str] = {
-    UsefulLink.Group.EXAM: "Egzamin",
-    UsefulLink.Group.GOV: "Urzędy i e-usługi",
-    UsefulLink.Group.TESTS: "Testy i przepisy",
-    UsefulLink.Group.LOCAL: "Wieluń i okolice",
+GROUP_LABELS: dict[str, Label] = {
+    UsefulLink.Group.EXAM: _("Egzamin"),
+    UsefulLink.Group.GOV: _("Urzędy i e-usługi"),
+    UsefulLink.Group.TESTS: _("Testy i przepisy"),
+    UsefulLink.Group.LOCAL: _("Wieluń i okolice"),
 }
 
-DESCRIPTION = (
+DESCRIPTION = _(
     "Rezerwacja egzaminu, punkty karne, testy i urzędy w Wieluniu. "
     "Linki, których kandydat na kierowcę potrzebuje najczęściej."
 )
@@ -42,7 +43,10 @@ DESCRIPTION = (
 def useful_links(request: HttpRequest) -> HttpResponse:
     """Every link the school sends people to, tech.md section 5."""
     links = services.publishable(list(selectors.active_links()))
-    trail = [("Start", "/"), ("Przydatne linki", reverse("links:useful"))]
+    trail: list[tuple[Label, str]] = [
+        (_("Start"), "/"),
+        (_("Przydatne linki"), reverse("links:useful")),
+    ]
 
     groups: list[dict[str, Any]] = [
         {"label": GROUP_LABELS.get(name, name), "links": items}
@@ -55,7 +59,7 @@ def useful_links(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Przydatne linki",
+                subject=_("Przydatne linki"),
                 description=DESCRIPTION,
                 breadcrumbs=trail,
             ),
@@ -96,7 +100,7 @@ def faq(request: HttpRequest) -> HttpResponse:
     """Questions the office answers over and over, tech.md section 5."""
     questions = list(selectors.published_faqs())
     answers = {item.pk: render_markdown(item.answer) for item in questions}
-    trail = [("Start", "/"), ("FAQ", reverse("links:faq"))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), ("FAQ", reverse("links:faq"))]
 
     groups = [
         {
@@ -114,7 +118,7 @@ def faq(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Najczęstsze pytania",
+                subject=_("Najczęstsze pytania"),
                 description=build_description(FAQ_DESCRIPTION),
                 breadcrumbs=trail,
                 # An empty FAQPage says nothing, so it is only emitted with

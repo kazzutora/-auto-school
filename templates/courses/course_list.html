@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 Course listings, FRONTEND.md A.10 and F4. One template, two pages: /kursy/ and
@@ -29,8 +30,9 @@ one file is the only way to hold it.
         {% include "courses/_pro_grid.html" with level=2 %}
       {% endif %}
     {% else %}
-      <c-alert tone="info" title="Oferta w przygotowaniu">
-        Kursy pojawią się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne.
+      {% translate "Oferta w przygotowaniu" as t_oferta_w_przygotowaniu %}
+      <c-alert tone="info" title="{{ t_oferta_w_przygotowaniu }}">
+        {% translate "Kursy pojawią się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne." %}
       </c-alert>
     {% endif %}
   </div>
@@ -42,39 +44,39 @@ one file is the only way to hold it.
      about licence categories, and each block leads to the page that lists its
      own offer properly. #}
   <c-section tone="muted">
-    <c-slot name="heading">Kierowca zawodowy</c-slot>
-    <c-slot name="sub">Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych.</c-slot>
+    <c-slot name="heading">{% translate "Kierowca zawodowy" %}</c-slot>
+    <c-slot name="sub">{% translate "Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych." %}</c-slot>
     <ul class="grid gap-4 sm:grid-cols-2">
       <li class="flex">
         <c-card href="{% url 'courses:pro_hub' %}" class="flex w-full flex-col">
-          <c-slot name="title">Kwalifikacja i szkolenia okresowe</c-slot>
-          <p>Dla kierowców zawodowych kategorii C i D, wstępna i przyspieszona.</p>
+          <c-slot name="title">{% translate "Kwalifikacja i szkolenia okresowe" %}</c-slot>
+          <p>{% translate "Dla kierowców zawodowych kategorii C i D, wstępna i przyspieszona." %}</p>
           <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
         </c-card>
       </li>
       <li class="flex">
         <c-card href="{% url 'courses:pro_hub' %}" class="flex w-full flex-col">
           <c-slot name="title">ADR</c-slot>
-          <p>Przewóz towarów niebezpiecznych, kurs podstawowy i specjalistyczne.</p>
+          <p>{% translate "Przewóz towarów niebezpiecznych, kurs podstawowy i specjalistyczne." %}</p>
           <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
         </c-card>
       </li>
     </ul>
 
     <div class="mt-12">
-      <c-heading level="2">Pozostałe uprawnienia</c-heading>
+      <c-heading level="2">{% translate "Pozostałe uprawnienia" %}</c-heading>
       <ul class="mt-6 grid gap-4 sm:grid-cols-2">
         <li class="flex">
           <c-card href="{% url 'courses:psychotests' %}" class="flex w-full flex-col">
-            <c-slot name="title">Badania psychologiczne</c-slot>
-            <p>Dla kierowców, instruktorów i operatorów maszyn.</p>
+            <c-slot name="title">{% translate "Badania psychologiczne" %}</c-slot>
+            <p>{% translate "Dla kierowców, instruktorów i operatorów maszyn." %}</p>
             <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
           </c-card>
         </li>
         <li class="flex">
           <c-card href="{% url 'courses:forklifts' %}" class="flex w-full flex-col">
-            <c-slot name="title">Wózki widłowe</c-slot>
-            <p>Uprawnienia operatora wózków jezdniowych z napędem silnikowym.</p>
+            <c-slot name="title">{% translate "Wózki widłowe" %}</c-slot>
+            <p>{% translate "Uprawnienia operatora wózków jezdniowych z napędem silnikowym." %}</p>
             <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
           </c-card>
         </li>
@@ -84,6 +86,7 @@ one file is the only way to hold it.
 {% endif %}
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar data-testid="call-bar" title="Nie wiesz, którą kategorię wybrać?"
+{% translate "Nie wiesz, którą kategorię wybrać?" as t_nie_wiesz_ktora %}
+<c-cta-bar data-testid="call-bar" title="{{ t_nie_wiesz_ktora }}"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

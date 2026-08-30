@@ -7,8 +7,10 @@ the section 8 SEO contract in the context and renders.
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
-from apps.core.seo import page_seo
+from apps.core.seo import Label, page_seo
 from apps.gallery import selectors, services
 from apps.gallery.models import GalleryImage
 
@@ -22,11 +24,14 @@ SECTION_ORDER = (
 
 # Page copy, not data. The choice labels on the model are english until the
 # locale catalogs are compiled, and this page is polish today.
-SECTION_LABELS: dict[str, str] = {
-    GalleryImage.Section.SCHOOL: "Ośrodek",
-    GalleryImage.Section.VEHICLES: "Pojazdy",
-    GalleryImage.Section.YARD: "Plac manewrowy",
-    GalleryImage.Section.EVENTS: "Zajęcia",
+SECTION_LABELS: dict[str, Label] = {
+    # pgettext, not gettext: the page eyebrow says "Ośrodek" about the school
+    # itself while this one names a shelf of photographs, and the two want
+    # different words in russian.
+    GalleryImage.Section.SCHOOL: pgettext_lazy("gallery section", "Ośrodek"),
+    GalleryImage.Section.VEHICLES: _("Pojazdy"),
+    GalleryImage.Section.YARD: _("Plac manewrowy"),
+    GalleryImage.Section.EVENTS: _("Zajęcia"),
 }
 
 SECTION_PARAM = "section"
@@ -54,7 +59,7 @@ def section_filters(chosen: str, counts: dict[str, int]) -> list[dict[str, objec
         return []
 
     path = reverse("gallery:index")
-    options: list[tuple[str, str, int]] = [(ALL_SECTIONS, "Wszystkie", sum(counts.values()))]
+    options: list[tuple[str, str, int]] = [(ALL_SECTIONS, _("Wszystkie"), sum(counts.values()))]
     options += [(name, SECTION_LABELS[name], counts[name]) for name in filled]
     return [
         {
@@ -68,7 +73,7 @@ def section_filters(chosen: str, counts: dict[str, int]) -> list[dict[str, objec
     ]
 
 
-def _crumbs(trail: list[tuple[str, str]]) -> list[dict[str, str]]:
+def _crumbs(trail: list[tuple[Label, str]]) -> list[dict[str, Label]]:
     """The same trail feeds the json-ld and the breadcrumbs component."""
     return [{"title": name, "url": url} for name, url in trail]
 
@@ -77,11 +82,11 @@ def gallery(request: HttpRequest) -> HttpResponse:
     chosen = chosen_section(request)
     images = list(selectors.published_images_in(chosen) if chosen else selectors.published_images())
     sections = services.group_by_section(images, SECTION_ORDER)
-    trail = [("Start", "/"), ("Galeria", reverse("gallery:index"))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Galeria"), reverse("gallery:index"))]
 
     seo = page_seo(
         request,
-        subject="Galeria",
+        subject=_("Galeria"),
         description=(
             "Zdjęcia ośrodka szkolenia kierowców OSK Nawrocki w Wieluniu: biuro, "
             "plac manewrowy i pojazdy szkoleniowe."
@@ -99,7 +104,7 @@ def gallery(request: HttpRequest) -> HttpResponse:
             "images": images,
             "filters": section_filters(chosen, selectors.published_section_counts()),
             "chosen": chosen,
-            "chosen_label": SECTION_LABELS.get(chosen, "Wszystkie"),
+            "chosen_label": SECTION_LABELS.get(chosen, _("Wszystkie")),
             "breadcrumbs": _crumbs(trail),
         },
     )
@@ -107,11 +112,14 @@ def gallery(request: HttpRequest) -> HttpResponse:
 
 def certificates(request: HttpRequest) -> HttpResponse:
     items = list(selectors.published_certificates())
-    trail = [("Start", "/"), ("Certyfikaty", reverse("gallery:certificates"))]
+    trail: list[tuple[Label, str]] = [
+        (_("Start"), "/"),
+        (_("Certyfikaty"), reverse("gallery:certificates")),
+    ]
 
     seo = page_seo(
         request,
-        subject="Certyfikaty",
+        subject=_("Certyfikaty"),
         description=(
             "Certyfikaty i uprawnienia ośrodka szkolenia kierowców OSK Nawrocki w Wieluniu."
         ),

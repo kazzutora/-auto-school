@@ -1,3 +1,4 @@
+{% load i18n %}
 <c-vars title="" price="" note="" badge="" href="" class="" />
 {% load core_ui %}
 {% comment %}
@@ -38,7 +39,7 @@ Takes: title, price, note, badge, href.
       {% if price %}
         <span class="data ml-auto shrink-0 whitespace-nowrap text-[1.0625rem] text-ink sm:ml-0">{{ price }}</span>
       {% else %}
-        <span class="ml-auto shrink-0 whitespace-nowrap text-small text-ink-500 sm:ml-0">wycena indywidualna</span>
+        <span class="ml-auto shrink-0 whitespace-nowrap text-small text-ink-500 sm:ml-0">{% translate "wycena indywidualna" %}</span>
       {% endif %}
     </span>
 

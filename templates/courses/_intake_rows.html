@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 The schedule rows, tech.md section 5 and FRONTEND.md F6.
 
@@ -16,8 +17,9 @@ uses. F6 asks for that in as many words: one row, two places.
   {% endfor %}
 {% else %}
   {# F6: a human sentence and a number, never an empty table. #}
-  <c-alert tone="info" title="Nic nie pasuje do tych filtrów">
-    <p>Dla wybranych kryteriów nie mamy jeszcze ogłoszonego terminu. Zadzwoń, podamy najbliższy start od ręki.</p>
+  {% translate "Nic nie pasuje do tych filtrów" as t_nic_nie_pasuje %}
+  <c-alert tone="info" title="{{ t_nic_nie_pasuje }}">
+    <p>{% translate "Dla wybranych kryteriów nie mamy jeszcze ogłoszonego terminu. Zadzwoń, podamy najbliższy start od ręki." %}</p>
     {% if site_settings.phone_primary %}
       <p class="mt-4">
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">

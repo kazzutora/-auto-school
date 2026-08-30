@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Sticky CTA, tech.md section 7, FRONTEND.md A.5 and A.9 point 11.
 
@@ -17,8 +18,8 @@ accessible name of the bar rather than as text nobody below md would see.
   {% if title %}role="region" aria-label="{{ title }}"{% endif %} {{ attrs }}>
   <div class="flex h-16 items-center gap-3 px-5">
     {% if phone %}<c-button variant="primary" full="1" href="tel:{{ phone|cut:' ' }}">
-      <c-icon name="phone" size="sm" /> Zadzwoń
+      <c-icon name="phone" size="sm" /> {% translate "Zadzwoń" %}
     </c-button>{% endif %}
-    {% if href %}<c-button variant="secondary" full="1" href="{{ href }}">Zapisz się</c-button>{% endif %}
+    {% if href %}<c-button variant="secondary" full="1" href="{{ href }}">{% translate "Zapisz się" %}</c-button>{% endif %}
   </div>
 </div>

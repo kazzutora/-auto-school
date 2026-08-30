@@ -48,6 +48,13 @@ COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN playwright install --with-deps chromium && chmod -R a+rX /ms-playwright && rm -rf /var/lib/apt/lists/*
 
+# gettext for makemessages and compilemessages. Django shells out to xgettext
+# and msgfmt and has no pure python fallback, so without these two binaries the
+# locale directory can only ever stay empty. It is a layer of its own, after the
+# browser: the browser install is the expensive one and does not deserve to be
+# rebuilt because a translation tool arrived.
+RUN apt-get update  && apt-get install -y --no-install-recommends gettext  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 USER app
 EXPOSE 8000

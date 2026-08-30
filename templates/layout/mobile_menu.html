@@ -19,7 +19,7 @@ Below the links sit the two things the header gives up on a phone: the language
 switcher and the phone number.
 {% endcomment %}
 {% nav_items as items %}
-<dialog id="main-menu" data-modal aria-label="Menu"
+<dialog id="main-menu" data-modal aria-label="{% translate 'Menu' %}"
         {# u-ground-paper: the panel lives inside the header element, so without
      it the ink ground the band publishes would reach in here and every
      control reading --on-ground would come out white on white. #}
@@ -29,12 +29,13 @@ switcher and the phone number.
       <p class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight [font-stretch:125%]">
         {{ site_settings.short_name|default:"OSK Nawrocki" }}
       </p>
-      <c-button variant="ghost" size="icon" data-modal-close aria-label="Zamknij menu" class="-mr-2">
+      {% translate "Zamknij menu" as t_zamknij_menu %}
+      <c-button variant="ghost" size="icon" data-modal-close aria-label="{{ t_zamknij_menu }}" class="-mr-2">
         <c-icon name="close" />
       </c-button>
     </div>
 
-    <nav aria-label="Główna nawigacja" class="u-container grow overflow-y-auto py-6">
+    <nav aria-label="{% translate 'Główna nawigacja' %}" class="u-container grow overflow-y-auto py-6">
       <ul class="flex flex-col">
         {% for item in items %}
           {% nav_url item as url %}

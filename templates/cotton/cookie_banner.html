@@ -1,3 +1,4 @@
+{% load i18n %}
 <c-vars class="" />
 {% comment %}
 Cookie banner, tech.md section 7, FRONTEND.md F2 point 6.
@@ -13,17 +14,17 @@ these two buttons.
 {% endcomment %}
 <div data-cookie-banner hidden
   class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper pb-[env(safe-area-inset-bottom)] {{ class }}"
-  role="region" aria-label="Zgoda na pliki cookie" {{ attrs }}>
+  role="region" aria-label="{% translate 'Zgoda na pliki cookie' %}" {{ attrs }}>
   <div class="u-container flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
     <p class="text-small text-ink-700">
-      Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie.
-      <a href="/polityka-prywatnosci/" class="underline underline-offset-4 hover:text-ink">Polityka prywatności</a>.
+      {% translate "Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie." %}
+      <a href="/polityka-prywatnosci/" class="underline underline-offset-4 hover:text-ink">{% translate "Polityka prywatności" %}</a>.
     </p>
     <div class="flex shrink-0 gap-3">
       {# md, not sm: A.5 fixes sm at 40px and A.11 wants 44 of anything a
          finger has to hit. Consent is the last place to save four pixels. #}
-      <c-button variant="secondary" data-cookie-reject="1">Odrzuć</c-button>
-      <c-button variant="primary" data-cookie-accept="1">Akceptuję</c-button>
+      <c-button variant="secondary" data-cookie-reject="1">{% translate "Odrzuć" %}</c-button>
+      <c-button variant="primary" data-cookie-accept="1">{% translate "Akceptuję" %}</c-button>
     </div>
   </div>
 </div>

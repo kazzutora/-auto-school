@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 The enrolment page, tech.md section 5.
@@ -11,9 +12,9 @@ the number, and what happens after they press send.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Zapisz się na kurs</c-heading>
+  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">{% translate "Zapisz się na kurs" %}</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz.
+    {% translate "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz." %}
   </p>
 
 </c-section>
@@ -26,8 +27,8 @@ the number, and what happens after they press send.
 
     <aside class="min-w-0">
       <c-card level="2" class="flex flex-col">
-        <c-slot name="title">Wolisz zadzwonić?</c-slot>
-        <p>Zapisy przyjmujemy też telefonicznie i w biurze na ul. Zielonej 45.</p>
+        <c-slot name="title">{% translate "Wolisz zadzwonić?" %}</c-slot>
+        <p>{% translate "Zapisy przyjmujemy też telefonicznie i w biurze na ul. Zielonej 45." %}</p>
         <div class="mt-6 flex flex-col gap-3">
           {% for phone in site_settings.phones %}
             <c-button variant="{% if forloop.first %}primary{% else %}secondary{% endif %}" full="1"
@@ -37,7 +38,7 @@ the number, and what happens after they press send.
           {% endfor %}
         </div>
         <div class="mt-8">
-          <p class="label text-ink-500">Godziny biura</p>
+          <p class="label text-ink-500">{% translate "Godziny biura" %}</p>
           <div class="mt-3"><c-hours-table department="office" /></div>
         </div>
       </c-card>
@@ -46,10 +47,11 @@ the number, and what happens after they press send.
 </c-section>
 
 <c-section size="compact">
-  <c-slot name="heading">Jak zapisać się na kurs</c-slot>
+  <c-slot name="heading">{% translate "Jak zapisać się na kurs" %}</c-slot>
   <c-steps :steps="steps" />
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Zapisz się na kurs" phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
+{% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
+<c-cta-bar title="{{ t_zapisz_sie_na }}" phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

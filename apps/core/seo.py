@@ -14,10 +14,18 @@ invented here.
 from dataclasses import dataclass, field
 from typing import Any
 
+from django.utils.functional import Promise
+
 TITLE_SUFFIX = "OSK Nawrocki Wieluń"
 TITLE_SEPARATOR = " — "
 TITLE_LIMIT = 70
 DESCRIPTION_LIMIT = 170
+
+
+# A label that reaches a template. gettext_lazy returns a promise rather than a
+# str and it must stay one until render time, so every signature that carries a
+# heading or a crumb takes both.
+Label = str | Promise
 
 
 @dataclass
@@ -109,13 +117,18 @@ def driving_school_jsonld(site: Any) -> dict[str, Any]:
     return data
 
 
-def breadcrumb_jsonld(items: list[tuple[str, str]]) -> dict[str, Any]:
-    """schema.org BreadcrumbList from (title, absolute url) pairs."""
+def breadcrumb_jsonld(items: list[tuple[Label, str]]) -> dict[str, Any]:
+    """schema.org BreadcrumbList from (title, absolute url) pairs.
+
+    str() around the name is not decoration: a trail carries gettext_lazy
+    titles, and json.dumps refuses a lazy proxy. Forcing it here resolves it in
+    the language of this request, which is the language the page is in.
+    """
     return {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": position, "name": name, "item": url}
+            {"@type": "ListItem", "position": position, "name": str(name), "item": url}
             for position, (name, url) in enumerate(items, start=1)
         ],
     }
@@ -126,7 +139,7 @@ def page_seo(
     *,
     subject: str,
     description: str,
-    breadcrumbs: list[tuple[str, str]] | None = None,
+    breadcrumbs: list[tuple[Label, str]] | None = None,
     og_image: str | None = None,
     robots: str = "index,follow",
     extra_jsonld: list[dict[str, Any]] | None = None,

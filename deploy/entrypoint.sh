@@ -32,4 +32,17 @@ while True:
         time.sleep(1)
 PY
 
+# Compile the message catalogues when a .po is newer than its .mo. Dev keeps
+# only the .po under version control, so without this a fresh checkout serves
+# polish to a reader who asked for russian. Production ships the .mo already
+# built and has no msgfmt, hence the guard rather than an unconditional call.
+if command -v msgfmt >/dev/null 2>&1; then
+  find locale -name '*.po' 2>/dev/null | while read -r po; do
+    mo="${po%.po}.mo"
+    if [ ! -f "$mo" ] || [ "$po" -nt "$mo" ]; then
+      msgfmt -o "$mo" "$po" && echo "entrypoint: compiled $po"
+    fi
+  done
+fi
+
 exec "$@"

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 Professional course cards, FRONTEND.md A.9 point 4.
 
@@ -22,7 +23,7 @@ Takes:
           {% if course.total_hours %}
             <span class="data text-ink">{{ course.total_hours }} h</span>
           {% else %}
-            <span class="text-small text-ink-500">program indywidualny</span>
+            <span class="text-small text-ink-500">{% translate "program indywidualny" %}</span>
           {% endif %}
           <c-icon name="arrow-right" size="sm" class="text-ink-500" />
         </p>

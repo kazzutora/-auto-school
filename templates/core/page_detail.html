@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load core_ui %}
+{% load core_ui i18n %}
 
 {% comment %}
 A flat page, FRONTEND.md A.10. Serves o-nas, polityka-prywatnosci and rodo.
@@ -22,7 +22,8 @@ nothing.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="{{ page.eyebrow|default:'O szkole' }}" class="mt-6">{{ page.title }}</c-heading>
+  {% translate "O szkole" as fallback %}
+  <c-heading level="1" eyebrow="{{ page.eyebrow|default:fallback }}" class="mt-6">{{ page.title }}</c-heading>
   {% if page.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ page.lead }}</p>{% endif %}
 
   {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
@@ -30,7 +31,8 @@ nothing.
   {% if about %}
     {# B6: one quote between the two halves of the text. #}
     <div class="mt-12">
-      <c-quote text="Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku."
+      {% translate "Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku." as t_jestesmy_firma_rodzinna %}
+      <c-quote text="{{ t_jestesmy_firma_rodzinna }}"
                author="{{ site_settings.short_name }}" role="Wieluń" />
     </div>
   {% endif %}
@@ -40,9 +42,9 @@ nothing.
        which counts the headings and gives up under six — a list over three
        sections is longer than the thing it indexes. Hidden until then, so a
        reader without javascript sees the text and no empty box. #}
-    <nav data-toc="[data-prose]" hidden aria-label="Spis treści"
+    <nav data-toc="[data-prose]" hidden aria-label="{% translate 'Spis treści' %}"
          class="u-narrow mt-12 flex flex-col gap-3 border-l-2 border-line-soft py-1 pl-6 text-ink-700">
-      <p class="label text-ink-500">Na tej stronie</p>
+      <p class="label text-ink-500">{% translate "Na tej stronie" %}</p>
     </nav>
 
     <div class="mt-12" data-prose>{% include "courses/_prose.html" with html=body %}</div>
@@ -54,7 +56,7 @@ nothing.
      is cards that go where they point. Built from the offer itself rather than
      by parsing the body, so it cannot drift from what the site sells. #}
   <c-section id="oferta" tone="muted" size="compact">
-    <c-slot name="heading">Co oferujemy</c-slot>
+    <c-slot name="heading">{% translate "Co oferujemy" %}</c-slot>
     <ul class="grid gap-4 md:grid-cols-2">
       {% for item in offer %}
         <li class="flex">
@@ -71,29 +73,29 @@ nothing.
      icons, hairlines between them. The numbers are counted rather than written
      down, so they cannot drift away from the offer. #}
   <c-section id="fakty">
-    <c-slot name="heading">W liczbach</c-slot>
+    <c-slot name="heading">{% translate "W liczbach" %}</c-slot>
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
       <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
         <p class="data text-data-xl">{{ site_settings.founded_year }}</p>
-        <p class="mt-2 u-muted-on-ground">rok założenia, działamy nieprzerwanie</p>
+        <p class="mt-2 u-muted-on-ground">{% translate "rok założenia, działamy nieprzerwanie" %}</p>
       </li>
       {# A tile reading zero is not a fact worth printing. #}
       {% if instructors %}
         <li class="lg:border-l lg:border-line-soft lg:px-8">
           <p class="data text-data-xl">{{ instructors|length }}</p>
-          <p class="mt-2 u-muted-on-ground">instruktorów prowadzi zajęcia i jazdy</p>
+          <p class="mt-2 u-muted-on-ground">{% translate "instruktorów prowadzi zajęcia i jazdy" %}</p>
         </li>
       {% endif %}
       {% if category_count %}
         <li class="lg:border-l lg:border-line-soft lg:px-8">
           <p class="data text-data-xl">{{ category_count }}</p>
-          <p class="mt-2 u-muted-on-ground">kategorii prawa jazdy w ofercie</p>
+          <p class="mt-2 u-muted-on-ground">{% translate "kategorii prawa jazdy w ofercie" %}</p>
         </li>
       {% endif %}
       {% if fleet_size %}
         <li class="lg:border-l lg:border-line-soft lg:px-8">
           <p class="data text-data-xl">{{ fleet_size }}</p>
-          <p class="mt-2 u-muted-on-ground">pojazdów szkoleniowych, własny plac manewrowy</p>
+          <p class="mt-2 u-muted-on-ground">{% translate "pojazdów szkoleniowych, własny plac manewrowy" %}</p>
         </li>
       {% endif %}
     </ul>
@@ -102,8 +104,8 @@ nothing.
 
 {% if instructors %}
   <c-section id="instruktorzy" tone="muted" size="compact">
-    <c-slot name="heading">Instruktorzy</c-slot>
-    <c-slot name="sub">Ludzie, z którymi jeździsz i którzy prowadzą wykłady.</c-slot>
+    <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
+    <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
       {% for instructor in instructors %}
         <li class="flex">
@@ -117,7 +119,7 @@ nothing.
               <h3 class="text-h3">{{ instructor.full_name }}</h3>
               {% if instructor.role %}<p class="mt-1 text-ink-500">{{ instructor.role }}</p>{% endif %}
               {% if instructor.since_year %}
-                <p class="mt-3 text-small text-ink-500">Szkoli od <span class="data">{{ instructor.since_year }}</span> roku</p>
+                <p class="mt-3 text-small text-ink-500">{% blocktranslate with year=instructor.since_year %}Szkoli od {{ year }} roku{% endblocktranslate %}</p>
               {% endif %}
               {% if instructor.categories.all %}
                 <p class="mt-4 flex flex-wrap gap-2">
@@ -137,8 +139,8 @@ nothing.
 
 {% if vehicle_groups %}
   <c-section id="pojazdy" size="compact">
-    <c-slot name="heading">Nasze pojazdy</c-slot>
-    <c-slot name="sub">Uczysz się na aucie, na którym potem zdajesz.</c-slot>
+    <c-slot name="heading">{% translate "Nasze pojazdy" %}</c-slot>
+    <c-slot name="sub">{% translate "Uczysz się na aucie, na którym potem zdajesz." %}</c-slot>
     <div class="flex flex-col gap-12" data-testid="vehicles">
       {% for group in vehicle_groups %}
         <div>
@@ -157,7 +159,7 @@ nothing.
                     <p class="mt-3 flex flex-wrap gap-2">
                       {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
                       <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
-                      {% if vehicle.is_exam_spec %}<c-badge tone="success">Zgodny z egzaminem</c-badge>{% endif %}
+                      {% if vehicle.is_exam_spec %}<c-badge tone="success">{% translate "Zgodny z egzaminem" %}</c-badge>{% endif %}
                     </p>
                     {% with shown=vehicle.note|owner_ready %}{% if shown %}<p class="mt-3 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
                   </div>
@@ -175,11 +177,11 @@ nothing.
   <c-section tone="brand" size="compact">
     <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
       <div>
-        <c-heading level="2">Chcesz zacząć kurs?</c-heading>
-        <p class="mt-3 text-body-lg">Zostaw numer albo zadzwoń — dobierzemy najbliższy termin.</p>
+        <c-heading level="2">{% translate "Chcesz zacząć kurs?" %}</c-heading>
+        <p class="mt-3 text-body-lg">{% translate "Zostaw numer albo zadzwoń — dobierzemy najbliższy termin." %}</p>
       </div>
       <p class="flex shrink-0 flex-wrap gap-4">
-        <c-button variant="primary" href="{{ enrol_url }}">Zapisz się</c-button>
+        <c-button variant="primary" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
         {% if site_settings.phone_primary %}
           <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
             <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -191,6 +193,7 @@ nothing.
 {% endif %}
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar data-testid="call-bar" title="Chcesz zacząć kurs?"
+{% translate "Chcesz zacząć kurs?" as t_chcesz_zaczac_kurs %}
+<c-cta-bar data-testid="call-bar" title="{{ t_chcesz_zaczac_kurs }}"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

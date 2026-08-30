@@ -10,10 +10,11 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.markdown import render_markdown
 from apps.core.models import Page, SiteSettings
-from apps.core.seo import Seo, build_title, page_seo
+from apps.core.seo import Label, Seo, build_title, page_seo
 
 _PLACEHOLDER_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">'
@@ -132,7 +133,7 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
 # same string rather than reverse(), so the link survives until leads.urls lands.
 ENROL_URL = "/zapisz-sie/"
 
-CONTACT_DESCRIPTION = (
+CONTACT_DESCRIPTION = _(
     "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. "
     "Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
 )
@@ -147,8 +148,8 @@ TESTIMONIALS_MINIMUM = 2
 # tech.md section 8 fixes the suffix as "— OSK Nawrocki Wieluń", so the subject
 # does not repeat the town: "Prawo jazdy — OSK Nawrocki Wieluń" carries the same
 # two keywords FRONTEND.md F3 asks for without saying Wieluń twice.
-HOME_SUBJECT = "Prawo jazdy"
-HOME_DESCRIPTION = (
+HOME_SUBJECT = _("Prawo jazdy")
+HOME_DESCRIPTION = _(
     "Ośrodek szkolenia kierowców w Wieluniu od 1996 roku. Kategorie AM–D, "
     "kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, "
     "rosyjsku i ukraińsku."
@@ -251,7 +252,7 @@ def directions(site: SiteSettings) -> dict[str, str]:
 def contact(request: HttpRequest) -> HttpResponse:
     """The page people call and drive from, tech.md section 5."""
     site = SiteSettings.get_solo()
-    trail = [("Start", "/"), ("Kontakt", reverse("core:contact"))]
+    trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Kontakt"), reverse("core:contact"))]
 
     return render(
         request,
@@ -259,7 +260,7 @@ def contact(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject="Kontakt",
+                subject=_("Kontakt"),
                 description=CONTACT_DESCRIPTION,
                 breadcrumbs=trail,
             ),
@@ -302,7 +303,10 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
     page = get_object_or_404(Page, slug=slug, is_published=True)
     about = slug == ABOUT_SLUG
-    trail = [("Start", "/"), (page.title, reverse("core:page", kwargs={"slug": slug}))]
+    trail: list[tuple[Label, str]] = [
+        (_("Start"), "/"),
+        (page.title, reverse("core:page", kwargs={"slug": slug})),
+    ]
 
     fleet = people.vehicles_by_course() if about else []
 
@@ -326,23 +330,23 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "offer": (
                 [
                     {
-                        "title": "Prawo jazdy",
-                        "note": "kategorie AM, A1, A2, A, B, B+E, C, C+E, D",
+                        "title": _("Prawo jazdy"),
+                        "note": _("kategorie AM, A1, A2, A, B, B+E, C, C+E, D"),
                         "url": "/kursy/",
                     },
                     {
-                        "title": "Kierowca zawodowy",
-                        "note": "kwalifikacja wstępna i szkolenia okresowe",
+                        "title": _("Kierowca zawodowy"),
+                        "note": _("kwalifikacja wstępna i szkolenia okresowe"),
                         "url": "/kierowca-zawodowy/",
                     },
                     {
-                        "title": "Badania psychologiczne",
-                        "note": "kierowcy i operatorzy maszyn",
+                        "title": _("Badania psychologiczne"),
+                        "note": _("kierowcy i operatorzy maszyn"),
                         "url": "/cennik/",
                     },
                     {
-                        "title": "Wózki widłowe",
-                        "note": "uprawnienia operatora",
+                        "title": _("Wózki widłowe"),
+                        "note": _("uprawnienia operatora"),
                         "url": "/kursy/wozki-widlowe/",
                     },
                 ]

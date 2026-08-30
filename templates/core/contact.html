@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load l10n static %}
+{% load l10n static i18n %}
 
 {% comment %}
 Contact, FRONTEND.md A.10 and F8.
@@ -19,10 +19,10 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="Kontakt" class="mt-6">Kontakt</c-heading>
+  {% translate "Kontakt" as t_kontakt %}
+  <c-heading level="1" eyebrow="{{ t_kontakt }}" class="mt-6">{% translate "Kontakt" %}</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy
-    przez telefon i przez formularz.
+    {% translate "Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy przez telefon i przez formularz." %}
   </p>
 
   <div class="mt-12 grid gap-12 lg:grid-cols-2">
@@ -31,7 +31,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
     <div class="flex min-w-0 flex-col gap-10" data-testid="details">
       <address class="flex flex-col gap-6 not-italic">
         <div>
-          <p class="label text-ink-500">Adres</p>
+          <p class="label text-ink-500">{% translate "Adres" %}</p>
           <p class="mt-2 font-semibold text-ink">{{ site_settings.legal_name }}</p>
           <p class="mt-1 text-ink-700">
             {{ site_settings.street }}<br>
@@ -44,7 +44,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
            320px screen never breaks a number in the middle of the digits. #}
         {% if site_settings.phones %}
           <div>
-            <p class="label text-ink-500">Telefon</p>
+            <p class="label text-ink-500">{% translate "Telefon" %}</p>
             <ul class="mt-2 flex flex-col gap-1">
               {% for phone in site_settings.phones %}
                 <li>
@@ -60,7 +60,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 
         {% if site_settings.email %}
           <div>
-            <p class="label text-ink-500">E-mail</p>
+            <p class="label text-ink-500">{% translate "E-mail" %}</p>
             <p class="mt-2">
               <a href="mailto:{{ site_settings.email }}"
                  class="inline-flex min-h-[44px] items-center gap-3 text-ink underline-offset-4 hover:underline">
@@ -72,7 +72,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
       </address>
 
       <div>
-        <p class="label text-ink-500">Dane firmy</p>
+        <p class="label text-ink-500">{% translate "Dane firmy" %}</p>
         <dl class="mt-2 flex flex-col gap-1 text-ink-700">
           {% if site_settings.nip %}
             <div class="flex gap-2"><dt>NIP</dt><dd class="data text-ink">{{ site_settings.nip }}</dd></div>
@@ -82,7 +82,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
              at all, A.9 point 10. #}
           {% if site_settings.bank_account_public and site_settings.bank_account %}
             <div class="flex flex-wrap gap-2" data-testid="bank-account">
-              <dt>Konto</dt><dd class="data text-ink">{{ site_settings.bank_account }}</dd>
+              <dt>{% translate "Konto" %}</dt><dd class="data text-ink">{{ site_settings.bank_account }}</dd>
             </div>
           {% endif %}
         </dl>
@@ -93,11 +93,11 @@ performance gate is 90 and one page carries a map, tech.md section 7.
          any use. #}
       <div class="grid gap-8 sm:grid-cols-2" id="godziny">
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">Biuro</p>
+          <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
           <c-hours-table department="office" data-testid="hours-office" />
         </div>
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">Pracownia psychologiczna</p>
+          <p class="label mb-3 text-ink-500">{% translate "Pracownia psychologiczna" %}</p>
           <c-hours-table department="psychology" data-testid="hours-psychology" />
         </div>
       </div>
@@ -105,9 +105,9 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 
     {# -------------------------------------------------------- right column #}
     <div class="min-w-0" data-testid="enrol">
-      <c-heading level="2">Zapisy na kurs</c-heading>
+      <c-heading level="2">{% translate "Zapisy na kurs" %}</c-heading>
       <p class="mt-4 text-ink-700">
-        Zostaw numer, oddzwonimy w godzinach pracy biura — także po rosyjsku i po ukraińsku.
+        {% translate "Zostaw numer, oddzwonimy w godzinach pracy biura — także po rosyjsku i po ukraińsku." %}
       </p>
       <div class="mt-8">{% include "leads/_form.html" with form=lead_form %}</div>
     </div>
@@ -121,8 +121,8 @@ performance gate is 90 and one page carries a map, tech.md section 7.
    merges an incoming class since F2.
    ------------------------------------------------------------------ #}
 <c-section id="dojazd" tone="deep">
-  <c-slot name="heading">Dojazd</c-slot>
-  <c-slot name="sub">Wieluń, ul. Zielona 45. Parking przed budynkiem.</c-slot>
+  <c-slot name="heading">{% translate "Dojazd" %}</c-slot>
+  <c-slot name="sub">{% translate "Wieluń, ul. Zielona 45. Parking przed budynkiem." %}</c-slot>
 
   {% if directions %}
     {# unlocalize: the polish locale writes the coordinates with a comma and
@@ -133,18 +133,18 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 
     <div class="mt-8 flex flex-wrap gap-4">
       <c-button variant="primary" href="{{ directions.osm }}" data-testid="route-osm">
-        Wyznacz trasę <c-icon name="external" size="sm" />
+        {% translate "Wyznacz trasę" %} <c-icon name="external" size="sm" />
       </c-button>
       {# geo: hands the point to whatever navigation the phone already has, and
          does nothing on a desktop, so the route above stays the primary. #}
       <c-button variant="secondary" href="{{ directions.geo }}" data-testid="route-geo">
-        Otwórz w nawigacji
+        {% translate "Otwórz w nawigacji" %}
       </c-button>
     </div>
   {% else %}
-    <c-alert tone="info" title="Mapa nieskonfigurowana">
-      Współrzędne biura nie są jeszcze ustawione. Adres: {{ site_settings.street }},
-      {{ site_settings.postal_code }} {{ site_settings.city }}.
+    {% translate "Mapa nieskonfigurowana" as t_mapa_nieskonfigurowana %}
+    <c-alert tone="info" title="{{ t_mapa_nieskonfigurowana }}">
+      {% blocktranslate with street=site_settings.street postal=site_settings.postal_code city=site_settings.city %}Współrzędne biura nie są jeszcze ustawione. Adres: {{ street }}, {{ postal }} {{ city }}.{% endblocktranslate %}
     </c-alert>
   {% endif %}
 </c-section>
@@ -152,11 +152,11 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
-      <c-heading level="2">Wolisz porozmawiać?</c-heading>
-      <p class="mt-3 text-body-lg">Zadzwoń albo zostaw numer — oddzwonimy w godzinach pracy biura.</p>
+      <c-heading level="2">{% translate "Wolisz porozmawiać?" %}</c-heading>
+      <p class="mt-3 text-body-lg">{% translate "Zadzwoń albo zostaw numer — oddzwonimy w godzinach pracy biura." %}</p>
     </div>
     <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -167,6 +167,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar data-testid="call-bar" title="Masz pytanie o kurs albo o badania?"
+{% translate "Masz pytanie o kurs albo o badania?" as t_masz_pytanie_o %}
+<c-cta-bar data-testid="call-bar" title="{{ t_masz_pytanie_o }}"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

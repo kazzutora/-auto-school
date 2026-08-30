@@ -1,4 +1,4 @@
-{% load core_ui %}
+{% load core_ui i18n %}
 {% comment %}
 Intake row, tech.md section 7, layout from FRONTEND.md A.9 point 3.
 
@@ -30,10 +30,10 @@ the model. Needs ratifying in tech.md the next time the core version moves.
       {# Tones fixed by F6: open is the green outline, a full group goes quiet
          rather than shouting, and planned is the warning — it is a date nobody
          can book yet. #}
-      {% if intake.status == 'open' %}<c-badge tone="success">Zapisy otwarte</c-badge>
-      {% elif intake.status == 'full' %}<c-badge tone="neutral">Brak miejsc</c-badge>
-      {% elif intake.status == 'closed' %}<c-badge tone="danger">Zamknięty</c-badge>
-      {% else %}<c-badge tone="warning">Planowany</c-badge>{% endif %}
+      {% if intake.status == 'open' %}<c-badge tone="success">{% translate "Zapisy otwarte" %}</c-badge>
+      {% elif intake.status == 'full' %}<c-badge tone="neutral">{% translate "Brak miejsc" %}</c-badge>
+      {% elif intake.status == 'closed' %}<c-badge tone="danger">{% translate "Zamknięty" %}</c-badge>
+      {% else %}<c-badge tone="warning">{% translate "Planowany" %}</c-badge>{% endif %}
     </p>
     {% with shown=intake.note|owner_ready %}{% if shown %}<p class="mt-2 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
     {# Anything the page knows and the row does not: free seats on /terminy/,
@@ -43,11 +43,11 @@ the model. Needs ratifying in tech.md the next time the core version moves.
 
   <div class="shrink-0">
     {% if intake.status == 'open' or intake.status == 'planned' %}
-      <c-button size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapisz się</c-button>
+      <c-button size="md" href="/zapisz-sie/?intake={{ intake.id }}">{% translate "Zapisz się" %}</c-button>
     {% else %}
       {# Full or closed: nothing to join, but somebody who wanted this date is
          exactly who should be told about the next one. #}
-      <c-button variant="ghost" size="md" href="/zapisz-sie/?intake={{ intake.id }}">Zapytaj</c-button>
+      <c-button variant="ghost" size="md" href="/zapisz-sie/?intake={{ intake.id }}">{% translate "Zapytaj" %}</c-button>
     {% endif %}
   </div>
 </div>

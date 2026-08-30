@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% comment %}
 Gallery, FRONTEND.md A.10 and F9. Two columns on a phone, three from sm, four
@@ -17,15 +18,16 @@ here is decorative: every image is content, so every alt says what it shows.
   <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
     <div>
     <c-breadcrumbs :items="breadcrumbs" />
-    <c-heading level="1" eyebrow="Ośrodek" class="mt-6">Galeria</c-heading>
+    {% translate "Ośrodek" as t_osrodek %}
+    <c-heading level="1" eyebrow="{{ t_osrodek }}" class="mt-6">{% translate "Galeria" %}</c-heading>
     <p class="u-narrow mt-4 text-body-lg text-ink-700">
-      Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć.
+      {% translate "Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć." %}
     </p>
   
     {# Plain links, so the filter works with javascript switched off and every
        section keeps a url a visitor can share. #}
     {% if filters %}
-      <nav aria-label="Filtr sekcji" class="mt-10 flex flex-wrap gap-3" data-testid="filters">
+      <nav aria-label="{% translate 'Filtr sekcji' %}" class="mt-10 flex flex-wrap gap-3" data-testid="filters">
         {% for filter in filters %}
           <a href="{{ filter.url }}"{% if filter.is_active %} aria-current="page"{% endif %}
              class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-semibold transition
@@ -44,16 +46,17 @@ here is decorative: every image is content, so every alt says what it shows.
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
-      <p class="label mt-2 text-right text-ink-500">Rok założenia</p>
+      <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
     </div>
   </div>
 </c-section>. #}
   {% elif chosen %}
     <div class="mt-12">
-      <c-alert tone="info" title="Nic w tej sekcji">
-        <p>W sekcji „{{ chosen_label }}” nie ma jeszcze zdjęć.</p>
+      {% translate "Nic w tej sekcji" as t_nic_w_tej %}
+      <c-alert tone="info" title="{{ t_nic_w_tej }}">
+        <p>{% blocktranslate with label=chosen_label %}W sekcji „{{ label }}” nie ma jeszcze zdjęć.{% endblocktranslate %}</p>
         <p class="mt-4 flex flex-wrap gap-4">
-          <c-button variant="secondary" href="{% url 'gallery:index' %}">Zobacz całą galerię</c-button>
+          <c-button variant="secondary" href="{% url 'gallery:index' %}">{% translate "Zobacz całą galerię" %}</c-button>
           {% if site_settings.phone_primary %}
             <c-button variant="ghost" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
               <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -64,14 +67,15 @@ here is decorative: every image is content, so every alt says what it shows.
     </div>
   {% else %}
     <div class="mt-12">
-      <c-alert tone="info" title="Galeria w przygotowaniu">Zdjęcia pojawią się wkrótce.</c-alert>
+      {% translate "Galeria w przygotowaniu" as t_galeria_w_przygotowaniu %}
+      <c-alert tone="info" title="{{ t_galeria_w_przygotowaniu }}">{% translate "Zdjęcia pojawią się wkrótce." %}</c-alert>
     </div>
   {% endif %}
     </div>
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
-      <p class="label mt-2 text-right text-ink-500">Rok założenia</p>
+      <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
     </div>
   </div>
 </c-section>
@@ -86,11 +90,11 @@ here is decorative: every image is content, so every alt says what it shows.
 <c-section tone="brand" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
-      <c-heading level="2">Chcesz zobaczyć ośrodek na żywo?</c-heading>
-      <p class="mt-3 text-body-lg">Umów się — pokażemy plac, sale i pojazdy.</p>
+      <c-heading level="2">{% translate "Chcesz zobaczyć ośrodek na żywo?" %}</c-heading>
+      <p class="mt-3 text-body-lg">{% translate "Umów się — pokażemy plac, sale i pojazdy." %}</p>
     </div>
     <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -101,6 +105,7 @@ here is decorative: every image is content, so every alt says what it shows.
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar title="Chcesz zobaczyć ośrodek na żywo?"
+{% translate "Chcesz zobaczyć ośrodek na żywo?" as t_chcesz_zobaczyc_osrodek %}
+<c-cta-bar title="{{ t_chcesz_zobaczyc_osrodek }}"
            phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

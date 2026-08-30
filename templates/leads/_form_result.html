@@ -1,3 +1,4 @@
+{% load i18n %}
 {% comment %}
 What htmx swaps in after a submit, tech.md section 5.
 
@@ -7,8 +8,9 @@ never loses their place on the page.
 {% endcomment %}
 {% if sent %}
   <div id="{{ form_id|default:'lead-form' }}" role="status">
-    <c-alert tone="success" title="Zgłoszenie przyjęte">
-      <p>Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń do nas.</p>
+    {% translate "Zgłoszenie przyjęte" as t_zgoszenie_przyjete %}
+    <c-alert tone="success" title="{{ t_zgoszenie_przyjete }}">
+      <p>{% translate "Oddzwonimy w godzinach pracy biura. Jeśli sprawa jest pilna, zadzwoń do nas." %}</p>
       {% if site_settings.phone_primary %}
         <p class="mt-4">
           <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
@@ -20,8 +22,9 @@ never loses their place on the page.
   </div>
 {% elif rate_limited %}
   <div id="{{ form_id|default:'lead-form' }}">
-    <c-alert tone="warning" title="Za dużo zgłoszeń">
-      <p>Z tego połączenia wysłano już kilka zgłoszeń. Spróbuj za godzinę albo po prostu zadzwoń.</p>
+    {% translate "Za dużo zgłoszeń" as t_za_duzo_zgoszen %}
+    <c-alert tone="warning" title="{{ t_za_duzo_zgoszen }}">
+      <p>{% translate "Z tego połączenia wysłano już kilka zgłoszeń. Spróbuj za godzinę albo po prostu zadzwoń." %}</p>
       {% if site_settings.phone_primary %}
         <p class="mt-4">
           <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">

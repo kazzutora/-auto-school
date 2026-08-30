@@ -13,7 +13,7 @@ the heading here is the code and there is nothing else in the tile to click, so
 the anchor is the tile and the ring lands on the same rectangle either way.
 {% endcomment %}
 <c-vars course="" level="3" class="" />
-{% load core_ui %}
+{% load core_ui i18n %}
 <a href="{{ course.get_absolute_url }}" data-testid="category-tile"
   class="u-card group flex h-full flex-col rounded border border-line-soft bg-paper p-6 transition hover:-translate-y-1 hover:border-ink hover:shadow-card {{ class }}" {{ attrs }}>
   {# The code and what it lets you drive, on one line. The vehicle sits
@@ -40,12 +40,12 @@ the anchor is the tile and the ring lands on the same rectangle either way.
   {% endif %}
   <dl class="mt-auto flex flex-col gap-1 pt-4 text-small text-ink-500">
     {% if course.min_age %}<div class="flex justify-between gap-3">
-      <dt>Wiek od</dt><dd class="data text-ink">{{ course.min_age }} lat</dd>
+      <dt>{% translate "Wiek od" %}</dt><dd class="data text-ink">{% blocktranslate count years=course.min_age %}{{ years }} rok{% plural %}{{ years }} lat{% endblocktranslate %}</dd>
     </div>{% endif %}
     <div class="flex justify-between gap-3">
-      <dt>Cena</dt>
+      <dt>{% translate "Cena" %}</dt>
       {% if course.price_gross %}<dd class="data text-ink">od {{ course.price_gross|floatformat:0 }} zł</dd>
-      {% else %}<dd class="whitespace-nowrap text-ink-500">na zapytanie</dd>{% endif %}
+      {% else %}<dd class="whitespace-nowrap text-ink-500">{% translate "na zapytanie" %}</dd>{% endif %}
     </div>
   </dl>
 </a>
