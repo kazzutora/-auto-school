@@ -7,6 +7,7 @@ tags.
 
 import re
 from typing import Any
+from urllib.parse import urlsplit
 
 from django import template
 from django.conf import settings
@@ -142,3 +143,15 @@ def without_lead_in(html: str, heading: str) -> str:
 
     first = re.sub(r"<[^>]+>", "", opening.group(1)).strip().rstrip(":").casefold()
     return text[opening.end() :] if first == wanted else text
+
+
+@register.filter
+def domain(url: str) -> str:
+    """The host of a link, without the scheme or the www.
+
+    Shown under an outbound card so a reader knows where it goes before they
+    go. Not the whole address: FRONTEND.md F10 keeps bare urls off the page,
+    and a path tells nobody anything a title has not already said.
+    """
+    host = urlsplit(str(url or "")).netloc
+    return host[4:] if host.startswith("www.") else host

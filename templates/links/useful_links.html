@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_ui %}
 
 {% comment %}
 Useful links, FRONTEND.md A.10 and F10.
@@ -12,55 +13,76 @@ and it is the thing that pushes the page sideways on a phone.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+<c-section size="compact">
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Przydatne linki</c-heading>
+  <c-heading level="1" eyebrow="Dla kursanta" class="mt-6">Przydatne linki</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
     Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu,
     punkty karne, testy i urzędy.
   </p>
+</c-section>
 
-  {% if groups %}
-    <div class="mt-12 flex flex-col gap-12" data-testid="groups">
-      {% for group in groups %}
-        <div>
-          <c-heading level="2">{{ group.label }}</c-heading>
-          <ul class="mt-6 flex flex-col">
-            {% for link in group.links %}
-              <li>
-                {# Every one of these leaves the site: a new tab, and rel guards
-                   the opener against the target rewriting it. #}
-                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
-                   class="flex items-start justify-between gap-6 border-b border-line-soft py-5 transition hover:bg-paper-50">
-                  <span class="min-w-0">
-                    <span class="block font-semibold text-ink">{{ link.title }}</span>
-                    {% if link.description %}
-                      <span class="mt-1 block text-small text-ink-500">{{ link.description }}</span>
-                    {% endif %}
-                  </span>
+{% if groups %}
+  {% for group in groups %}
+    <c-section tone="{% cycle 'muted' 'default' %}" size="compact"
+               id="grupa-{{ forloop.counter }}" data-testid="groups">
+      <c-heading level="2">{{ group.label }}</c-heading>
+
+      {# A grid, not a list across the full page. The flat rows put the text in
+         the left 40% and the external mark a screen away from the name it
+         belonged to — X4 point 1, finding 16. #}
+      <ul class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {% for link in group.links %}
+          <li class="flex">
+            <c-card href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                    class="flex w-full max-w-[400px] flex-col">
+              <c-slot name="title">
+                <span class="flex items-start justify-between gap-3">
+                  <span class="min-w-0">{{ link.title }}</span>
                   <c-icon name="external" size="sm" class="mt-1 shrink-0 text-ink-500" />
-                  <span class="sr-only">otwiera się w nowej karcie</span>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-      {% endfor %}
+                </span>
+              </c-slot>
+              {% if link.description %}
+                <p class="text-small text-ink-500">{{ link.description }}</p>
+              {% endif %}
+              <p class="label mt-auto pt-6 text-ink-500">{{ link.url|domain }}</p>
+              <span class="sr-only">otwiera się w nowej karcie</span>
+            </c-card>
+          </li>
+        {% endfor %}
+      </ul>
+    </c-section>
+  {% endfor %}
+{% else %}
+  <c-section>
+    <c-alert tone="info" title="Lista w przygotowaniu">
+      <p>Linki pojawią się wkrótce.</p>
+      {% if site_settings.phone_primary %}
+        <p class="mt-4">
+          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        </p>
+      {% endif %}
+    </c-alert>
+  </c-section>
+{% endif %}
+
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <c-heading level="2">Nie wiesz, od czego zacząć?</c-heading>
+      <p class="mt-3 text-body-lg">Powiemy, który dokument załatwić najpierw.</p>
     </div>
-  {% else %}
-    <div class="mt-12">
-      <c-alert tone="info" title="Lista w przygotowaniu">
-        <p>Linki pojawią się wkrótce.</p>
-        {% if site_settings.phone_primary %}
-          <p class="mt-4">
-            <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-              <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-            </c-button>
-          </p>
-        {% endif %}
-      </c-alert>
-    </div>
-  {% endif %}
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
+  </div>
 </c-section>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>

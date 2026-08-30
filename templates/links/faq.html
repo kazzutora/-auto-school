@@ -13,32 +13,56 @@ the fastest way to lose the rich result altogether.
 {% endcomment %}
 
 {% block content %}
-<c-section>
-  <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Najczęstsze pytania</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki.
-  </p>
+{# The search is one Alpine scope over the whole page: it hides rows whose text
+   does not match, and hides a group heading once every row under it is gone.
+
+   Without javascript the field simply does nothing and every question is
+   there, which is the criterion — x-cloak keeps the "nothing found" line out
+   of sight until there is a script to decide it. #}
+<div x-data="{
+       q: '',
+       matches(text) { return !this.q || text.toLowerCase().includes(this.q.toLowerCase()) },
+       get empty() { return this.q && !this.$el.querySelector('[data-faq-item]:not([hidden])') }
+     }">
+
+  <c-section size="compact">
+    <c-breadcrumbs :items="breadcrumbs" />
+    <c-heading level="1" eyebrow="Pytania" class="mt-6">Najczęstsze pytania</c-heading>
+    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+      To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki.
+    </p>
+
+    {% if groups %}
+      <div class="u-narrow mt-8 flex flex-col gap-2">
+        <label for="faq-search" class="font-semibold text-ink">Szukaj w pytaniach</label>
+        <c-input name="faq-search" type="search" placeholder="np. PKK, cena, terminy"
+                 x-model="q" autocomplete="off" />
+      </div>
+    {% endif %}
+  </c-section>
 
   {% if groups %}
-    <div class="u-narrow mt-12 flex flex-col gap-12" data-testid="faq">
-      {% for group in groups %}
-        <div>
-          {% if group.label %}<c-heading level="2">{{ group.label }}</c-heading>{% endif %}
-          <c-accordion class="{% if group.label %}mt-6{% endif %}">
+    {% for group in groups %}
+      <c-section tone="{% cycle 'muted' 'default' %}" size="compact" data-testid="faq"
+                 x-show="$el.querySelector('[data-faq-item]:not([hidden])')">
+        {% if group.label %}<c-heading level="2">{{ group.label }}</c-heading>{% endif %}
+        <div class="u-narrow{% if group.label %} mt-6{% endif %}">
+          <c-accordion>
             {% for entry in group.questions %}
-              <c-accordion.item title="{{ entry.question }}">
-                {% include "courses/_prose.html" with html=entry.answer %}
-              </c-accordion.item>
+              <div data-faq-item x-bind:hidden="!matches('{{ entry.question|escapejs }}')">
+                <c-accordion.item title="{{ entry.question }}">
+                  {% include "courses/_prose.html" with html=entry.answer %}
+                </c-accordion.item>
+              </div>
             {% endfor %}
           </c-accordion>
         </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="mt-12">
-      <c-alert tone="info" title="Pytania w przygotowaniu">
-        <p>Lista pojawi się wkrótce.</p>
+      </c-section>
+    {% endfor %}
+
+    <c-section x-cloak x-show="empty" size="compact">
+      <c-alert tone="info" title="Nic nie znaleźliśmy">
+        <p>Zadaj pytanie przez telefon — odpowiemy od ręki.</p>
         {% if site_settings.phone_primary %}
           <p class="mt-4">
             <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
@@ -47,9 +71,32 @@ the fastest way to lose the rich result altogether.
           </p>
         {% endif %}
       </c-alert>
-    </div>
+    </c-section>
+  {% else %}
+    <c-section>
+      <c-alert tone="info" title="Pytania w przygotowaniu">
+        <p>Lista pojawi się wkrótce.</p>
+      </c-alert>
+    </c-section>
   {% endif %}
-</c-section>
+
+  <c-section tone="brand" size="compact">
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div>
+        <c-heading level="2">Nie znalazłeś odpowiedzi?</c-heading>
+        <p class="mt-3 text-body-lg">Zadzwoń — odpowiemy od ręki, także po rosyjsku i po ukraińsku.</p>
+      </div>
+      <p class="flex shrink-0 flex-wrap gap-4">
+        {% if site_settings.phone_primary %}
+          <c-button variant="primary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        {% endif %}
+        <c-button variant="secondary" href="{% url 'leads:enroll' %}">Zapisz się</c-button>
+      </p>
+    </div>
+  </c-section>
+</div>
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 <c-cta-bar title="Nie znalazłeś odpowiedzi?"
