@@ -42,7 +42,13 @@ javascript never arrives, so the filter is not a javascript feature.
     </div>
   </form>
 
-  <div id="intake-rows" class="mt-10">
+</c-section>
+
+{# The rows sit on their own ground: the filter above is a control panel and
+   this is its answer, and a page that runs one white field from the heading to
+   the footer has no rhythm to read by. #}
+<c-section tone="muted">
+  <div id="intake-rows">
     {% include "courses/_intake_rows.html" %}
   </div>
 </c-section>

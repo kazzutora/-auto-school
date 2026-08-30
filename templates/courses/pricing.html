@@ -60,8 +60,11 @@ still must not move sideways, A.4.
     </div>
   {% endif %}
 
-  {% if on_request %}
-    <div class="mt-16">
+</c-section>
+
+{% if on_request %}
+  <c-section tone="muted">
+    <div>
       <c-heading level="2">Cena ustalana indywidualnie</c-heading>
       <p class="u-narrow mt-4 text-ink-700">
         Te kursy wyceniamy pod konkretne zgłoszenie — zakres zależy od tego, co już masz.
@@ -87,15 +90,15 @@ still must not move sideways, A.4.
         {% endfor %}
       </ul>
     </div>
-  {% endif %}
+  </c-section>
+{% endif %}
 
-  {% if payments %}
-    <div class="mt-16">
-      <c-heading level="2">{{ payments_title|default:"Płatności i raty" }}</c-heading>
-      <div class="mt-6">{% include "courses/_prose.html" with html=payments %}</div>
-    </div>
-  {% endif %}
-</c-section>
+{% if payments %}
+  <c-section>
+    <c-heading level="2">{{ payments_title|default:"Płatności i raty" }}</c-heading>
+    <div class="mt-6">{% include "courses/_prose.html" with html=payments %}</div>
+  </c-section>
+{% endif %}
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 <c-cta-bar data-testid="call-bar" title="Masz pytanie o cenę?"

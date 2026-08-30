@@ -13,16 +13,17 @@ and when, and a download beside the scan wherever there is a pdf.
     Uprawnienia i zaświadczenia ośrodka. Kliknij skan, żeby zobaczyć go w powiększeniu.
   </p>
 
-  {% if certificates %}
-    <div class="mt-12">
-      {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label="Podgląd skanu" %}
-    </div>
-  {% else %}
-    <div class="mt-12">
-      <c-alert tone="info" title="Certyfikaty w przygotowaniu">Skany pojawią się wkrótce.</c-alert>
-    </div>
-  {% endif %}
 </c-section>
+
+{% if certificates %}
+  <c-section tone="muted">
+    {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label="Podgląd skanu" %}
+  </c-section>
+{% else %}
+  <c-section tone="muted">
+    <c-alert tone="info" title="Certyfikaty w przygotowaniu">Skany pojawią się wkrótce.</c-alert>
+  </c-section>
+{% endif %}
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 <c-cta-bar title="Masz pytanie o uprawnienia ośrodka?"
