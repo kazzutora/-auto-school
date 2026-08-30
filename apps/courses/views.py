@@ -188,9 +188,10 @@ def pricing(request: HttpRequest) -> HttpResponse:
     """One page that answers "how much", tech.md section 5."""
     from apps.core.models import Page
 
-    priced = list(selectors.priced_courses())
+    # Every active course, not only the priced ones: see course_rows.
+    offered = list(selectors.active_courses())
     groups = [
-        (label, services.course_rows(course for course in priced if course.kind == kind))
+        (label, services.course_rows(course for course in offered if course.kind == kind))
         for kind, label in PRICE_GROUPS
     ]
     groups = [(label, rows) for label, rows in groups if rows]
@@ -215,7 +216,6 @@ def pricing(request: HttpRequest) -> HttpResponse:
             "breadcrumbs": _crumbs(trail),
             "groups": groups,
             "headers": PRICE_HEADERS,
-            "on_request": list(selectors.unpriced_courses()),
             "payments": render_markdown(payments.body) if payments else "",
             "payments_title": payments.title if payments else "",
             "enrol_url": ENROL_URL,

@@ -72,21 +72,30 @@ class PriceRow:
     price: str
     note: str
     url: str = ""
+    # The category letter, so a page can mark the one most people come for.
+    code: str = ""
 
 
 def course_rows(courses: Iterable[Any]) -> list[PriceRow]:
-    """Priced courses as table rows. A course with no price does not belong here."""
+    """Courses as rows, priced or not.
+
+    A course without a figure keeps its row and leaves `price` empty, so the
+    page can say the price is set case by case and offer to answer. Dropping it
+    was worse than useless: the licence categories have no `price_gross` yet,
+    so the first and most looked-for group came out empty and disappeared, and
+    somebody arriving for the cost of category B found no line about category B
+    anywhere on the price page.
+    """
     rows = []
     for course in courses:
-        if course.price_gross is None:
-            continue
         label = f"{course.title} ({course.code})" if course.code else course.title
         rows.append(
             PriceRow(
                 label=label,
-                price=format_price(course.price_gross),
+                price=format_price(course.price_gross) if course.price_gross else "",
                 note=course.price_note or "",
                 url=course.get_absolute_url(),
+                code=course.code or "",
             )
         )
     return rows

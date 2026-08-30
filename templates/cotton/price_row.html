@@ -1,0 +1,45 @@
+<c-vars row="" featured="" class="" />
+{% load core_ui %}
+{% comment %}
+One line of the price list, FRONTEND_FIXES.md X1 point 2.
+
+A row, not a table. The three column table put the price at 63% of a 1240px
+page and a nearly empty "Uwagi" column at 87%, so the eye lost the service on
+the left before it reached the figure on the right — 700px of nothing between
+a name and its number. Here they sit at either end of a 900px line with a
+leader of dots joining them, which is how a printed price list has always done
+it and for the same reason.
+
+A row with no figure is still a row. The licence categories have no price in
+the database yet, and leaving them out meant the page had no line about
+category B at all.
+
+Takes:
+  row       a services.PriceRow: label, price, note, url, code.
+  featured  optional. Marks the one most people come for.
+{% endcomment %}
+<li class="border-b border-line-soft last:border-b-0">
+  {% if row.url %}<a href="{{ row.url }}"{% else %}<div{% endif %}
+    class="group flex flex-wrap items-baseline gap-x-3 gap-y-1 py-4 transition hover:bg-paper-50 {{ class }}">
+
+    <span class="min-w-0 font-semibold text-ink">
+      {{ row.label }}
+      {% if featured %}<c-badge tone="accent" class="ml-2 align-middle">Najczęściej wybierany</c-badge>{% endif %}
+    </span>
+
+    {# The leader. aria-hidden because it is a ruled line, not words: a screen
+       reader gets the name and the price with nothing between them. #}
+    <span aria-hidden="true"
+          class="order-last h-px min-w-8 grow self-center border-b border-dotted border-line-soft sm:order-none"></span>
+
+    {% if row.price %}
+      <span class="data shrink-0 whitespace-nowrap text-body-lg text-ink">{{ row.price }}</span>
+    {% else %}
+      <span class="shrink-0 whitespace-nowrap text-small text-ink-500">wycena indywidualna</span>
+    {% endif %}
+
+    {% with shown=row.note|owner_ready %}
+      {% if shown %}<span class="w-full text-small text-ink-500">{{ shown }}</span>{% endif %}
+    {% endwith %}
+  {% if row.url %}</a>{% else %}</div>{% endif %}
+</li>

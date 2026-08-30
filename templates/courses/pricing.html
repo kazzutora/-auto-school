@@ -17,91 +17,65 @@ still must not move sideways, A.4.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+<c-section size="compact">
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Cennik</c-heading>
+  <c-heading level="1" eyebrow="Oferta" class="mt-6">Cennik</c-heading>
   <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Wszystkie ceny są cenami brutto. Kursy bez ceny w tabeli wyceniamy pod konkretne zgłoszenie.
+    Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie.
   </p>
-
-  {% if groups %}
-    <div class="mt-12 flex flex-col gap-12">
-      {% for label, rows in groups %}
-        <div>
-          <c-heading level="2">{{ label|default:"Pozostałe usługi" }}</c-heading>
-          <div class="mt-6">
-            <c-table :headers="headers">
-              {% for row in rows %}
-                <tr class="border-b border-line-soft last:border-b-0">
-                  <th scope="row" class="py-4 pr-6 text-left font-normal">
-                    {% if row.url %}
-                      {# The row is already tall enough; the link fills it so the
-                         target is the 44px A.11 asks for rather than the 19px
-                         the text happens to occupy. #}
-                      <a href="{{ row.url }}"
-                         class="inline-flex min-h-[44px] items-center font-semibold text-ink underline-offset-4 hover:underline">{{ row.label }}</a>
-                    {% else %}
-                      <span class="text-ink">{{ row.label }}</span>
-                    {% endif %}
-                  </th>
-                  <td class="data whitespace-nowrap py-4 pr-6 text-right text-ink">{{ row.price }}</td>
-                  <td class="py-4 text-small text-ink-500">{{ row.note|owner_ready }}</td>
-                </tr>
-              {% endfor %}
-            </c-table>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="mt-12">
-      <c-alert tone="info" title="Cennik w przygotowaniu">
-        Ceny podamy telefonicznie od ręki.
-      </c-alert>
-    </div>
-  {% endif %}
-
 </c-section>
 
-{% if on_request %}
-  <c-section tone="deep">
-    <div>
-      <c-heading level="2">Cena ustalana indywidualnie</c-heading>
-      <p class="u-narrow mt-4 text-ink-700">
-        Te kursy wyceniamy pod konkretne zgłoszenie — zakres zależy od tego, co już masz.
-        Zadzwoń albo napisz, podamy cenę od ręki.
-      </p>
-      <p class="mt-6 flex flex-wrap gap-4">
-        <c-button variant="primary" href="{{ enrol_url }}">Zapytaj o cenę</c-button>
-        {% if site_settings.phone_primary %}
-          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-          </c-button>
-        {% endif %}
-      </p>
-      <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {% for course in on_request %}
-          <li class="flex">
-            {# No price prop: c-price-tile prints "Cena ustalana indywidualnie"
-               itself when it has no figure, rather than a blank where a number
-               belongs. #}
-            <c-price-tile title="{{ course.title }}" note="{{ course.price_note|owner_ready }}"
-                          href="{{ course.get_absolute_url }}" class="w-full" />
-          </li>
+{% if groups %}
+  {# Ground alternates group by group, X1 point 7: two sections of the same
+     colour in a row read as one long block. #}
+  {% for label, rows in groups %}
+    <c-section tone="{% cycle 'muted' 'default' %}" size="compact" id="grupa-{{ forloop.counter }}">
+      <c-heading level="2">{{ label|default:"Pozostałe usługi" }}</c-heading>
+      {# 900px, not the full 1240: a line whose ends are further apart than
+         that stops reading as one line. #}
+      <ul class="mt-6 max-w-[640px]">
+        {% for row in rows %}
+          <c-price-row :row="row" featured="{% if row.code == 'B' %}1{% endif %}" />
         {% endfor %}
       </ul>
-    </div>
+    </c-section>
+  {% endfor %}
+{% else %}
+  <c-section>
+    <c-alert tone="info" title="Cennik w przygotowaniu">
+      Ceny podamy telefonicznie od ręki.
+    </c-alert>
   </c-section>
 {% endif %}
 
 {% if payments %}
-  <c-section>
+  <c-section tone="muted">
     <c-heading level="2">{{ payments_title|default:"Płatności i raty" }}</c-heading>
     <div class="mt-6">{% include "courses/_prose.html" with html=payments %}</div>
   </c-section>
 {% endif %}
 
+{# The page ends on a question and two ways to answer it, X1 point 9. It used
+   to end on the block of courses without a price, which is a list, not an
+   invitation. #}
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <c-heading level="2">Nie wiesz, którą kategorię wybrać?</c-heading>
+      <p class="mt-3 text-body-lg">Powiemy, co się opłaca w Twojej sytuacji, i podamy cenę.</p>
+    </div>
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{{ enrol_url }}">Zapytaj o cenę</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
+  </div>
+</c-section>
+
 <div class="h-16 md:hidden" aria-hidden="true"></div>
-<c-cta-bar data-testid="call-bar" title="Masz pytanie o cenę?"
+<c-cta-bar title="Masz pytanie o cenę?"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}
