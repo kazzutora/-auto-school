@@ -17,26 +17,33 @@ Takes: title, price, note, badge, href.
 {% endcomment %}
 <li class="border-b border-line-soft last:border-b-0">
   {% if href %}<a href="{{ href }}"{% else %}<div{% endif %}
-    class="group flex flex-wrap items-baseline gap-x-3 gap-y-1 py-4 transition hover:bg-paper-50 {{ class }}">
+    class="group block py-4 transition hover:bg-paper-50 {{ class }}">
 
-    <span class="min-w-0 font-semibold text-ink">
-      {{ title }}
-      {% if badge %}<c-badge tone="accent" class="ml-2 align-middle">{{ badge }}</c-badge>{% endif %}
+    {# One line that never breaks between the name and the figure. The name
+       shrinks and wraps inside its own box — min-w-0 is what allows that — so
+       at 320px a long service still keeps its price beside it rather than
+       sending it to the next line. #}
+    <span class="flex items-baseline gap-3">
+      <span class="min-w-0 font-semibold text-ink">
+        {{ title }}
+        {% if badge %}<c-badge tone="accent" class="ml-2 align-middle">{{ badge }}</c-badge>{% endif %}
+      </span>
+
+      {# A ruled line, not words: a screen reader gets the name and the figure
+         with nothing between them. It needs room to be worth drawing, so it
+         waits for sm. #}
+      <span aria-hidden="true"
+            class="hidden grow self-center border-b border-dotted border-line-soft sm:block"></span>
+
+      {% if price %}
+        <span class="data ml-auto shrink-0 whitespace-nowrap text-[1.0625rem] text-ink sm:ml-0">{{ price }}</span>
+      {% else %}
+        <span class="ml-auto shrink-0 whitespace-nowrap text-small text-ink-500 sm:ml-0">wycena indywidualna</span>
+      {% endif %}
     </span>
 
-    {# The leader is a ruled line, not words: a screen reader gets the name and
-       the figure with nothing between them. #}
-    <span aria-hidden="true"
-          class="order-last h-px min-w-8 grow self-center border-b border-dotted border-line-soft sm:order-none"></span>
-
-    {% if price %}
-      <span class="data shrink-0 whitespace-nowrap text-[1.0625rem] text-ink">{{ price }}</span>
-    {% else %}
-      <span class="shrink-0 whitespace-nowrap text-small text-ink-500">wycena indywidualna</span>
-    {% endif %}
-
     {% with shown=note|owner_ready %}
-      {% if shown %}<span class="w-full text-small text-ink-500">{{ shown }}</span>{% endif %}
+      {% if shown %}<span class="mt-1 block text-small text-ink-500">{{ shown }}</span>{% endif %}
     {% endwith %}
   {% if href %}</a>{% else %}</div>{% endif %}
 </li>
