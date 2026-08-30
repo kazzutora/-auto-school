@@ -605,3 +605,40 @@ def test_every_vehicle_named_is_in_the_sprite() -> None:
     for icons in CATEGORY_VEHICLES.values():
         for icon in icons:
             assert f"i-{icon}" in declared, f"the sprite has no i-{icon} at its root"
+
+
+def test_a_category_page_draws_the_vehicle_when_it_has_no_photo(client: Client) -> None:
+    """The school owns no photographs yet, and a course page with a blank
+    where a picture goes reads as broken.
+
+    A drawing rather than a stock photo: a picture on this page claims to show
+    this school's fleet, and one bought from an image library would not. The
+    branch disappears of its own accord the day hero_image is filled.
+    """
+    make_course(slug="kat-b", code="B", title="Kategoria B")
+
+    body = body_of(client, "/kursy/kat-b/")
+    assert "#i-car" in body
+    assert 'role="img"' in body, "the drawing carries a name for a screen reader"
+
+
+def test_a_course_with_no_licence_letter_still_names_its_vehicle(client: Client) -> None:
+    """Forklifts and driver qualifications carry no category code, so the code
+    map cannot reach them and the slug has to."""
+    from apps.core.templatetags.core_ui import course_vehicles
+
+    make_course(slug="wozki-widlowe", code="", title="Wózki widłowe")
+    course = Course.objects.get(slug="wozki-widlowe")
+
+    assert course_vehicles(course) == ("forklift",)
+
+
+def test_the_psychological_tests_get_no_vehicle(client: Client) -> None:
+    """Nothing is driven there, and a lorry beside a consulting room would be
+    an invention."""
+    from apps.core.templatetags.core_ui import course_vehicles
+
+    make_course(slug="badania-psychologiczne", code="", title="Badania psychologiczne")
+    course = Course.objects.get(slug="badania-psychologiczne")
+
+    assert course_vehicles(course) == ()
