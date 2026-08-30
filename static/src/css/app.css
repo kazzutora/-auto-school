@@ -544,6 +544,23 @@
     font-family: theme('fontFamily.mono');
   }
 
+  /* A graphic figure, BLOCKS.md A4.
+   *
+   * For the pages where the right half of the header has nothing true to put
+   * in it — a gallery, the certificates, a list of links. One number, outlined
+   * rather than filled, so it reads as a graphic mark and not as a fact
+   * competing with the heading beside it.
+   *
+   * BLOCKS is right that this is honest: inventing data to fill a slot would
+   * be worse than an ornament that admits to being one.
+   */
+  .u-bignum {
+    @apply font-display text-right font-extrabold leading-none;
+    font-size: 120px;
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(var(--ink));
+  }
+
   .u-section {
     @apply py-16 md:py-24;
   }

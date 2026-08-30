@@ -1,0 +1,30 @@
+<c-vars label="" value="" note="" action="" href="" class="" />
+{% comment %}
+Fact card, BLOCKS.md A1.
+
+The right half of a page header was empty on every inner page — on /o-nas/ the
+heading took the left 40% and a thousand pixels sat idle beside it. This fills
+it with the one thing somebody on that page is most likely to want: a number
+they can ring, the hours it is answered, and a way to act.
+
+The value is set in the data face because a phone number is a fact, A.3, and
+because it is the thing the eye should land on.
+{% endcomment %}
+<c-card class="flex w-full flex-col {{ class }}" {{ attrs }}>
+  {% if label %}<p class="label text-ink-500">{{ label }}</p>{% endif %}
+
+  {% if href %}
+    <p class="mt-3">
+      <a href="{{ href }}"
+         class="data inline-flex min-h-[44px] items-center whitespace-nowrap text-[1.625rem] leading-none text-ink underline-offset-4 hover:underline">
+        {{ value }}
+      </a>
+    </p>
+  {% else %}
+    <p class="data mt-3 text-[1.625rem] leading-none text-ink">{{ value }}</p>
+  {% endif %}
+
+  {% if note %}<p class="mt-3 text-small text-ink-500">{{ note }}</p>{% endif %}
+  {% if slot %}<div class="mt-4 text-small text-ink-500">{{ slot }}</div>{% endif %}
+  {% if action %}<div class="mt-auto pt-6">{{ action }}</div>{% endif %}
+</c-card>
