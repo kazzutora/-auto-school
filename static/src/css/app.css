@@ -457,14 +457,26 @@
 
   /* The way back. A panel that floats over the page from inside an inverted
    * region — the header's dropdown — is on the page, not on the band, and has
-   * to say so or it inherits a foreground meant for a dark ground. */
-  .u-ground-paper {
+   * to say so or it inherits a foreground meant for a dark ground.
+   *
+   * A card and a tile carry their own paper background, so they are the page
+   * wherever they are put down. Without this a white card on the purple band
+   * kept the band's white foreground and printed white on white: the title
+   * vanished and the outlined button became an empty rectangle. */
+  .u-ground-paper,
+  .u-card,
+  .u-tile {
     --ground: var(--paper);
     --on-ground: var(--ink);
   }
 
-  .u-ground-ink :is(h1, h2, h3, h4) {
-    @apply text-paper;
+  /* --on-ground, not a fixed colour. This selector reaches every heading
+   * inside the band, including the ones in white cards sitting on it, and it
+   * outranks a text-ink utility — a class plus an element beats a class. A
+   * card that resets the ground now takes its headings back with it. */
+  .u-ground-ink :is(h1, h2, h3, h4),
+  .u-ground-deep :is(h1, h2, h3, h4) {
+    color: rgb(var(--on-ground));
   }
 
   /* Deep stays a dark purple in both themes, so its text is fixed for the same
@@ -477,9 +489,7 @@
     --on-ground: var(--fixed-paper);
   }
 
-  .u-ground-deep :is(h1, h2, h3, h4) {
-    color: rgb(var(--fixed-paper));
-  }
+
 
   /* The yellow does not swap with the theme, so the text on it must not swap
    * either: text-ink would resolve to near-white in the dark and land on the
@@ -605,6 +615,13 @@
     position: relative;
     z-index: 0;
     isolation: isolate;
+
+    /* Map tiles are light whatever the section around them is, so the map is
+     * the page. On the ink band the focus halo was following the band and
+     * painting white on a pale street map, which left the yellow ring at
+     * 1.43:1 on every control inside it. */
+    --ground: var(--paper);
+    --on-ground: var(--ink);
   }
 
   /* A.6 point 2 allows the mobile menu 180ms to arrive, and nothing had ever
