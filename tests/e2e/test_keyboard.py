@@ -283,6 +283,7 @@ READERS = {
     "self": "el => getComputedStyle(el).transform",
     "svg": "el => getComputedStyle(el.querySelector('svg')).transform",
     "img": "el => getComputedStyle(el.querySelector('img')).transform",
+    "code": "el => getComputedStyle(el.querySelector('p')).transform",
 }
 
 # What is hovered, what is measured, and what it should become. The card moves
@@ -303,6 +304,10 @@ HOVER_MOVES = [
         "svg",
         "matrix(1, 0, 0, 1, 2, -2)",
     ),
+    # The category tile is the first thing anyone touches on the home page and
+    # it had a border and a shadow but never moved. Its code letter leads.
+    ("/kursy/", ".u-card.group", "self", "matrix(1, 0, 0, 1, 0, -4)"),
+    ("/kursy/", ".u-card.group", "code", "matrix(1, 0, 0, 1, 0, -2)"),
 ]
 
 
@@ -376,3 +381,118 @@ def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, pag
     row.hover()
     page.wait_for_timeout(300)
     assert row.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(250, 250, 250)"
+
+
+# The row of menu items only exists from xl; below that it is a burger and a
+# panel, so a mobile viewport has no pseudo element to measure at all.
+DESKTOP = {"width": 1440, "height": 900}
+
+BAR_HIDDEN = "matrix(0, 0, 0, 1, 0, 0)"
+BAR_DRAWN = "matrix(1, 0, 0, 1, 0, 0)"
+READ_BAR = "el => getComputedStyle(el, '::after').transform"
+
+
+def test_the_menu_underline_sweeps_rather_than_appears(
+    live_server, browser: Browser, site: SiteSettings
+) -> None:
+    """A.6 point 4. A border-colour fade told you an item was hovered without
+    anything appearing to move; the bar now grows from the left."""
+    context = browser.new_context(viewport=DESKTOP)
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}/")
+        page.wait_for_selector("h1")
+
+        item = page.locator(".u-header .u-navlink:not([aria-current])").first
+        assert item.evaluate(READ_BAR) == BAR_HIDDEN, "the bar should start at nothing"
+
+        item.hover()
+        page.wait_for_timeout(300)
+        assert item.evaluate(READ_BAR) == BAR_DRAWN
+    finally:
+        context.close()
+
+
+def test_the_current_page_keeps_its_underline(
+    live_server, browser: Browser, site: SiteSettings
+) -> None:
+    """aria-current is the hook, so the marker cannot drift from what a screen
+    reader is told."""
+    context = browser.new_context(viewport=DESKTOP)
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}/kursy/")
+        page.wait_for_selector("h1")
+
+        current = page.locator('.u-header .u-navlink[aria-current="page"]').first
+        assert current.count() == 1
+        assert current.evaluate(READ_BAR) == BAR_DRAWN
+    finally:
+        context.close()
+
+
+def test_the_map_never_covers_the_header(live_server, site: SiteSettings, page: Page) -> None:
+    """Leaflet numbers its panes from 400 and its controls to 1000, and those
+    are absolute figures. Straight on the page they beat a sticky header at
+    z-30, so scrolling drove the map over the menu."""
+    page.goto(f"{live_server.url}/kontakt/")
+    page.wait_for_selector("h1")
+
+    page.locator("[data-map]").scroll_into_view_if_needed()
+    page.wait_for_selector(".leaflet-tile")
+    page.wait_for_timeout(300)
+
+    # What is actually painted in the middle of the header band.
+    on_top = page.evaluate(
+        """() => {
+            const header = document.querySelector('.u-header').getBoundingClientRect();
+            const el = document.elementFromPoint(header.width / 2, header.top + header.height / 2);
+            return {
+                inHeader: !!(el && el.closest('.u-header')),
+                inMap: !!(el && el.closest('[data-map]')),
+                tag: el ? el.tagName.toLowerCase() : null,
+            };
+        }"""
+    )
+    assert on_top["inHeader"], f"the header is not on top where it should be: {on_top}"
+    assert not on_top["inMap"], f"the map is painting over the header: {on_top}"
+
+
+def test_an_answer_opens_over_time(live_server, site: SiteSettings, page: Page) -> None:
+    """A.6 point 2 gives the accordion 180ms and <details> has none of its own:
+    the content is not rendered while it is shut, so there is no height to
+    travel from."""
+    page.goto(f"{live_server.url}/faq/")
+    page.wait_for_selector("h1")
+
+    item = page.locator("[data-accordion]").first
+    body = item.locator("[data-accordion-body]")
+    item.locator("summary").click()
+
+    # Caught in the middle: open, but not yet at its full height.
+    page.wait_for_timeout(60)
+    mid = body.evaluate("el => el.getBoundingClientRect().height")
+    page.wait_for_timeout(400)
+    settled = body.evaluate("el => el.getBoundingClientRect().height")
+
+    assert settled > 0, "the answer never appeared"
+    assert mid < settled, f"it arrived at once: {mid} then {settled}"
+    assert item.evaluate("el => el.open")
+
+
+def test_an_answer_still_opens_without_javascript(
+    live_server, browser: Browser, site: SiteSettings
+) -> None:
+    """<details> is the reason this degrades: with no script it toggles on its
+    own, instantly, which is what it did before any of this."""
+    context = browser.new_context(viewport=MOBILE, java_script_enabled=False)
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}/faq/")
+        page.wait_for_selector("h1")
+        item = page.locator("[data-accordion]").first
+        item.locator("summary").click()
+        assert item.evaluate("el => el.open")
+        assert item.locator("[data-accordion-body]").is_visible()
+    finally:
+        context.close()
