@@ -70,7 +70,11 @@ EXTRA_ICONS = (
     "car",
     "truck",
     "bus",
-    "trailer",
+    # A combination category is one symbol, not two side by side: a car and a
+    # separate trailer needed twice the width of every other marker and left
+    # the tile at five columns.
+    "car-trailer",
+    "truck-trailer",
 )
 
 ICONS = (

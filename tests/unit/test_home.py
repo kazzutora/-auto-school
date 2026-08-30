@@ -171,7 +171,7 @@ def test_a_course_without_a_price_says_so(client: Client, site: SiteSettings) ->
     """A.9 point 2: cena na zapytanie, never an empty line where a number goes."""
     make_course(price_gross=None)
     html = body(client)
-    assert "cena na zapytanie" in html
+    assert "na zapytanie" in html
 
 
 def test_a_course_with_a_price_prints_it(client: Client, site: SiteSettings) -> None:

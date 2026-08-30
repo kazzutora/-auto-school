@@ -169,9 +169,9 @@ CATEGORY_VEHICLES = {
     "A2": ("motorcycle",),
     "A": ("motorcycle",),
     "B": ("car",),
-    "B+E": ("car", "trailer"),
+    "B+E": ("car-trailer",),
     "C": ("truck",),
-    "C+E": ("truck", "trailer"),
+    "C+E": ("truck-trailer",),
     "D": ("bus",),
 }
 

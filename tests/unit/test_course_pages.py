@@ -560,14 +560,19 @@ def test_each_category_shows_what_it_lets_you_drive(client: Client) -> None:
             assert f"#i-{icon}" in tile, f"{code} is missing its {icon}"
 
 
-def test_a_towing_category_shows_both_halves(client: Client) -> None:
-    """B+E is a car and what it pulls, so it carries two marks rather than a
-    letter with a plus in it."""
+def test_a_towing_category_carries_one_mark_for_the_combination(client: Client) -> None:
+    """B+E is a car and what it pulls, drawn as one symbol.
+
+    It used to be two, a car beside a trailer, and two marks needed 68px where
+    every other tile needed 32. At five columns the tile gives 128px of content
+    and the code takes 105 of them, so the pair hung outside the card. A
+    combination is one thing and now reads as one.
+    """
     make_course(slug="kat-be", code="B+E", title="Kategoria B+E")
 
     tile = category_tiles(body_of(client, "/kursy/"))[0]
-    assert "#i-car" in tile
-    assert "#i-trailer" in tile
+    assert "#i-car-trailer" in tile
+    assert tile.count("data-icon") == 1, "a tile carries exactly one vehicle mark"
 
 
 def test_a_course_with_no_category_gets_no_vehicle(client: Client) -> None:
@@ -577,7 +582,7 @@ def test_a_course_with_no_category_gets_no_vehicle(client: Client) -> None:
 
     assert category_vehicles("") == ()
     assert category_vehicles("T") == ()
-    assert category_vehicles("b+e") == ("car", "trailer")
+    assert category_vehicles("b+e") == ("car-trailer",)
 
 
 def test_every_vehicle_named_is_in_the_sprite() -> None:

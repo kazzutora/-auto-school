@@ -71,8 +71,11 @@ def test_the_polish_page_never_shows_an_english_key(client: Client, site: SiteSe
     key itself, and nobody noticed because a mode only reaches a page once an
     intake exists.
     """
+    # Keys whose polish differs from the key. E-learning is deliberately not
+    # here: polish spells it the same way, so an identical string is the right
+    # answer and proves nothing either way.
     with translation.override("pl"):
-        for key in ("Stationary", "E-learning", "Planned", "Office", "Psychology lab"):
+        for key in ("Stationary", "Planned", "Office", "Psychology lab", "Full", "Closed"):
             assert translation.gettext(key) != key, f"{key} has no polish translation"
 
 
@@ -117,9 +120,7 @@ def test_a_row_answers_in_the_asked_language(
     assert "Kategoria B" not in body, f"the {language} listing still names the polish title"
 
 
-def test_a_row_with_no_translation_falls_back_to_polish(
-    client: Client, site: SiteSettings
-) -> None:
+def test_a_row_with_no_translation_falls_back_to_polish(client: Client, site: SiteSettings) -> None:
     """MODELTRANSLATION_FALLBACK_LANGUAGES is what keeps a half translated
     database readable: an empty _ru shows the polish text, never an empty gap.
     """
