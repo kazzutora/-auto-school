@@ -4,7 +4,7 @@
    frame — an ink border and the hard 2px offset on hover, the same treatment
    every other clickable card gets. #}
 <button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
-        class="block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
+        class="u-photo block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
   <c-picture :image="item.image" alt="{{ item.alt }}" ratio="tile"
              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" />
   <span class="sr-only">Powiększ: {{ item.alt }}</span>

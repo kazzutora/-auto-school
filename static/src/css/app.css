@@ -383,7 +383,10 @@
      * motion gets none — the border and the shadow still answer the pointer,
      * so the card has not gone quiet. */
     .u-btn:hover svg,
-    .u-card:hover {
+    summary:hover svg,
+    .u-photo:hover img,
+    .u-card:hover,
+    .u-tile:hover {
       transform: none !important;
     }
   }
@@ -548,6 +551,39 @@
 
   .u-btn:hover:not(:disabled) svg {
     transform: scale(1.08);
+  }
+
+  /* An arrow travels instead of growing. A button that means "onward" should
+   * point that way when you reach for it, and on a site whose whole language
+   * is road signs that reads better than a symbol swelling in place. */
+  .u-btn:hover:not(:disabled) svg[data-icon="arrow-right"] {
+    transform: translateX(3px);
+  }
+
+  .u-btn:hover:not(:disabled) svg[data-icon="external"] {
+    transform: translate(2px, -2px);
+  }
+
+  /* The accordion's plus answers the pointer the same way a button's icon
+   * does, so the row does not feel dead above the one thing you can click. */
+  summary:hover svg[data-icon="plus"],
+  summary:hover svg[data-icon="minus"] {
+    transform: scale(1.15);
+  }
+
+  summary svg {
+    transition: transform 120ms ease-out;
+  }
+
+  /* A photograph leans in a little inside its frame. The frame is clipped, so
+   * nothing outside it moves and the grid stays where it was — A.8 keeps the
+   * pictures unfiltered and this does not touch that. */
+  .u-photo img {
+    transition: transform 300ms ease-out;
+  }
+
+  .u-photo:hover img {
+    transform: scale(1.04);
   }
 
   .u-btn-secondary {

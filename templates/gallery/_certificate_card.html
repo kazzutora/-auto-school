@@ -7,7 +7,7 @@
    is, who issued it and when. #}
 <c-card padded="" class="flex w-full flex-col">
   <button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
-          class="block w-full overflow-hidden border-b border-line-soft transition hover:opacity-90">
+          class="u-photo block w-full overflow-hidden border-b border-line-soft transition">
     <c-picture :image="item.image" alt="{{ item.alt }}" ratio="a4"
                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
     <span class="sr-only">Powiększ skan: {{ item.title }}</span>
