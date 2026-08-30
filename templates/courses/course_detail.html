@@ -81,13 +81,20 @@ only action on the page.
 
       {% if entitlements %}
         <c-heading level="2">Uprawnia do kierowania</c-heading>
-        <div class="mt-6">{% include "courses/_prose.html" with html=entitlements %}</div>
+        {# The bodies are written with their own lead-in, which the heading
+           above already says. X0 point 6: the body's line is the one that
+           goes. #}
+        <div class="mt-6">
+          {% include "courses/_prose.html" with html=entitlements|without_lead_in:"Uprawnia do kierowania" %}
+        </div>
       {% endif %}
 
       {% if requirements %}
         <div class="mt-12">
           <c-heading level="2">Wymagania</c-heading>
-          <div class="mt-6">{% include "courses/_prose.html" with html=requirements %}</div>
+          <div class="mt-6">
+            {% include "courses/_prose.html" with html=requirements|without_lead_in:"Wymagania" %}
+          </div>
         </div>
       {% endif %}
 
@@ -103,7 +110,7 @@ only action on the page.
        is nothing left for sticky to slide against. It sticks below the 72px
        header and only from lg: on a phone the card belongs in the flow, where
        the reader meets it after the text rather than on top of it. #}
-    <aside class="min-w-0 lg:sticky lg:top-[88px] lg:self-start">
+    <aside class="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+16px)] lg:self-start">
       <c-card class="flex flex-col">
         <c-slot name="title">{{ course.title }}</c-slot>
 
@@ -153,8 +160,11 @@ only action on the page.
     </aside>
   </div>
 
-  {% if intakes %}
-    <div class="mt-16">
+</c-section>
+
+{% if intakes %}
+  <c-section tone="muted" size="compact">
+    <div>
       <c-heading level="2">Najbliższe terminy</c-heading>
       <div class="mt-6">
         {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
@@ -165,10 +175,12 @@ only action on the page.
         </c-button>
       </p>
     </div>
-  {% endif %}
+  </c-section>
+{% endif %}
 
-  {% if vehicles %}
-    <div class="mt-16">
+{% if vehicles %}
+  <c-section size="compact">
+    <div>
       <c-heading level="2">Pojazdy szkoleniowe</c-heading>
       <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {% for vehicle in vehicles %}
@@ -186,8 +198,8 @@ only action on the page.
         {% endfor %}
       </ul>
     </div>
-  {% endif %}
-</c-section>
+  </c-section>
+{% endif %}
 
 {# ------------------------------------------------------------ enrolment
    A.10 and F5 end the page with the form, and it arrives with this course
@@ -204,6 +216,28 @@ only action on the page.
       {% endif %}
     </p>
     <div class="mt-8">{% include "leads/_form.html" with form=lead_form %}</div>
+  </div>
+</c-section>
+
+<c-section tone="brand" size="compact">
+  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      {% if course.kind == 'license' %}
+        <c-heading level="2">Nie wiesz, czy ta kategoria jest dla Ciebie?</c-heading>
+        <p class="mt-3 text-body-lg">Zadzwoń — powiemy, co daje i ile trwa w praktyce.</p>
+      {% else %}
+        <c-heading level="2">Potrzebujesz tych uprawnień do pracy?</c-heading>
+        <p class="mt-3 text-body-lg">Powiemy, od czego zacząć i co trzeba mieć na starcie.</p>
+      {% endif %}
+    </div>
+    <p class="flex shrink-0 flex-wrap gap-4">
+      <c-button variant="primary" href="{{ enrol_url }}">Zapisz się</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
+      {% endif %}
+    </p>
   </div>
 </c-section>
 
