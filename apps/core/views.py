@@ -304,6 +304,8 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
     about = slug == ABOUT_SLUG
     trail = [("Start", "/"), (page.title, reverse("core:page", kwargs={"slug": slug}))]
 
+    fleet = people.vehicles_by_course() if about else []
+
     return render(
         request,
         "core/page_detail.html",
@@ -319,7 +321,10 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "about": about,
             "instructors": people.active_instructors() if about else [],
-            "vehicle_groups": people.vehicles_by_course() if about else [],
+            "vehicle_groups": fleet,
+            # Counted from what is already loaded rather than asked for again:
+            # the about page has a query budget and this is not worth one.
+            "fleet_size": sum(len(group["vehicles"]) for group in fleet),
             "category_count": active_courses(Course.Kind.LICENSE).count() if about else 0,
             "enrol_url": ENROL_URL,
         },

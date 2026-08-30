@@ -22,7 +22,7 @@ nothing.
 {% block content %}
 <c-section>
   <c-breadcrumbs :items="breadcrumbs" />
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">{{ page.title }}</c-heading>
+  <c-heading level="1" eyebrow="{{ page.eyebrow|default:'O szkole' }}" class="mt-6">{{ page.title }}</c-heading>
   {% if page.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ page.lead }}</p>{% endif %}
 
   {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
@@ -45,7 +45,7 @@ nothing.
   {# The facts, laid out as section 6 of the home page: big figures, no circle
      icons, hairlines between them. The numbers are counted rather than written
      down, so they cannot drift away from the offer. #}
-  <c-section id="fakty" tone="deep">
+  <c-section id="fakty" tone="muted">
     <c-slot name="heading">W liczbach</c-slot>
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
       <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
@@ -65,16 +65,18 @@ nothing.
           <p class="mt-2 u-muted-on-ground">kategorii prawa jazdy w ofercie</p>
         </li>
       {% endif %}
-      <li class="lg:border-l lg:border-line-soft lg:px-8">
-        <p class="font-display text-h2 font-bold">własny</p>
-        <p class="mt-2 u-muted-on-ground">plac manewrowy i sale wykładowe</p>
-      </li>
+      {% if fleet_size %}
+        <li class="lg:border-l lg:border-line-soft lg:px-8">
+          <p class="data text-data-xl">{{ fleet_size }}</p>
+          <p class="mt-2 u-muted-on-ground">pojazdów szkoleniowych, własny plac manewrowy</p>
+        </li>
+      {% endif %}
     </ul>
   </c-section>
 {% endif %}
 
 {% if instructors %}
-  <c-section id="instruktorzy">
+  <c-section id="instruktorzy" size="compact">
     <c-slot name="heading">Instruktorzy</c-slot>
     <c-slot name="sub">Ludzie, z którymi jeździsz i którzy prowadzą wykłady.</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
@@ -109,7 +111,7 @@ nothing.
 {% endif %}
 
 {% if vehicle_groups %}
-  <c-section id="pojazdy" tone="muted">
+  <c-section id="pojazdy" tone="muted" size="compact">
     <c-slot name="heading">Nasze pojazdy</c-slot>
     <c-slot name="sub">Uczysz się na aucie, na którym potem zdajesz.</c-slot>
     <div class="flex flex-col gap-12" data-testid="vehicles">
@@ -140,6 +142,25 @@ nothing.
           </ul>
         </div>
       {% endfor %}
+    </div>
+  </c-section>
+{% endif %}
+
+{% if about %}
+  <c-section tone="brand" size="compact">
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div>
+        <c-heading level="2">Chcesz zacząć kurs?</c-heading>
+        <p class="mt-3 text-body-lg">Zostaw numer albo zadzwoń — dobierzemy najbliższy termin.</p>
+      </div>
+      <p class="flex shrink-0 flex-wrap gap-4">
+        <c-button variant="primary" href="{{ enrol_url }}">Zapisz się</c-button>
+        {% if site_settings.phone_primary %}
+          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        {% endif %}
+      </p>
     </div>
   </c-section>
 {% endif %}

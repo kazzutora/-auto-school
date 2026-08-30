@@ -527,8 +527,8 @@ def seed_pages() -> None:
             "o-nas",
             "O nas",
             "Jesteśmy firmą rodzinną, szkolimy kierowców w Wieluniu od 1996 roku.",
-            "## Kim jesteśmy\n\nOśrodek szkolenia kierowców w Wieluniu, działamy od 1996 roku.\n\n"
-            "## Co oferujemy\n\n- kursy prawa jazdy wszystkich kategorii\n"
+            "# Kim jesteśmy\n\nOśrodek szkolenia kierowców w Wieluniu, działamy od 1996 roku.\n\n"
+            "# Co oferujemy\n\n- kursy prawa jazdy wszystkich kategorii\n"
             "- szkolenia dla kierowców zawodowych\n- badania psychologiczne\n"
             "- uprawnienia operatora wózków widłowych",
         ),
@@ -536,13 +536,13 @@ def seed_pages() -> None:
             "polityka-prywatnosci",
             "Polityka prywatności",
             "Jak przetwarzamy dane osobowe kandydatów na kierowców.",
-            f"## Administrator danych\n\n{TODO} pełna treść polityki do zatwierdzenia.",
+            f"# Administrator danych\n\n{TODO} pełna treść polityki do zatwierdzenia.",
         ),
         (
             "rodo",
             "RODO",
             "Obowiązek informacyjny zgodny z RODO.",
-            f"## Obowiązek informacyjny\n\n{TODO} pełna treść klauzuli do zatwierdzenia.",
+            f"# Obowiązek informacyjny\n\n{TODO} pełna treść klauzuli do zatwierdzenia.",
         ),
     ]
     for slug, title, lead, body in pages:
