@@ -17,7 +17,7 @@ with it — which is what a card wrapping the opening hours did at 320px.
 {% endcomment %}
 <c-vars href="" padded="1" level="3" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
-  class="block min-w-0 rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:border-ink hover:shadow-card{% endif %} {{ class }}"
+  class="u-card block min-w-0 rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:-translate-y-0.5 hover:border-ink hover:shadow-card{% endif %} {{ class }}"
   {{ attrs }}>
   {# The level is the page's to choose: a card sitting straight under the h1
      is a level 2 item, and one inside a section that already has an h2 is a

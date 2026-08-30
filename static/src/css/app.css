@@ -358,12 +358,11 @@
   select,
   textarea,
   [role='button'] {
-    /* A.6 allows colour, border and background, and nothing else. box-shadow
-     * was in this list and is neither — it also meant the focus halo faded in
-     * over 120ms instead of arriving with the ring, which is the one thing on
-     * the page that should never be gradual. Dropping it makes the card's
-     * hover offset snap too, which suits A.1 rather better than a fade. */
-    transition-property: color, background-color, border-color, outline-color;
+    /* A.6 allows colour, border and background, plus transform since core v7
+     * for the two hover moves. box-shadow stays out: the focus halo rides on
+     * it, and a focus indicator is the one thing on a page that must never be
+     * gradual. */
+    transition-property: color, background-color, border-color, outline-color, transform;
     transition-duration: theme('transitionDuration.DEFAULT');
     transition-timing-function: theme('transitionTimingFunction.DEFAULT');
   }
@@ -376,6 +375,16 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+
+    /* Killing the duration is not enough for the two moves: it leaves the card
+     * and the icon jumping to their new position instead of travelling there,
+     * which is the opposite of what was asked for. Somebody who wants less
+     * motion gets none — the border and the shadow still answer the pointer,
+     * so the card has not gone quiet. */
+    .u-btn:hover svg,
+    .u-card:hover {
+      transform: none !important;
     }
   }
 
@@ -524,6 +533,23 @@
    * It lives here rather than as utilities on the component because the hover
    * has to fill with the foreground and repaint the text in the ground's own
    * colour, and there is no utility that names "the background behind me". */
+  /* The icon inside a button grows a little when the button is pointed at,
+   * A.6 point 4. Here rather than on every call site: the icon is a component
+   * of its own and the button is the thing being hovered, so a group class
+   * would have to be repeated at some fifty call sites to say what one rule
+   * says once.
+   *
+   * 1.08, not 1.2. The icon sits on a text baseline beside a word, and
+   * anything more makes the row jump rather than answer.
+   */
+  .u-btn svg {
+    transition: transform 120ms ease-out;
+  }
+
+  .u-btn:hover:not(:disabled) svg {
+    transform: scale(1.08);
+  }
+
   .u-btn-secondary {
     border-color: rgb(var(--on-ground));
     color: rgb(var(--on-ground));

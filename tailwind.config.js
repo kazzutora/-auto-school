@@ -173,12 +173,16 @@ module.exports = {
         // A.3: a line of text is 60 to 75 characters.
         narrow: "68ch",
       },
-      // A.6 names what may move: colour, border and background. Tailwind's own
-      // `transition` also carries box-shadow, transform, filter and opacity,
-      // so the bare class was animating four things the contract does not
-      // allow — including the focus halo, which should never fade in.
+      // A.6 names what may move: colour, border, background, and since core v7
+      // the two hover moves the owner asked for — a card lifting and an icon
+      // growing. transform is in the list for those and nothing else.
+      //
+      // box-shadow, filter and opacity are still out. tailwind's own
+      // `transition` carries all of them, which is why this replaces it rather
+      // than extending: the focus halo rides on box-shadow and should never
+      // fade in.
       transitionProperty: {
-        DEFAULT: "color, background-color, border-color, outline-color",
+        DEFAULT: "color, background-color, border-color, outline-color, transform",
       },
       transitionDuration: {
         // A.6: the only three durations in the design.
