@@ -95,3 +95,47 @@ def test_the_header_never_becomes_the_page(
         }"""
     )
     assert found["ratio"] >= 3.0, f"{path}: header {found['header']} on page {found['body']}"
+
+
+@pytest.mark.a11y
+@pytest.mark.parametrize("path", ["/cennik/", "/terminy/", "/o-nas/", "/certyfikaty/", "/kontakt/"])
+def test_the_dark_band_reads_as_well_as_the_page(
+    live_server, site: SiteSettings, page: Page, path: str
+) -> None:
+    """Every inner page carries one inverted band now, and axe measures what is
+    painted on it — the grounds publish their own foreground, so a component
+    that named a page colour instead would show up here."""
+    violations = audit(page, f"{live_server.url}{path}")
+    assert not violations, f"{path}\n{json.dumps(violations, indent=2, ensure_ascii=False)}"
+
+    band = page.locator(".u-ground-deep, .u-ground-ink").first
+    assert band.count() == 1, f"{path} has no inverted band"
+
+
+@pytest.mark.parametrize(
+    "path", ["/cennik/", "/terminy/", "/o-nas/", "/certyfikaty/", "/kontakt/", "/"]
+)
+def test_no_purple_band_touches_the_purple_footer(
+    live_server, site: SiteSettings, page: Page, path: str
+) -> None:
+    """The footer is deep purple. A deep section directly above it makes one
+    band twice the height with a seam nobody can see, so the last section
+    before the footer is never purple."""
+    page.goto(f"{live_server.url}{path}")
+    page.wait_for_selector("h1")
+
+    clash = page.evaluate(
+        """() => {
+            const footer = document.querySelector('footer');
+            let previous = footer && footer.previousElementSibling;
+            while (previous && !previous.matches('section, div')) {
+                previous = previous.previousElementSibling;
+            }
+            const deep = (el) => !!el && (
+                el.classList.contains('u-ground-deep') ||
+                !!el.querySelector(':scope > .u-ground-deep')
+            );
+            return deep(previous);
+        }"""
+    )
+    assert not clash, f"{path} ends on purple, straight above a purple footer"

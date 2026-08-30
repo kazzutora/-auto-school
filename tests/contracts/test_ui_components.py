@@ -8,7 +8,7 @@ from django.conf import settings
 
 COTTON = Path(settings.BASE_DIR) / "templates" / "cotton"
 
-# tech.md section 7 at core v4: component file -> the props its row declares.
+# tech.md section 7 at core v10: component file -> the props its row declares.
 # Slot only components carry an empty set. Cotton maps <c-gallery-grid> to
 # gallery_grid and <c-accordion.item> to accordion/item.
 TECH_MD_COMPONENTS: dict[str, set[str]] = {

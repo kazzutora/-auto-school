@@ -353,16 +353,18 @@ def test_a_longer_offer_does_not_add_queries(client: Client, django_assert_num_q
 
 
 def category_tiles(html: str) -> list[str]:
-    """Every licence tile in the grid, markup and all."""
-    grid = re.search(
-        r'<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">(.*?)</ul>',
+    """Every licence tile on the page, markup and all.
+
+    Found by a test hook rather than by its classes. This helper matched on the
+    grid's exact class string and on the anchor's class starting with "group",
+    and both broke the moment the tile learned to lift — the anchor gained
+    u-card ahead of group and the search quietly returned nothing at all, which
+    reads as "the page renders no tiles" rather than "the test lost them".
+    """
+    return re.findall(
+        r'<a [^>]*data-testid="category-tile"[^>]*>.*?</a>',
         html,
         re.S,
-    )
-    if not grid:
-        return []
-    return re.findall(
-        r'<a href="/kursy/[^"]*"[^>]*class="group[^"]*"[^>]*>.*?</a>', grid.group(1), re.S
     )
 
 
