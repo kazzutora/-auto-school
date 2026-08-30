@@ -5,6 +5,7 @@ frozen in section 7 stay exactly as written and the data arrives through these
 tags.
 """
 
+import re
 from typing import Any
 
 from django import template
@@ -114,3 +115,30 @@ def owner_ready(value: Any) -> str:
     """
     text = str(value or "").strip()
     return "" if text.startswith(OWNER_TODO) else text
+
+
+@register.filter
+def without_lead_in(html: str, heading: str) -> str:
+    """The rendered markdown minus a first line that just repeats the heading.
+
+    Course bodies are written with their own lead-in — "Uprawnia do
+    kierowania:" — and the template prints a heading saying the same thing
+    right above it. That is a duplicate on all fifteen course pages, and it is
+    the body's line rather than the heading's that goes: the heading is the one
+    the page controls and the one an anchor points at.
+
+    Compared without the colon and without case, because that is the whole of
+    the difference between the two in every case seen so far. Anything else is
+    left alone: a body that opens on a real sentence keeps it.
+    """
+    text = str(html or "")
+    wanted = str(heading or "").strip().rstrip(":").casefold()
+    if not wanted:
+        return text
+
+    opening = re.match(r"\s*<p>(.*?)</p>", text, re.S)
+    if not opening:
+        return text
+
+    first = re.sub(r"<[^>]+>", "", opening.group(1)).strip().rstrip(":").casefold()
+    return text[opening.end() :] if first == wanted else text

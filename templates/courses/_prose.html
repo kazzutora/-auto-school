@@ -14,12 +14,10 @@ overflow-wrap:anywhere for the same reason one step further: a privacy policy
 cites urls, and hyphenation will not break a word with no vowels in it. A single
 long link is enough to push the whole page sideways, F10.
 
+Everything it looks like now lives in .u-prose in the base layer, where the
+markdown renderer's bare h2 and li can be reached. This file is the seam:
+three pages include it and none of them repeats the styling.
+
 Takes: html — already rendered and marked safe by the view.
 {% endcomment %}
-<div class="u-narrow text-ink-700 [overflow-wrap:anywhere]
-            [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-ink
-            [&_li]:ml-5 [&_li]:mt-2 [&_li]:list-disc
-            [&_ol]:mt-4 [&_ol_li]:list-decimal
-            [&_p]:mt-4 [&_p:first-child]:mt-0
-            [&_strong]:font-semibold [&_strong]:text-ink
-            [&_ul]:mt-4">{{ html }}</div>
+<div class="u-prose">{{ html }}</div>

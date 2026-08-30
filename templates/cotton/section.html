@@ -10,9 +10,9 @@ the enum the way A.5 extends the badge's.
 deep is deliberately absent. A.1 allows it for inverted blocks and the footer,
 and the footer is layout, not a section.
 {% endcomment %}
-<c-vars id="" tone="default" class="" />
+<c-vars id="" tone="default" size="normal" class="" />
 <section data-reveal {% if id %}id="{{ id }}"{% endif %}
-  class="u-section{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'deep' %} u-ground-deep{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
+  class="u-section{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'deep' %} u-ground-deep{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container">
     {% if heading %}<h2>{{ heading }}</h2>{% endif %}

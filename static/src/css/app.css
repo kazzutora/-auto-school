@@ -191,11 +191,29 @@
    */
   :root {
     color-scheme: light;
+
+    /* The header's own height, in one place. Everything that has to clear it
+     * reads this rather than repeating 72px, so moving the header moves them
+     * all. */
+    --header-h: 72px;
   }
 
   /* ------------------------------------------------------------------ *
    * Document
    * ------------------------------------------------------------------ */
+  /* Anything a link can jump to stops below the header instead of under it.
+   *
+   * A sticky header is not taken into account by an anchor jump: the browser
+   * puts the target at the top of the viewport and the header then covers it.
+   * On /kursy/kat-b/ that cut "18 lat" in half, and on /przydatne-linki/ it ate
+   * the "Egzamin" heading outright. 24px past the header, so the target has air
+   * above it rather than touching the band.
+   */
+  :is(h1, h2, h3, h4, h5, h6),
+  [id] {
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+
   html {
     @apply bg-paper text-ink antialiased;
     font-family: theme('fontFamily.sans');
@@ -430,8 +448,112 @@
     @apply max-w-narrow;
   }
 
+  /* Three heights, X0 point 4. The old single step was 64/96/128px and it
+   * gave a section holding 337 characters a height of 707px — air instead of
+   * rhythm, which reads as an unfinished page rather than a calm one.
+   *
+   * normal keeps the middle step. compact is for a row that is mostly one
+   * control, tall for the few blocks that carry a page on their own. */
+  /* Markdown out of the database, X0 point 5.
+   *
+   * The renderer emits bare h2, h3, p, ul, ol and a — no classes to hang
+   * anything on — so the styling has to come from the container. Before this
+   * the headings inside a page body were set in the body face at body weight
+   * and lost to the page lead above them: "Kim jesteśmy" read as a bold
+   * sentence rather than the start of a section.
+   *
+   * The list marker is the design's own yellow square, 6px, not a grey disc.
+   * A.7 keeps circles out of the language and a bullet is the smallest place
+   * that rule shows.
+   */
+  .u-prose {
+    @apply u-narrow;
+    overflow-wrap: anywhere;
+  }
+
+  .u-prose > :first-child {
+    margin-top: 0;
+  }
+
+  .u-prose h2 {
+    @apply font-display text-h2 font-bold text-ink;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .u-prose h3,
+  .u-prose h4 {
+    @apply font-display text-h3 font-bold text-ink;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .u-prose p,
+  .u-prose ul,
+  .u-prose ol {
+    margin-top: 1rem;
+  }
+
+  .u-prose li {
+    position: relative;
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+    list-style: none;
+  }
+
+  .u-prose li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background-color: rgb(var(--accent));
+  }
+
+  /* An ordered list keeps its numbers: they are the content there, and a row
+   * of identical squares would throw the order away. */
+  .u-prose ol {
+    counter-reset: u-prose-item;
+  }
+
+  .u-prose ol > li {
+    counter-increment: u-prose-item;
+  }
+
+  .u-prose ol > li::before {
+    content: counter(u-prose-item) ".";
+    background: none;
+    top: 0;
+    width: auto;
+    height: auto;
+    font-variant-numeric: tabular-nums;
+    color: rgb(var(--ink-500));
+  }
+
+  .u-prose a {
+    @apply text-ink underline underline-offset-4;
+  }
+
+  .u-prose strong {
+    @apply font-semibold text-ink;
+  }
+
+  .u-prose code {
+    @apply rounded bg-paper-100 px-1.5 py-0.5 text-small;
+    font-family: theme('fontFamily.mono');
+  }
+
   .u-section {
-    @apply py-16 md:py-24 xl:py-32;
+    @apply py-16 md:py-24;
+  }
+
+  .u-section-compact {
+    @apply py-12 md:py-16;
+  }
+
+  .u-section-tall {
+    @apply py-24 md:py-32;
   }
 
   /* A ground is a block that flips the local colour roles: the hero and the
