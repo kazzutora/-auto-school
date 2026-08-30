@@ -41,7 +41,7 @@ switcher and the phone number.
           <li class="border-b border-line-soft last:border-b-0">
             <a href="{% if url %}{{ url }}{% else %}#{% endif %}"
                {% if request.path == url %}aria-current="page"{% endif %}
-               class="flex min-h-[56px] items-center text-h3 font-bold transition hover:text-ink-700{% if request.path == url %} border-l-4 border-accent pl-4{% endif %}">
+               class="u-menurow flex min-h-[56px] items-center text-h3 font-bold transition hover:translate-x-1{% if request.path == url %} border-l-4 border-accent pl-4{% endif %}">
               {{ item.title }}
             </a>
             {% if item.children %}

@@ -14,8 +14,10 @@ the anchor is the tile and the ring lands on the same rectangle either way.
 {% endcomment %}
 <c-vars course="" level="3" class="" />
 <a href="{{ course.get_absolute_url }}"
-  class="group flex h-full flex-col rounded border border-line-soft bg-paper p-6 transition hover:border-ink hover:shadow-card {{ class }}" {{ attrs }}>
-  {% if course.code %}<p class="font-display text-h1 font-extrabold leading-none text-ink">{{ course.code }}</p>{% endif %}
+  class="u-card group flex h-full flex-col rounded border border-line-soft bg-paper p-6 transition hover:-translate-y-1 hover:border-ink hover:shadow-card {{ class }}" {{ attrs }}>
+  {% if course.code %}
+    <p class="font-display text-h1 font-extrabold leading-none text-ink transition group-hover:-translate-y-0.5">{{ course.code }}</p>
+  {% endif %}
   {% if level == '2' or level == 2 %}
     <h2 class="mt-3 text-body font-semibold text-ink">{{ course.title }}</h2>
   {% else %}
