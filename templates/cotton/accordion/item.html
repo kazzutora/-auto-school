@@ -10,11 +10,11 @@ The indicator is plus and minus from the sprite, not a chevron. A.5 is explicit
 about that, and the two symbols say open-me and close-me rather than pointing.
 {% endcomment %}
 <c-vars title="" open="" class="" />
-<details class="group border-b border-line-soft last:border-b-0 {{ class }}" {% if open %}open{% endif %} {{ attrs }}>
+<details data-accordion class="group border-b border-line-soft last:border-b-0 {{ class }}" {% if open %}open{% endif %} {{ attrs }}>
   <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-semibold text-ink transition hover:bg-paper-50 [&::-webkit-details-marker]:hidden">
     {{ title }}
     <span class="text-ink-500 group-open:hidden"><c-icon name="plus" /></span>
     <span class="hidden text-ink-500 group-open:block"><c-icon name="minus" /></span>
   </summary>
-  <div class="px-4 pb-4 text-ink-700">{{ slot }}</div>
+  <div data-accordion-body class="overflow-hidden px-4 pb-4 text-ink-700">{{ slot }}</div>
 </details>

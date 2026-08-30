@@ -210,6 +210,73 @@
     });
   }
 
+  /* The accordion opens and closes over 180ms, FRONTEND.md A.6 point 2.
+   *
+   * <details> has no animation of its own: the content is not rendered while
+   * it is shut, so there is no height to travel from. The element is opened
+   * first, measured, then walked from zero to that height — and on the way out
+   * the reverse, with the open attribute dropped only once the box has closed.
+   *
+   * Without this script <details> still opens and closes on its own, instantly,
+   * which is what it did before and what a reader with no javascript gets.
+   */
+  var PANEL_MS = 180;
+
+  function animateAccordion(details, body, opening) {
+    var height = body.scrollHeight;
+    body.style.overflow = "hidden";
+    body.style.height = (opening ? 0 : height) + "px";
+
+    // Reading offsetHeight forces the start height to be applied before the
+    // end one lands; without it the browser sees a single value and no move.
+    void body.offsetHeight;
+
+    body.style.transition = "height " + PANEL_MS + "ms ease-out";
+    body.style.height = (opening ? height : 0) + "px";
+
+    window.setTimeout(function () {
+      body.style.transition = "";
+      body.style.height = "";
+      body.style.overflow = "";
+      if (!opening) {
+        details.open = false;
+      }
+      details.removeAttribute("data-animating");
+    }, PANEL_MS);
+  }
+
+  function initAccordion() {
+    var reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      return;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-accordion]"), function (details) {
+      var summary = details.querySelector("summary");
+      var body = details.querySelector("[data-accordion-body]");
+      if (!summary || !body) {
+        return;
+      }
+
+      summary.addEventListener("click", function (event) {
+        if (details.hasAttribute("data-animating")) {
+          event.preventDefault();
+          return;
+        }
+        event.preventDefault();
+        details.setAttribute("data-animating", "");
+
+        var opening = !details.open;
+        if (opening) {
+          // Opened first, because a shut <details> has nothing to measure.
+          details.open = true;
+        }
+        animateAccordion(details, body, opening);
+      });
+    });
+  }
+
   /* Section reveal, FRONTEND.md A.6 point 3.
    *
    * Hides a section only when it starts watching it, and only when it is below
@@ -363,6 +430,7 @@
     linkFieldErrors();
     initTableOfContents();
     initReveal();
+    initAccordion();
   });
 
   /* htmx replaces the enrolment form with a version carrying its errors, and
