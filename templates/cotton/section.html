@@ -12,11 +12,11 @@ and the footer is layout, not a section.
 {% endcomment %}
 <c-vars id="" tone="default" class="" />
 <section data-reveal {% if id %}id="{{ id }}"{% endif %}
-  class="u-section{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
+  class="u-section{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'deep' %} u-ground-deep{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container">
     {% if heading %}<h2>{{ heading }}</h2>{% endif %}
-    {% if sub %}<p class="u-narrow mt-4 text-body-lg{% if tone == 'accent' %} u-fixed-ink{% elif tone == 'brand' %}{% else %} text-ink-700{% endif %}">{{ sub }}</p>{% endif %}
+    {% if sub %}<p class="u-narrow mt-4 text-body-lg{% if tone == 'accent' %} u-fixed-ink{% elif tone == 'brand' or tone == 'deep' %}{% else %} text-ink-700{% endif %}">{{ sub }}</p>{% endif %}
     <div class="{% if heading or sub %}mt-12{% endif %}">{{ slot }}</div>
   </div>
 </section>

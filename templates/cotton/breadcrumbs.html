@@ -1,17 +1,17 @@
-{% comment %}
-Breadcrumbs, tech.md section 7.
-
-The separator is a sprite arrow rather than a slash so it inherits the stroke
-weight of the rest of the interface, and it is hidden from assistive tech: the
-list structure already carries the nesting.
-{% endcomment %}
 <c-vars items="" />
+{% comment %}
+Breadcrumbs, FRONTEND.md A.10.
+
+Every colour here comes from the ground rather than from the palette. The trail
+sits at the top of a page, which since core v10 may be an inverted band, and a
+component that names ink is a component that disappears on one.
+{% endcomment %}
 <nav aria-label="Okruszki" {{ attrs }}>
-  <ol class="flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-ink-500">
+  <ol class="u-muted-on-ground flex flex-wrap items-center gap-x-3 gap-y-1 text-small">
     {% for item in items %}<li class="flex items-center gap-3">
-      {% if not forloop.first %}<c-icon name="arrow-right" size="sm" class="text-ink-300" />{% endif %}
-      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="underline-offset-4 hover:text-ink hover:underline">{{ item.title }}</a>
-      {% else %}<span aria-current="page" class="text-ink">{{ item.title }}</span>{% endif %}
+      {% if not forloop.first %}<c-icon name="arrow-right" size="sm" class="opacity-60" />{% endif %}
+      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="underline-offset-4 transition hover:underline hover:opacity-100">{{ item.title }}</a>
+      {% else %}<span aria-current="page" class="u-on-ground">{{ item.title }}</span>{% endif %}
     </li>{% endfor %}
   </ol>
 </nav>

@@ -532,6 +532,12 @@
 
   /* Text that sits back on a ground without naming a colour of its own. Same
    * reason: ink-500 is a page colour and has no contrast on deep. */
+  /* Full strength on whatever the ground is, for the one item in a quiet row
+   * that has to stand out — the current page in a trail. */
+  .u-on-ground {
+    color: rgb(var(--on-ground));
+  }
+
   .u-muted-on-ground {
     color: rgb(var(--on-ground) / 0.75);
   }
