@@ -59,7 +59,7 @@ def section_filters(chosen: str, counts: dict[str, int]) -> list[dict[str, objec
         return []
 
     path = reverse("gallery:index")
-    options: list[tuple[str, str, int]] = [(ALL_SECTIONS, _("Wszystkie"), sum(counts.values()))]
+    options: list[tuple[str, Label, int]] = [(ALL_SECTIONS, _("Wszystkie"), sum(counts.values()))]
     options += [(name, SECTION_LABELS[name], counts[name]) for name in filled]
     return [
         {

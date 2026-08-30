@@ -55,17 +55,23 @@ def truncate_text(text: str, limit: int) -> str:
     return collapsed[:limit]
 
 
-def build_description(text: str, limit: int = DESCRIPTION_LIMIT) -> str:
-    """Meta description, filled from lead when the database field is empty."""
-    return truncate_text(text, limit)
+def build_description(text: Label, limit: int = DESCRIPTION_LIMIT) -> str:
+    """Meta description, filled from lead when the database field is empty.
+
+    str() first: a caller may hand over a lazy string, and this is the point
+    where it has to become one, because it is about to be measured and cut.
+    The request has already chosen a language by the time a view builds its
+    Seo, so resolving here resolves it in the right one.
+    """
+    return truncate_text(str(text), limit)
 
 
-def build_title(subject: str, limit: int = TITLE_LIMIT) -> str:
+def build_title(subject: Label, limit: int = TITLE_LIMIT) -> str:
     """Compose "<subject> — OSK Nawrocki Wieluń" within the limit."""
     room = limit - len(TITLE_SEPARATOR) - len(TITLE_SUFFIX)
     if room <= 0:
-        return truncate_text(subject, limit)
-    head = truncate_text(subject, room)
+        return truncate_text(str(subject), limit)
+    head = truncate_text(str(subject), room)
     if not head:
         return TITLE_SUFFIX
     return f"{head}{TITLE_SEPARATOR}{TITLE_SUFFIX}"
@@ -137,8 +143,8 @@ def breadcrumb_jsonld(items: list[tuple[Label, str]]) -> dict[str, Any]:
 def page_seo(
     request: Any,
     *,
-    subject: str,
-    description: str,
+    subject: Label,
+    description: Label,
     breadcrumbs: list[tuple[Label, str]] | None = None,
     og_image: str | None = None,
     robots: str = "index,follow",
