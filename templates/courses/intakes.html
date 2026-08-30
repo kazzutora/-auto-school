@@ -9,10 +9,10 @@ javascript never arrives, so the filter is not a javascript feature.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+<c-section tone="deep">
   <c-breadcrumbs :items="breadcrumbs" />
   <c-heading level="1" eyebrow="OSK Nawrocki Wieluń" class="mt-6">Terminy</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+  <p class="u-narrow mt-4 text-body-lg u-muted-on-ground">
     Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane.
   </p>
 
@@ -24,15 +24,15 @@ javascript never arrives, so the filter is not a javascript feature.
         hx-push-url="true"
         class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <div class="flex flex-col gap-2">
-      <label for="id_course" class="font-semibold text-ink">Kurs</label>
+      <label for="id_course" class="font-semibold">Kurs</label>
       <c-select name="course" :options="course_options" value="{{ chosen.course }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_language" class="font-semibold text-ink">Język</label>
+      <label for="id_language" class="font-semibold">Język</label>
       <c-select name="language" :options="language_options" value="{{ chosen.language }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_mode" class="font-semibold text-ink">Tryb</label>
+      <label for="id_mode" class="font-semibold">Tryb</label>
       <c-select name="mode" :options="mode_options" value="{{ chosen.mode }}" />
     </div>
     {# Only reached without javascript: with htmx the change trigger has
@@ -47,7 +47,7 @@ javascript never arrives, so the filter is not a javascript feature.
 {# The rows sit on their own ground: the filter above is a control panel and
    this is its answer, and a page that runs one white field from the heading to
    the footer has no rhythm to read by. #}
-<c-section tone="muted">
+<c-section>
   <div id="intake-rows">
     {% include "courses/_intake_rows.html" %}
   </div>

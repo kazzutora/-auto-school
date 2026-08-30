@@ -16,7 +16,9 @@ and when, and a download beside the scan wherever there is a pdf.
 </c-section>
 
 {% if certificates %}
-  <c-section tone="muted">
+  {# ink, not deep: the footer below is purple and two purples would run
+     together into one band. #}
+  <c-section tone="brand">
     {% include "gallery/_lightbox.html" with items=certificates tile="gallery/_certificate_card.html" grid="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="certificates" label="Podgląd skanu" %}
   </c-section>
 {% else %}

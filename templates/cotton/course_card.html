@@ -13,7 +13,7 @@ the heading here is the code and there is nothing else in the tile to click, so
 the anchor is the tile and the ring lands on the same rectangle either way.
 {% endcomment %}
 <c-vars course="" level="3" class="" />
-<a href="{{ course.get_absolute_url }}"
+<a href="{{ course.get_absolute_url }}" data-testid="category-tile"
   class="u-card group flex h-full flex-col rounded border border-line-soft bg-paper p-6 transition hover:-translate-y-1 hover:border-ink hover:shadow-card {{ class }}" {{ attrs }}>
   {% if course.code %}
     <p class="font-display text-h1 font-extrabold leading-none text-ink transition group-hover:-translate-y-0.5">{{ course.code }}</p>

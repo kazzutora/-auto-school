@@ -44,29 +44,29 @@ nothing.
   {# The facts, laid out as section 6 of the home page: big figures, no circle
      icons, hairlines between them. The numbers are counted rather than written
      down, so they cannot drift away from the offer. #}
-  <c-section id="fakty" tone="muted">
+  <c-section id="fakty" tone="deep">
     <c-slot name="heading">W liczbach</c-slot>
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
       <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
-        <p class="data text-data-xl text-ink">{{ site_settings.founded_year }}</p>
-        <p class="mt-2 text-ink-700">rok założenia, działamy nieprzerwanie</p>
+        <p class="data text-data-xl">{{ site_settings.founded_year }}</p>
+        <p class="mt-2 u-muted-on-ground">rok założenia, działamy nieprzerwanie</p>
       </li>
       {# A tile reading zero is not a fact worth printing. #}
       {% if instructors %}
         <li class="lg:border-l lg:border-line-soft lg:px-8">
-          <p class="data text-data-xl text-ink">{{ instructors|length }}</p>
-          <p class="mt-2 text-ink-700">instruktorów prowadzi zajęcia i jazdy</p>
+          <p class="data text-data-xl">{{ instructors|length }}</p>
+          <p class="mt-2 u-muted-on-ground">instruktorów prowadzi zajęcia i jazdy</p>
         </li>
       {% endif %}
       {% if category_count %}
         <li class="lg:border-l lg:border-line-soft lg:px-8">
-          <p class="data text-data-xl text-ink">{{ category_count }}</p>
-          <p class="mt-2 text-ink-700">kategorii prawa jazdy w ofercie</p>
+          <p class="data text-data-xl">{{ category_count }}</p>
+          <p class="mt-2 u-muted-on-ground">kategorii prawa jazdy w ofercie</p>
         </li>
       {% endif %}
       <li class="lg:border-l lg:border-line-soft lg:px-8">
-        <p class="font-display text-h2 font-bold text-ink">własny</p>
-        <p class="mt-2 text-ink-700">plac manewrowy i sale wykładowe</p>
+        <p class="font-display text-h2 font-bold">własny</p>
+        <p class="mt-2 u-muted-on-ground">plac manewrowy i sale wykładowe</p>
       </li>
     </ul>
   </c-section>
