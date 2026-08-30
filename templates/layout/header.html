@@ -35,7 +35,11 @@ which half of A.9 point 0 to honour.
     {% include "layout/nav.html" %}
 
     <div class="flex shrink-0 items-center gap-3">
-      <c-lang-switcher class="hidden xl:flex" />
+      {# From md rather than xl. Below xl the nav is a burger, so the row the
+         switcher used to share with a full menu is empty anyway, and hiding it
+         until 1280 buried the one control a russian or ukrainian reader opens
+         the site looking for. #}
+      <c-lang-switcher class="hidden md:flex" />
 
       {% if site_settings.phone_primary %}
         <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="data hidden xl:inline-flex">

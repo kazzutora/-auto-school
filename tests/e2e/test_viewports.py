@@ -59,3 +59,34 @@ def test_the_page_never_moves_sideways(
         assert overflow <= 0, f"{path} at {width}px scrolls {overflow}px: {offenders(page)}"
     finally:
         context.close()
+
+
+@pytest.mark.parametrize("width,shown", [(390, False), (768, True), (1024, True), (1440, True)])
+def test_the_language_row_is_reachable_at_every_width(
+    live_server, site: SiteSettings, browser: Browser, width: int, shown: bool
+) -> None:
+    """A reader who does not read polish opens the site looking for one control.
+
+    It used to appear only from 1280, which put it behind the burger on every
+    laptop narrower than that and on every tablet. It stands in the bar from md
+    now; below md the bar has no room and it lives in the menu panel, which is
+    the one place it is allowed to hide.
+    """
+    context = browser.new_context(viewport={"width": width, "height": 900})
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}/o-nas/")
+        page.wait_for_selector("h1")
+
+        # The panel carries a second copy of the row, so take the one in the
+        # bar by document order rather than by a selector the panel also fits.
+        bar = page.locator(".u-header nav[aria-label]:has(a[hreflang])").first
+        assert bar.is_visible() is shown, f"the language row at {width}px"
+
+        if not shown:
+            page.locator("[data-modal-open=main-menu]").click()
+            panel = page.locator("#main-menu nav[aria-label]:has(a[hreflang])")
+            panel.wait_for(state="visible")
+            assert panel.is_visible(), "the menu panel drops the language row too"
+    finally:
+        context.close()
