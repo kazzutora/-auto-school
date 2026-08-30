@@ -190,7 +190,11 @@ def test_the_filter_works_without_javascript(live_server, browser: Browser) -> N
     page.wait_for_url("**/galeria/?section=vehicles")
 
     assert page.locator("picture img").count() == 1
-    assert page.locator("h2").inner_text() == "Pojazdy"
+
+    # The first h2 is the group. The page closes on an invitation that has one
+    # of its own now, so asking for "the" h2 is a strict mode violation rather
+    # than a failure of the filter.
+    assert page.locator("main h2").first.inner_text() == "Pojazdy"
     context.close()
 
 

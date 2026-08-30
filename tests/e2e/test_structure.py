@@ -104,6 +104,7 @@ RHYTHM = """() => {
               : s.classList.contains('u-ground-deep') ? 'deep' : 'paper',
         height: Math.round(s.getBoundingClientRect().height),
         chars: s.textContent.replace(/\s+/g, ' ').trim().length,
+        media: !!s.querySelector('img, picture, iframe, [data-map]'),
     }));
     let repeats = 0;
     for (let i = 1; i < report.length; i++) {
@@ -114,7 +115,11 @@ RHYTHM = """() => {
         grounds: report.map(r => r.ground),
         repeats: repeats,
         last: report.length ? report[report.length - 1].ground : null,
-        airy: report.filter(r => r.height > 700 && r.chars < 400)
+        // A section whose content is a map or a wall of photographs is tall
+        // for a reason, and counting its characters says nothing about it.
+        // The rule is about text with air around it, so only text sections
+        // are judged by it.
+        airy: report.filter(r => !r.media && r.height > 700 && r.chars < 400)
                     .map(r => r.height + 'px for ' + r.chars + ' characters'),
     };
 }"""
