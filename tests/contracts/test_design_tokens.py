@@ -75,8 +75,6 @@ EXTRA_ICONS = (
     # the tile at five columns.
     "car-trailer",
     "truck-trailer",
-    # The one course taught on something that is not a road vehicle.
-    "forklift",
 )
 
 ICONS = (
@@ -455,60 +453,3 @@ def test_the_emails_keep_their_text_readable(themes: dict) -> None:
 
     # A.2's banned pair, in case anyone paints a button here.
     assert contrast(hex_to_rgb("#FFFFFF"), hex_to_rgb("#FFD400")) < 2.0
-
-
-# Every course kind has a drawing behind it, and a name with no symbol is an
-# empty sheet on a public page.
-VEHICLE_DRAWINGS = (
-    "moped",
-    "motorcycle",
-    "car",
-    "car-trailer",
-    "truck",
-    "truck-trailer",
-    "bus",
-    "forklift",
-)
-
-ILLUSTRATIONS = SPRITE.parent.parent / "illustrations" / "vehicles"
-
-
-def test_every_vehicle_the_courses_name_has_a_drawing() -> None:
-    """One file per vehicle, and every file holds the symbol it is named for.
-
-    Parsed rather than grepped, for the reason the sprite test gives: an id
-    inside a comment is a string in a file and nothing on the screen.
-    """
-    import xml.etree.ElementTree as ElementTree
-
-    for name in VEHICLE_DRAWINGS:
-        path = ILLUSTRATIONS / f"{name}.svg"
-        assert path.exists(), f"{name} has no drawing"
-
-        root = ElementTree.parse(path).getroot()
-        ids = {symbol.get("id") for symbol in root.iter("{http://www.w3.org/2000/svg}symbol")}
-        assert f"v-{name}" in ids, f"{path.name} does not hold v-{name}"
-
-    extra = {found.stem for found in ILLUSTRATIONS.glob("*.svg")} - set(VEHICLE_DRAWINGS)
-    assert not extra, f"drawings nobody asks for: {sorted(extra)}"
-
-
-def test_the_drawings_carry_their_own_stroke() -> None:
-    """A <use> pointing at another document clones the element; it is not worth
-    betting on whether it also carries that document's stylesheet. Every group
-    states its own paint, exactly as the icon sprite does."""
-    for name in VEHICLE_DRAWINGS:
-        text = (ILLUSTRATIONS / f"{name}.svg").read_text(encoding="utf-8")
-        assert "class=" not in text, f"{name} leans on css that may not travel"
-        assert 'stroke="currentColor"' in text, f"{name} does not take the ground's ink"
-
-
-def test_a_drawing_is_small_enough_to_be_worth_fetching() -> None:
-    """The reason the set is eight files and not one sprite. A course page pulls
-    exactly one, and the first screen budget in A.11 has no room for the other
-    seven."""
-    for found in ILLUSTRATIONS.glob("*.svg"):
-        assert found.stat().st_size <= 9 * 1024, (
-            f"{found.name} is {found.stat().st_size // 1024}KB; a drawing this "
-            "heavy belongs behind a scroll, not above the fold"
-        )

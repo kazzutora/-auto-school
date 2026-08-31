@@ -176,27 +176,6 @@ CATEGORY_VEHICLES = {
 }
 
 
-# The courses that carry no licence letter. A qualification is taught in a
-# lorry, a forklift ticket on a forklift, and neither has a code to key on.
-# Psychological tests are deliberately absent: no vehicle belongs beside them.
-COURSE_VEHICLES = {
-    "wozki-widlowe": ("forklift",),
-    "kwalifikacja-wstepna": ("truck",),
-    "kwalifikacja-wstepna-przyspieszona": ("truck",),
-    "szkolenia-okresowe": ("truck",),
-    "adr": ("truck",),
-}
-
-
-@register.filter
-def course_vehicles(course: object) -> tuple[str, ...]:
-    """What a whole course is taught on, by code first and slug second."""
-    by_code = category_vehicles(getattr(course, "code", "") or "")
-    if by_code:
-        return by_code
-    return COURSE_VEHICLES.get(str(getattr(course, "slug", "") or ""), ())
-
-
 @register.filter
 def category_vehicles(code: str) -> tuple[str, ...]:
     """The icons for a category code, or nothing for a course without one.

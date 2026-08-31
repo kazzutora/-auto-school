@@ -137,10 +137,6 @@ STATICFILES_DIRS = [
     ("js", BASE_DIR / "static" / "js"),
     ("fonts", BASE_DIR / "static" / "fonts"),
     ("icons", BASE_DIR / "static" / "icons"),
-    # The vehicle blueprints. A directory of its own rather than more files in
-    # icons/: a 24px pictogram and a 720x240 side elevation share nothing but
-    # the file format.
-    ("illustrations", BASE_DIR / "static" / "illustrations"),
 ]
 
 MEDIA_URL = "media/"

@@ -72,24 +72,11 @@ only action on the page.
 
   <div class="mt-12 grid gap-12 lg:grid-cols-3">
     <div class="min-w-0 lg:col-span-2">
-      {# A photograph when the school has one, a drawing of the vehicle when it
-         does not. The drawing is deliberately a drawing: the alternative was a
-         stock photo of somebody else's car standing in for this fleet, and a
-         picture that claims to show the school's vehicles has to show them.
-         3/1 rather than the 3/2 a photo takes: a side elevation is a wide,
-         flat thing and the extra height would be empty sheet. #}
       {% if course.hero_image %}
         <div class="mb-10 overflow-hidden rounded border border-line-soft">
           <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}"
                      ratio="card" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
         </div>
-      {% else %}
-        {% with vehicles=course|course_vehicles %}
-          {% for vehicle in vehicles %}
-            {% blocktranslate with title=course.title asvar drawing_label %}Rysunek pojazdu: {{ title }}{% endblocktranslate %}
-            <c-vehicle-drawing name="{{ vehicle }}" label="{{ drawing_label }}" class="mb-10" />
-          {% endfor %}
-        {% endwith %}
       {% endif %}
 
       {% if entitlements %}
