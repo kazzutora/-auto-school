@@ -479,10 +479,7 @@ def test_every_vehicle_the_courses_name_has_a_drawing() -> None:
     import xml.etree.ElementTree as ElementTree
 
     root = ElementTree.parse(ILLUSTRATIONS).getroot()
-    ids = {
-        symbol.get("id")
-        for symbol in root.iter("{http://www.w3.org/2000/svg}symbol")
-    }
+    ids = {symbol.get("id") for symbol in root.iter("{http://www.w3.org/2000/svg}symbol")}
     assert ids == {f"v-{name}" for name in VEHICLE_DRAWINGS}
 
 
