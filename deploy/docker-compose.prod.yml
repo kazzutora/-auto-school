@@ -9,7 +9,10 @@ x-django-env: &django-env
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
   DJANGO_DEBUG: "0"
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?set DJANGO_ALLOWED_HOSTS in .env}
-  DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env}
+  # Built from the POSTGRES_* values the db service already requires, so the
+  # password is written once in .env. Set DATABASE_URL explicitly only to point
+  # at a database outside this stack.
+  DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}}
   REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
   MAIL_CLIENT: ${MAIL_CLIENT:-smtp}
   SMS_CLIENT: ${SMS_CLIENT:-fake}
