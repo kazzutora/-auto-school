@@ -76,9 +76,8 @@ only action on the page.
          does not. The drawing is deliberately a drawing: the alternative was a
          stock photo of somebody else's car standing in for this fleet, and a
          picture that claims to show the school's vehicles has to show them.
-         Shorter than the 3/2 the photo takes: a drawing needs enough room to
-         be read and no more, and a half empty 480px box is the kind of dead
-         space this footer has just been trimmed of. #}
+         3/1 rather than the 3/2 a photo takes: a side elevation is a wide,
+         flat thing and the extra height would be empty sheet. #}
       {% if course.hero_image %}
         <div class="mb-10 overflow-hidden rounded border border-line-soft">
           <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}"
@@ -86,17 +85,10 @@ only action on the page.
         </div>
       {% else %}
         {% with vehicles=course|course_vehicles %}
-          {% if vehicles %}
-            <div class="mb-10 flex h-40 items-center justify-center rounded border border-line-soft bg-paper-50 md:h-56">
-              {% for vehicle in vehicles %}
-                {# Important, because c-icon always emits a size of its own and two
-                   height utilities of equal specificity are settled by whichever
-                   tailwind happened to write last. #}
-                <c-icon name="{{ vehicle }}" class="!h-20 !w-20 text-ink-300 md:!h-28 md:!w-28"
-                        label="{% blocktranslate with title=course.title %}Rysunek pojazdu: {{ title }}{% endblocktranslate %}" />
-              {% endfor %}
-            </div>
-          {% endif %}
+          {% for vehicle in vehicles %}
+            {% blocktranslate with title=course.title asvar drawing_label %}Rysunek pojazdu: {{ title }}{% endblocktranslate %}
+            <c-vehicle-drawing name="{{ vehicle }}" label="{{ drawing_label }}" class="mb-10" />
+          {% endfor %}
         {% endwith %}
       {% endif %}
 

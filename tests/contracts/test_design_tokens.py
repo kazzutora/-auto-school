@@ -455,3 +455,44 @@ def test_the_emails_keep_their_text_readable(themes: dict) -> None:
 
     # A.2's banned pair, in case anyone paints a button here.
     assert contrast(hex_to_rgb("#FFFFFF"), hex_to_rgb("#FFD400")) < 2.0
+
+
+# Every course kind has a drawing behind it, and a name with no symbol is an
+# empty sheet on a public page.
+VEHICLE_DRAWINGS = (
+    "moped",
+    "motorcycle",
+    "car",
+    "car-trailer",
+    "truck",
+    "truck-trailer",
+    "bus",
+    "forklift",
+)
+
+ILLUSTRATIONS = SPRITE.parent.parent / "illustrations" / "vehicles.svg"
+
+
+def test_every_vehicle_the_courses_name_has_a_drawing() -> None:
+    """Parsed rather than grepped, for the reason the sprite test gives: an id
+    inside a comment is a string in a file and nothing on the screen."""
+    import xml.etree.ElementTree as ElementTree
+
+    root = ElementTree.parse(ILLUSTRATIONS).getroot()
+    ids = {
+        symbol.get("id")
+        for symbol in root.iter("{http://www.w3.org/2000/svg}symbol")
+    }
+    assert ids == {f"v-{name}" for name in VEHICLE_DRAWINGS}
+
+
+def test_the_drawings_carry_their_own_stroke() -> None:
+    """A <use> pointing at another document clones the element; it is not worth
+    betting on whether it also carries that document's stylesheet. Every group
+    states its own paint, exactly as the icon sprite does."""
+    text = ILLUSTRATIONS.read_text(encoding="utf-8")
+    assert "class=" not in text, "a drawing leans on css that may not travel"
+    assert text.count('stroke="currentColor"') == len(VEHICLE_DRAWINGS), (
+        "each drawing states its own paint once, the two combinations included: "
+        "they reuse a drawing for the towing half and draw the trailer themselves"
+    )

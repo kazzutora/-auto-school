@@ -618,7 +618,7 @@ def test_a_category_page_draws_the_vehicle_when_it_has_no_photo(client: Client) 
     make_course(slug="kat-b", code="B", title="Kategoria B")
 
     body = body_of(client, "/kursy/kat-b/")
-    assert "#i-car" in body
+    assert "#v-car" in body, "the blueprint, not the 24px pictogram"
     assert 'role="img"' in body, "the drawing carries a name for a screen reader"
 
 
