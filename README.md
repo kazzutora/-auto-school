@@ -114,11 +114,26 @@ Two one time steps once the repository is on github:
 
 ## Production
 
-The production stack takes its secrets from `deploy/.env`, not from the `.env`
-at the repo root: compose resolves the project directory from the location of
-the compose file, and the same rule puts the backups in `deploy/backups`. Copy
-`.env.example` there and fill it in. The database password is written once, as
-`POSTGRES_PASSWORD`; both compose files build `DATABASE_URL` from it.
+The production stack keeps its secrets in `.env` at the repo root, the same file
+the development stack uses, and needs `--env-file .env` to find it: compose
+resolves the project directory from the location of the compose file, so without
+the flag it would look in `deploy/`. That same rule is what puts the backups in
+`deploy/backups`. `deploy.yml` passes the flag already; pass it in a manual call
+too:
+
+```bash
+docker compose --env-file .env -f deploy/docker-compose.prod.yml up -d
+```
+
+The database password is written once, as `POSTGRES_PASSWORD`; both compose
+files build `DATABASE_URL` from it and ignore any `DATABASE_URL` left in `.env`.
+
+On a machine with the checkout but no ghcr login, leave `WEB_IMAGE` empty and
+the stack builds the image locally instead of pulling it:
+
+```bash
+docker compose --env-file .env -f deploy/docker-compose.prod.yml up -d --build
+```
 
 `/healthz` answers 200 only when postgres and redis both respond, and 503 with
 the failing dependency named otherwise. The deploy smoke step and the container

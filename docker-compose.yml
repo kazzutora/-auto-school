@@ -8,9 +8,10 @@ x-django-env: &django-env
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-not-secret}
   DJANGO_DEBUG: ${DJANGO_DEBUG:-1}
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
-  # Built from the POSTGRES_* values below so the password lives in one place.
-  # Set DATABASE_URL explicitly only to point at a database outside this stack.
-  DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:-osk}:${POSTGRES_PASSWORD:-osk}@db:5432/${POSTGRES_DB:-osk}}
+  # Always built from the POSTGRES_* values below, never read from .env: the
+  # password used to be written twice and the two drifted apart. Point the stack
+  # at an outside database by editing this line, not by setting DATABASE_URL.
+  DATABASE_URL: postgres://${POSTGRES_USER:-osk}:${POSTGRES_PASSWORD:-osk}@db:5432/${POSTGRES_DB:-osk}
   REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
   MAIL_CLIENT: ${MAIL_CLIENT:-fake}
   SMS_CLIENT: ${SMS_CLIENT:-fake}

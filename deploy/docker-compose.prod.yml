@@ -1,20 +1,21 @@
 name: osk
 
 # Production stack, tech.md sections 17 and 19. Run from the repo root:
-#   docker compose -f deploy/docker-compose.prod.yml up -d
-# The project directory is this one, not the repo root, so the secrets are read
-# from deploy/.env and the bind mounts resolve to deploy/Caddyfile and
-# deploy/backups. Unlike the development stack this file has no fallbacks: every
-# secret must be present in deploy/.env or the stack refuses to start.
+#   docker compose --env-file .env -f deploy/docker-compose.prod.yml up -d
+# The --env-file is not optional: compose takes the project directory from this
+# file's location, so it would otherwise read deploy/.env rather than the .env at
+# the repo root. That same rule resolves the bind mounts below against deploy/.
+# Unlike the development stack this file has no fallbacks for the secrets: each
+# one must be present in .env or the stack refuses to start.
 x-django-env: &django-env
   DJANGO_SETTINGS_MODULE: config.settings.prod
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
   DJANGO_DEBUG: "0"
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?set DJANGO_ALLOWED_HOSTS in .env}
-  # Built from the POSTGRES_* values the db service already requires, so the
-  # password is written once in .env. Set DATABASE_URL explicitly only to point
-  # at a database outside this stack.
-  DATABASE_URL: ${DATABASE_URL:-postgres://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}}
+  # Always built from the POSTGRES_* values below, never read from .env: the
+  # password used to be written twice and the two drifted apart. Point the stack
+  # at an outside database by editing this line, not by setting DATABASE_URL.
+  DATABASE_URL: postgres://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
   REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
   MAIL_CLIENT: ${MAIL_CLIENT:-smtp}
   SMS_CLIENT: ${SMS_CLIENT:-fake}
@@ -28,7 +29,13 @@ x-django-env: &django-env
   MEDIA_ROOT: ${MEDIA_ROOT:-/app/media}
 
 x-app: &app
-  image: ${WEB_IMAGE:?set WEB_IMAGE in .env}
+  # CI publishes to ghcr and pins the released tag into .env, so there WEB_IMAGE
+  # is always set and `compose pull` fetches it. On a box that has the checkout
+  # but no registry login, leaving it unset builds the same image locally.
+  image: ${WEB_IMAGE:-osk:local}
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
   restart: unless-stopped
   environment: *django-env
   volumes:
