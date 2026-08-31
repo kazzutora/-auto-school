@@ -29,11 +29,15 @@ def course() -> Course:
 def test_list_display_matches_the_task() -> None:
     admin = site._registry[Course]
     # Django normalises these to lists, so compare on content not on type.
+    # intake_count is not from S1.1: CourseIntake.course is PROTECT, so a course
+    # with dates on it refuses to be deleted, and the owner met that as a wall
+    # with nothing on the page to explain it. The count is the explanation.
     assert tuple(admin.list_display) == (
         "title",
         "kind",
         "code",
         "price_gross",
+        "intake_count",
         "is_active",
         "order",
     )
