@@ -6,7 +6,7 @@
    it look like something else. The old site showed eleven of these as bare
    images with no captions, tech.md section 4.5, so every one here says what it
    is, who issued it and when. #}
-<c-card padded="" class="flex w-full flex-col">
+<c-card padded="" class="w-full">
   <button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
           class="u-photo block w-full overflow-hidden border-b border-line-soft transition">
     <c-picture :image="item.image" alt="{{ item.alt }}" ratio="a4"

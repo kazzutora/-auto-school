@@ -109,7 +109,7 @@ nothing.
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
       {% for instructor in instructors %}
         <li class="flex">
-          <c-card padded="" class="flex w-full flex-col">
+          <c-card padded="" class="w-full">
             {% if instructor.photo %}
               {# 1:1, A.8. alt carries the name: the person is the content. #}
               <c-picture :image="instructor.photo" alt="{{ instructor.full_name }}" ratio="square"
@@ -148,7 +148,7 @@ nothing.
           <ul class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {% for vehicle in group.vehicles %}
               <li class="flex">
-                <c-card padded="" class="flex w-full flex-col">
+                <c-card padded="" class="w-full">
                   {% if vehicle.photo %}
                     {# 3:2, A.8: the proportion a car actually looks like. #}
                     <c-picture :image="vehicle.photo" alt="{{ vehicle.make }} {{ vehicle.model }}" ratio="card"

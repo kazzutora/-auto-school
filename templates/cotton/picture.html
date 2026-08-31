@@ -19,5 +19,10 @@ decorative image passes alt="" together with aria-hidden and says so.
   <img src="{{ image.url }}" alt="{{ alt }}" loading="{{ loading }}" decoding="async" sizes="{{ sizes }}"
     width="{% if image.width %}{{ image.width }}{% elif ratio == 'card' %}1200{% elif ratio == 'tile' %}1200{% elif ratio == 'a4' %}1000{% else %}1000{% endif %}"
     height="{% if image.height %}{{ image.height }}{% elif ratio == 'card' %}800{% elif ratio == 'tile' %}900{% elif ratio == 'a4' %}1410{% else %}1000{% endif %}"
-    class="h-full w-full object-cover{% if ratio == 'square' %} aspect-square{% elif ratio == 'card' %} aspect-[3/2]{% elif ratio == 'tile' %} aspect-[4/3]{% elif ratio == 'a4' %} aspect-[1/1.41]{% endif %}">
+    {# h-full only when no ratio is given. With one, the two fight: h-full ties
+       the height to the box, the box is sized from the image, and a browser
+       resolving that circle picked the aspect height while measuring and the
+       box height while painting. On a card that difference was the title and
+       the badges hanging outside the card, over the band below it. #}
+    class="w-full object-cover{% if ratio == 'square' %} aspect-square{% elif ratio == 'card' %} aspect-[3/2]{% elif ratio == 'tile' %} aspect-[4/3]{% elif ratio == 'a4' %} aspect-[1/1.41]{% else %} h-full{% endif %}">
 </picture>

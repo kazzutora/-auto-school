@@ -141,3 +141,49 @@ def test_the_header_row_fits_in_every_language(
         )
     finally:
         context.close()
+
+
+@pytest.mark.parametrize("width", WIDTHS)
+@pytest.mark.parametrize("path", PAGES)
+def test_nothing_hangs_out_of_a_card(
+    live_server, site: SiteSettings, browser: Browser, path: str, width: int
+) -> None:
+    """A card holds what is inside it.
+
+    c-card wraps the slot in a div of its own, so a card told to be a flex
+    column made that wrapper its only flex item — and a lone item with
+    flex-shrink 1 was squeezed to the height of the picture above the text. The
+    title and the badges under the vehicle photos hung 108px below the card,
+    over the dark band underneath.
+
+    The picture was the other half: h-full and an aspect ratio on one image
+    argue, and the browser measured with one and painted with the other.
+    """
+    context = browser.new_context(viewport={"width": width, "height": 900})
+    page = context.new_page()
+    try:
+        page.goto(f"{live_server.url}{path}")
+        page.wait_for_selector("h1")
+        page.wait_for_timeout(150)
+
+        spills = page.evaluate(
+            """() => {
+                const bad = [];
+                for (const card of document.querySelectorAll('.u-card')) {
+                    const cr = card.getBoundingClientRect();
+                    for (const kid of card.querySelectorAll('*')) {
+                        const kr = kid.getBoundingClientRect();
+                        if (kr.height === 0) continue;
+                        const over = Math.round(kr.bottom - cr.bottom);
+                        if (over > 1) {
+                            bad.push(kid.tagName.toLowerCase() + ' by ' + over + 'px');
+                            break;
+                        }
+                    }
+                }
+                return bad;
+            }"""
+        )
+        assert not spills, f"{path} at {width}px: content outside its card — {spills[:3]}"
+    finally:
+        context.close()
