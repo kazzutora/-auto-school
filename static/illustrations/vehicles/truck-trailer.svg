@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Truck with a trailer, side elevation. Why this file looks the way it does:
+     templates/cotton/vehicle_drawing.html. -->
+<symbol id="v-truck" viewBox="0 0 720 240">
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- cab -->
+    <path d="M40 186 L40 104 C42 88 54 78 72 76 L126 70 L158 34 L236 34 L236 186" />
+    <path d="M76 80 L150 72 L174 42 L236 42 L236 94 L76 94 Z" />
+    <path stroke-width="1.4" d="M86 84 L150 78 L172 50 L228 50 L228 86 L86 86 Z" />
+    <path d="M158 42 L158 94" />
+    <path stroke-width="1.4" d="M96 108 L156 108 M96 120 L156 120" />
+    <path stroke-width="1.4" d="M52 116 L52 148 M44 128 L60 128" />
+    <path stroke-width="1.4" d="M124 130 L156 130 M124 134 L152 134" />
+    <path stroke-width="1.4" d="M150 60 L128 54 M128 44 L128 76 M122 46 L134 46 M122 74 L134 74" />
+    <!-- box body with its ribs and the rear door -->
+    <path d="M236 34 L688 34 L688 176 L236 176" />
+    <path stroke-width="1.4" d="M252 48 L676 48 M252 162 L676 162" />
+    <path stroke-width="1.4" d="M340 48 L340 162 M444 48 L444 162 M548 48 L548 162" />
+    <path stroke-width="1.4" d="M636 48 L636 162 M660 60 L660 150 M646 104 L672 104" />
+    <path d="M236 106 L688 106" />
+    <!-- chassis, steps and mudguards -->
+    <path d="M40 186 L94 186 M198 186 L462 186 M566 186 L688 186 L688 176" />
+    <path d="M94 186 A52 52 0 0 1 198 186" />
+    <path d="M462 186 A52 52 0 0 1 566 186" />
+    <path stroke-width="1.4" d="M198 196 L462 196 M566 196 L672 196" />
+    <path stroke-width="1.4" d="M60 190 L60 202 L94 202 L94 190" />
+    <circle cx="146" cy="186" r="48" />
+    <circle cx="146" cy="186" r="34" stroke-width="1.4" />
+    <circle cx="146" cy="186" r="29" stroke-width="1.4" />
+    <circle cx="146" cy="186" r="8" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M145 178 L139 158 A29 29 0 0 1 153 158 L147 178" />
+    <path stroke-width="1.4" d="M153 183 L170 170 A29 29 0 0 1 175 184 L154 184" />
+    <path stroke-width="1.4" d="M152 192 L168 204 A29 29 0 0 1 156 213 L150 193" />
+    <path stroke-width="1.4" d="M142 193 L136 213 A29 29 0 0 1 124 204 L140 192" />
+    <path stroke-width="1.4" d="M138 184 L117 184 A29 29 0 0 1 122 170 L139 183" />
+    <path stroke-width="1.4" d="M146 172 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M160 182 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M154 198 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M138 198 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M132 182 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <circle cx="514" cy="186" r="48" />
+    <circle cx="514" cy="186" r="34" stroke-width="1.4" />
+    <circle cx="514" cy="186" r="29" stroke-width="1.4" />
+    <circle cx="514" cy="186" r="8" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M513 178 L507 158 A29 29 0 0 1 521 158 L515 178" />
+    <path stroke-width="1.4" d="M521 183 L538 170 A29 29 0 0 1 543 184 L522 184" />
+    <path stroke-width="1.4" d="M520 192 L536 204 A29 29 0 0 1 524 213 L518 193" />
+    <path stroke-width="1.4" d="M510 193 L504 213 A29 29 0 0 1 492 204 L508 192" />
+    <path stroke-width="1.4" d="M506 184 L485 184 A29 29 0 0 1 490 170 L507 183" />
+    <path stroke-width="1.4" d="M514 172 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M528 182 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M522 198 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M506 198 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M500 182 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <path stroke-width="1.4" d="M8 234 H712" />
+  </g>
+</symbol>
+
+<symbol id="v-truck-trailer" viewBox="0 0 720 240">
+  <use href="#v-truck" transform="translate(-16 68) scale(0.56)" />
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M370 186 L382 178 L410 178" />
+    <path d="M410 88 L698 88 L698 186 L410 186 Z" />
+    <path stroke-width="1.4" d="M424 100 L684 100 M424 174 L684 174" />
+    <path stroke-width="1.4" d="M496 100 L496 174 M568 100 L568 174 M640 100 L640 174" />
+    <path d="M410 140 L698 140" />
+    <path stroke-width="1.4" d="M410 192 L508 192 M628 192 L698 192" />
+    <circle cx="552" cy="202" r="32" />
+    <circle cx="552" cy="202" r="22" stroke-width="1.4" />
+    <circle cx="552" cy="202" r="19" stroke-width="1.4" />
+    <circle cx="552" cy="202" r="5" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M551 197 L547 183 A19 19 0 0 1 557 183 L553 197" />
+    <path stroke-width="1.4" d="M557 200 L568 192 A19 19 0 0 1 571 201 L557 201" />
+    <path stroke-width="1.4" d="M556 206 L567 214 A19 19 0 0 1 559 220 L555 207" />
+    <path stroke-width="1.4" d="M549 207 L545 220 A19 19 0 0 1 537 214 L548 206" />
+    <path stroke-width="1.4" d="M547 201 L533 201 A19 19 0 0 1 536 192 L547 200" />
+    <path stroke-width="1.4" d="M552 192 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M561 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M558 210 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M546 210 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M543 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <circle cx="614" cy="202" r="32" />
+    <circle cx="614" cy="202" r="22" stroke-width="1.4" />
+    <circle cx="614" cy="202" r="19" stroke-width="1.4" />
+    <circle cx="614" cy="202" r="5" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M613 197 L609 183 A19 19 0 0 1 619 183 L615 197" />
+    <path stroke-width="1.4" d="M619 200 L630 192 A19 19 0 0 1 633 201 L619 201" />
+    <path stroke-width="1.4" d="M618 206 L629 214 A19 19 0 0 1 621 220 L617 207" />
+    <path stroke-width="1.4" d="M611 207 L607 220 A19 19 0 0 1 599 214 L610 206" />
+    <path stroke-width="1.4" d="M609 201 L595 201 A19 19 0 0 1 598 192 L609 200" />
+    <path stroke-width="1.4" d="M614 192 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M623 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M620 210 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M608 210 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M605 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <path stroke-width="1.4" d="M8 234 H712" />
+  </g>
+</symbol>
+</svg>

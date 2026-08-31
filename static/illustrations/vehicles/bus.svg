@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Bus, side elevation. Why this file looks the way it does:
+     templates/cotton/vehicle_drawing.html. -->
+<symbol id="v-bus" viewBox="0 0 720 240">
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 186 L28 70 C28 52 42 38 62 36 L664 36 C684 38 696 52 696 70 L696 186" />
+    <path d="M28 186 L182 186 M286 186 L504 186 M608 186 L696 186" />
+    <path d="M182 186 A52 52 0 0 1 286 186" />
+    <path d="M504 186 A52 52 0 0 1 608 186" />
+    <!-- destination board, windscreen, then the door ahead of the front axle -->
+    <path stroke-width="1.4" d="M48 46 L120 46 L120 58 L48 58 Z" />
+    <path d="M40 68 L40 126 L114 126 L114 62 Z" />
+    <path stroke-width="1.4" d="M48 74 L48 120 L108 120 L108 70 Z" />
+    <path d="M126 58 L126 180 L174 180 L174 58 Z" />
+    <path stroke-width="1.4" d="M150 58 L150 180 M134 66 L142 66 M158 66 L166 66" />
+    <path stroke-width="1.4" d="M134 74 L142 122 M158 74 L166 122" />
+    <!-- window band -->
+    <path d="M190 62 L678 62 L678 126 L190 126 Z" />
+    <path stroke-width="1.4" d="M272 62 L272 126 M354 62 L354 126 M436 62 L436 126
+             M518 62 L518 126 M600 62 L600 126" />
+    <path stroke-width="1.4" d="M198 70 L264 70 L264 118 L198 118 Z" />
+    <path stroke-width="1.4" d="M280 70 L346 70 L346 118 L280 118 Z" />
+    <path stroke-width="1.4" d="M362 70 L428 70 L428 118 L362 118 Z" />
+    <path stroke-width="1.4" d="M444 70 L510 70 L510 118 L444 118 Z" />
+    <path stroke-width="1.4" d="M526 70 L592 70 L592 118 L526 118 Z" />
+    <path stroke-width="1.4" d="M608 70 L670 70 L670 118 L608 118 Z" />
+    <!-- skirt, lamps and mirror -->
+    <path stroke-width="1.4" d="M30 146 L118 146 M182 146 L688 146" />
+    <path stroke-width="1.4" d="M34 156 L60 156 L60 172 L34 172 Z" />
+    <path stroke-width="1.4" d="M660 156 L690 156 L690 172 L660 172 Z" />
+    <path stroke-width="1.4" d="M40 58 L22 50 M22 40 L22 74 M16 42 L28 42 M16 72 L28 72" />
+    <circle cx="234" cy="186" r="52" />
+    <circle cx="234" cy="186" r="36" stroke-width="1.4" />
+    <circle cx="234" cy="186" r="31" stroke-width="1.4" />
+    <circle cx="234" cy="186" r="9" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M233 177 L226 156 A31 31 0 0 1 242 156 L235 177" />
+    <path stroke-width="1.4" d="M242 182 L260 169 A31 31 0 0 1 265 184 L243 184" />
+    <path stroke-width="1.4" d="M240 192 L258 206 A31 31 0 0 1 245 215 L238 194" />
+    <path stroke-width="1.4" d="M230 194 L223 215 A31 31 0 0 1 210 206 L228 192" />
+    <path stroke-width="1.4" d="M225 184 L203 184 A31 31 0 0 1 208 169 L226 182" />
+    <path stroke-width="1.4" d="M234 170 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M249 181 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M243 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M225 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M219 181 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <circle cx="556" cy="186" r="52" />
+    <circle cx="556" cy="186" r="36" stroke-width="1.4" />
+    <circle cx="556" cy="186" r="31" stroke-width="1.4" />
+    <circle cx="556" cy="186" r="9" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M555 177 L548 156 A31 31 0 0 1 564 156 L557 177" />
+    <path stroke-width="1.4" d="M564 182 L582 169 A31 31 0 0 1 587 184 L565 184" />
+    <path stroke-width="1.4" d="M562 192 L580 206 A31 31 0 0 1 567 215 L560 194" />
+    <path stroke-width="1.4" d="M552 194 L545 215 A31 31 0 0 1 532 206 L550 192" />
+    <path stroke-width="1.4" d="M547 184 L525 184 A31 31 0 0 1 530 169 L548 182" />
+    <path stroke-width="1.4" d="M556 170 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M571 181 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M565 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M547 199 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M541 181 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <path stroke-width="1.4" d="M8 234 H712" />
+  </g>
+</symbol>
+</svg>

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Forklift, side elevation. Why this file looks the way it does:
+     templates/cotton/vehicle_drawing.html. -->
+<symbol id="v-forklift" viewBox="0 0 720 240">
+  <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- counterweight, bonnet and the cab it carries -->
+    <path d="M300 194 L300 130 C300 116 310 106 324 106 L360 106 L372 56
+             C376 42 388 34 402 34 L470 34 C486 34 496 44 496 58 L496 106 L566 106
+             C588 106 600 118 600 140 L600 194" />
+    <path d="M300 194 L332 194 M414 194 L520 194 M594 194 L600 194" />
+    <path d="M372 56 L496 56" />
+    <path d="M392 56 L392 106 M452 56 L452 106" />
+    <path stroke-width="1.4" d="M398 62 L398 100 M446 62 L446 100 M404 62 L440 62" />
+    <path stroke-width="1.4" d="M404 106 L404 82 L462 82 L462 106 M410 88 L456 88" />
+    <path stroke-width="1.4" d="M324 130 L566 130 M334 158 L570 158 M336 176 L580 176" />
+    <path stroke-width="1.4" d="M540 112 L588 112 L588 126 L540 126 Z" />
+    <!-- mast, its channels, the tilt rams and the carriage -->
+    <path d="M232 194 L232 28 M266 194 L266 28 M232 28 L266 28" />
+    <path stroke-width="1.4" d="M240 34 L240 190 M258 34 L258 190" />
+    <path d="M266 194 L300 194" />
+    <path d="M266 70 L300 70 M266 128 L300 128" />
+    <path stroke-width="1.4" d="M272 76 L300 90 M272 122 L300 112" />
+    <path d="M200 128 L232 128 M200 128 L200 186" />
+    <path stroke-width="1.4" d="M206 134 L226 134 M206 156 L226 156 M200 156 L232 156" />
+    <!-- the fork itself, and the load it is under -->
+    <path d="M200 186 L104 186 L104 170" />
+    <path stroke-width="1.4" d="M200 178 L110 178" />
+    <path stroke-width="1.4" d="M116 168 L188 168 L188 138 L116 138 Z M116 153 L188 153" />
+    <circle cx="378" cy="194" r="44" />
+    <circle cx="378" cy="194" r="31" stroke-width="1.4" />
+    <circle cx="378" cy="194" r="26" stroke-width="1.4" />
+    <circle cx="378" cy="194" r="7" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M377 187 L371 168 A26 26 0 0 1 385 168 L379 187" />
+    <path stroke-width="1.4" d="M385 191 L400 180 A26 26 0 0 1 404 193 L385 193" />
+    <path stroke-width="1.4" d="M383 199 L399 211 A26 26 0 0 1 387 219 L382 201" />
+    <path stroke-width="1.4" d="M374 201 L369 219 A26 26 0 0 1 357 211 L373 199" />
+    <path stroke-width="1.4" d="M371 193 L352 193 A26 26 0 0 1 356 180 L371 191" />
+    <path stroke-width="1.4" d="M378 181 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M391 190 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M386 205 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M370 205 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M365 190 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <circle cx="556" cy="194" r="40" />
+    <circle cx="556" cy="194" r="28" stroke-width="1.4" />
+    <circle cx="556" cy="194" r="24" stroke-width="1.4" />
+    <circle cx="556" cy="194" r="7" stroke-width="1.4" />
+    <path stroke-width="1.4" d="M555 187 L550 171 A24 24 0 0 1 562 171 L557 187" />
+    <path stroke-width="1.4" d="M562 191 L576 181 A24 24 0 0 1 580 193 L563 193" />
+    <path stroke-width="1.4" d="M561 199 L575 209 A24 24 0 0 1 565 216 L559 200" />
+    <path stroke-width="1.4" d="M553 200 L547 216 A24 24 0 0 1 537 209 L551 199" />
+    <path stroke-width="1.4" d="M549 193 L532 193 A24 24 0 0 1 536 181 L550 191" />
+    <path stroke-width="1.4" d="M556 182 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M567 190 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M563 204 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M549 204 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M545 190 m-2 0 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0" />
+    <path stroke-width="1.4" d="M8 234 H712" />
+  </g>
+</symbol>
+</svg>
