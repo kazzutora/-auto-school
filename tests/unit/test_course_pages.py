@@ -605,3 +605,40 @@ def test_every_vehicle_named_is_in_the_sprite() -> None:
     for icons in CATEGORY_VEHICLES.values():
         for icon in icons:
             assert f"i-{icon}" in declared, f"the sprite has no i-{icon} at its root"
+
+
+def test_a_course_with_no_photo_shows_the_slot_it_will_go_into(client: Client) -> None:
+    """The owner is filling hero_image with their own photographs.
+
+    Until one arrives the page shows a framed panel with the marker of what the
+    category is taught on, rather than a gap where a picture belongs — a gap
+    reads as a page that broke, not as one still being filled. The branch goes
+    away by itself the day the photo is uploaded.
+    """
+    make_course(slug="kat-b", code="B", title="Kategoria B")
+
+    body = body_of(client, "/kursy/kat-b/")
+    assert "#i-car" in body
+    assert "Miejsce na zdjęcie" in body, "the panel does not say what it is holding"
+
+
+def test_a_course_with_no_licence_letter_still_names_its_vehicle(client: Client) -> None:
+    """Forklifts and driver qualifications carry no category code, so the code
+    map cannot reach them and the slug has to."""
+    from apps.core.templatetags.core_ui import course_vehicles
+
+    make_course(slug="wozki-widlowe", code="", title="Wózki widłowe")
+    course = Course.objects.get(slug="wozki-widlowe")
+
+    assert course_vehicles(course) == ("forklift",)
+
+
+def test_the_psychological_tests_get_no_slot(client: Client) -> None:
+    """Nothing is driven there, and a lorry beside a consulting room would be
+    an invention."""
+    from apps.core.templatetags.core_ui import course_vehicles
+
+    make_course(slug="badania-psychologiczne", code="", title="Badania psychologiczne")
+    course = Course.objects.get(slug="badania-psychologiczne")
+
+    assert course_vehicles(course) == ()

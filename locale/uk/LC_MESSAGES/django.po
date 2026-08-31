@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-30 22:42+0200\n"
+"POT-Creation-Date: 2026-08-31 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgid "Opening hours"
 msgstr "Години роботи"
 
 #: apps/core/navigation.py:34 templates/404.html:22 templates/500.html:35
-#: templates/layout/footer.html:37
+#: templates/layout/footer.html:38
 msgid "Kursy"
 msgstr "Курси"
 
@@ -49,7 +49,7 @@ msgstr "Проф. водій"
 
 #: apps/core/navigation.py:41 apps/courses/views.py:209
 #: apps/courses/views.py:218 templates/404.html:24 templates/500.html:37
-#: templates/courses/pricing.html:26 templates/layout/footer.html:50
+#: templates/courses/pricing.html:26 templates/layout/footer.html:51
 msgid "Cennik"
 msgstr "Ціни"
 
@@ -58,18 +58,18 @@ msgctxt "nav"
 msgid "Terminy"
 msgstr "Дати"
 
-#: apps/core/navigation.py:43 templates/layout/footer.html:49
+#: apps/core/navigation.py:43 templates/layout/footer.html:50
 msgid "O nas"
 msgstr "Про нас"
 
 #: apps/core/navigation.py:44 apps/gallery/views.py:85 apps/gallery/views.py:89
-#: templates/gallery/gallery.html:20 templates/layout/footer.html:52
+#: templates/gallery/gallery.html:20 templates/layout/footer.html:53
 msgid "Galeria"
 msgstr "Галерея"
 
 #: apps/core/navigation.py:45 apps/core/views.py:255 apps/core/views.py:263
 #: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
-#: templates/core/contact.html:23 templates/layout/footer.html:63
+#: templates/core/contact.html:23 templates/layout/footer.html:64
 msgid "Kontakt"
 msgstr "Контакти"
 
@@ -78,7 +78,7 @@ msgid "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. Biuro, pracow
 msgstr "Адреса, телефони та години роботи OSK Nawrocki у Велюні. Офіс, психологічний кабінет і проїзд на вул. Зелену 45."
 
 #: apps/core/views.py:151 apps/core/views.py:333
-#: templates/layout/footer.html:39
+#: templates/layout/footer.html:40
 msgid "Prawo jazdy"
 msgstr "Водійські права"
 
@@ -99,7 +99,7 @@ msgid "kategorie AM, A1, A2, A, B, B+E, C, C+E, D"
 msgstr "категорії AM, A1, A2, A, B, B+E, C, C+E, D"
 
 #: apps/core/views.py:338 apps/courses/views.py:107 apps/courses/views.py:113
-#: templates/courses/course_list.html:43 templates/layout/footer.html:40
+#: templates/courses/course_list.html:43 templates/layout/footer.html:41
 #: templates/pages/home.html:89
 msgid "Kierowca zawodowy"
 msgstr "Професійний водій"
@@ -109,7 +109,7 @@ msgid "kwalifikacja wstępna i szkolenia okresowe"
 msgstr "початкова кваліфікація та періодичне навчання"
 
 #: apps/core/views.py:343 templates/courses/course_list.html:67
-#: templates/layout/footer.html:41
+#: templates/layout/footer.html:42
 msgid "Badania psychologiczne"
 msgstr "Психологічні тести"
 
@@ -118,7 +118,7 @@ msgid "kierowcy i operatorzy maszyn"
 msgstr "водії та оператори машин"
 
 #: apps/core/views.py:348 templates/courses/course_list.html:74
-#: templates/layout/footer.html:42
+#: templates/layout/footer.html:43
 msgid "Wózki widłowe"
 msgstr "Навантажувачі"
 
@@ -196,7 +196,7 @@ msgid "Wszystkie tryby"
 msgstr "Всі формати"
 
 #: apps/courses/views.py:280 templates/404.html:23 templates/500.html:36
-#: templates/courses/intakes.html:16 templates/layout/footer.html:51
+#: templates/courses/intakes.html:16 templates/layout/footer.html:52
 msgid "Terminy"
 msgstr "Розклад"
 
@@ -366,8 +366,8 @@ msgstr "Профіль кандидата у водії (PKK) видає Пов�
 #: apps/leads/views.py:57 apps/leads/views.py:69 apps/leads/views.py:87
 #: templates/core/contact.html:146 templates/core/page_detail.html:176
 #: templates/cotton/cta_bar.html:23 templates/cotton/intake_row.html:43
-#: templates/courses/course_detail.html:140
-#: templates/courses/course_detail.html:228 templates/courses/intakes.html:62
+#: templates/courses/course_detail.html:153
+#: templates/courses/course_detail.html:241 templates/courses/intakes.html:62
 #: templates/gallery/certificates.html:49 templates/gallery/gallery.html:85
 #: templates/links/faq.html:95 templates/links/useful_links.html:87
 #: templates/pages/home.html:35
@@ -440,7 +440,7 @@ msgid "Rezerwacja egzaminu, punkty karne, testy i urzędy w Wieluniu. Linki, kt�
 msgstr "Запис на іспит, штрафні бали, тести та установи у Велюні. Посилання, які потрібні кандидату у водії найчастіше."
 
 #: apps/links/views.py:48 apps/links/views.py:62
-#: templates/layout/footer.html:53 templates/links/useful_links.html:22
+#: templates/layout/footer.html:54 templates/links/useful_links.html:22
 msgid "Przydatne linki"
 msgstr "Корисні посилання"
 
@@ -524,7 +524,7 @@ msgstr "Зателефонуйте, напишіть або приїжджайт
 msgid "Adres"
 msgstr "Адреса"
 
-#: templates/core/contact.html:73 templates/layout/footer.html:19
+#: templates/core/contact.html:73 templates/layout/footer.html:20
 msgid "Dane firmy"
 msgstr "Дані фірми"
 
@@ -646,7 +646,7 @@ msgstr "Наші автомобілі"
 msgid "Uczysz się na aucie, na którym potem zdajesz."
 msgstr "Навчаєтесь на тій машині, на якій потім складаєте іспит."
 
-#: templates/core/page_detail.html:154 templates/courses/course_detail.html:184
+#: templates/core/page_detail.html:154 templates/courses/course_detail.html:197
 msgid "Zgodny z egzaminem"
 msgstr "Відповідає іспиту"
 
@@ -670,7 +670,7 @@ msgstr "Згода на файли cookie"
 msgid "Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie."
 msgstr "Ми використовуємо cookie, щоб сайт працював правильно. Статистику вмикаємо лише після вашої згоди."
 
-#: templates/cotton/cookie_banner.html:21 templates/layout/footer.html:60
+#: templates/cotton/cookie_banner.html:21 templates/layout/footer.html:61
 msgid "Polityka prywatności"
 msgstr "Політика конфіденційності"
 
@@ -696,7 +696,7 @@ msgstr[2] "%(years)s років"
 msgstr[3] "%(years)s року"
 
 #: templates/cotton/course_card.html:43 templates/courses/course_detail.html:60
-#: templates/courses/course_detail.html:110
+#: templates/courses/course_detail.html:123
 msgid "Cena"
 msgstr "Ціна"
 
@@ -785,7 +785,7 @@ msgstr "джерело"
 #: templates/courses/_ask_for_price.html:6
 #: templates/courses/_ask_for_price.html:9
 #: templates/courses/_ask_for_price.html:13
-#: templates/courses/course_detail.html:142 templates/courses/pricing.html:38
+#: templates/courses/course_detail.html:155 templates/courses/pricing.html:38
 #: templates/courses/pricing.html:85
 msgid "Zapytaj o cenę"
 msgstr "Дізнатися ціну"
@@ -827,69 +827,74 @@ msgstr "Разом"
 msgid "ustalana indywidualnie"
 msgstr "визначається індивідуально"
 
-#: templates/courses/course_detail.html:79
+#: templates/courses/course_detail.html:84
+#, python-format
+msgid "Miejsce na zdjęcie: %(title)s"
+msgstr "Місце для фотографії: %(title)s"
+
+#: templates/courses/course_detail.html:92
 msgid "Uprawnia do kierowania"
 msgstr "Дає право керувати"
 
-#: templates/courses/course_detail.html:88
+#: templates/courses/course_detail.html:101
 msgid "Wymagania"
 msgstr "Вимоги"
 
-#: templates/courses/course_detail.html:97
+#: templates/courses/course_detail.html:110
 msgid "O kursie"
 msgstr "Про курс"
 
-#: templates/courses/course_detail.html:115
+#: templates/courses/course_detail.html:128
 msgid "Cenę tego kursu ustalamy indywidualnie — podamy ją od ręki."
 msgstr "Ціну цього курсу визначаємо індивідуально — назвемо її одразу."
 
-#: templates/courses/course_detail.html:121
+#: templates/courses/course_detail.html:134
 msgid "Najbliższy start"
 msgstr "Найближчий старт"
 
-#: templates/courses/course_detail.html:133
+#: templates/courses/course_detail.html:146
 msgid "Zadzwoń, ustalimy termin."
 msgstr "Зателефонуйте, узгодимо дату."
 
-#: templates/courses/course_detail.html:159 templates/pages/home.html:74
+#: templates/courses/course_detail.html:172 templates/pages/home.html:74
 msgid "Najbliższe terminy"
 msgstr "Найближчі дати"
 
-#: templates/courses/course_detail.html:165 templates/pages/home.html:80
+#: templates/courses/course_detail.html:178 templates/pages/home.html:80
 msgid "Wszystkie terminy"
 msgstr "Всі дати"
 
-#: templates/courses/course_detail.html:175
+#: templates/courses/course_detail.html:188
 msgid "Pojazdy szkoleniowe"
 msgstr "Навчальні автомобілі"
 
-#: templates/courses/course_detail.html:198
-#: templates/courses/course_detail.html:239
+#: templates/courses/course_detail.html:211
+#: templates/courses/course_detail.html:252
 #, python-format
 msgid "Zapisz się na %(title)s"
 msgstr "Записатися на %(title)s"
 
-#: templates/courses/course_detail.html:200
+#: templates/courses/course_detail.html:213
 msgid "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Wolisz zadzwonić?"
 msgstr "Залиште номер, передзвонимо та підберемо найближчу дату. Хочете зателефонувати самі?"
 
-#: templates/courses/course_detail.html:211
+#: templates/courses/course_detail.html:224
 msgid "Inne kategorie"
 msgstr "Інші категорії"
 
-#: templates/courses/course_detail.html:220
+#: templates/courses/course_detail.html:233
 msgid "Nie wiesz, czy ta kategoria jest dla Ciebie?"
 msgstr "Не впевнені, що це ваша категорія?"
 
-#: templates/courses/course_detail.html:221
+#: templates/courses/course_detail.html:234
 msgid "Zadzwoń — powiemy, co daje i ile trwa w praktyce."
 msgstr "Зателефонуйте — розкажемо, що вона дає і скільки триває на практиці."
 
-#: templates/courses/course_detail.html:223
+#: templates/courses/course_detail.html:236
 msgid "Potrzebujesz tych uprawnień do pracy?"
 msgstr "Потрібен цей допуск для роботи?"
 
-#: templates/courses/course_detail.html:224
+#: templates/courses/course_detail.html:237
 msgid "Powiemy, od czego zacząć i co trzeba mieć na starcie."
 msgstr "Розкажемо, з чого почати і що потрібно мати на старті."
 
@@ -1084,15 +1089,15 @@ msgstr "Хочете побачити автошколу наживо?"
 msgid "Umów się — pokażemy plac, sale i pojazdy."
 msgstr "Домовтеся про візит — покажемо майданчик, класи та машини."
 
-#: templates/layout/footer.html:47
+#: templates/layout/footer.html:48
 msgid "Informacje"
 msgstr "Інформація"
 
-#: templates/layout/footer.html:58
+#: templates/layout/footer.html:59
 msgid "Formalności"
 msgstr "Формальності"
 
-#: templates/layout/footer.html:70
+#: templates/layout/footer.html:71
 msgid "na rynku od"
 msgstr "на ринку з"
 

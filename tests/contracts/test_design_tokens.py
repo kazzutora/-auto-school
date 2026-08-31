@@ -75,6 +75,8 @@ EXTRA_ICONS = (
     # the tile at five columns.
     "car-trailer",
     "truck-trailer",
+    # The one course taught on something that is not a road vehicle.
+    "forklift",
 )
 
 ICONS = (

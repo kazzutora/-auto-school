@@ -72,11 +72,34 @@ only action on the page.
 
   <div class="mt-12 grid gap-12 lg:grid-cols-3">
     <div class="min-w-0 lg:col-span-2">
+      {# A photograph when the school has one, and the slot it will go into
+         when it does not: a framed panel with the marker of what this category
+         is taught on. The owner is filling hero_image in with their own photos,
+         and an empty gap where a picture belongs reads as a page that broke
+         rather than a page still being filled.
+
+         Not a drawing pretending to be a photograph, and not a stock photo of
+         somebody else's car: a marker, plainly a marker, holding the place.
+         The branch disappears of its own accord the day hero_image is set. #}
       {% if course.hero_image %}
         <div class="mb-10 overflow-hidden rounded border border-line-soft">
           <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}"
                      ratio="card" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
         </div>
+      {% else %}
+        {% with vehicles=course|course_vehicles %}
+          {% if vehicles %}
+            <div class="mb-10 flex h-40 items-center justify-center rounded border border-line-soft bg-paper-50 md:h-56">
+              {% for vehicle in vehicles %}
+                {# Important, because c-icon always emits a size of its own and
+                   two height utilities of equal specificity are settled by
+                   whichever tailwind happened to write last. #}
+                <c-icon name="{{ vehicle }}" class="!h-20 !w-20 text-ink-300 md:!h-28 md:!w-28"
+                        label="{% blocktranslate with title=course.title %}Miejsce na zdjęcie: {{ title }}{% endblocktranslate %}" />
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
       {% endif %}
 
       {% if entitlements %}
