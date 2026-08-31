@@ -1,0 +1,28 @@
+{
+	# No acme account is needed: this file never asks for a certificate.
+	auto_https off
+}
+
+# Preview only, selected with CADDYFILE=Caddyfile.preview in .env. Plain http on
+# port 80, matching any host name, so the stack answers on a bare ip address
+# while the domain is not pointed at the box yet. Set HTTPS_ENABLED=0 alongside
+# it, or django redirects every request to a certificate that does not exist.
+#
+# It drops the hsts header and the www redirect of the live Caddyfile on
+# purpose: both are statements about a domain this file has no business making.
+:80 {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+	}
+	handle_path /static/* {
+		root * /srv/static
+		file_server
+	}
+	handle_path /media/* {
+		root * /srv/media
+		file_server
+	}
+	reverse_proxy web:8000
+}

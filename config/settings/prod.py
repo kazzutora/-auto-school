@@ -17,16 +17,22 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [
     ("django.template.loaders.cached.Loader", COTTON_TEMPLATE_LOADERS),
 ]
 
+# A preview box reached by bare ip has no certificate anyone would accept, so
+# the redirect to https and the secure-only cookies would shut the browser out
+# of a site that otherwise works. HTTPS_ENABLED=0 drops exactly those, and
+# nothing else. It stays on by default: the live site is served over tls.
+HTTPS_ENABLED = env.bool("HTTPS_ENABLED", default=True)
+
 # Caddy terminates tls and sets the header, tech.md section 19.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = HTTPS_ENABLED
+SECURE_HSTS_SECONDS = 31536000 if HTTPS_ENABLED else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = HTTPS_ENABLED
+SECURE_HSTS_PRELOAD = HTTPS_ENABLED
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = HTTPS_ENABLED
+CSRF_COOKIE_SECURE = HTTPS_ENABLED
 X_FRAME_OPTIONS = "DENY"
 
 # tech.md section 19 scopes the policy to production: the django debug page

@@ -12,6 +12,8 @@ x-django-env: &django-env
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
   DJANGO_DEBUG: "0"
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?set DJANGO_ALLOWED_HOSTS in .env}
+  # 0 only for a preview box on a bare ip, together with CADDYFILE below.
+  HTTPS_ENABLED: ${HTTPS_ENABLED:-1}
   # Always built from the POSTGRES_* values below, never read from .env: the
   # password used to be written twice and the two drifted apart. Point the stack
   # at an outside database by editing this line, not by setting DATABASE_URL.
@@ -60,7 +62,9 @@ services:
       SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
       ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # CADDYFILE=Caddyfile.preview swaps in the plain http config, for a box
+      # reached by bare ip. Pair it with HTTPS_ENABLED=0.
+      - ./${CADDYFILE:-Caddyfile}:/etc/caddy/Caddyfile:ro
       - static:/srv/static:ro
       - media:/srv/media:ro
       - caddy_data:/data
