@@ -114,6 +114,12 @@ Two one time steps once the repository is on github:
 
 ## Production
 
+The production stack takes its secrets from `deploy/.env`, not from the `.env`
+at the repo root: compose resolves the project directory from the location of
+the compose file, and the same rule puts the backups in `deploy/backups`. Copy
+`.env.example` there and fill it in. The database password is written once, as
+`POSTGRES_PASSWORD`; both compose files build `DATABASE_URL` from it.
+
 `/healthz` answers 200 only when postgres and redis both respond, and 503 with
 the failing dependency named otherwise. The deploy smoke step and the container
 healthcheck both use it.

@@ -2,8 +2,10 @@ name: osk
 
 # Production stack, tech.md sections 17 and 19. Run from the repo root:
 #   docker compose -f deploy/docker-compose.prod.yml up -d
-# Unlike the development stack this file has no fallbacks: every secret must be
-# present in .env or the stack refuses to start.
+# The project directory is this one, not the repo root, so the secrets are read
+# from deploy/.env and the bind mounts resolve to deploy/Caddyfile and
+# deploy/backups. Unlike the development stack this file has no fallbacks: every
+# secret must be present in deploy/.env or the stack refuses to start.
 x-django-env: &django-env
   DJANGO_SETTINGS_MODULE: config.settings.prod
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
