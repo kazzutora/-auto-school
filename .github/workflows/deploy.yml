@@ -95,13 +95,29 @@ jobs:
       - name: Smoke
         env:
           VPS: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          APP_DIR: ${{ secrets.VPS_PATH }}
         # /healthz answers 200 only when both postgres and redis are reachable,
         # tech.md section 17. It ships with S0.11.
         run: |
-          ssh -o BatchMode=yes "$VPS" bash -s <<'EOF'
+          ssh -o BatchMode=yes "$VPS" "APP_DIR='$APP_DIR' bash -s" <<'EOF'
             set -euo pipefail
+            cd "$APP_DIR"
+            # The two modes share no probe. A preview box answers plain http
+            # on any host name; a live one answers only the canonical name, over
+            # https, and hands Host: localhost a 404 from Caddy that never
+            # reaches django. Read the mode out of .env instead of assuming one,
+            # so this step is right on both sides of the switch to the domain.
+            domain=$(grep -m1 '^SITE_DOMAIN=' .env | cut -d= -f2- | tr -d '\r')
+            if grep -qE '^(CADDYFILE=Caddyfile.preview|HTTPS_ENABLED=0)' .env; then
+              probe=(http://localhost/healthz)
+            else
+              # --resolve pins the canonical name to the loopback: the same
+              # request the public makes, certificate and all, without the
+              # round trip out of the box and back.
+              probe=(--resolve "$domain:443:127.0.0.1" "https://$domain/healthz")
+            fi
             for attempt in $(seq 1 30); do
-              code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/healthz || true)
+              code=$(curl -s -o /dev/null -w '%{http_code}' "${probe[@]}" || true)
               if [ "$code" = "200" ]; then
                 echo "healthz ok"
                 exit 0
