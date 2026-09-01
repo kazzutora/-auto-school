@@ -35,6 +35,18 @@ SESSION_COOKIE_SECURE = HTTPS_ENABLED
 CSRF_COOKIE_SECURE = HTTPS_ENABLED
 X_FRAME_OPTIONS = "DENY"
 
+# Derived from ALLOWED_HOSTS rather than read from .env: the domain would
+# otherwise be written twice and the two copies would drift apart. Django
+# matches the Origin header of an unsafe request against this list, and behind
+# Caddy every origin is https - except in preview mode, which has no
+# certificate to name.
+_ORIGIN_SCHEME = "https" if HTTPS_ENABLED else "http"
+CSRF_TRUSTED_ORIGINS = [
+    f"{_ORIGIN_SCHEME}://*{host}" if host.startswith(".") else f"{_ORIGIN_SCHEME}://{host}"
+    for host in ALLOWED_HOSTS
+    if host != "*"
+]
+
 # tech.md section 19 scopes the policy to production: the django debug page
 # needs inline scripts that 'self' would block.
 MIDDLEWARE = [*MIDDLEWARE, "config.middleware.ContentSecurityPolicyMiddleware"]
