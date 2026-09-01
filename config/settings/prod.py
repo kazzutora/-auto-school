@@ -26,6 +26,13 @@ HTTPS_ENABLED = env.bool("HTTPS_ENABLED", default=True)
 # Caddy terminates tls and sets the header, tech.md section 19.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = HTTPS_ENABLED
+# The container healthcheck and the deploy smoke step reach /healthz over plain
+# http on the loopback, where no proxy sets X-Forwarded-Proto. Without the
+# exemption the redirect above answers them with a 301 to port 443 of a
+# container that does not listen there, and a healthy stack reports itself sick.
+# Nothing is exposed by it: a request from outside meets Caddy first, and Caddy
+# redirects the whole host to https before django is reached.
+SECURE_REDIRECT_EXEMPT = [r"^healthz$"]
 SECURE_HSTS_SECONDS = 31536000 if HTTPS_ENABLED else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = HTTPS_ENABLED
 SECURE_HSTS_PRELOAD = HTTPS_ENABLED
