@@ -1,9 +1,10 @@
 # tech.md — ядро проекта OSK Nawrocki
 
-**Версия ядра: v22**
+**Версия ядра: v23**
 
 | Версия | Изменение |
 |---|---|
+| v23 | `CSRF_TRUSTED_ORIGINS` перестал быть пустым: `config/settings/prod.py` собирает его из `ALLOWED_HOSTS`, схема `https`, а при `HTTPS_ENABLED=0` — `http`. Запись вида `.example.com` даёт `https://*.example.com`, одиночная `*` пропускается. Домен по-прежнему пишется в `.env` ровно один раз, второй копии, которая разъедется, нет. Отдельно описан третий режим переезда: бесплатное dynamic-dns имя вместо голого ip. Оно получает настоящий сертификат, поэтому `CADDYFILE` и `HTTPS_ENABLED` не нужны — хватает `SITE_DOMAIN` и `DJANGO_ALLOWED_HOSTS` плюс открытых 80 и 443, а www-редирект боевого `Caddyfile` работает, потому что такой провайдер резолвит все под-имена в тот же адрес Выход из режима предпросмотра вскрыл две поломки, обе закрыты. `SECURE_REDIRECT_EXEMPT = [r"^healthz$"]`: healthcheck контейнера и smoke-шаг деплоя ходят на `/healthz` по обычному http через loopback, где никакой прокси не ставит `X-Forwarded-Proto`, и `SECURE_SSL_REDIRECT` отвечал им 301 на порт 443, которого у контейнера нет. Наружу это ничего не открывает: запрос снаружи сперва встречает Caddy, а тот редиректит весь хост на https. И smoke-шаг в `deploy.yml` перестал дёргать `http://localhost/healthz`: боевой `Caddyfile` отвечает только на каноническое имя, на `localhost` он отдаёт 404. Теперь шаг читает режим из `.env`: в предпросмотре бьёт по-старому в `http://localhost/healthz`, а на боевом — в `SITE_DOMAIN`, прибитый к loopback через `--resolve`, тот же путь, что у публики, вместе с сертификатом. Правка `deploy.yml` в день переезда домена больше не нужна, и порядок «сперва `.env`, потом push» перестал быть обязательным |
 | v22 | Добавлен режим предпросмотра на голом ip, пока домен не переехал. Две переменные: `CADDYFILE=Caddyfile.preview` подменяет конфиг Caddy на `deploy/Caddyfile.preview` — HTTP на порту 80, любое имя хоста, без ACME, без HSTS и без www-редиректа; `HTTPS_ENABLED=0` снимает в `config/settings/prod.py` ровно три настройки — `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE` и `CSRF_COOKIE_SECURE` — плюс обнуляет HSTS. По умолчанию обе выключены, боевой путь не меняется. Работают только парой: без второй django редиректит на несуществующий сертификат, без первой Caddy не отвечает на запрос с ip в заголовке `Host` |
 | v21 | `DATABASE_URL` убран из `.env`: оба compose-файла собирают DSN из `POSTGRES_USER`, `POSTGRES_PASSWORD` и `POSTGRES_DB`, и значение из окружения больше не читается. Пароль базы был записан дважды — в `POSTGRES_PASSWORD` и внутри строки подключения, — и смена его в одном месте оставляла django с прежним паролем. Внешняя база теперь задаётся правкой compose-файла, а не переменной. Побочно: у `WEB_IMAGE` появился дефолт `osk:local`, а продовый стек получил `build`, чтобы машина с чекаутом, но без логина в реестр, собирала образ на месте |
 | v20 | На место фотографии на странице курса возвращена панель-заглушка: рамка 160/224 со значком транспорта категории, подпись «Miejsce na zdjęcie» переведена на ru и uk. Вернулись `course_vehicles` и `i-forklift`. Это заглушка, а не иллюстрация: владелец заполняет `hero_image` своими снимками, а пустой провал на месте картинки читается как сломанная страница. Ветка исчезает сама, как только фото загружено |
@@ -867,6 +868,10 @@ naukajazdywielun.pl {
 ```
 
 `config/settings/prod.py`: `SECURE_SSL_REDIRECT=True`, `SECURE_HSTS_SECONDS=31536000`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`, `X_FRAME_OPTIONS=DENY`, `SECURE_REFERRER_POLICY="same-origin"`, CSP без внешних хостов.
+
+`CSRF_TRUSTED_ORIGINS` не задаётся вручную: он выводится из `ALLOWED_HOSTS` со схемой `https` (`http` при `HTTPS_ENABLED=0`). Домен указывается в `.env` один раз, в `DJANGO_ALLOWED_HOSTS`.
+
+`/healthz` выведен из-под `SECURE_SSL_REDIRECT` через `SECURE_REDIRECT_EXEMPT`: пробы ходят к нему по loopback, где `X-Forwarded-Proto` некому поставить. По этой же причине `DJANGO_ALLOWED_HOSTS` обязан содержать `127.0.0.1` — иначе healthcheck контейнера получает 400 и здоровый стек числится больным.
 
 Бэкапы: `core.tasks.db_backup` ежедневно в 02:00, `pg_dump` в `deploy/backups/`, ротация 14 дней. Восстановление проверяется вручную один раз перед переездом домена.
 
