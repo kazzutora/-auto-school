@@ -3,49 +3,31 @@
 Idempotent: every row is written with update_or_create keyed on a natural key,
 so running it twice changes nothing and creates no duplicates.
 
-Values the owner has not supplied yet (tech.md section 16) are seeded as
-plausible placeholders and marked so they can be listed:
+**Every fact in this file is transcribed from the school's own site**, tech.md
+section 1 and OSTRYCHARZ.md part A. Nothing here is invented. Where the school
+publishes no figure, the row carries a ``TODO_OWNER:`` marker and
+``owner_data_gaps()`` reports it; ``pytest -m owner_data`` fails while the list
+is not empty, and production does not ship until it is.
 
-* text fields carry the ``TODO_OWNER:`` prefix;
-* media files are named ``todo_owner_*``;
-* genuinely unknown numbers stay NULL.
+Two things this seed deliberately does not create:
 
-``owner_data_gaps()`` turns all of that into a report. ``pytest -m owner_data``
-fails while the list is not empty, and production does not ship until it is.
+* ``Testimonial`` rows. tech.md section 4.7 forbids invented reviews, and the
+  school's "110 opinii, 96% bardzo dobrych" is prose with no source behind it.
+  Real reviews arrive with a source_url or not at all, and the section on the
+  page renders only when there are at least two.
+* ``Instructor``, ``Vehicle`` and ``Certificate`` rows. The photographs on the
+  old site are the school's property, not ours, and a placeholder person is
+  worse than an absent section.
 """
 
 from __future__ import annotations
 
 import os
-from datetime import date, time, timedelta
 from decimal import Decimal
-from io import BytesIO
-from typing import Any
-
-# What a licence course asks for before anything else. Seeded only when the
-# course is new: the real list comes from data/legacy through import_legacy.
-# The about page opens on one section; what it offers is a card grid now,
-# BLOCKS.md B5, so the bulleted copy of the same navigation has gone.
-HEADING_ABOUT = "# Kim jesteśmy" + chr(10) + chr(10)
-
-BASIC_REQUIREMENTS = chr(10).join(
-    ("- ukończone {age} lat", "- orzeczenie lekarskie", "- numer PKK")
-)
 
 TODO = "TODO_OWNER:"
-PLACEHOLDER_PREFIX = "todo_owner_"
 
-# Stand-in values for content the owner has not supplied. They used to carry
-# the TODO_OWNER prefix, which meant the word TODO was printed at visitors on
-# the price list, the FAQ and every instructor card — the marker is for us, and
-# a demo the owner is looking at should still read like a website.
-#
-# owner_data_gaps() keys on these exact strings instead of on a prefix, so
-# nothing is lost: the report still lists every one of them.
-DEMO_INSTRUCTOR = "Instruktor"
-DEMO_VEHICLE = "Pojazd"
-DEMO_CERTIFICATE = "Certyfikat"
-DEMO_REVIEW = "Opinia"
+HEADING_ABOUT = "# Kim jesteśmy" + chr(10) + chr(10)
 
 
 def _setup() -> None:
@@ -56,341 +38,285 @@ def _setup() -> None:
 
 
 # --------------------------------------------------------------------------
-# helpers
-
-
-def _placeholder(name: str, label: str) -> Any:
-    """A branded stand-in image, so the pipeline is exercised end to end."""
-    from django.core.files.base import ContentFile
-    from PIL import Image, ImageDraw
-
-    image = Image.new("RGB", (960, 640), "#EBE6F8")
-    draw = ImageDraw.Draw(image)
-    draw.rectangle((0, 560, 960, 640), fill="#2A1F55")
-    draw.text((24, 590), label[:60], fill="#FFD400")
-    draw.text((24, 24), "TODO_OWNER", fill="#5B47A8")
-
-    buffer = BytesIO()
-    image.save(buffer, format="PNG")
-    return ContentFile(buffer.getvalue(), name=f"{PLACEHOLDER_PREFIX}{name}.png")
-
-
-def _attach_placeholder(obj: Any, field: str, name: str, label: str) -> None:
-    """Attach once. Re-saving on every run would pile up suffixed copies."""
-    if getattr(obj, field):
-        return
-    getattr(obj, field).save(
-        f"{PLACEHOLDER_PREFIX}{name}.png", _placeholder(name, label), save=True
-    )
-
-
-# --------------------------------------------------------------------------
 # sections
 
 
 def seed_site_settings() -> None:
+    """Contact details, tech.md section 1. Transcribed from oskostrycharz.pl."""
     from apps.core.models import SiteSettings
 
     site = SiteSettings.get_solo()
-    site.legal_name = (
-        "Ośrodek Kształcenia i Doskonalenia Zawodowego Adam Nawrocki, Mariola Nawrocka S.C."
-    )
-    site.short_name = "OSK Nawrocki"
-    site.street = "ul. Zielona 45"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.short_name = "OSK Ostrycharz"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.nip = "8321916014"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
-    site.phone_secondary = "605 065 795"
-    site.phone_tertiary = "667 615 184"
-    site.founded_year = 1996
+    # The school publishes no NIP and no founding year. Both stay empty rather
+    # than guessed: a made up tax number reaches the DrivingSchool json-ld.
+    site.nip = ""
+    site.founded_year = None
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
+    site.phone_secondary = ""
+    site.phone_tertiary = ""
     # Town centre. The exact office pin is confirmed by the owner.
     site.map_lat = Decimal("51.220600")
     site.map_lng = Decimal("18.569700")
-    site.lead_notify_emails = "osk.adam.nawrocki@wp.pl"
+    site.facebook_url = "https://pl-pl.facebook.com/osrodekostrycharz/"
+    site.youtube_url = "https://www.youtube.com/channel/UCbXki-U-CJjcQ36tZ5GZ4lw"
+    site.youtube_video_url = "https://www.youtube.com/watch?v=abeQhB0RfV4"
+    site.lead_notify_emails = "oskostrycharz@poczta.onet.pl"
     site.bank_account_public = False
     site.analytics_enabled = False
     site.save()
 
 
 def seed_opening_hours() -> None:
-    """Psychology hours are known, tech.md section 16. Office hours are not."""
+    """The office answers by prior arrangement, which is a note, not a schedule.
+
+    The school's own site says only "po wcześniejszym ustaleniu telefonicznym".
+    Inventing 9-17 would be the one lie on the page a visitor can catch by
+    turning up, so every day is closed and carries that sentence instead.
+    """
     from apps.core.models import OpeningHours
 
+    note = "Po wcześniejszym ustaleniu telefonicznym"
     for weekday in range(7):
-        # Tuesday and Friday 8:00-16:00, the one schedule we actually have.
-        psychology = weekday in (1, 4)
-        OpeningHours.objects.update_or_create(
-            department=OpeningHours.DEPT.PSYCHOLOGY,
-            weekday=weekday,
-            defaults={
-                "opens": time(8, 0) if psychology else None,
-                "closes": time(16, 0) if psychology else None,
-                "note": "",
-            },
-        )
         OpeningHours.objects.update_or_create(
             department=OpeningHours.DEPT.OFFICE,
             weekday=weekday,
-            defaults={
-                "opens": time(9, 0) if weekday < 5 else None,
-                "closes": time(17, 0) if weekday < 5 else None,
-                "note": "",
-            },
+            defaults={"opens": None, "closes": None, "note": note},
         )
+    # No psychology lab at this school. The rows would render an empty table.
+    OpeningHours.objects.filter(department=OpeningHours.DEPT.PSYCHOLOGY).delete()
 
 
-LICENSE_COURSES = [
-    ("kat-am", "AM", "Kategoria AM", 14, "motorower i czterokołowiec lekki"),
-    ("kat-a1", "A1", "Kategoria A1", 16, "motocykl do 125 cm3"),
-    ("kat-a2", "A2", "Kategoria A2", 18, "motocykl o mocy do 35 kW"),
-    ("kat-a", "A", "Kategoria A", 24, "motocykl bez ograniczeń"),
-    ("kat-b", "B", "Kategoria B", 18, "samochód osobowy do 3,5 t"),
-    ("kat-be", "B+E", "Kategoria B+E", 18, "samochód osobowy z przyczepą"),
-    ("kat-c", "C", "Kategoria C", 21, "samochód ciężarowy powyżej 3,5 t"),
-    ("kat-ce", "C+E", "Kategoria C+E", 21, "samochód ciężarowy z przyczepą"),
-    ("kat-d", "D", "Kategoria D", 24, "autobus"),
-]
-
-PROFESSIONAL_COURSES = [
-    ("szkolenia-okresowe", "", "Szkolenia okresowe", "odnowienie uprawnień kierowcy zawodowego"),
+# The legal requirements for category B are statute, identical for every school
+# in Poland, so this copy carries over from the first project unchanged.
+KAT_B_ENTITLEMENTS = "\n".join(
     (
-        "kwalifikacja-wstepna",
-        "",
-        "Kwalifikacja wstępna",
-        "pełna kwalifikacja dla kierowcy zawodowego",
-    ),
+        "- pojazdem samochodowym o dopuszczalnej masie całkowitej do 3,5 t",
+        "- zespołem pojazdów o dmc do 3,5 t",
+        "- ciągnikiem rolniczym",
+        "- pojazdami kategorii AM",
+    )
+)
+
+KAT_B_REQUIREMENTS = "\n".join(
     (
-        "kwalifikacja-wstepna-przyspieszona",
-        "",
-        "Kwalifikacja wstępna przyspieszona",
-        "skrócony wariant kwalifikacji wstępnej",
-    ),
-    ("adr", "ADR", "Kurs ADR", "przewóz towarów niebezpiecznych"),
-]
+        "- ukończone 18 lat, kurs można rozpocząć trzy miesiące wcześniej",
+        "- orzeczenie lekarskie o braku przeciwwskazań zdrowotnych",
+        "- numer PKK z wieluńskiego starostwa",
+        "- zgoda rodziców, jeżeli nie masz jeszcze 18 lat",
+    )
+)
+
+KAT_B_BODY = "\n\n".join(
+    (
+        "## Kurs standardowy",
+        "Zajęcia teoretyczne i praktyczne w tempie, które da się pogodzić ze "
+        "szkołą albo pracą. Cena 3700 zł obejmuje pełen kurs kategorii B "
+        "i dowóz na egzamin państwowy.",
+        "## Kurs przyspieszony",
+        "Ten sam program w dwa tygodnie, dla osób, które potrzebują prawa jazdy "
+        "na konkretną datę. Cena 4300 zł.",
+        "## Skrzynia automatyczna",
+        "Jeżeli sprzęgło i zmiana biegów są tym, co blokuje Cię najbardziej, "
+        "cały kurs możesz zrobić na automacie. Cena 4300 zł. Prawo jazdy "
+        "zdobyte na automacie uprawnia do jazdy wyłącznie autem "
+        "z automatyczną skrzynią biegów.",
+    )
+)
 
 
 def seed_courses() -> None:
-    """9 license categories, 4 professional, psychotests and forklifts."""
+    """One course. This school teaches category B and nothing else."""
     from apps.courses.models import Course
 
-    for order, (slug, code, title, min_age, entitlement) in enumerate(LICENSE_COURSES, start=10):
-        Course.objects.update_or_create(
-            slug=slug,
-            defaults={
-                "kind": Course.Kind.LICENSE,
-                "code": code,
-                "title": title,
-                "min_age": min_age,
-                # Hours and prices are owner data, tech.md section 16.
-                "theory_hours": None,
-                "practice_hours": None,
-                "price_gross": None,
-                "price_note": "",
-                "languages": ["pl"],
-                "is_active": True,
-                "order": order,
-            },
-            create_defaults={
-                # Written only when the course does not exist yet.
-                #
-                # These three belong to import_legacy, which reads the real
-                # text out of data/legacy. In `defaults` they were rewritten on
-                # every seed run, so an imported list of four entitlements came
-                # back as one templated line — which is exactly what the review
-                # found on kat-b and blamed on the importer.
-                "lead": f"Kurs prawa jazdy {title.lower()} w Wieluniu.",
-                "entitlements": f"- {entitlement}",
-                "requirements": BASIC_REQUIREMENTS.format(age=min_age),
-            },
-        )
-
-    for order, (slug, code, title, lead) in enumerate(PROFESSIONAL_COURSES, start=10):
-        Course.objects.update_or_create(
-            slug=slug,
-            defaults={
-                "kind": Course.Kind.PROFESSIONAL,
-                "code": code,
-                "title": title,
-                "lead": f"{title}: {lead}.",
-                "price_gross": None,
-                "price_note": "",
-                "languages": ["pl"],
-                "is_active": True,
-                "order": order,
-            },
-        )
-
     Course.objects.update_or_create(
-        slug="badania-psychologiczne",
+        slug="kat-b",
         defaults={
-            "kind": Course.Kind.PSYCHOTEST,
-            "title": "Badania psychologiczne",
-            "lead": "Badania psychologiczne dla kierowców i operatorów.",
-            "body": "Pracownia czynna we wtorki i piątki w godzinach 8:00-16:00.",
-            "price_gross": None,
-            "price_note": "",
-            "languages": ["pl"],
+            "kind": Course.Kind.LICENSE,
+            "code": "B",
+            "title": "Prawo jazdy kat. B",
+            "lead": "Kurs na prawo jazdy kategorii B w Wieluniu — standardowy, "
+            "przyspieszony w dwa tygodnie albo na skrzyni automatycznej.",
+            "min_age": 18,
+            # The school publishes prices but not the hour breakdown. The
+            # statutory minimum is 30 h theory and 30 h practice, but what this
+            # school actually runs is its own to state.
+            "theory_hours": None,
+            "practice_hours": None,
+            "price_gross": Decimal("3700.00"),
+            "price_note": "cena kursu standardowego, dowóz na egzamin w cenie",
+            "languages": ["pl", "ru", "uk"],
             "is_active": True,
             "order": 10,
         },
-    )
-    Course.objects.update_or_create(
-        slug="wozki-widlowe",
-        defaults={
-            "kind": Course.Kind.OPERATOR,
-            "title": "Wózki widłowe",
-            "lead": "Uprawnienia operatora wózków jezdniowych podnośnikowych.",
-            "price_gross": None,
-            "price_note": "",
-            "languages": ["pl"],
-            "is_active": True,
-            "order": 10,
+        create_defaults={
+            "lead": "Kurs na prawo jazdy kategorii B w Wieluniu — standardowy, "
+            "przyspieszony w dwa tygodnie albo na skrzyni automatycznej.",
+            "entitlements": KAT_B_ENTITLEMENTS,
+            "requirements": KAT_B_REQUIREMENTS,
+            "body": KAT_B_BODY,
         },
     )
 
+    # Anything the previous client sold and this one does not. Deactivated
+    # rather than deleted, so a stray row in an existing database stops
+    # answering instead of 404-ing halfway through a page.
+    Course.objects.exclude(slug="kat-b").update(is_active=False)
 
-def seed_intakes() -> None:
-    """Six upcoming group starts. The real dates come from the owner."""
-    from apps.courses.models import Course, CourseIntake
 
-    plan = [
-        ("kat-b", 14, CourseIntake.Mode.STATIONARY, "pl", CourseIntake.Status.OPEN),
-        ("kat-b", 45, CourseIntake.Mode.MIXED, "pl", CourseIntake.Status.PLANNED),
-        ("kat-c", 21, CourseIntake.Mode.STATIONARY, "pl", CourseIntake.Status.OPEN),
-        ("kwalifikacja-wstepna", 30, CourseIntake.Mode.MIXED, "pl", CourseIntake.Status.PLANNED),
-        ("adr", 60, CourseIntake.Mode.STATIONARY, "pl", CourseIntake.Status.PLANNED),
-        ("wozki-widlowe", 10, CourseIntake.Mode.STATIONARY, "pl", CourseIntake.Status.FULL),
-    ]
-    today = date.today()
-    for slug, offset, mode, language, status in plan:
-        course = Course.objects.get(slug=slug)
-        CourseIntake.objects.update_or_create(
-            course=course,
-            start_date=today + timedelta(days=offset),
-            language=language,
-            defaults={
-                "mode": mode,
-                "status": status,
-                "seats_total": 20,
-                "seats_taken": 0,
-                "note": "",
-            },
-        )
+# tech.md section 1, transcribed to the złoty. Group, title, note, unit, price.
+#
+# The group name is what the pricing page splits on and what the home page reads
+# as "the course itself", so it is not decoration.
+PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
+    ("Kurs", "Kurs kategorii B", "pełny kurs, dowóz na egzamin w cenie", "", "3700.00"),
+    ("Kurs", "Kurs przyspieszony", "ten sam program w dwa tygodnie", "", "4300.00"),
+    ("Kurs", "Skrzynia automatyczna", "cały kurs na automacie", "", "4300.00"),
+    (
+        "Jazdy doszkalające",
+        "Jazda doszkalająca — manual",
+        "",
+        "za godzinę",
+        "160.00",
+    ),
+    (
+        "Jazdy doszkalające",
+        "Jazda doszkalająca — manual, dla naszych kursantów",
+        "cena dla osób, które robią u nas kurs",
+        "za godzinę",
+        "140.00",
+    ),
+    (
+        "Jazdy doszkalające",
+        "Jazda doszkalająca — automat",
+        "",
+        "za godzinę",
+        "140.00",
+    ),
+    (
+        "Opłaty zewnętrzne",
+        "Badanie lekarskie",
+        "opłata poza szkołą, u lekarza uprawnionego",
+        "",
+        "200.00",
+    ),
+    (
+        "Opłaty zewnętrzne",
+        "Egzamin państwowy",
+        "opłata poza szkołą, w ośrodku egzaminowania",
+        "",
+        "230.00",
+    ),
+    (
+        "Opłaty zewnętrzne",
+        "Zaświadczenie o zameldowaniu",
+        "opłata poza szkołą, w urzędzie gminy",
+        "",
+        "17.00",
+    ),
+    ("W cenie kursu", "Dowóz na egzamin", "w cenie kursu", "", "0.00"),
+]
 
 
 def seed_price_items() -> None:
     from apps.courses.models import PriceItem
 
-    items = [
-        ("Jazda doszkalająca kat. B", "Jazdy doszkalające", "za godzinę", "120.00"),
-        ("Jazda doszkalająca kat. C", "Jazdy doszkalające", "za godzinę", "180.00"),
-        ("Egzamin wewnętrzny teoretyczny", "Egzaminy", "za osobę", "50.00"),
-        ("Egzamin wewnętrzny praktyczny", "Egzaminy", "za osobę", "100.00"),
-        ("Badanie psychologiczne kierowcy", "Badania", "za osobę", "150.00"),
-        ("Wynajem pojazdu na egzamin", "Pozostałe", "za godzinę", "200.00"),
-    ]
-    for order, (title, group, unit, price) in enumerate(items, start=10):
+    for order, (group, title, note, unit, price) in enumerate(PRICE_ITEMS, start=10):
         PriceItem.objects.update_or_create(
             title=title,
             defaults={
                 "group": group,
                 "unit": unit,
                 "price_gross": Decimal(price),
-                "note": "",
+                "note": note,
                 "order": order,
                 "is_active": True,
             },
         )
 
+    # Whatever the previous client priced and this one does not.
+    PriceItem.objects.exclude(title__in=[title for _, title, *_ in PRICE_ITEMS]).update(
+        is_active=False
+    )
 
-def seed_people() -> None:
-    from apps.courses.models import Course
-    from apps.people.models import Instructor, Vehicle
 
-    for number in range(1, 5):
-        instructor, _ = Instructor.objects.update_or_create(
-            full_name=f"{DEMO_INSTRUCTOR} {number}",
-            defaults={
-                "role": "Instruktor nauki jazdy",
-                "bio": "",
-                "since_year": None,
-                "order": number * 10,
-                "is_active": True,
-            },
+def seed_pass_rates() -> None:
+    """The school's own figures, tech.md section 1.
+
+    One confirmed year: 92 candidates, 68 of them through at the first attempt.
+    The site also carries images labelled 2019, 2020 and 2021, but the numbers
+    inside them cannot be read from the page, so those years are not invented
+    here — owner_data_gaps() asks for them instead.
+    """
+    from apps.core.models import PassRate
+
+    PassRate.objects.update_or_create(
+        year=CONFIRMED_PASS_RATE_YEAR,
+        defaults={
+            "students": 92,
+            "passed_1st": 68,
+            "passed_2nd": 16,
+            "passed_3rd": 3,
+            "passed_4th": 3,
+            "note": "",
+            "is_published": True,
+        },
+    )
+
+
+# The site prints the figures without a year beside them. This is the year they
+# were published under, and the owner confirms or corrects it.
+CONFIRMED_PASS_RATE_YEAR = 2025
+
+# The years the old site shows only as images: obrazy/galeria/statystyka/*.jpg.
+UNREAD_PASS_RATE_YEARS = (2019, 2020, 2021)
+
+
+# tech.md section 1: the five documents the old site offered for download. The
+# pdf files themselves belong to the school and are not in this repository, so
+# the rows are created empty and the selector keeps them off the page until the
+# owner uploads one.
+DOWNLOADS: list[tuple[str, str]] = [
+    ("Regulamin", "Zasady szkolenia w naszym ośrodku. Do przeczytania przed startem."),
+    ("Umowa z kursantem", "Umowa, którą podpisujesz przy zapisie."),
+    (
+        "Oświadczenie dot. stanu zdrowia",
+        "Wypełniasz przed pierwszymi zajęciami praktycznymi.",
+    ),
+    ("Wzór — opłata za egzamin", "Jak i gdzie opłacić egzamin państwowy."),
+    (
+        "Zgoda rodziców — osoby niepełnoletnie",
+        "Podpisana przez oboje rodziców lub opiekunów.",
+    ),
+]
+
+
+def seed_downloads() -> None:
+    from apps.core.models import DownloadFile
+
+    for order, (title, description) in enumerate(DOWNLOADS, start=10):
+        DownloadFile.objects.update_or_create(
+            title=title,
+            defaults={"description": description, "order": order, "is_published": True},
         )
-        _attach_placeholder(instructor, "photo", f"instructor_{number}", "Instruktor")
-
-    kat_b = Course.objects.get(slug="kat-b")
-    for number in range(1, 6):
-        vehicle, _ = Vehicle.objects.update_or_create(
-            course=kat_b,
-            make=DEMO_VEHICLE,
-            model=f"szkoleniowy {number}",
-            defaults={
-                "year": None,
-                "gearbox": Vehicle.Gearbox.MANUAL,
-                "note": "",
-                "is_exam_spec": True,
-                "order": number * 10,
-                "is_active": True,
-            },
-        )
-        _attach_placeholder(vehicle, "photo", f"vehicle_{number}", "Pojazd")
-
-
-def seed_gallery() -> None:
-    from apps.gallery.models import Certificate, GalleryImage
-
-    sections = [
-        (GalleryImage.Section.SCHOOL, "Biuro ośrodka szkolenia kierowców", 3),
-        (GalleryImage.Section.VEHICLES, "Pojazd szkoleniowy", 3),
-        (GalleryImage.Section.YARD, "Plac manewrowy", 3),
-        (GalleryImage.Section.EVENTS, "Zajęcia praktyczne", 3),
-    ]
-    counter = 0
-    for section, alt_base, how_many in sections:
-        for number in range(1, how_many + 1):
-            counter += 1
-            image, _ = GalleryImage.objects.update_or_create(
-                legacy_name=f"{counter}.JPG",
-                defaults={
-                    "section": section,
-                    "alt": f"{alt_base} {number}",
-                    "caption": "",
-                    "order": counter * 10,
-                    "is_published": True,
-                },
-            )
-            _attach_placeholder(image, "image", f"gallery_{counter}", alt_base)
-
-    for number in range(1, 12):
-        certificate, _ = Certificate.objects.update_or_create(
-            order=number * 10,
-            defaults={
-                "title": f"{DEMO_CERTIFICATE} {number}",
-                "issuer": "",
-                "issued_on": None,
-                "description": "",
-                "is_published": True,
-            },
-        )
-        _attach_placeholder(certificate, "image", f"certificate_{number}", "Certyfikat")
 
 
 USEFUL_LINKS = [
     (
-        "exam",
-        "Info-Car",
-        "Rezerwacja terminu egzaminu państwowego i sprawdzenie statusu PKK.",
-        "https://info-car.pl/",
+        "tests",
+        "Zdamyto — testy na prawo jazdy",
+        "Baza pytań egzaminacyjnych, z której korzystają nasi kursanci.",
+        "https://www.zdamyto.com/",
     ),
     (
-        "gov",
-        "Sprawdź punkty karne",
-        "Usługa gov.pl: liczba punktów karnych po zalogowaniu profilem zaufanym.",
-        "https://www.gov.pl/web/gov/sprawdz-punkty-karne",
+        "exam",
+        "Sprawdź status PKK",
+        "Info-Car: czy Twój Profil Kandydata na Kierowcę jest już gotowy.",
+        "https://info-car.pl/infocar/prawo-jazdy/sprawdz-status.html",
     ),
     (
         "gov",
@@ -405,18 +331,6 @@ USEFUL_LINKS = [
         "https://www.gov.pl/web/gov/sprawdz-swoje-prawo-jazdy",
     ),
     (
-        "gov",
-        "Ministerstwo Infrastruktury",
-        "Przepisy i komunikaty dotyczące szkolenia kierowców.",
-        "https://www.gov.pl/web/infrastruktura",
-    ),
-    (
-        "gov",
-        "Mój Pojazd i Kierowca",
-        "Dane pojazdu i uprawnień w jednym miejscu.",
-        "https://www.gov.pl/web/gov/moj-pojazd",
-    ),
-    (
         "local",
         "Starostwo Powiatowe w Wieluniu",
         "Tu odbierzesz numer PKK i gotowe prawo jazdy.",
@@ -424,33 +338,59 @@ USEFUL_LINKS = [
     ),
     (
         "local",
-        "Urząd Miejski w Wieluniu",
-        "Sprawy urzędowe mieszkańców Wielunia.",
-        "https://www.wielun.pl/",
-    ),
-    (
-        "local",
         "WORD Sieradz",
         "Ośrodek egzaminowania właściwy dla powiatu wieluńskiego.",
         "https://www.wordsieradz.pl/",
     ),
+]
+
+
+# Eight questions, every answer drawn from a figure the school publishes. A
+# question whose answer we would have to guess is not asked.
+FAQS = [
     (
-        "tests",
-        "Testy na prawo jazdy gov.pl",
-        "Oficjalna baza pytań egzaminacyjnych.",
-        "https://www.gov.pl/web/infrastruktura/testy-na-prawo-jazdy",
+        "Ile kosztuje kurs na prawo jazdy kategorii B?",
+        "Kurs standardowy kosztuje 3700 zł. Kurs przyspieszony, w dwa tygodnie, "
+        "oraz kurs na skrzyni automatycznej — po 4300 zł. To ceny brutto, "
+        "bez ukrytych dopłat.",
     ),
     (
-        "exam",
-        "Kodeks drogowy w ISAP",
-        "Aktualny tekst ustawy Prawo o ruchu drogowym.",
-        "https://isap.sejm.gov.pl/",
+        "Ile trwa kurs przyspieszony?",
+        "Dwa tygodnie. Program jest ten sam co w kursie standardowym, "
+        "różni się tylko tempo. Kosztuje 4300 zł.",
     ),
     (
-        "tests",
-        "Znaki drogowe",
-        "Rozporządzenie o znakach i sygnałach drogowych.",
-        "https://www.gov.pl/web/infrastruktura/znaki-i-sygnaly-drogowe",
+        "Czy można zrobić kurs na automacie?",
+        "Tak. Cały kurs na skrzyni automatycznej kosztuje 4300 zł. Pamiętaj, "
+        "że prawo jazdy zdobyte na automacie uprawnia do jazdy wyłącznie "
+        "autem z automatyczną skrzynią biegów.",
+    ),
+    (
+        "Ile kosztuje jazda doszkalająca?",
+        "Manual — 160 zł za godzinę, a dla osób, które robią u nas kurs, "
+        "140 zł. Automat — 140 zł za godzinę.",
+    ),
+    (
+        "Czy dowozicie na egzamin?",
+        "Tak, i jest to w cenie kursu. Zdajesz autem, którym u nas jeździsz.",
+    ),
+    (
+        "Od ilu lat można zacząć kurs?",
+        "Kurs możesz rozpocząć trzy miesiące przed osiemnastymi urodzinami, "
+        "czyli od 17 lat i 9 miesięcy. Osoby niepełnoletnie przynoszą "
+        "zgodę rodziców.",
+    ),
+    (
+        "Jakie dokumenty są potrzebne do zapisu?",
+        "Orzeczenie lekarskie, fotografia 3,5 x 4,5 cm, dowód osobisty lub "
+        "paszport, zaświadczenie o zameldowaniu (17 zł) oraz zgoda rodziców "
+        "w przypadku osób niepełnoletnich.",
+    ),
+    (
+        "Jak wyrobić PKK?",
+        "Profil Kandydata na Kierowcę zakłada Starostwo Powiatowe w Wieluniu "
+        "na podstawie orzeczenia lekarskiego, zdjęcia i dowodu osobistego. "
+        "Numer PKK podajesz nam przy zapisie.",
     ),
 ]
 
@@ -469,73 +409,46 @@ def seed_links() -> None:
                 "is_active": True,
             },
         )
+    UsefulLink.objects.exclude(url__in=[url for *_, url in USEFUL_LINKS]).update(is_active=False)
 
-    faqs = [
-        (
-            "Ile trwa kurs na prawo jazdy kategorii B?",
-            "Liczbę godzin teorii i praktyki potwierdzamy telefonicznie.",
-        ),
-        (
-            "Od jakiego wieku mogę zapisać się na kurs kategorii B?",
-            "Kurs możesz rozpocząć trzy miesiące przed osiemnastymi urodzinami.",
-        ),
-        (
-            "Czy zajęcia są prowadzone po rosyjsku?",
-            "O zajęcia po rosyjsku zapytaj przez telefon.",
-        ),
-        (
-            "Co to jest PKK i gdzie go otrzymam?",
-            "Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu.",
-        ),
-        (
-            "Jakie dokumenty są potrzebne do zapisu?",
-            "Dowód tożsamości, orzeczenie lekarskie i numer PKK.",
-        ),
-        (
-            "Ile kosztuje kurs?",
-            "Aktualny cennik podajemy telefonicznie i w biurze.",
-        ),
-        (
-            "Kiedy rusza najbliższy kurs?",
-            "Najbliższe terminy podajemy telefonicznie.",
-        ),
-        (
-            "Czy prowadzicie badania psychologiczne?",
-            "Tak. Pracownia jest czynna we wtorki i piątki w godzinach 8:00-16:00.",
-        ),
-    ]
-    for order, (question, answer) in enumerate(faqs, start=10):
+    for order, (question, answer) in enumerate(FAQS, start=10):
         Faq.objects.update_or_create(
             question=question,
             defaults={"answer": answer, "order": order, "is_published": True},
         )
+    Faq.objects.exclude(question__in=[question for question, _ in FAQS]).update(is_published=False)
 
 
-def seed_reviews() -> None:
-    """Placeholders only, and never published.
+# tech.md section 1: transcribed word for word from the school's own page.
+ABOUT_BODY = HEADING_ABOUT + "\n\n".join(
+    (
+        "Nasza szkoła jest firmą z dużym doświadczeniem w zakresie szkolenia "
+        "przyszłych kierowców kat. B. Pracujący u nas instruktorzy posiadają "
+        "wiedzę i kwalifikacje na wysokim poziomie, dzięki doświadczeniu "
+        "zdobytemu przez lata praktyki.",
+        "Możemy pochwalić się jedną z najwyższych zdawalności w województwie "
+        "łódzkim. Posiadamy samochody z bogatym wyposażeniem — klimatyzowane!",
+        "Gorąco pozdrawiamy — Kierownictwo Szkoły.",
+    )
+)
 
-    tech.md section 4.7 forbids synthetic reviews, so these carry the marker and
-    stay unpublished until real ones with a source_url arrive.
-    """
-    from apps.reviews.models import Testimonial
-
-    for number, rating in enumerate([5, 5, 4], start=1):
-        Testimonial.objects.update_or_create(
-            author_name=f"{DEMO_REVIEW} {number}",
-            defaults={
-                "rating": rating,
-                # The marker stays here, and only here. tech.md section 4.7 forbids
-                # invented reviews, and test_no_synthetic_review_can_reach_a_page
-                # proves a placeholder is one by this prefix. These rows are
-                # unpublished, so nothing of it reaches a visitor.
-                "text": f"{TODO} prawdziwa opinia z podanym source_url",
-                "source": Testimonial.Source.MANUAL,
-                "source_url": "",
-                "published_on": None,
-                "is_published": False,
-                "order": number * 10,
-            },
-        )
+ENROL_BODY = "\n\n".join(
+    (
+        "# Zapisy",
+        "Zapisy prowadzimy po wcześniejszym ustaleniu telefonicznym pod numerem "
+        "691 570 489. Dzwoniąc, umówimy termin startu i powiemy, ile potrwa "
+        "kompletowanie papierów.",
+        "# Dokumenty",
+        "- orzeczenie lekarskie",
+        "- fotografia 3,5 x 4,5 cm",
+        "- dowód osobisty / paszport",
+        "- zaświadczenie o zameldowaniu (17 zł)",
+        "- zgoda rodziców (osoby niepełnoletnie)",
+        "# Badanie lekarskie",
+        "Orzeczenie o braku przeciwwskazań zdrowotnych do kierowania pojazdami "
+        "kosztuje 200 zł i jest opłatą poza szkołą.",
+    )
+)
 
 
 def seed_pages() -> None:
@@ -545,10 +458,15 @@ def seed_pages() -> None:
         (
             "o-nas",
             "O nas",
-            "Jesteśmy firmą rodzinną, szkolimy kierowców w Wieluniu od 1996 roku.",
-            HEADING_ABOUT
-            + "Rodzinny ośrodek szkolenia kierowców w Wieluniu. "
-            + "Uczymy od 1996 roku, zajęcia prowadzimy także po rosyjsku.",
+            "Szkolimy kierowców kategorii B w Wieluniu. Jedna z najwyższych "
+            "zdawalności w województwie łódzkim.",
+            ABOUT_BODY,
+        ),
+        (
+            "zapisy",
+            "Zapisy i dokumenty",
+            "Jak się zapisać i co przynieść. Pięć kroków, pięć dokumentów, jeden telefon.",
+            ENROL_BODY,
         ),
         (
             "polityka-prywatnosci",
@@ -575,12 +493,14 @@ def seed_pages() -> None:
 
 
 def owner_data_gaps() -> list[str]:
-    """Everything the owner still owes, tech.md section 16."""
-    from apps.core.models import OpeningHours, Page, SiteSettings
-    from apps.courses.models import Course, CourseIntake, PriceItem
-    from apps.gallery.models import Certificate, GalleryImage
-    from apps.links.models import Faq
-    from apps.people.models import Instructor, Vehicle
+    """Everything the owner still owes, tech.md section 16.
+
+    This is the list that goes in the letter under "czego brakuje". Every entry
+    is something the school has but has not given us, never something we could
+    have written ourselves.
+    """
+    from apps.core.models import DownloadFile, Page, PassRate, SiteSettings
+    from apps.courses.models import Course
     from apps.reviews.models import Testimonial
 
     gaps: list[str] = []
@@ -589,57 +509,59 @@ def owner_data_gaps() -> list[str]:
         if count:
             gaps.append(f"{count} x {what}")
 
-    note(Course.objects.filter(price_gross__isnull=True).count(), "Course.price_gross missing")
-    note(
-        Course.objects.filter(kind=Course.Kind.LICENSE, theory_hours__isnull=True).count(),
-        "Course.theory_hours missing",
-    )
-    note(
-        Course.objects.filter(kind=Course.Kind.LICENSE, practice_hours__isnull=True).count(),
-        "Course.practice_hours missing",
-    )
-    note(
-        Course.objects.exclude(languages__contains=["ru"]).count(),
-        "Course.languages: which courses run in russian is unconfirmed",
-    )
-    note(
-        OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE, note="").count(),
-        "OpeningHours office schedule unconfirmed",
-    )
-    note(CourseIntake.objects.filter(note="").count(), "CourseIntake start unconfirmed")
-    note(PriceItem.objects.filter(note="").count(), "PriceItem price unconfirmed")
-    note(
-        Instructor.objects.filter(full_name__startswith=DEMO_INSTRUCTOR).count(),
-        "Instructor unknown",
-    )
-    note(Vehicle.objects.filter(make=DEMO_VEHICLE).count(), "Vehicle unknown")
-    note(
-        Certificate.objects.filter(title__startswith=DEMO_CERTIFICATE).count(),
-        "Certificate caption missing",
-    )
-    note(
-        GalleryImage.objects.filter(image__contains=PLACEHOLDER_PREFIX).count(),
-        "GalleryImage still a placeholder file",
-    )
-    note(
-        Faq.objects.filter(answer__contains="potwierdzamy telefonicznie").count()
-        + Faq.objects.filter(answer__contains="podajemy telefonicznie").count()
-        + Faq.objects.filter(answer__contains="zapytaj przez telefon").count(),
-        "Faq answer unconfirmed",
-    )
-    note(
-        Testimonial.objects.filter(author_name__startswith=DEMO_REVIEW).count(),
-        "Testimonial is a placeholder, real ones need a source_url",
-    )
-    note(Page.objects.filter(body__contains=TODO).count(), "Page body unconfirmed")
-
     site = SiteSettings.get_solo()
-    if not site.facebook_url:
-        gaps.append("1 x SiteSettings.facebook_url missing")
+    if not site.nip:
+        gaps.append("1 x SiteSettings.nip: not published on the old site, ask the owner")
+    if site.founded_year is None:
+        gaps.append("1 x SiteSettings.founded_year: never stated, ask the owner")
     if not site.google_business_url:
         gaps.append("1 x SiteSettings.google_business_url missing")
+    if not site.youtube_poster:
+        gaps.append("1 x SiteSettings.youtube_poster: a still frame for the home page clip")
+
+    note(
+        _office_hours_gap(),
+        "OpeningHours: the office answers by arrangement only, real hours unconfirmed",
+    )
+    note(
+        Course.objects.filter(is_active=True, theory_hours__isnull=True).count(),
+        "Course.theory_hours: the school publishes prices but not the hour breakdown",
+    )
+    note(
+        Course.objects.filter(is_active=True, practice_hours__isnull=True).count(),
+        "Course.practice_hours unconfirmed",
+    )
+    note(
+        len(UNREAD_PASS_RATE_YEARS)
+        - PassRate.objects.filter(year__in=UNREAD_PASS_RATE_YEARS).count(),
+        "PassRate: 2019-2021 exist only as images on the old site, ask for the figures",
+    )
+    note(
+        PassRate.objects.filter(year=CONFIRMED_PASS_RATE_YEAR).count(),
+        f"PassRate: confirm {CONFIRMED_PASS_RATE_YEAR} is the right year for 92/68/16/3/3",
+    )
+    note(
+        DownloadFile.objects.filter(file="").count(),
+        "DownloadFile: pdf not uploaded yet, the row stays off the page",
+    )
+    note(
+        Testimonial.objects.filter(is_published=True, source_url="").count(),
+        "Testimonial published without a source_url, which is not allowed",
+    )
+    if not Testimonial.objects.filter(is_published=True).exists():
+        gaps.append("1 x Testimonial: no verifiable reviews yet, the section stays hidden")
+    note(Page.objects.filter(body__contains=TODO).count(), "Page body unconfirmed")
+    gaps.append("1 x photographs: cars, lessons, the office — none are ours to publish")
 
     return gaps
+
+
+def _office_hours_gap() -> int:
+    """1 while every office day is closed with only the arrangement note on it."""
+    from apps.core.models import OpeningHours
+
+    office = OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE)
+    return 1 if office.exists() and not office.exclude(opens=None).exists() else 0
 
 
 # --------------------------------------------------------------------------
@@ -650,12 +572,10 @@ def run() -> None:
     seed_site_settings()
     seed_opening_hours()
     seed_courses()
-    seed_intakes()
     seed_price_items()
-    seed_people()
-    seed_gallery()
+    seed_pass_rates()
+    seed_downloads()
     seed_links()
-    seed_reviews()
     seed_pages()
     # Last: it writes only the _ru and _uk columns of rows the steps above
     # created, so it has nothing to work on until they have run.
