@@ -13,16 +13,24 @@ from django.utils import timezone
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.courses.models import Course, CourseIntake
 from apps.people.models import Vehicle
-from scripts.import_legacy import import_courses
-from tests.unit.test_import_legacy import LEGACY
+from scripts import seed
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
 def offer() -> list[Course]:
-    import_courses(LEGACY)
-    return list(Course.objects.all())
+    """What the school actually sells, straight out of the seed.
+
+    One course. The previous client had fifteen and this fixture read them out
+    of a legacy export; there is no export here, and the seed is the single
+    source of what the offer is — tests that read it cannot drift from what a
+    visitor sees.
+    """
+    seed.seed_site_settings()
+    seed.seed_courses()
+    seed.seed_price_items()
+    return list(Course.objects.filter(is_active=True))
 
 
 def make_course(**overrides: object) -> Course:

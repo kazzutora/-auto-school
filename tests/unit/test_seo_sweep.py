@@ -18,22 +18,24 @@ from apps.core.models import Page, SiteSettings
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.courses.models import Course, CourseIntake, PriceItem
 from apps.links.models import Faq, UsefulLink
-from scripts.import_legacy import import_courses
+from scripts import seed
 from tests.factories import CertificateFactory, GalleryImageFactory, image_bytes
-from tests.unit.test_import_legacy import LEGACY
 
 pytestmark = pytest.mark.django_db
 
-# tech.md section 5, every public url a visitor can reach today.
+# tech.md section 5, every public url a visitor can reach today. The routes for
+# the kinds this school does not sell — /kierowca-zawodowy/, the psychotests and
+# the forklifts — still exist in the url map but have no course behind them, so
+# they answer 404 and are not public pages here.
 PUBLIC_URLS = [
+    "/",
     "/kursy/",
     "/kursy/kat-b/",
-    "/kierowca-zawodowy/",
-    "/kierowca-zawodowy/adr/",
-    "/badania-psychologiczne/",
-    "/wozki-widlowe/",
     "/cennik/",
     "/terminy/",
+    "/zdawalnosc/",
+    "/do-pobrania/",
+    "/zapisy/",
     "/o-nas/",
     "/galeria/",
     "/certyfikaty/",
@@ -58,9 +60,13 @@ def whole_site() -> None:
     site.phone_primary = "691 570 489"
     site.save()
 
-    import_courses(LEGACY)
+    seed.seed_courses()
+    seed.seed_price_items()
+    seed.seed_pass_rates()
+    seed.seed_downloads()
     for slug, title in (
         ("o-nas", "O nas"),
+        ("zapisy", "Zapisy i dokumenty"),
         ("rodo", "RODO"),
         ("polityka-prywatnosci", "Polityka prywatności"),
     ):

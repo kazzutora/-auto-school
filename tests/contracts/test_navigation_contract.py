@@ -2,14 +2,15 @@
 
 from apps.core.navigation import NAV, NavItem
 
-# tech.md section 7, in order.
+# tech.md section 7, in order. Seven items, one level, no submenus: this school
+# sells one category, so there is no course tree to fold away.
 TECH_MD_NAV = [
-    ("Kursy", "courses:list"),
-    ("Kierowca zawodowy", "courses:pro_hub"),
+    ("Kurs kat. B", "courses:detail"),
     ("Cennik", "courses:pricing"),
-    ("Terminy", "courses:intakes"),
+    ("Zapisy", "core:page"),
+    ("Zdawalność", "core:pass_rates"),
     ("O nas", "core:page"),
-    ("Galeria", "gallery:index"),
+    ("Do pobrania", "core:downloads"),
     ("Kontakt", "core:contact"),
 ]
 
@@ -27,9 +28,34 @@ def test_kontakt_is_a_first_level_item() -> None:
         assert "Kontakt" not in {child.title for child in item.children}
 
 
-def test_o_nas_carries_its_slug() -> None:
-    o_nas = next(item for item in NAV if item.route == "core:page")
-    assert o_nas.kwargs == {"slug": "o-nas"}
+def test_every_flat_page_item_carries_its_slug() -> None:
+    """core:page answers for four slugs, so the route alone is not an address."""
+    slugs = [item.kwargs.get("slug") for item in NAV if item.route == "core:page"]
+
+    assert slugs == ["zapisy", "o-nas"]
+
+
+def test_the_course_item_names_the_one_category() -> None:
+    course = next(item for item in NAV if item.route == "courses:detail")
+    assert course.kwargs == {"slug": "kat-b"}
+
+
+def test_the_two_pages_this_school_leads_with_are_in_the_menu() -> None:
+    """tech.md section 1: the pass rate and the price list are the argument.
+
+    Both were buried in the middle of a one page site. A menu that does not name
+    them puts them back where they were.
+    """
+    routes = {item.route for item in NAV}
+
+    assert "core:pass_rates" in routes
+    assert "courses:pricing" in routes
+
+
+def test_every_nav_route_resolves() -> None:
+    """A menu item pointing at a route that does not exist is a 500 in the header."""
+    for item in NAV:
+        assert item.url().startswith("/")
 
 
 def test_nav_items_are_immutable() -> None:
