@@ -4,63 +4,84 @@
 {% comment %}
 The price list, FRONTEND.md A.10 and F6.
 
-One table per group, and the figures are the point: the mono face with tabular
-figures and right alignment, so the złoty columns line up digit under digit and
-the place values do not dance from row to row, A.5.
+This is a strong page for this school rather than a placeholder, which is the
+one real difference from the first project: every figure here is published on
+the school's own site, so the page can answer the question a visitor arrived
+with instead of asking them to ring for a quote.
 
-No zebra. A.5 parts the rows with a line.soft hairline and nothing else — a
-striped table is a decoration standing in for alignment that already works.
+Rows, not tables. BLOCKS.md B9: a three column table put the figure at 63% of
+the page and left 700px of nothing between a service and its price. Name at one
+end, figure at the other, a leader of dots between.
 
-Every table scrolls inside its own box, which is what c-table's container is
-for: at 320px a three column price row is wider than the screen and the page
-still must not move sideways, A.4.
+The last group is money that does not go to the school — a doctor, an exam
+centre, a council office. It sits on its own ground with a callout saying so,
+because "230 zł" under "3700 zł" otherwise reads as one bill.
+
+Every figure is the mono face with tabular numerals, which is what makes the
+złoty column line up digit under digit, A.5.
 {% endcomment %}
 
 {% block content %}
-<c-section size="compact">
-  {# The right half of a page header was empty on every inner page.
-     BLOCKS.md section A fills it with the one thing somebody here is
-     most likely to want. #}
-  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
-    <div>
-    <c-breadcrumbs :items="breadcrumbs" />
-    {% translate "Oferta" as t_oferta %}
-    <c-heading level="1" eyebrow="{{ t_oferta }}" class="mt-6">{% translate "Cennik" %}</c-heading>
-    <p class="u-narrow mt-4 text-body-lg text-ink-700">
-      {% translate "Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie." %}
-    </p>
-    </div>
 
-    <div class="lg:pt-2">
-      {% translate "Zadzwoń po wycenę" as t_zadzwon_po_wycene %}
-      <c-fact-card label="{{ t_zadzwon_po_wycene }}" value="{{ site_settings.phone_primary }}"
-                   href="tel:{{ site_settings.phone_primary|cut:' ' }}"
-                   note="{% translate 'Podamy kwotę od ręki, w godzinach pracy biura.' %}">
+<c-page-header eyebrow="{% translate 'Cennik' %}" title="{% translate 'Cennik' %}"
+               lead="{% translate 'Ceny brutto, bez ukrytych kosztów. Dowóz na egzamin państwowy jest w cenie kursu.' %}">
+  <c-breadcrumbs :items="breadcrumbs" />
+
+  <c-slot name="aside">
+    {% if headline_price %}
+      <c-fact-card label="{% translate 'Kurs kat. B' %}" value="{{ headline_price }}"
+                   note="{% translate 'Pełny kurs standardowy. Przyspieszony i automat po 4300 zł.' %}">
         <c-slot name="action">
-          <c-button variant="primary" full="1" href="{% url 'leads:enroll' %}">{% translate "Zapytaj o cenę" %}</c-button>
+          <c-button variant="primary" href="{{ enrol_url }}" full="1">{% translate "Zapisz się" %}</c-button>
         </c-slot>
       </c-fact-card>
-    </div>
-  </div>
-</c-section>
+    {% endif %}
+  </c-slot>
+</c-page-header>
+
+{% if anchors %}
+  <c-anchor-nav :items="anchors" label="{% translate 'Sekcje cennika' %}" />
+{% endif %}
 
 {% if groups %}
   {# Ground alternates group by group, X1 point 7: two sections of the same
      colour in a row read as one long block. #}
   {% for label, rows in groups %}
-    <c-section tone="{% cycle 'muted' 'default' %}" size="compact" id="grupa-{{ forloop.counter }}">
-      <c-heading level="2">{% translate "Pozostałe usługi" as fallback %}{{ label|default:fallback }}</c-heading>
-      {# 900px, not the full 1240: a line whose ends are further apart than
-         that stops reading as one line. #}
+    <c-section tone="{% cycle 'default' 'muted' %}" size="compact" id="grupa-{{ forloop.counter }}">
+      {% translate "Pozostałe usługi" as fallback %}
+      <c-heading level="2">{{ label|default:fallback }}</c-heading>
+
+      {% if label == external_group %}
+        <div class="mt-6 max-w-[900px]">
+          <c-callout title="{% translate 'To nie są opłaty dla szkoły' %}">
+            <p>
+              {% translate "Badanie lekarskie płacisz lekarzowi, egzamin — ośrodkowi egzaminowania, zaświadczenie o zameldowaniu — urzędowi gminy. Podajemy je, żebyś od razu wiedział, ile kosztuje całość, a nie tylko nasza część." %}
+            </p>
+          </c-callout>
+        </div>
+      {% endif %}
+
       {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
          stops reading as one line. #}
       <ul class="mt-6 max-w-[900px]">
         {% for row in rows %}
           <c-price-row title="{{ row.label }}" price="{{ row.price }}" note="{{ row.note }}"
-                       href="{{ row.url }}"
-                       badge="{% if row.code == 'B' %}{% translate 'Najczęściej wybierany' %}{% endif %}" />
+                       badge="{% if forloop.first and label == 'Kurs' %}{% translate 'Najczęściej wybierany' %}{% endif %}" />
         {% endfor %}
       </ul>
+
+      {% if label == 'Kurs' %}
+        <div class="mt-8 max-w-[900px]">
+          <c-callout tone="accent" title="{% translate 'Co jest w cenie kursu' %}">
+            <ul class="flex flex-col gap-1">
+              <li>{% translate "Zajęcia teoretyczne i praktyczne w pełnym wymiarze." %}</li>
+              <li>{% translate "Egzamin wewnętrzny przed państwowym." %}</li>
+              <li><strong>{% translate "Dowóz na egzamin państwowy — GRATIS." %}</strong></li>
+              <li>{% translate "Klimatyzowane auta z bogatym wyposażeniem." %}</li>
+            </ul>
+          </c-callout>
+        </div>
+      {% endif %}
     </c-section>
   {% endfor %}
 {% else %}
@@ -72,32 +93,21 @@ still must not move sideways, A.4.
   </c-section>
 {% endif %}
 
+{# Instalments, if the owner ever gives us the terms. No page, no section. #}
 {% if payments %}
-  <c-section tone="muted">
-    <c-heading level="2">{% translate "Płatności i raty" as fallback %}{{ payments_title|default:fallback }}</c-heading>
+  <c-section tone="default" size="compact">
+    {% translate "Płatności i raty" as fallback %}
+    <c-heading level="2">{{ payments_title|default:fallback }}</c-heading>
     <div class="mt-6">{% include "courses/_prose.html" with html=payments %}</div>
   </c-section>
 {% endif %}
 
-{# The page ends on a question and two ways to answer it, X1 point 9. It used
-   to end on the block of courses without a price, which is a list, not an
-   invitation. #}
-<c-section tone="brand" size="compact">
-  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-    <div>
-      <c-heading level="2">{% translate "Nie wiesz, którą kategorię wybrać?" %}</c-heading>
-      <p class="mt-3 text-body-lg">{% translate "Powiemy, co się opłaca w Twojej sytuacji, i podamy cenę." %}</p>
-    </div>
-    <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{{ enrol_url }}">{% translate "Zapytaj o cenę" %}</c-button>
-      {% if site_settings.phone_primary %}
-        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-        </c-button>
-      {% endif %}
-    </p>
-  </div>
-</c-section>
+<c-cta-band ground="ink"
+            title="{% translate 'Zaczynamy?' %}"
+            text="{% translate 'Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — powiemy, kiedy startuje najbliższa grupa.' %}"
+            href="{{ enrol_url }}"
+            action="{% translate 'Zapisz się' %}"
+            phone="{{ site_settings.phone_primary }}" />
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% translate "Masz pytanie o cenę?" as t_masz_pytanie_o %}

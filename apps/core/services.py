@@ -82,6 +82,25 @@ def attempt_percents(entry: ExamYear) -> list[int]:
     return [pass_rate_percent(count, entry.students) for count in counts]
 
 
+def not_passed(entry: ExamYear) -> int:
+    """Candidates in this cohort who have not passed yet.
+
+    ``students`` counts everybody who sat the exam; the four attempt columns
+    count everybody who got through. The difference is the people still without
+    a licence, and it is the reason the four percentages do not add up to 100.
+
+    Printing it is not modesty, it is what makes the other four figures
+    checkable. The school's own site prints 76% for the first attempt, which is
+    68 of the 90 who eventually passed rather than 68 of the 92 who sat — and a
+    reader who cannot see the 2 has no way to tell those two claims apart.
+
+    Never negative: a cohort whose columns exceed its headcount is a data entry
+    error, not minus two people.
+    """
+    counts = (entry.passed_1st, entry.passed_2nd, entry.passed_3rd, entry.passed_4th)
+    return max(0, entry.students - sum(counts))
+
+
 def average_attempts(entry: ExamYear) -> float | None:
     """Mean number of tries per candidate who passed, to one decimal.
 

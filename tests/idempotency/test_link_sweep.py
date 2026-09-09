@@ -41,7 +41,7 @@ def internet(monkeypatch: pytest.MonkeyPatch) -> FakeInternet:
 @pytest.fixture
 def twelve_links() -> None:
     site = SiteSettings.get_solo()
-    site.short_name = "OSK Nawrocki"
+    site.short_name = "OSK Ostrycharz"
     site.save()
 
     for number in range(12):

@@ -38,40 +38,55 @@ point 10 and tech.md section 1 both say it never appears on a public page.
       </div>
 
       <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">{% translate "Kursy" %}</p>
+        <p class="label u-muted-on-ground">{% translate "Kurs" %}</p>
         <ul class="flex flex-col gap-2">
-          <li><a href="{% url 'courses:list' %}" class="underline-offset-4 hover:underline">{% translate "Prawo jazdy" %}</a></li>
-          <li><a href="{% url 'courses:pro_hub' %}" class="underline-offset-4 hover:underline">{% translate "Kierowca zawodowy" %}</a></li>
-          <li><a href="{% url 'courses:psychotests' %}" class="underline-offset-4 hover:underline">{% translate "Badania psychologiczne" %}</a></li>
-          <li><a href="{% url 'courses:forklifts' %}" class="underline-offset-4 hover:underline">{% translate "Wózki widłowe" %}</a></li>
-        </ul>
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <p class="label u-muted-on-ground">{% translate "Informacje" %}</p>
-        <ul class="flex flex-col gap-2">
-          <li><a href="{% url 'core:page' slug='o-nas' %}" class="underline-offset-4 hover:underline">{% translate "O nas" %}</a></li>
+          <li><a href="{% url 'courses:detail' slug='kat-b' %}" class="underline-offset-4 hover:underline">{% translate "Prawo jazdy kat. B" %}</a></li>
           <li><a href="{% url 'courses:pricing' %}" class="underline-offset-4 hover:underline">{% translate "Cennik" %}</a></li>
-          <li><a href="{% url 'courses:intakes' %}" class="underline-offset-4 hover:underline">{% translate "Terminy" %}</a></li>
-          <li><a href="{% url 'gallery:index' %}" class="underline-offset-4 hover:underline">{% translate "Galeria" %}</a></li>
-          <li><a href="{% url 'links:useful' %}" class="underline-offset-4 hover:underline">{% translate "Przydatne linki" %}</a></li>
+          <li><a href="{% url 'core:pass_rates' %}" class="underline-offset-4 hover:underline">{% translate "Zdawalność" %}</a></li>
+          <li><a href="{% url 'links:faq' %}" class="underline-offset-4 hover:underline">FAQ</a></li>
         </ul>
       </div>
 
       <div class="flex flex-col gap-4">
         <p class="label u-muted-on-ground">{% translate "Formalności" %}</p>
         <ul class="flex flex-col gap-2">
+          <li><a href="{% url 'core:page' slug='zapisy' %}" class="underline-offset-4 hover:underline">{% translate "Zapisy i dokumenty" %}</a></li>
+          <li><a href="{% url 'core:downloads' %}" class="underline-offset-4 hover:underline">{% translate "Do pobrania" %}</a></li>
+          <li><a href="{% url 'links:useful' %}" class="underline-offset-4 hover:underline">{% translate "Przydatne linki" %}</a></li>
           <li><a href="{% url 'core:page' slug='polityka-prywatnosci' %}" class="underline-offset-4 hover:underline">{% translate "Polityka prywatności" %}</a></li>
           <li><a href="{% url 'core:page' slug='rodo' %}" class="underline-offset-4 hover:underline">RODO</a></li>
-          <li><a href="{% url 'links:faq' %}" class="underline-offset-4 hover:underline">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <p class="label u-muted-on-ground">{% translate "Ośrodek" %}</p>
+        <ul class="flex flex-col gap-2">
+          <li><a href="{% url 'core:page' slug='o-nas' %}" class="underline-offset-4 hover:underline">{% translate "O nas" %}</a></li>
+          <li><a href="{% url 'gallery:index' %}" class="underline-offset-4 hover:underline">{% translate "Galeria" %}</a></li>
           <li><a href="{% url 'core:contact' %}" class="underline-offset-4 hover:underline">{% translate "Kontakt" %}</a></li>
+          {% if site_settings.facebook_url %}
+            <li>
+              <a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank"
+                 class="inline-flex items-center gap-2 underline-offset-4 hover:underline">
+                Facebook <c-icon name="external" size="sm" />
+              </a>
+            </li>
+          {% endif %}
+          {% if site_settings.youtube_url %}
+            <li>
+              <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank"
+                 class="inline-flex items-center gap-2 underline-offset-4 hover:underline">
+                YouTube <c-icon name="external" size="sm" />
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
 
     <div class="u-rule-on-ground mt-10 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-small u-muted-on-ground">
-        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Ostrycharz" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
+        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Ostrycharz" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %} &middot; {% translate "Wieluń" %}
       </p>
       <c-lang-switcher />
     </div>

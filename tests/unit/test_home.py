@@ -25,14 +25,14 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def site() -> SiteSettings:
     row = SiteSettings.get_solo()
-    row.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    row.short_name = "OSK Nawrocki"
-    row.street = "ul. Zielona 45"
+    row.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    row.short_name = "OSK Ostrycharz"
+    row.street = "ul. Asnyka 7"
     row.postal_code = "98-300"
     row.city = "Wieluń"
     row.nip = "8321916014"
     row.email = "biuro@example.com"
-    row.phone_primary = "43 843 29 11"
+    row.phone_primary = "691 570 489"
     row.founded_year = 1996
     row.map_lat = Decimal("51.220600")
     row.map_lng = Decimal("18.569700")
@@ -88,7 +88,7 @@ def test_the_title_and_description_are_filled(client: Client, site: SiteSettings
     title = re.search(r"<title>(.*?)</title>", html, re.S)
     description = re.search(r'<meta name="description" content="([^"]*)"', html)
     assert title and title.group(1).strip()
-    assert title.group(1).strip().endswith("OSK Nawrocki Wieluń")
+    assert title.group(1).strip().endswith("OSK Ostrycharz Wieluń")
     assert "Prawo jazdy" in title.group(1)
     assert description and description.group(1).strip()
     assert len(description.group(1)) <= 170

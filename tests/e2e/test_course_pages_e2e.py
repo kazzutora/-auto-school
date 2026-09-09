@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db
 def course() -> Course:
     site = SiteSettings.get_solo()
     site.phone_primary = "605 065 795"
-    site.short_name = "OSK Nawrocki"
+    site.short_name = "OSK Ostrycharz"
     site.save()
     return Course.objects.create(
         kind=Course.Kind.LICENSE,

@@ -63,9 +63,17 @@ still renders — as an empty state with a phone number, not a blank.
         {% translate "Liczymy kursantów, którzy ukończyli u nas kurs kategorii B i podeszli do egzaminu państwowego w WORD. „Za pierwszym razem” to zdany egzamin praktyczny w pierwszym podejściu." %}
       </p>
     </c-callout>
-    <c-callout title="{% translate 'Dlaczego procenty nie sumują się równo do 100' %}">
+    <c-callout title="{% translate 'Dlaczego procenty nie sumują się do 100' %}">
       <p>
-        {% translate "Każdy procent zaokrąglamy osobno, do liczby całkowitej. Cztery takie zaokrąglenia potrafią dać w sumie 99 albo 101. Dlatego w tabeli obok procentu zawsze stoi liczba osób — to ona jest faktem, procent jest tylko wygodniejszy w czytaniu." %}
+        {% translate "Z dwóch powodów. Po pierwsze, każdy procent zaokrąglamy osobno — cztery takie zaokrąglenia potrafią dać w sumie 99 albo 101." %}
+      </p>
+      {% if latest and latest.not_passed %}
+        <p class="mt-2">
+          {% blocktranslate with count=latest.not_passed students=latest.students year=latest.year %}Po drugie, dzielimy przez wszystkich {{ students }} kursantów, którzy w {{ year }} roku podeszli do egzaminu — a {{ count }} z nich prawa jazdy jeszcze nie ma. Gdybyśmy liczyli tylko tych, którzy ostatecznie zdali, każda z liczb w tabeli byłaby wyższa. Wolimy podać niższą i policzalną.{% endblocktranslate %}
+        </p>
+      {% endif %}
+      <p class="mt-2">
+        {% translate "Dlatego w tabeli obok procentu zawsze stoi liczba osób — to ona jest faktem, procent jest tylko wygodniejszy w czytaniu." %}
       </p>
     </c-callout>
     <c-callout title="{% translate 'Skąd bierzemy dane' %}">

@@ -32,7 +32,7 @@ def narrow_page(browser: Browser) -> Iterator[Page]:
 def school() -> None:
     site = SiteSettings.get_solo()
     site.founded_year = 1996
-    site.phone_primary = "43 843 29 11"
+    site.phone_primary = "691 570 489"
     site.save()
 
     FlatPage.objects.create(

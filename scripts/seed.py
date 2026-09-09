@@ -129,37 +129,52 @@ KAT_B_BODY = "\n\n".join(
 )
 
 
+KAT_B_LEAD = (
+    "Kurs na prawo jazdy kategorii B w Wieluniu — standardowy, "
+    "przyspieszony w dwa tygodnie albo na skrzyni automatycznej."
+)
+
+# Fields the seed owns and rewrites on every run.
+KAT_B_MANAGED: dict[str, object] = {
+    "code": "B",
+    "title": "Prawo jazdy kat. B",
+    "lead": KAT_B_LEAD,
+    "min_age": 18,
+    # The school publishes prices but not the hour breakdown. The statutory
+    # minimum is 30 h theory and 30 h practice, but what this school actually
+    # runs is its own to state.
+    "theory_hours": None,
+    "practice_hours": None,
+    "price_gross": Decimal("3700.00"),
+    "price_note": "cena kursu standardowego, dowóz na egzamin w cenie",
+    "languages": ["pl", "ru", "uk"],
+    "is_active": True,
+    "order": 10,
+}
+
+# Fields an editor curates in the admin. Written once, when the row is first
+# created, so a rerun never overwrites somebody's work.
+KAT_B_EDITORIAL: dict[str, object] = {
+    "entitlements": KAT_B_ENTITLEMENTS,
+    "requirements": KAT_B_REQUIREMENTS,
+    "body": KAT_B_BODY,
+}
+
+
 def seed_courses() -> None:
-    """One course. This school teaches category B and nothing else."""
+    """One course. This school teaches category B and nothing else.
+
+    create_defaults *replaces* defaults on creation rather than adding to it —
+    Django 5.0 — so the create branch has to carry both dicts. Splitting them
+    without merging leaves a freshly created row with no kind, no title and no
+    price until somebody happens to run the seed a second time.
+    """
     from apps.courses.models import Course
 
     Course.objects.update_or_create(
         slug="kat-b",
-        defaults={
-            "kind": Course.Kind.LICENSE,
-            "code": "B",
-            "title": "Prawo jazdy kat. B",
-            "lead": "Kurs na prawo jazdy kategorii B w Wieluniu — standardowy, "
-            "przyspieszony w dwa tygodnie albo na skrzyni automatycznej.",
-            "min_age": 18,
-            # The school publishes prices but not the hour breakdown. The
-            # statutory minimum is 30 h theory and 30 h practice, but what this
-            # school actually runs is its own to state.
-            "theory_hours": None,
-            "practice_hours": None,
-            "price_gross": Decimal("3700.00"),
-            "price_note": "cena kursu standardowego, dowóz na egzamin w cenie",
-            "languages": ["pl", "ru", "uk"],
-            "is_active": True,
-            "order": 10,
-        },
-        create_defaults={
-            "lead": "Kurs na prawo jazdy kategorii B w Wieluniu — standardowy, "
-            "przyspieszony w dwa tygodnie albo na skrzyni automatycznej.",
-            "entitlements": KAT_B_ENTITLEMENTS,
-            "requirements": KAT_B_REQUIREMENTS,
-            "body": KAT_B_BODY,
-        },
+        defaults={"kind": Course.Kind.LICENSE, **KAT_B_MANAGED},
+        create_defaults={"kind": Course.Kind.LICENSE, **KAT_B_MANAGED, **KAT_B_EDITORIAL},
     )
 
     # Anything the previous client sold and this one does not. Deactivated
@@ -540,6 +555,12 @@ def owner_data_gaps() -> list[str]:
         PassRate.objects.filter(year=CONFIRMED_PASS_RATE_YEAR).count(),
         f"PassRate: confirm {CONFIRMED_PASS_RATE_YEAR} is the right year for 92/68/16/3/3",
     )
+    if PassRate.objects.filter(year=CONFIRMED_PASS_RATE_YEAR, students=92, passed_1st=68).exists():
+        gaps.append(
+            "1 x PassRate: the old site prints 76% for the first attempt, which is 68 of the "
+            "90 who eventually passed. This site prints 68 of the 92 who sat, which is 74%. "
+            "Ask the owner which denominator they mean, and what happened to the other 2"
+        )
     note(
         DownloadFile.objects.filter(file="").count(),
         "DownloadFile: pdf not uploaded yet, the row stays off the page",

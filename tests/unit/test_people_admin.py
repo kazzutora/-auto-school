@@ -45,14 +45,14 @@ def test_the_instructor_photo_shows_in_the_list(
     client: Client, staff: None, category: Course
 ) -> None:
     """The preview is the point: the owner cannot tell rows apart by name alone."""
-    instructor = Instructor.objects.create(full_name="Adam Nawrocki", photo=image_bytes())
+    instructor = Instructor.objects.create(full_name="Adam Kowalski", photo=image_bytes())
     instructor.categories.add(category)
 
     row = changelist(client, "instructor")
     image = re.search(r"<img[^>]*people[^>]*>", row)
 
     assert image, "no photo preview in the changelist"
-    assert 'alt="Adam Nawrocki"' in image.group(0)
+    assert 'alt="Adam Kowalski"' in image.group(0)
 
 
 def test_a_row_without_a_photo_does_not_break_the_list(client: Client, staff: None) -> None:
@@ -104,13 +104,13 @@ def test_more_rows_do_not_add_queries(
 
 
 def test_the_owner_can_filter_and_search(client: Client, staff: None, category: Course) -> None:
-    Instructor.objects.create(full_name="Adam Nawrocki", role="Instruktor kat. B")
+    Instructor.objects.create(full_name="Adam Kowalski", role="Instruktor kat. B")
     Instructor.objects.create(full_name="Były instruktor", is_active=False)
 
     url = reverse("admin:people_instructor_changelist")
     active = client.get(url, {"is_active__exact": "1"}).content.decode()
-    found = client.get(url, {"q": "Nawrocki"}).content.decode()
+    found = client.get(url, {"q": "Kowalski"}).content.decode()
 
-    assert "Adam Nawrocki" in active
+    assert "Adam Kowalski" in active
     assert "Były instruktor" not in active
-    assert "Adam Nawrocki" in found
+    assert "Adam Kowalski" in found

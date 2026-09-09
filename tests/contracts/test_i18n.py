@@ -33,9 +33,9 @@ CHROME = {
 @pytest.fixture
 def site() -> SiteSettings:
     return SiteSettings.objects.create(
-        legal_name="OSK Nawrocki",
-        short_name="OSK Nawrocki",
-        street="Zielona 45",
+        legal_name="OSK Ostrycharz",
+        short_name="OSK Ostrycharz",
+        street="Asnyka 7",
         postal_code="98-300",
         city="Wieluń",
         phone_primary="605 065 795",

@@ -19,6 +19,7 @@ from apps.core.services import (
     average_attempts,
     first_attempt_percent,
     human_size,
+    not_passed,
     youtube_id,
 )
 
@@ -246,6 +247,9 @@ def _pass_rate_row(entry: PassRate | Any) -> dict[str, Any]:
         ),
         "first_percent": percents[0],
         "average": average_attempts(entry),
+        # The people the four columns leave out. Printed on the page, not
+        # quietly dropped: see the docstring on services.not_passed.
+        "not_passed": not_passed(entry),
     }
 
 

@@ -74,14 +74,14 @@ def site(db: None) -> SiteSettings:
     from tests.factories import CertificateFactory, GalleryImageFactory
 
     settings_row = SiteSettings.get_solo()
-    settings_row.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    settings_row.short_name = "OSK Nawrocki"
-    settings_row.street = "ul. Zielona 45"
+    settings_row.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    settings_row.short_name = "OSK Ostrycharz"
+    settings_row.street = "ul. Asnyka 7"
     settings_row.postal_code = "98-300"
     settings_row.city = "Wieluń"
     settings_row.nip = "8321916014"
     settings_row.email = "biuro@example.com"
-    settings_row.phone_primary = "43 843 29 11"
+    settings_row.phone_primary = "691 570 489"
     settings_row.phone_secondary = "605 065 795"
     settings_row.map_lat = Decimal("51.220600")
     settings_row.map_lng = Decimal("18.569700")

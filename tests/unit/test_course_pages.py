@@ -229,7 +229,7 @@ def test_the_title_follows_the_contract(client: Client) -> None:
     body = body_of(client, "/kursy/kat-b/")
 
     title = re.search(r"<title>(.*?)</title>", body).group(1)
-    assert title == "Prawo jazdy kat. B — OSK Nawrocki Wieluń"
+    assert title == "Prawo jazdy kat. B — OSK Ostrycharz Wieluń"
     assert len(title) <= TITLE_LIMIT
 
 

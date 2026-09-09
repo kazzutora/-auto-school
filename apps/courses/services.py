@@ -101,11 +101,18 @@ def course_rows(courses: Iterable[Any]) -> list[PriceRow]:
     return rows
 
 
+# What a price of exactly zero means on this site. The school's strongest small
+# advantage is that it drives candidates to the exam at no charge, and printing
+# that as "0,00 zł" reads like a placeholder somebody forgot to fill in.
+FREE = "GRATIS"
+
+
 def price_item_rows(items: Iterable[Any]) -> list[PriceRow]:
     rows = []
     for item in items:
         note = " ".join(part for part in (item.unit, item.note) if part).strip()
-        rows.append(PriceRow(label=item.title, price=format_price(item.price_gross), note=note))
+        price = FREE if item.price_gross == 0 else format_price(item.price_gross)
+        rows.append(PriceRow(label=item.title, price=price, note=note))
     return rows
 
 

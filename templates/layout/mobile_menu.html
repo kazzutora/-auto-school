@@ -1,4 +1,4 @@
-{% load core_ui i18n %}
+{% load core_ui i18n static %}
 {% comment %}
 Mobile menu, FRONTEND.md F2 point 4.
 
@@ -26,9 +26,9 @@ switcher and the phone number.
         class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
   <div class="flex h-full flex-col">
     <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-soft">
-      <p class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight [font-stretch:125%]">
-        {{ site_settings.short_name|default:"OSK Ostrycharz" }}
-      </p>
+      <img src="{% static 'brand/logo-lockup.svg' %}" width="278" height="23"
+           alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
+           class="h-[23px] w-auto">
       {% translate "Zamknij menu" as t_zamknij_menu %}
       <c-button variant="ghost" size="icon" data-modal-close aria-label="{{ t_zamknij_menu }}" class="-mr-2">
         <c-icon name="close" />

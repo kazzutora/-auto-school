@@ -22,9 +22,9 @@ ABOUT = "/o-nas/"
 @pytest.fixture
 def about_page() -> Page:
     site = SiteSettings.get_solo()
-    site.short_name = "OSK Nawrocki"
+    site.short_name = "OSK Ostrycharz"
     site.founded_year = 1996
-    site.phone_primary = "43 843 29 11"
+    site.phone_primary = "691 570 489"
     site.save()
 
     return Page.objects.create(
@@ -48,7 +48,7 @@ def category() -> Course:
 
 def make_instructor(**overrides: Any) -> Instructor:
     values: dict[str, Any] = {
-        "full_name": "Adam Nawrocki",
+        "full_name": "Adam Kowalski",
         "role": "Instruktor kat. B",
         "since_year": 1996,
         "photo": image_bytes(),
@@ -241,7 +241,7 @@ def test_the_team_and_the_fleet_are_listed(
     make_vehicle(category)
     body = page(client)
 
-    assert "Adam Nawrocki" in block(body, "instructors")
+    assert "Adam Kowalski" in block(body, "instructors")
     assert "Instruktor kat. B" in block(body, "instructors")
     assert "Skoda Fabia" in block(body, "vehicles")
     assert "Kategoria B" in block(body, "vehicles")
@@ -282,7 +282,7 @@ def test_an_instructor_without_a_photo_still_renders(
     make_vehicle(category, photo=None)
     body = page(client)
 
-    assert "Adam Nawrocki" in body
+    assert "Adam Kowalski" in body
     assert "Skoda Fabia" in body
     assert "<img" not in block(body, "instructors")
 

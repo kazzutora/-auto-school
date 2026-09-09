@@ -49,13 +49,13 @@ PUBLIC_URLS = [
 def whole_site() -> None:
     """Enough content that no page falls back to its empty state."""
     site = SiteSettings.get_solo()
-    site.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    site.short_name = "OSK Nawrocki"
-    site.street = "ul. Zielona 45"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.short_name = "OSK Ostrycharz"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
     site.save()
 
     import_courses(LEGACY)

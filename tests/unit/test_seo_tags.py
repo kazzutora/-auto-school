@@ -14,7 +14,7 @@ def render(template: str, context: dict) -> str:
 
 def make_seo(**overrides: object) -> Seo:
     base = {
-        "title": "Kat. B — OSK Nawrocki Wieluń",
+        "title": "Kat. B — OSK Ostrycharz Wieluń",
         "description": "Kurs prawa jazdy kategorii B w Wieluniu.",
         "canonical": "https://naukajazdywielun.pl/kursy/kat-b/",
     }
@@ -56,7 +56,7 @@ def test_seo_meta_emits_the_contract_fields() -> None:
     request = RequestFactory().get("/kursy/kat-b/")
     out = render("{% seo_meta %}", {"seo": make_seo(), "request": request})
 
-    assert "<title>Kat. B — OSK Nawrocki Wieluń</title>" in out
+    assert "<title>Kat. B — OSK Ostrycharz Wieluń</title>" in out
     assert 'name="description"' in out
     assert 'rel="canonical"' in out
     assert 'name="robots" content="index,follow"' in out

@@ -45,7 +45,7 @@ def internet(monkeypatch: pytest.MonkeyPatch) -> FakeInternet:
 @pytest.fixture
 def live_domain() -> None:
     """The site knows its own name, which is what a ping is worth sending."""
-    Site.objects.filter(pk=1).update(domain=DOMAIN, name="OSK Nawrocki")
+    Site.objects.filter(pk=1).update(domain=DOMAIN, name="OSK Ostrycharz")
 
 
 def run() -> dict[str, Any]:

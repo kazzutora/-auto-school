@@ -17,20 +17,20 @@ from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 
 pytestmark = pytest.mark.django_db
 
-PHONES = ("43 843 29 11", "605 065 795", "667 615 184")
+PHONES = ("691 570 489", "605 065 795", "667 615 184")
 
 
 @pytest.fixture
 def site() -> SiteSettings:
     """The office as the seed leaves it, tech.md section 1."""
     settings = SiteSettings.get_solo()
-    settings.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    settings.short_name = "OSK Nawrocki"
-    settings.street = "ul. Zielona 45"
+    settings.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    settings.short_name = "OSK Ostrycharz"
+    settings.street = "ul. Asnyka 7"
     settings.postal_code = "98-300"
     settings.city = "Wieluń"
     settings.nip = "8321916014"
-    settings.email = "osk.adam.nawrocki@wp.pl"
+    settings.email = "oskostrycharz@poczta.onet.pl"
     settings.phone_primary, settings.phone_secondary, settings.phone_tertiary = PHONES
     settings.map_lat = Decimal("51.220600")
     settings.map_lng = Decimal("18.569700")

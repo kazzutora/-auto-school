@@ -13,93 +13,81 @@ only action on the page.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+
+<c-page-header eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}">
   <c-breadcrumbs :items="breadcrumbs" />
 
   {% if course.code or course.languages %}
-    <p class="mt-6 flex flex-wrap gap-2">
-      {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
-      {% for language in course.languages %}<c-badge tone="neutral">{{ language|upper }}</c-badge>{% endfor %}
-    </p>
+    <c-slot name="below">
+      <p class="flex flex-wrap gap-2">
+        {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
+        {% for language in course.languages %}<c-badge tone="neutral">{{ language|upper }}</c-badge>{% endfor %}
+      </p>
+    </c-slot>
   {% endif %}
 
-  <c-heading level="1" class="mt-4">{{ course.title }}</c-heading>
-  {% if course.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ course.lead }}</p>{% endif %}
-
-  {# The facts row, A.10: age, hours and price in the data face, because every
-     one of them is a figure and A.3 puts figures in the mono. It is a dl so the
-     label belongs to its value even when the row wraps on a phone. #}
-  <dl class="mt-10 flex flex-wrap gap-x-12 gap-y-6 border-y border-line-soft py-6">
-    {% if course.min_age %}
-      <div>
-        <dt class="label text-ink-500">{% translate "Wiek od" %}</dt>
-        <dd class="data mt-1 text-data-lg text-ink">{% blocktranslate count years=course.min_age %}{{ years }} rok{% plural %}{{ years }} lat{% endblocktranslate %}</dd>
-        {% if start_age %}
-          <dd class="mt-1 text-small text-ink-500">{% blocktranslate with years=start_age.0 months=start_age.1 %}kurs od {{ years }} lat {{ months }} mies.{% endblocktranslate %}</dd>
-        {% endif %}
-      </div>
-    {% endif %}
-    {% if course.theory_hours %}
-      <div>
-        <dt class="label text-ink-500">{% translate "Teoria" %}</dt>
-        <dd class="data mt-1 text-data-lg text-ink">{{ course.theory_hours }} h</dd>
-      </div>
-    {% endif %}
-    {% if course.practice_hours %}
-      <div>
-        <dt class="label text-ink-500">{% translate "Praktyka" %}</dt>
-        <dd class="data mt-1 text-data-lg text-ink">{{ course.practice_hours }} h</dd>
-      </div>
-    {% endif %}
-    {% if course.total_hours %}
-      <div>
-        <dt class="label text-ink-500">{% translate "Razem" %}</dt>
-        <dd class="data mt-1 text-data-lg text-ink">{{ course.total_hours }} h</dd>
-      </div>
-    {% endif %}
-    {# course.price_gross, not price: format_price returns the note on its own
-       when there is no amount, so `price` is truthy for a course that has none
-       and the figure slot would fill with a sentence. #}
-    <div>
-      <dt class="label text-ink-500">{% translate "Cena" %}</dt>
-      {% if course.price_gross %}
-        <dd class="data mt-1 text-data-lg text-ink">{{ price }}</dd>
-      {% else %}
-        <dd class="mt-1 text-ink-500">{% translate "ustalana indywidualnie" %}</dd>
+  {# The facts row A.10 asks for, as a definition list rather than a strip of
+     columns: at 380px in the aside a four column strip is four one word
+     columns. Every figure is in the data face, A.3. #}
+  <c-slot name="aside">
+    <c-spec-list :items="facts" title="{% translate 'W skrócie' %}" />
+    <div class="mt-6 flex flex-col gap-3">
+      <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
+      {% if site_settings.phone_primary %}
+        <c-button variant="secondary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+        </c-button>
       {% endif %}
     </div>
-  </dl>
+  </c-slot>
+</c-page-header>
 
-  <div class="mt-12 grid gap-12 lg:grid-cols-3">
+{# ------------------------------------------------------------- the variants
+   This school's one real choice: the same category at three speeds and on two
+   kinds of gearbox. It is the section this page exists for, so it comes before
+   the statutory text about what the licence entitles you to.
+   ------------------------------------------------------------- #}
+{% if variants %}
+  <c-section id="warianty" tone="muted">
+    <c-slot name="heading">{% translate "Wybierz wariant" %}</c-slot>
+    <c-slot name="sub">{% translate "Ta sama kategoria i ten sam egzamin państwowy. Różni się tempo i skrzynia biegów." %}</c-slot>
+    <ul class="grid gap-6 md:grid-cols-3">
+      {% for variant in variants %}
+        <li class="flex">
+          <c-card class="flex w-full flex-col">
+            {% if forloop.first %}
+              <p class="mb-4"><c-badge tone="accent">{% translate "Najczęściej wybierany" %}</c-badge></p>
+            {% endif %}
+            <c-slot name="title">{{ variant.label }}</c-slot>
+            {% if variant.note %}<p class="text-ink-700">{{ variant.note }}</p>{% endif %}
+            <p class="data mt-auto pt-6 text-data-xl text-ink">{{ variant.price }}</p>
+          </c-card>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="mt-8 max-w-[900px]">
+      <c-callout title="{% translate 'Co warto wiedzieć o automacie' %}">
+        <p>
+          {% translate "Prawo jazdy zdobyte na skrzyni automatycznej uprawnia do jazdy wyłącznie autem z automatem. Żeby jeździć manualem, trzeba później zdać egzamin praktyczny na aucie z ręczną skrzynią." %}
+        </p>
+      </c-callout>
+    </div>
+  </c-section>
+{% endif %}
+
+<c-section id="o-kursie">
+  <div class="grid gap-12 lg:grid-cols-3">
     <div class="min-w-0 lg:col-span-2">
-      {# A photograph when the school has one, and the slot it will go into
-         when it does not: a framed panel with the marker of what this category
-         is taught on. The owner is filling hero_image in with their own photos,
-         and an empty gap where a picture belongs reads as a page that broke
-         rather than a page still being filled.
-
-         Not a drawing pretending to be a photograph, and not a stock photo of
-         somebody else's car: a marker, plainly a marker, holding the place.
-         The branch disappears of its own accord the day hero_image is set. #}
+      {# A photograph when the school has one, and nothing at all when it does
+         not. The previous client had a marker panel here for eight categories
+         that each looked different; one category needs one photograph, and an
+         empty frame under a heading that already says what the course is adds
+         nothing. The section on our cars below asks for the photos instead. #}
       {% if course.hero_image %}
         <div class="mb-10 overflow-hidden rounded border border-line-soft">
           <c-picture :image="course.hero_image" alt="{{ course.hero_alt|default:course.title }}"
                      ratio="card" sizes="(min-width: 1024px) 66vw, 100vw" loading="eager" />
         </div>
-      {% else %}
-        {% with vehicles=course|course_vehicles %}
-          {% if vehicles %}
-            <div class="mb-10 flex h-40 items-center justify-center rounded border border-line-soft bg-paper-50 md:h-56">
-              {% for vehicle in vehicles %}
-                {# Important, because c-icon always emits a size of its own and
-                   two height utilities of equal specificity are settled by
-                   whichever tailwind happened to write last. #}
-                <c-icon name="{{ vehicle }}" class="!h-20 !w-20 text-ink-300 md:!h-28 md:!w-28"
-                        label="{% blocktranslate with title=course.title %}Miejsce na zdjęcie: {{ title }}{% endblocktranslate %}" />
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
       {% endif %}
 
       {% if entitlements %}
@@ -132,23 +120,17 @@ only action on the page.
     {# self-start, or the grid stretches the column to the row height and there
        is nothing left for sticky to slide against. It sticks below the 72px
        header and only from lg: on a phone the card belongs in the flow, where
-       the reader meets it after the text rather than on top of it. #}
+       the reader meets it after the text rather than on top of it.
+
+       It does not repeat the price: that is in the spec list at the top of the
+       page, and a figure printed twice on one screen invites the reader to
+       check whether the two agree. What it carries is the next start and a
+       second reach for the phone, halfway down a long page. #}
     <aside class="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+16px)] lg:self-start">
       <c-card class="flex flex-col">
-        <c-slot name="title">{{ course.title }}</c-slot>
+        <c-slot name="title">{% translate "Zacznij kurs" %}</c-slot>
 
         <dl class="mt-2 flex flex-col gap-4">
-          <div>
-            <dt class="label text-ink-500">{% translate "Cena" %}</dt>
-            {% if course.price_gross %}
-              <dd class="data mt-1 text-data-xl text-ink">{{ price }}</dd>
-            {% else %}
-              <dd class="mt-2 text-ink-700">
-                {% translate "Cenę tego kursu ustalamy indywidualnie — podamy ją od ręki." %}
-              </dd>
-            {% endif %}
-          </div>
-
           <div>
             <dt class="label text-ink-500">{% translate "Najbliższy start" %}</dt>
             {% if intakes %}
@@ -165,14 +147,15 @@ only action on the page.
               <dd class="mt-2 text-ink-700">{% translate "Zadzwoń, ustalimy termin." %}</dd>
             {% endif %}
           </div>
+
+          <div>
+            <dt class="label text-ink-500">{% translate "Zapisy" %}</dt>
+            <dd class="mt-2 text-ink-700">{% translate "Po wcześniejszym ustaleniu telefonicznym." %}</dd>
+          </div>
         </dl>
 
         <div class="mt-8 flex flex-col gap-3">
-          {% if course.price_gross %}
-            <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
-          {% else %}
-            <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">{% translate "Zapytaj o cenę" %}</c-button>
-          {% endif %}
+          <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
           {% if site_settings.phone_primary %}
             <c-button variant="secondary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
               <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -201,28 +184,42 @@ only action on the page.
   </c-section>
 {% endif %}
 
-{% if vehicles %}
-  <c-section size="compact">
-    <div>
-      <c-heading level="2">{% translate "Pojazdy szkoleniowe" %}</c-heading>
-      <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {% for vehicle in vehicles %}
-          <li class="flex">
-            <c-card class="flex w-full flex-col">
-              <c-slot name="title">{{ vehicle.make }} {{ vehicle.model }}</c-slot>
-              <p class="flex flex-wrap gap-2">
-                {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
-                <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
-                {% if vehicle.is_exam_spec %}<c-badge tone="success">{% translate "Zgodny z egzaminem" %}</c-badge>{% endif %}
-              </p>
-              {% with shown=vehicle.note|owner_ready %}{% if shown %}<p class="mt-3 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
-            </c-card>
-          </li>
-        {% endfor %}
-      </ul>
+{# --------------------------------------------------------------- our cars
+   The school's own copy says klimatyzowane and bogato wyposażone, tech.md
+   section 1, and that is worth a section on the page a candidate reads before
+   deciding. The photographs are theirs and are not in this repository, so what
+   stands here until they arrive is the claim and a phone number, in a frame
+   that plainly reads as a placeholder.
+   --------------------------------------------------------------- #}
+<c-section id="auta" size="compact">
+  <c-slot name="heading">{% translate "Nasze samochody" %}</c-slot>
+  <c-slot name="sub">{% translate "Uczysz się na aucie, którym potem zdajesz — i którym Cię na ten egzamin dowozimy." %}</c-slot>
+
+  {% if vehicles %}
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% for vehicle in vehicles %}
+        <li class="flex">
+          <c-card class="flex w-full flex-col">
+            <c-slot name="title">{{ vehicle.make }} {{ vehicle.model }}</c-slot>
+            <p class="flex flex-wrap gap-2">
+              {% if vehicle.year %}<c-badge tone="neutral">{{ vehicle.year }}</c-badge>{% endif %}
+              <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
+              {% if vehicle.is_exam_spec %}<c-badge tone="success">{% translate "Zgodny z egzaminem" %}</c-badge>{% endif %}
+            </p>
+            {% with shown=vehicle.note|owner_ready %}{% if shown %}<p class="mt-3 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
+          </c-card>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="grid gap-8 lg:grid-cols-2">
+      <c-spec-list title="{% translate 'Czym jeździmy' %}" :items="fleet_facts" />
+      <c-empty title="{% translate 'Zdjęcia aut w przygotowaniu' %}" phone="{{ site_settings.phone_primary }}">
+        {% translate "Chcesz zobaczyć auto, zanim się zapiszesz? Zadzwoń i wpadnij na plac — pokażemy je na miejscu." %}
+      </c-empty>
     </div>
-  </c-section>
-{% endif %}
+  {% endif %}
+</c-section>
 
 {# ------------------------------------------------------------ enrolment
    A.10 and F5 end the page with the form, and it arrives with this course
@@ -249,27 +246,12 @@ only action on the page.
   </c-section>
 {% endif %}
 
-<c-section tone="brand" size="compact">
-  <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-    <div>
-      {% if course.kind == 'license' %}
-        <c-heading level="2">{% translate "Nie wiesz, czy ta kategoria jest dla Ciebie?" %}</c-heading>
-        <p class="mt-3 text-body-lg">{% translate "Zadzwoń — powiemy, co daje i ile trwa w praktyce." %}</p>
-      {% else %}
-        <c-heading level="2">{% translate "Potrzebujesz tych uprawnień do pracy?" %}</c-heading>
-        <p class="mt-3 text-body-lg">{% translate "Powiemy, od czego zacząć i co trzeba mieć na starcie." %}</p>
-      {% endif %}
-    </div>
-    <p class="flex shrink-0 flex-wrap gap-4">
-      <c-button variant="primary" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
-      {% if site_settings.phone_primary %}
-        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-          <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-        </c-button>
-      {% endif %}
-    </p>
-  </div>
-</c-section>
+<c-cta-band ground="ink"
+            title="{% translate 'Nie wiesz, który wariant wybrać?' %}"
+            text="{% translate 'Zadzwoń — powiemy, ile realnie trwa kurs przyspieszony i kiedy automat ma sens.' %}"
+            href="{{ enrol_url }}"
+            action="{% translate 'Zapisz się' %}"
+            phone="{{ site_settings.phone_primary }}" />
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% blocktranslate with title=course.title asvar enrol_title %}Zapisz się na {{ title }}{% endblocktranslate %}

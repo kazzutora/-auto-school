@@ -89,7 +89,7 @@ nothing.
 {# The page's own text. 68ch, A.3: a line of text is 60 to 75 characters and a
    page of prose at full container width is a page nobody reads to the end. #}
 {% if body %}
-  <c-section id="tresc"{% if enrolment %} tone="muted"{% endif %}>
+  <c-section id="tresc" tone="{% if enrolment %}muted{% else %}default{% endif %}">
     {% if about %}
       {# B6: one quote before the text, in the school's own words. #}
       <div class="mb-12">

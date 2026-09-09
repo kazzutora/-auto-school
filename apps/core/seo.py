@@ -3,20 +3,23 @@
 Every public view puts a Seo instance in the context. The rules the gate checks
 live here so no slice reimplements them.
 
-CONTRACT GAP: DEV.md S8 wants a default og image taken from SiteSettings, and
-tech.md section 4.1 freezes that model without an image field. Until the field
-exists, og_image is whatever the page itself owns: a course hands over its
-hero_image, every other page ships no og:image at all. A tag pointing at a
-picture that does not exist is worse than the missing tag, so nothing is
-invented here.
+DEV.md S8 wanted the default og image to come from SiteSettings, which has no
+image field. It comes from the brand kit instead: static/brand/og-image.png is
+a 1200x630 card carrying the school's own wordmark, so every page has a share
+image without the owner having to upload one. A page that owns a better picture
+— a course with a hero_image — still overrides it.
 """
 
 from dataclasses import dataclass, field
 from typing import Any
 
+from django.templatetags.static import static
 from django.utils.functional import Promise
 
 TITLE_SUFFIX = "OSK Ostrycharz Wieluń"
+# The share card, static/brand/og-image.png. Named here rather than in each
+# view: it is the same picture on every page that has nothing better.
+DEFAULT_OG_IMAGE = "brand/og-image.png"
 TITLE_SEPARATOR = " — "
 TITLE_LIMIT = 70
 DESCRIPTION_LIMIT = 170
@@ -171,7 +174,8 @@ def page_seo(
         description=build_description(description),
         # The canonical never carries the query string.
         canonical=request.build_absolute_uri(request.path),
-        og_image=og_image,
+        # Absolute: facebook and the rest refuse a relative og:image outright.
+        og_image=og_image or request.build_absolute_uri(static(DEFAULT_OG_IMAGE)),
         robots=robots,
         jsonld=jsonld,
     )

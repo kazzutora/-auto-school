@@ -14,6 +14,14 @@
   <link rel="preload" href="{% static 'fonts/archivo-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{% static 'fonts/public-sans-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
 
+  {# The brand mark, self hosted like everything else. The svg is what a modern
+     browser picks and it scales to any tab size; the png is the fallback for
+     the ones that still want a raster, and the same file is what a phone puts
+     on a home screen. #}
+  <link rel="icon" href="{% static 'brand/favicon.svg' %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static 'brand/mark-512.png' %}">
+  <meta name="theme-color" content="#0E0E10">
+
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block head %}{% endblock %}
 

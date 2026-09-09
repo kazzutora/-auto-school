@@ -74,14 +74,14 @@ def test_context_processor_exposes_site_settings() -> None:
 
 def test_driving_school_jsonld_from_site_settings() -> None:
     site = SiteSettings.get_solo()
-    site.legal_name = "Ośrodek Kształcenia Adam Nawrocki S.C."
-    site.short_name = "OSK Nawrocki"
-    site.street = "ul. Zielona 45"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.short_name = "OSK Ostrycharz"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
     site.nip = "8321916014"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
     site.phone_secondary = "605 065 795"
     site.map_lat = Decimal("51.220000")
     site.map_lng = Decimal("18.570000")

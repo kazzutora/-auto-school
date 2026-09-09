@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 {% comment %}
 Header, FRONTEND.md A.9 point 0.
 
@@ -11,9 +11,11 @@ Nothing in here names a colour: the band publishes the ink ground and its
 contents read --on-ground, so the lettering, the outlined phone button and the
 language codes all turn themselves the right way round.
 
-Three clusters: the lettering, the menu in the middle, and the two things a
-visitor reaches for. The logo is type, not an image — Archivo at the expanded
-width, A.9 point 0 is explicit that no picture is involved.
+Three clusters: the wordmark, the menu in the middle, and the two things a
+visitor reaches for. A.9 point 0 used to say the logo was type rather than a
+picture, and it was, until the school's brand kit arrived with a proper lockup
+— the same Archivo at the expanded width, plus the yellow mark. It is now one
+cached svg instead of a font the band has to wait for.
 
 The phone is a secondary button in the data face, because a phone number is a
 fact and A.3 puts facts in the mono.
@@ -26,10 +28,19 @@ which half of A.9 point 0 to honour.
 {% endcomment %}
 <header class="u-header">
   <div class="u-container flex h-[var(--header-h)] items-center justify-between gap-2">
-    <a href="/"
-       class="font-display inline-flex min-h-[44px] shrink-0 items-center text-h3 font-extrabold
-              uppercase leading-none tracking-tight [font-stretch:125%]">
-      {{ site_settings.short_name|default:"OSK Ostrycharz" }}
+    {# The wordmark from static/brand, not lettering typed into the template.
+       The -dark file is the one with white letters, which is what a dark band
+       needs; the yellow mark is the same in both. An <img> rather than an
+       inline <use>: it is a logo, it never changes colour with the text around
+       it, and the browser caches one file across every page.
+
+       The alt is the school's name because that is what the mark says. Height
+       is fixed and width follows, so the row cannot reflow while it loads. #}
+    <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
+       aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
+      <img src="{% static 'brand/logo-lockup-dark.svg' %}" width="278" height="23"
+           alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
+           class="h-[23px] w-auto">
     </a>
 
     {% include "layout/nav.html" %}
