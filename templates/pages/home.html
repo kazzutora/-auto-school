@@ -2,12 +2,21 @@
 {% load static l10n i18n %}
 
 {% comment %}
-Home page, FRONTEND.md A.9. Eleven sections in the order A.9 fixes them.
+Home page, FRONTEND.md A.9, rebuilt around what this school actually sells.
 
-Three of them decide whether they exist at all: no joinable group, fewer than
-two verifiable reviews, no published questions — and the section is absent
-rather than empty. A block that says nothing is worse than one section fewer,
-and A.9 says so for the terms and the reviews in as many words.
+The previous client had fifteen courses and no prices; this one has one category
+and publishes every figure it charges. So the tiles for nine categories are gone
+and in their place stand three ways to take the same course, each with its price
+on the card.
+
+The order below puts the school's own numbers second, straight under the hero.
+tech.md section 1 is explicit that 76% at the first attempt is the single
+strongest thing this business has to say, and it spent years buried between a
+photo gallery and a list of files.
+
+Sections that have nothing to say do not render: no confirmed pass rate, no
+video, fewer than two verifiable reviews, no published questions. A block that
+says nothing is worse than one section fewer.
 
 Nothing here writes its own button, card, badge or field. Every one of those
 comes from templates/cotton/, tech.md section 7.
@@ -19,179 +28,203 @@ comes from templates/cotton/, tech.md section 7.
    The only inverted block on the page, A.9 point 1. No background image and no
    stock photograph of anyone holding car keys, A.1.
 
-   78vh, not more: the boundary with the categories below has to land inside the
-   first screen so the page reads as having something to scroll to. At 1440x900
-   that puts it at 774px, header included.
+   Two columns from lg: the claim on the left, the one number that backs it on
+   the right, so the proof is beside the promise rather than a scroll below it.
    ------------------------------------------------------------------ #}
-<section class="u-ground-ink flex min-h-[78vh] items-center py-16">
-  <div class="u-container">
-    <h1 class="display max-w-[16ch]">
-      {% translate "Prawo jazdy w" %}
-      {# The yellow slab sits behind the baseline rather than under it, so the
-         descenders cut through it the way a marker would. #}
-      <span class="relative inline-block">
-        <span aria-hidden="true" class="absolute inset-x-0 bottom-[0.04em] h-[0.18em] bg-accent"></span>
-        <span class="relative">{% translate "Wieluniu" %}</span>
-      </span>
-    </h1>
+<section class="u-ground-ink relative overflow-hidden">
+  {# A single quiet graphic behind the band: the yellow mark at poster scale,
+     clipped by the section. It is the brand's own shape, not decoration bought
+     from anywhere, and it costs no request beyond the css. #}
+  <span aria-hidden="true"
+        class="pointer-events-none absolute -right-24 top-1/2 hidden h-[34rem] w-[34rem] -translate-y-1/2 lg:block">
+    <svg viewBox="0 0 512 512" class="h-full w-full opacity-[0.07]" focusable="false">
+      <path d="M148 382V129h75v193h163v60Z" fill="rgb(var(--accent))" />
+    </svg>
+  </span>
 
-    <p class="u-narrow mt-8 text-body-lg">
-      {% translate "Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku." %}
-    </p>
+  <div class="u-container relative grid min-h-[78vh] items-center gap-12 py-16 lg:grid-cols-12">
+    <div class="lg:col-span-7">
+      <h1 class="display max-w-[15ch]">
+        {% translate "Prawo jazdy kat. B w" %}
+        {# The yellow slab sits behind the baseline rather than under it, so the
+           descenders cut through it the way a marker would. #}
+        <span class="relative inline-block">
+          <span aria-hidden="true" class="absolute inset-x-0 bottom-[0.04em] h-[0.18em] bg-accent"></span>
+          <span class="relative">{% translate "Wieluniu" %}</span>
+        </span>
+      </h1>
 
-    <div class="mt-10 flex flex-wrap gap-4">
-      <c-button variant="primary" size="lg" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
-      {% if site_settings.phone_primary %}
-        <c-button variant="secondary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-          <c-icon name="phone" size="sm" /> {% translate "Zadzwoń" %} <span class="data">{{ site_settings.phone_primary }}</span>
-        </c-button>
-      {% endif %}
+      <p class="u-narrow mt-8 text-body-lg">
+        {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-4">
+        <c-button variant="primary" size="lg" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
+        {% if site_settings.phone_primary %}
+          <c-button variant="secondary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> {% translate "Zadzwoń" %} <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        {% endif %}
+      </div>
+
+      {# A.11 caps the accents on the first screen at three. The slab under
+         "Wieluniu", the primary button and the figure in the card opposite are
+         those three, so the dots between these facts are hairlines, not
+         yellow. #}
+      <ul class="label mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
+        {% if first_attempt %}
+          <li><span class="data">{{ first_attempt }}%</span> {% translate "za pierwszym razem" %}</li>
+          <li aria-hidden="true" class="u-rule-on-ground h-4 w-px border-l"></li>
+        {% endif %}
+        {% if course.price_gross %}
+          <li>{% translate "kurs" %} <span class="data">{{ course.price_gross|floatformat:0 }} zł</span></li>
+          <li aria-hidden="true" class="u-rule-on-ground h-4 w-px border-l"></li>
+        {% endif %}
+        <li>{% translate "dowóz na egzamin gratis" %}</li>
+      </ul>
     </div>
 
-    <ul class="label mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
-      {% if site_settings.founded_year %}
-        <li>{% blocktranslate with year=site_settings.founded_year %}od {{ year }} roku{% endblocktranslate %}</li>
-        <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
-      {% endif %}
-      {% if course_count %}
-        <li><span class="data">{{ course_count }}</span> {% translate "kursów" %}</li>
-        <li aria-hidden="true" class="h-1 w-1 rounded-full bg-accent"></li>
-      {% endif %}
-      <li>{% translate "zajęcia po pl / ru / ua" %}</li>
-    </ul>
+    {# The proof, beside the promise. Absent until the owner confirms a year,
+       and the hero simply runs one column wide instead. #}
+    {% if pass_rate %}
+      <div class="lg:col-span-5 lg:justify-self-end">
+        <div class="u-ground-paper w-full max-w-sm rounded border-2 border-accent bg-paper p-8 text-ink">
+          <p class="label text-ink-500">{% translate "Zdawalność" %}</p>
+          <p class="u-bignum data mt-4 text-ink">{{ pass_rate.first_percent }}%</p>
+          <p class="mt-3 text-body-lg text-ink-700">{% translate "kursantów zdaje egzamin za pierwszym razem" %}</p>
+          <p class="data mt-6 text-small text-ink-500">
+            {% blocktranslate with students=pass_rate.students year=pass_rate.year %}na {{ students }} kursantów w {{ year }} roku{% endblocktranslate %}
+          </p>
+          <p class="mt-6">
+            <c-button variant="ghost" href="{% url 'core:pass_rates' %}">
+              {% translate "Zobacz wyniki" %} <c-icon name="arrow-right" size="sm" />
+            </c-button>
+          </p>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </section>
 
-{# --------------------------------------------------- 2. Licence categories
-   The main navigation node of the page, A.9 point 2. Two columns on a phone,
-   three from md, five from lg. The tile is c-course-card, the same one /kursy/
-   uses — there is one of these, not two.
-   --------------------------------------------------- #}
-<c-section id="kategorie">
-  <c-slot name="heading">{% translate "Kategorie prawa jazdy" %}</c-slot>
-  {% if categories %}
-    {# The same file /kursy/ includes, so the tile cannot drift between the two
-       pages. The price question stays off here: nine of them would be nine
-       buttons in the second section of the most important page. #}
-    {% include "courses/_category_grid.html" with courses=categories %}
-  {% else %}
-    {% translate "Oferta w przygotowaniu" as t_oferta_w_przygotowaniu %}
-    <c-alert tone="info" title="{{ t_oferta_w_przygotowaniu }}">
-      {% translate "Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne." %}
-    </c-alert>
-  {% endif %}
-</c-section>
-
-{# ------------------------------------------------------- 3. Nearest starts
-   A.9 point 3: no joinable group and the section does not render at all.
+{# ------------------------------------------------------- 2. The three courses
+   The main navigation node of the page. One category, three ways to take it,
+   each with the figure on the card — which is the question a visitor arrived
+   with and the one the previous site could not answer at all.
    ------------------------------------------------------- #}
-{% if intakes %}
-  <c-section id="terminy" tone="muted">
-    <c-slot name="heading">{% translate "Najbliższe terminy" %}</c-slot>
-    <div>
-      {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
-    </div>
-    <p class="mt-8">
-      <c-button variant="ghost" href="{% url 'courses:intakes' %}">
-        {% translate "Wszystkie terminy" %} <c-icon name="arrow-right" size="sm" />
+{% if variants %}
+  <c-section id="kurs">
+    <c-slot name="heading">{% translate "Trzy sposoby na kategorię B" %}</c-slot>
+    <c-slot name="sub">{% translate "Ta sama kategoria, ten sam egzamin. Różni się tempo i skrzynia biegów." %}</c-slot>
+
+    <ul class="grid gap-6 md:grid-cols-3">
+      {% for variant in variants %}
+        <li class="flex">
+          <c-card href="{% url 'courses:detail' slug='kat-b' %}" class="flex w-full flex-col">
+            {% if forloop.first %}
+              <p class="mb-4"><c-badge tone="accent">{% translate "Najczęściej wybierany" %}</c-badge></p>
+            {% endif %}
+            <c-slot name="title">{{ variant.title }}</c-slot>
+            {% if variant.note %}<p class="text-ink-700">{{ variant.note }}</p>{% endif %}
+            <p class="data mt-auto pt-6 text-data-xl text-ink">{{ variant.price_gross|floatformat:0 }} zł</p>
+          </c-card>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <p class="mt-8 flex flex-wrap gap-6">
+      <c-button variant="ghost" href="{% url 'courses:pricing' %}">
+        {% translate "Pełny cennik" %} <c-icon name="arrow-right" size="sm" />
+      </c-button>
+      <c-button variant="ghost" href="{% url 'courses:detail' slug='kat-b' %}">
+        {% translate "O kursie kat. B" %} <c-icon name="arrow-right" size="sm" />
       </c-button>
     </p>
   </c-section>
 {% endif %}
 
-{# -------------------------------------------------- 4. Professional courses
-   A.9 point 4: four cards, then the two narrower ones underneath.
-   -------------------------------------------------- #}
-{% if professional or psychotests or operator_courses %}
-  <c-section id="zawodowy">
-    <c-slot name="heading">{% translate "Kierowca zawodowy" %}</c-slot>
+{# ---------------------------------------------------------- 3. The numbers
+   The band the whole letter to this owner is built on. Counts, not adjectives.
+   ---------------------------------------------------------- #}
+{% if pass_rate %}
+  <c-stat-band ground="ink" :items="stat_items">
+    <c-button variant="secondary" href="{% url 'core:pass_rates' %}">
+      {% translate "Jak liczymy zdawalność" %} <c-icon name="arrow-right" size="sm" />
+    </c-button>
+  </c-stat-band>
+{% endif %}
 
-    {% if professional %}
-      {% include "courses/_pro_grid.html" with courses=professional %}
-    {% endif %}
-
-    {# A.9 point 4 puts these two on a row of their own, narrower than the four
-       above. Same card, two columns. #}
-    {% if psychotests %}
-      <div class="mt-4">{% include "courses/_pro_grid.html" with courses=psychotests narrow=1 %}</div>
-    {% endif %}
-    {% if operator_courses %}
-      <div class="mt-4">{% include "courses/_pro_grid.html" with courses=operator_courses narrow=1 %}</div>
-    {% endif %}
+{# ------------------------------------------------------------------ 4. Video
+   No youtube script and no youtube thumbnail: c-video-embed explains why. The
+   section disappears entirely when the owner has not given us a clip.
+   ------------------------------------------------------------------ #}
+{% if video_id or video_url %}
+  <c-section id="wideo" tone="muted">
+    <c-slot name="heading">{% translate "Zobacz, jak uczymy" %}</c-slot>
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-7">
+        <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
+                       poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
+                       alt="{{ site_settings.youtube_poster_alt }}" />
+      </div>
+      <div class="lg:col-span-5">
+        <p class="text-body-lg text-ink-700">
+          {% translate "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google." %}
+        </p>
+        {% if site_settings.youtube_url %}
+          <p class="mt-6">
+            <c-button variant="secondary" href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank">
+              {% translate "Nasz kanał" %} <c-icon name="external" size="sm" />
+            </c-button>
+          </p>
+        {% endif %}
+      </div>
+    </div>
   </c-section>
 {% endif %}
 
-{# ------------------------------------------------------- 5. Russian strip
-   The single yellow block on the page, A.9 point 5. It is the school's
-   competitive advantage and the old site buried it in a paragraph.
-
-   CONTRACT GAP: A.9 sends the button to /kursy-po-rosyjsku/, which is in
-   neither the url map in tech.md section 5 nor the routes that exist. Shipping
-   a link to a 404 is worse than shipping the wrong one, so it points at the
-   russian version of the course list, which is a real page saying the same
-   thing. Owner's call whether the landing page joins the url map.
+{# ------------------------------------------------------- 5. What you get
+   Straight out of the school's own copy, tech.md section 1. Four facts, no
+   circle icons, hairlines between them — the A.9 point 6 layout.
    ------------------------------------------------------- #}
-<c-section tone="accent">
-  <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-    <div class="u-narrow">
-      <h2>{% translate "Zajęcia po rosyjsku i ukraińsku" %}</h2>
-      <p class="mt-4 text-body-lg">
-        {% translate "Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku, ale uczysz się tak, żeby wszystko rozumieć." %}
-      </p>
-    </div>
-    <div class="shrink-0">
-      <c-button variant="secondary" size="lg" href="/ru/kursy/">Смотреть курсы</c-button>
-    </div>
-  </div>
-</c-section>
-
-{# ------------------------------------------------------------ 6. Why us
-   A.9 point 6: four facts, big figures, no circle icons, vertical hairlines
-   between them.
-   ------------------------------------------------------------ #}
-<c-section id="dlaczego" tone="muted">
-  <c-slot name="heading">{% translate "Dlaczego OSK Ostrycharz" %}</c-slot>
+<c-section id="w-cenie">
+  <c-slot name="heading">{% translate "Co dostajesz w cenie" %}</c-slot>
   <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
     <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
-      <p class="data text-data-xl text-ink">{{ years_on_market }}</p>
-      <p class="mt-2 text-ink-700">{% blocktranslate with year=site_settings.founded_year|default:1996 %}lat na rynku, nieprzerwanie od {{ year }} roku{% endblocktranslate %}</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "gratis" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "dowóz na egzamin państwowy, autem, którym jeździsz na kursie" %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "własny" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "plac manewrowy, ćwiczysz tam, gdzie zdajesz" %}</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "klimatyzacja" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "auta z bogatym wyposażeniem, także latem" %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "własne" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "sale wykładowe w centrum Wielunia" %}</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "automat" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "kurs na skrzyni automatycznej, jeśli manual Cię blokuje" %}</p>
     </li>
     <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "zgodne" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "pojazdy spełniające wymogi egzaminacyjne" %}</p>
+      <p class="font-display text-h2 font-bold text-ink">{% translate "pl / ru / ua" %}</p>
+      <p class="mt-2 text-ink-700">{% translate "strona i materiały w trzech językach" %}</p>
     </li>
   </ul>
 </c-section>
 
-{# ---------------------------------------------------------- 7. Testimonials
+{# ---------------------------------------------------------- 6. Testimonials
    A.9 point 7: fewer than two and the section does not render. The view has
    already emptied the list in that case, and every one of them carries a link
    to its source — no invented reviews under any circumstances.
    ---------------------------------------------------------- #}
 {% if testimonials %}
-  <c-section id="opinie">
+  <c-section id="opinie" tone="muted">
     <c-slot name="heading">{% translate "Co mówią kursanci" %}</c-slot>
     <c-testimonials :items="testimonials" />
   </c-section>
 {% endif %}
 
-{# ------------------------------------------------------------------ 8. FAQ
+{# ------------------------------------------------------------------ 7. FAQ
    Five questions, A.9 point 8. The same five go into the FAQPage json-ld the
    view builds: marking up an answer that is not on the page is hidden content.
    ------------------------------------------------------------------ #}
 {% if faqs %}
-  {# Paper rather than muted, and the contact block below takes the muted tone
-     instead. The reviews section between them is the one that disappears when
-     there is nothing verifiable to show, and two muted sections meeting where
-     it used to be read as one very long block. #}
   <c-section id="faq">
     <c-slot name="heading">{% translate "Częste pytania" %}</c-slot>
     <div class="u-narrow">
@@ -209,7 +242,7 @@ comes from templates/cotton/, tech.md section 7.
   </c-section>
 {% endif %}
 
-{# ------------------------------------------------------------- 9. Contact
+{# ------------------------------------------------------------- 8. Contact
    A.9 point 9: two columns on lg, the details on the left with the map under
    them, the way to sign up on the right.
 
@@ -240,15 +273,9 @@ comes from templates/cotton/, tech.md section 7.
         {% endif %}
       </address>
 
-      <div class="grid gap-8 sm:grid-cols-2">
-        <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
-          <c-hours-table department="office" />
-        </div>
-        <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">{% translate "Pracownia psychologiczna" %}</p>
-          <c-hours-table department="psychology" />
-        </div>
+      <div class="min-w-0">
+        <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
+        <c-hours-table department="office" />
       </div>
 
       {% if site_settings.map_lat and site_settings.map_lng %}
@@ -280,13 +307,21 @@ comes from templates/cotton/, tech.md section 7.
   </div>
 </c-section>
 
-{# 10. The footer is layout, built in F2, and this page does not touch it. #}
+{# 9. The footer is layout, built in F2, and this page does not touch it. #}
 
-{# ------------------------------------------------------------ 11. Sticky CTA
+{# ------------------------------------------------------------ 10. Sticky CTA
    Below md only, and always under the cookie banner, A.5. The padding below
    keeps the bar off the last section instead of on top of it.
    ------------------------------------------------------------ #}
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
 <c-cta-bar title="{{ t_zapisz_sie_na }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+{% endblock %}
+
+{% block scripts %}
+  {# The old site was one page with anchors, so its urls all look like /#pliki.
+     A browser never sends the fragment, which is why django.contrib.redirects
+     cannot answer these and static/js/app.js does it here instead. The table is
+     the same csv the server side redirects come from. #}
+  {% if fragment_map %}{{ fragment_map|json_script:"legacy-fragments" }}{% endif %}
 {% endblock %}

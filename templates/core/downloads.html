@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% comment %}
+/do-pobrania/ — regulamin, umowa, oświadczenia.
+
+On the old site these were a row of bare links in the middle of the one page,
+with no explanation of which of them a candidate has to sign and which they only
+have to read. That distinction is the whole point of the callout below: turning
+up at the office with an unsigned oświadczenie costs a second trip.
+
+A document with no file uploaded never reaches this page — apps/core/selectors
+drops it — so the list is short rather than broken while the owner is still
+sending the pdfs over.
+{% endcomment %}
+
+{% block content %}
+
+<c-page-header eyebrow="{% translate 'Dokumenty' %}" title="{% translate 'Do pobrania' %}"
+               lead="{% translate 'Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować.' %}">
+  <c-breadcrumbs :items="breadcrumbs" />
+
+  <c-slot name="aside">
+    <c-fact-card label="{% translate 'Pytania o papiery' %}" value="{{ site_settings.phone_primary }}"
+                 href="tel:{{ site_settings.phone_primary|cut:' ' }}"
+                 note="{% translate 'Zadzwoń, powiemy od ręki, czego brakuje.' %}">
+      <c-slot name="action">
+        <c-button variant="secondary" href="{% url 'core:page' slug='zapisy' %}" full="1">
+          {% translate "Jak się zapisać" %}
+        </c-button>
+      </c-slot>
+    </c-fact-card>
+  </c-slot>
+</c-page-header>
+
+<c-section id="pliki">
+  {% if documents %}
+    <c-download-list :items="documents" />
+  {% else %}
+    <c-empty title="{% translate 'Pliki są w drodze' %}" phone="{{ site_settings.phone_primary }}">
+      {% translate "Komplet dokumentów wydajemy w biurze przy zapisie. Jeśli chcesz je zobaczyć wcześniej — zadzwoń, wyślemy mailem." %}
+    </c-empty>
+  {% endif %}
+
+  <div class="u-narrow mt-12 flex flex-col gap-6">
+    <c-callout tone="accent" title="{% translate 'Co podpisać, a co tylko przeczytać' %}">
+      <p>
+        {% translate "Umowę z kursantem i oświadczenie o stanie zdrowia podpisujesz — przynieś je wypełnione albo podpisz na miejscu. Regulamin i wzór opłaty za egzamin są do przeczytania, nic z nimi nie robisz." %}
+      </p>
+      <p class="mt-2">
+        {% translate "Zgodę rodziców przynoszą tylko osoby niepełnoletnie, podpisaną przez oboje rodziców lub opiekunów." %}
+      </p>
+    </c-callout>
+    <c-callout title="{% translate 'Czego tu nie ma' %}">
+      <p>
+        {% translate "Orzeczenia lekarskiego i zaświadczenia o zameldowaniu nie da się pobrać — te wydaje lekarz i urząd. Co dokładnie przynieść i skąd to wziąć, opisujemy w zakładce Zapisy." %}
+      </p>
+    </c-callout>
+  </div>
+</c-section>
+
+<c-cta-band ground="ink"
+            title="{% translate 'Masz komplet? Zaczynamy.' %}"
+            text="{% translate 'Zapisy po wcześniejszym ustaleniu telefonicznym. Zostaw numer — oddzwonimy i umówimy termin.' %}"
+            href="{{ enrol_url }}"
+            action="{% translate 'Zapisz się' %}"
+            phone="{{ site_settings.phone_primary }}" />
+
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+{% translate "Zapisz się na kurs" as t_zapisz %}
+<c-cta-bar title="{{ t_zapisz }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+{% endblock %}

@@ -2,108 +2,144 @@
 {% load core_ui i18n %}
 
 {% comment %}
-A flat page, FRONTEND.md A.10. Serves o-nas, polityka-prywatnosci and rodo.
+A flat page, FRONTEND.md A.10. Serves o-nas, zapisy, polityka-prywatnosci and
+rodo.
 
-CONTRACT GAP: F9 names templates/pages/page_detail.html. The skeleton's view has
-rendered core/page_detail.html since S0, and moving it is a python change that
-F9 also forbids, so the composition lands where the view looks — the same
-mismatch the contact page carries.
+Two of the four carry more than their own text. The about page gets the team and
+the fleet, when the owner has supplied any. The enrolment page gets the five
+steps, the list of papers and whatever documents are uploaded — built by the
+view rather than parsed out of the body, so the page cannot promise a pdf the
+media folder does not hold.
 
-o-nas gets more than its own text: the url map hands it the instructors and the
-fleet too, so the page runs text, then facts, then people, then cars. The two
-legal pages have none of those and render as the text alone, which is what they
-should be — a privacy policy with a photo gallery underneath is a privacy
-policy nobody finishes.
+The two legal pages have none of that and render as the text alone, which is
+what they should be: a privacy policy with a photo gallery underneath is a
+privacy policy nobody finishes.
 
 Every list here disappears when it is empty rather than printing a heading over
 nothing.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+
+<c-page-header eyebrow="{% if enrolment %}{% translate 'Formalności' %}{% else %}{% translate 'O szkole' %}{% endif %}"
+               title="{{ page.title }}" lead="{{ page.lead }}">
   <c-breadcrumbs :items="breadcrumbs" />
-  {% translate "O szkole" as fallback %}
-  <c-heading level="1" eyebrow="{{ page.eyebrow|default:fallback }}" class="mt-6">{{ page.title }}</c-heading>
-  {% if page.lead %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ page.lead }}</p>{% endif %}
 
-  {# 68ch, A.3: a line of text is 60 to 75 characters and a page of prose at
-     full container width is a page nobody reads to the end. #}
-  {% if about %}
-    {# B6: one quote between the two halves of the text. #}
-    <div class="mt-12">
-      {% translate "Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku." as t_jestesmy_firma_rodzinna %}
-      <c-quote text="{{ t_jestesmy_firma_rodzinna }}"
-               author="{{ site_settings.short_name }}" role="Wieluń" />
-    </div>
+  {% if enrolment %}
+    <c-slot name="aside">
+      <c-fact-card label="{% translate 'Zapisy telefoniczne' %}" value="{{ site_settings.phone_primary }}"
+                   href="tel:{{ site_settings.phone_primary|cut:' ' }}"
+                   note="{% translate 'Zapisujemy po wcześniejszym ustaleniu terminu.' %}">
+        <c-slot name="action">
+          <c-button variant="primary" href="{{ enrol_url }}" full="1">{% translate "Zostaw numer" %}</c-button>
+        </c-slot>
+      </c-fact-card>
+    </c-slot>
   {% endif %}
+</c-page-header>
 
-  {% if body %}
+{# ------------------------------------------------------------------ Zapisy #}
+{% if enrolment %}
+  <c-section id="jak">
+    <c-slot name="heading">{% translate "Jak się zapisać" %}</c-slot>
+    <c-slot name="sub">{% translate "Pięć kroków. Pierwszy to telefon, ostatni to pierwsze zajęcia." %}</c-slot>
+    <c-steps :steps="steps" />
+  </c-section>
+
+  <c-section id="dokumenty" tone="muted">
+    <c-slot name="heading">{% translate "Co przynieść" %}</c-slot>
+    <div class="grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <c-spec-list :items="required_documents" />
+      </div>
+      <div class="lg:col-span-5">
+        <c-callout tone="accent" title="{% translate 'Jedyny płatny papier: 17 zł' %}">
+          <p>
+            {% translate "Zaświadczenie o zameldowaniu wydaje urząd gminy i kosztuje 17 zł. Wszystkie pozostałe dokumenty z tej listy albo już masz, albo dostajesz przy badaniu." %}
+          </p>
+        </c-callout>
+        <c-callout class="mt-6" title="{% translate 'Badanie lekarskie' %}">
+          <p>
+            {% translate "Orzeczenie o braku przeciwwskazań zdrowotnych do kierowania pojazdami. Kosztuje 200 zł i jest opłatą poza szkołą." %}
+          </p>
+        </c-callout>
+      </div>
+    </div>
+  </c-section>
+
+  {# The list is short or absent while the owner is still sending the pdfs, and
+     both cases read as a page rather than as a hole. #}
+  <c-section id="pliki">
+    <c-slot name="heading">{% translate "Dokumenty do pobrania" %}</c-slot>
+    {% if documents %}
+      <c-download-list :items="documents" />
+      <p class="mt-8">
+        <c-button variant="ghost" href="{% url 'core:downloads' %}">
+          {% translate "Wszystkie pliki" %} <c-icon name="arrow-right" size="sm" />
+        </c-button>
+      </p>
+    {% else %}
+      <c-empty title="{% translate 'Komplet dostajesz w biurze' %}" phone="{{ site_settings.phone_primary }}">
+        {% translate "Regulamin i umowę wydajemy przy zapisie. Chcesz je zobaczyć wcześniej — zadzwoń, wyślemy mailem." %}
+      </c-empty>
+    {% endif %}
+  </c-section>
+{% endif %}
+
+{# The page's own text. 68ch, A.3: a line of text is 60 to 75 characters and a
+   page of prose at full container width is a page nobody reads to the end. #}
+{% if body %}
+  <c-section id="tresc"{% if enrolment %} tone="muted"{% endif %}>
+    {% if about %}
+      {# B6: one quote before the text, in the school's own words. #}
+      <div class="mb-12">
+        {% translate "Możemy pochwalić się jedną z najwyższych zdawalności w województwie łódzkim." as t_quote %}
+        <c-quote text="{{ t_quote }}" author="{{ site_settings.short_name }}" role="Wieluń" />
+      </div>
+    {% endif %}
+
     {# F10: a contents list on a long legal page. Filled by static/js/app.js,
        which counts the headings and gives up under six — a list over three
        sections is longer than the thing it indexes. Hidden until then, so a
        reader without javascript sees the text and no empty box. #}
     <nav data-toc="[data-prose]" hidden aria-label="{% translate 'Spis treści' %}"
-         class="u-narrow mt-12 flex flex-col gap-3 border-l-2 border-line-soft py-1 pl-6 text-ink-700">
+         class="u-narrow mb-12 flex flex-col gap-3 border-l-2 border-line-soft py-1 pl-6 text-ink-700">
       <p class="label text-ink-500">{% translate "Na tej stronie" %}</p>
     </nav>
 
-    <div class="mt-12" data-prose>{% include "courses/_prose.html" with html=body %}</div>
-  {% endif %}
-</c-section>
+    <div data-prose>{% include "courses/_prose.html" with html=body %}</div>
+  </c-section>
+{% endif %}
 
+{# ------------------------------------------------------------------- O nas #}
 {% if about %}
-  {# B5: the list under "Co oferujemy" is navigation written as bullets, so it
-     is cards that go where they point. Built from the offer itself rather than
-     by parsing the body, so it cannot drift from what the site sells. #}
   <c-section id="oferta" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Co oferujemy" %}</c-slot>
-    <ul class="grid gap-4 md:grid-cols-2">
-      {% for item in offer %}
-        <li class="flex">
-          <c-card href="{{ item.url }}" class="flex w-full flex-col">
-            <c-slot name="title">{{ item.title }}</c-slot>
-            <p class="text-small text-ink-500">{{ item.note }}</p>
-          </c-card>
-        </li>
-      {% endfor %}
-    </ul>
-  </c-section>
-
-  {# The facts, laid out as section 6 of the home page: big figures, no circle
-     icons, hairlines between them. The numbers are counted rather than written
-     down, so they cannot drift away from the offer. #}
-  <c-section id="fakty">
-    <c-slot name="heading">{% translate "W liczbach" %}</c-slot>
-    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
-      <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
-        <p class="data text-data-xl">{{ site_settings.founded_year }}</p>
-        <p class="mt-2 u-muted-on-ground">{% translate "rok założenia, działamy nieprzerwanie" %}</p>
+    <ul class="grid gap-4 md:grid-cols-3">
+      <li class="flex">
+        <c-card href="{% url 'courses:detail' slug='kat-b' %}" class="flex w-full flex-col">
+          <c-slot name="title">{% translate "Kurs kat. B" %}</c-slot>
+          <p class="text-small text-ink-500">{% translate "standardowy, przyspieszony i na automacie" %}</p>
+        </c-card>
       </li>
-      {# A tile reading zero is not a fact worth printing. #}
-      {% if instructors %}
-        <li class="lg:border-l lg:border-line-soft lg:px-8">
-          <p class="data text-data-xl">{{ instructors|length }}</p>
-          <p class="mt-2 u-muted-on-ground">{% translate "instruktorów prowadzi zajęcia i jazdy" %}</p>
-        </li>
-      {% endif %}
-      {% if category_count %}
-        <li class="lg:border-l lg:border-line-soft lg:px-8">
-          <p class="data text-data-xl">{{ category_count }}</p>
-          <p class="mt-2 u-muted-on-ground">{% translate "kategorii prawa jazdy w ofercie" %}</p>
-        </li>
-      {% endif %}
-      {% if fleet_size %}
-        <li class="lg:border-l lg:border-line-soft lg:px-8">
-          <p class="data text-data-xl">{{ fleet_size }}</p>
-          <p class="mt-2 u-muted-on-ground">{% translate "pojazdów szkoleniowych, własny plac manewrowy" %}</p>
-        </li>
-      {% endif %}
+      <li class="flex">
+        <c-card href="{% url 'core:pass_rates' %}" class="flex w-full flex-col">
+          <c-slot name="title">{% translate "Zdawalność" %}</c-slot>
+          <p class="text-small text-ink-500">{% translate "wyniki rok po roku, bez zaokrągleń" %}</p>
+        </c-card>
+      </li>
+      <li class="flex">
+        <c-card href="{% url 'courses:pricing' %}" class="flex w-full flex-col">
+          <c-slot name="title">{% translate "Cennik" %}</c-slot>
+          <p class="text-small text-ink-500">{% translate "ceny brutto, dowóz na egzamin gratis" %}</p>
+        </c-card>
+      </li>
     </ul>
   </c-section>
 {% endif %}
 
 {% if instructors %}
-  <c-section id="instruktorzy" tone="muted" size="compact">
+  <c-section id="instruktorzy" size="compact">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
@@ -121,13 +157,6 @@ nothing.
               {% if instructor.since_year %}
                 <p class="mt-3 text-small text-ink-500">{% blocktranslate with year=instructor.since_year %}Szkoli od {{ year }} roku{% endblocktranslate %}</p>
               {% endif %}
-              {% if instructor.categories.all %}
-                <p class="mt-4 flex flex-wrap gap-2">
-                  {% for category in instructor.categories.all %}
-                    <c-badge tone="neutral">{{ category.code|default:category.title }}</c-badge>
-                  {% endfor %}
-                </p>
-              {% endif %}
               {% if instructor.bio %}<p class="mt-4 text-ink-700">{{ instructor.bio }}</p>{% endif %}
             </div>
           </c-card>
@@ -138,7 +167,7 @@ nothing.
 {% endif %}
 
 {% if vehicle_groups %}
-  <c-section id="pojazdy" size="compact">
+  <c-section id="pojazdy" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Nasze pojazdy" %}</c-slot>
     <c-slot name="sub">{% translate "Uczysz się na aucie, na którym potem zdajesz." %}</c-slot>
     <div class="flex flex-col gap-12" data-testid="vehicles">
@@ -173,23 +202,23 @@ nothing.
   </c-section>
 {% endif %}
 
-{% if about %}
-  <c-section tone="brand" size="compact">
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div>
-        <c-heading level="2">{% translate "Chcesz zacząć kurs?" %}</c-heading>
-        <p class="mt-3 text-body-lg">{% translate "Zostaw numer albo zadzwoń — dobierzemy najbliższy termin." %}</p>
-      </div>
-      <p class="flex shrink-0 flex-wrap gap-4">
-        <c-button variant="primary" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
-        {% if site_settings.phone_primary %}
-          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-          </c-button>
-        {% endif %}
-      </p>
-    </div>
+{# The enrolment form belongs on the page that explains the enrolment, and
+   nowhere else among the flat pages. #}
+{% if enrolment %}
+  <c-section id="formularz">
+    <c-slot name="heading">{% translate "Zostaw numer, oddzwonimy" %}</c-slot>
+    <c-slot name="sub">{% translate "Wolisz nie dzwonić? Zostaw kontakt, odezwiemy się w ciągu jednego dnia roboczego." %}</c-slot>
+    <div class="u-narrow">{% include "leads/_form.html" with form=lead_form %}</div>
   </c-section>
+{% endif %}
+
+{% if about or enrolment %}
+  <c-cta-band ground="ink"
+              title="{% translate 'Zaczynamy?' %}"
+              text="{% translate 'Zadzwoń albo zostaw numer — ustalimy termin startu i powiemy, czego brakuje w papierach.' %}"
+              href="{{ enrol_url }}"
+              action="{% translate 'Zapisz się' %}"
+              phone="{{ site_settings.phone_primary }}" />
 {% endif %}
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>

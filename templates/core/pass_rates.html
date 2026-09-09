@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% comment %}
+/zdawalnosc/ — the page tech.md section 1 calls this school's strongest asset.
+
+On the old site the same numbers were a paragraph between the photo gallery and
+the file list, on a page with no url of its own, so nobody could send it to
+anybody. Here it is the page: a headline figure, the band of counts, the table
+year by year, and an honest note about what the figures do and do not cover.
+
+The honesty block is not decoration. A school claiming 76% without saying what
+it counted is a school nobody believes, and the reader who does the arithmetic
+and finds the percentages add to 101 deserves to know why before they conclude
+we are rounding in our own favour.
+
+Everything on the page comes from PassRate rows. No confirmed year and the page
+still renders — as an empty state with a phone number, not a blank.
+{% endcomment %}
+
+{% block content %}
+
+<c-page-header eyebrow="{% translate 'Wyniki' %}" title="{% translate 'Zdawalność' %}"
+               lead="{% translate 'Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. Liczby, nie deklaracje.' %}">
+  <c-breadcrumbs :items="breadcrumbs" />
+
+  <c-slot name="aside">
+    {% if latest %}
+      <c-fact-card label="{% translate 'Za pierwszym razem' %}" value="{{ latest.first_percent }}%"
+                   note="{% blocktranslate with students=latest.students year=latest.year %}na {{ students }} kursantów w {{ year }} roku{% endblocktranslate %}">
+        <c-slot name="action">
+          <c-button variant="primary" href="{{ enrol_url }}" full="1">{% translate "Zapisz się" %}</c-button>
+        </c-slot>
+      </c-fact-card>
+    {% endif %}
+  </c-slot>
+</c-page-header>
+
+{% if latest %}
+  {# The band repeats the headline figure on purpose: the card above is beside
+     the heading and a phone reader scrolls past it before the number registers.
+     Here it is full width and there is nothing else to look at. #}
+  <c-stat-band ground="ink" :items="band_items" />
+{% endif %}
+
+<c-section id="wyniki">
+  <c-slot name="heading">{% translate "Rok po roku" %}</c-slot>
+  {% if rows %}
+    <c-passrate-table :rows="rows" />
+  {% else %}
+    <c-empty title="{% translate 'Wyniki za ten rok jeszcze się liczą' %}"
+             phone="{{ site_settings.phone_primary }}">
+      {% translate "Podamy je przez telefon, zanim trafią na stronę." %}
+    </c-empty>
+  {% endif %}
+</c-section>
+
+<c-section id="metodologia" tone="muted" size="compact">
+  <c-slot name="heading">{% translate "Jak liczymy te liczby" %}</c-slot>
+  <div class="u-narrow flex flex-col gap-6">
+    <c-callout tone="accent" title="{% translate 'Co dokładnie znaczy „za pierwszym razem”' %}">
+      <p>
+        {% translate "Liczymy kursantów, którzy ukończyli u nas kurs kategorii B i podeszli do egzaminu państwowego w WORD. „Za pierwszym razem” to zdany egzamin praktyczny w pierwszym podejściu." %}
+      </p>
+    </c-callout>
+    <c-callout title="{% translate 'Dlaczego procenty nie sumują się równo do 100' %}">
+      <p>
+        {% translate "Każdy procent zaokrąglamy osobno, do liczby całkowitej. Cztery takie zaokrąglenia potrafią dać w sumie 99 albo 101. Dlatego w tabeli obok procentu zawsze stoi liczba osób — to ona jest faktem, procent jest tylko wygodniejszy w czytaniu." %}
+      </p>
+    </c-callout>
+    <c-callout title="{% translate 'Skąd bierzemy dane' %}">
+      <p>
+        {% translate "Z własnej ewidencji kursantów i z wyników przekazywanych przez ośrodek egzaminowania. Nie doliczamy osób, które przerwały kurs, i nie odejmujemy tych, którym nie poszło." %}
+      </p>
+    </c-callout>
+  </div>
+</c-section>
+
+{# Reviews only where they can be checked. tech.md section 4.7 and the docstring
+   on aggregate_rating_jsonld: an unverifiable rating in the markup is a manual
+   action, not a rich result, so nothing here is invented. #}
+{% if testimonials %}
+  <c-section id="opinie">
+    <c-slot name="heading">{% translate "Opinie kursantów" %}</c-slot>
+    <c-slot name="sub">{% translate "Każda z linkiem do źródła. Innych nie publikujemy." %}</c-slot>
+    <c-testimonials :items="testimonials" />
+  </c-section>
+{% endif %}
+
+<c-cta-band ground="ink"
+            title="{% translate 'Chcesz zdać za pierwszym razem?' %}"
+            text="{% translate 'Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — ustalimy termin startu.' %}"
+            href="{{ enrol_url }}"
+            action="{% translate 'Zapisz się' %}"
+            phone="{{ site_settings.phone_primary }}" />
+
+<div class="h-16 md:hidden" aria-hidden="true"></div>
+{% translate "Zapisz się na kurs" as t_zapisz %}
+<c-cta-bar title="{{ t_zapisz }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
+{% endblock %}

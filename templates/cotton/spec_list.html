@@ -1,0 +1,30 @@
+<c-vars items="" title="" class="" />
+{% comment %}
+Specification list, BLOCKS.md B4.
+
+A definition list, not a table: two of these sit side by side in a page header
+aside at 380px, where a table's columns collapse into each other. The term is
+the fact's name and the description is its value, which is what a screen reader
+should hear.
+
+The value goes in the data face when it is a figure and stays in the text face
+when it is a sentence — the caller decides by what it passes, since dt/dd carry
+no such distinction on their own. `numeric` on a row turns it on.
+
+Takes: title, items — rows carrying .title, .text and optionally .numeric.
+Anything in the default slot is appended, so a caller can hand-write one row.
+{% endcomment %}
+<div class="{{ class }}" {{ attrs }}>
+  {% if title %}<p class="label mb-4 text-ink-500">{{ title }}</p>{% endif %}
+  <dl class="flex flex-col divide-y divide-line-soft border-y border-line-soft">
+    {% for item in items %}
+      <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3">
+        <dt class="min-w-0 font-semibold text-ink">{{ item.title }}</dt>
+        {% if item.text %}
+          <dd class="min-w-0 text-ink-700{% if item.numeric %} data whitespace-nowrap text-ink{% endif %}">{{ item.text }}</dd>
+        {% endif %}
+      </div>
+    {% endfor %}
+    {{ slot }}
+  </dl>
+</div>

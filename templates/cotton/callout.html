@@ -1,0 +1,26 @@
+<c-vars tone="default" title="" icon="" class="" />
+{% comment %}
+Callout, BLOCKS.md B7.
+
+A short aside inside a section: what a price covers, how a number was counted,
+which paper costs money. Not an alert — nothing has gone wrong — so it carries
+no role and no state colour.
+
+A.1 has no tinted panels, so the accent tone is a 2px rule down the left rather
+than a wash. On an inverted ground it reads --on-ground through u-on-ground and
+the rule turns yellow, which is the one colour that does not swap.
+
+Takes: tone (default | accent | ink), title, icon.
+{% endcomment %}
+<aside class="rounded border-l-2 py-4 pl-6 pr-4
+{% if tone == 'accent' %} border-l-accent bg-accent-100/40
+{% elif tone == 'ink' %} u-ground-ink border-l-accent px-6 py-6
+{% else %} border-l-ink-300 bg-paper-50
+{% endif %} {{ class }}" {{ attrs }}>
+  {% if title %}
+    <p class="flex items-center gap-2 font-semibold{% if tone != 'ink' %} text-ink{% endif %}">
+      {% if icon %}<c-icon name="{{ icon }}" size="sm" />{% endif %}{{ title }}
+    </p>
+  {% endif %}
+  <div class="{% if title %}mt-2 {% endif %}{% if tone == 'ink' %}u-muted-on-ground{% else %}text-ink-700{% endif %}">{{ slot }}</div>
+</aside>

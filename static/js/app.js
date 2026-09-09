@@ -489,4 +489,38 @@
       region.hidden = true;
     }
   });
+
+  /* The old site's anchors, tech.md section 4.8.
+   *
+   * oskostrycharz.pl was one page with anchor navigation, so every link anybody
+   * ever shared looks like /#pliki or /#kontakt. A browser does not send the
+   * fragment, which is why django.contrib.redirects cannot answer these: the
+   * server sees a bare "/" and has no idea what was asked for. The table is
+   * printed into the page as json by templates/pages/home.html, read from the
+   * same csv the server side redirects come from.
+   *
+   * replace(), not assign(): the old url must not sit in the history, or Back
+   * lands on the home page and bounces straight out again.
+   */
+  (function () {
+    var hash = window.location.hash.replace(/^#/, "");
+    if (!hash) {
+      return;
+    }
+    var source = document.getElementById("legacy-fragments");
+    if (!source) {
+      return;
+    }
+    var table;
+    try {
+      table = JSON.parse(source.textContent);
+    } catch (error) {
+      return;
+    }
+    var target = table[hash];
+    /* An anchor that also exists on this page is a jump, not a redirect. */
+    if (target && !document.getElementById(hash)) {
+      window.location.replace(target);
+    }
+  })();
 })();

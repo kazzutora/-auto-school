@@ -1,0 +1,58 @@
+{% load i18n %}
+<c-vars rows="" class="" />
+{% comment %}
+Pass rate table, tech.md section 7.
+
+Year by year: how many candidates sat the exam and how many passed at the
+first, second, third and fourth attempt. A real table, because the reader is
+comparing one year against another down a column, which is the one job a table
+does better than anything else.
+
+Every cell carries the count as the primary figure and the percentage under it
+in the muted small. That order is deliberate: percentages that are each rounded
+on their own can total 101, and a reader who adds them up and finds that should
+be able to see the counts they came from. tabular-nums rides on .data.
+
+scope on every header, and the year is a row header — without it a screen
+reader reads twenty four loose numbers.
+
+Below sm the table scrolls inside its own box rather than taking the page
+sideways with it.
+
+Takes: rows — the dicts apps/core/views.py builds, carrying .year, .students,
+.attempts (count, percent pairs) and .note.
+{% endcomment %}
+<div class="u-scroll-x -mx-4 px-4 sm:mx-0 sm:px-0 {{ class }}" {{ attrs }}>
+  <table class="w-full min-w-[36rem] border-collapse text-left">
+    <caption class="sr-only">{% translate "Zdawalność egzaminu państwowego rok po roku" %}</caption>
+    <thead>
+      <tr class="border-b-2 border-line">
+        <th scope="col" class="label py-3 pr-4 text-ink-500">{% translate "Rok" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Kursantów" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 1 razem" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 2 razem" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 3 razem" %}</th>
+        <th scope="col" class="label py-3 text-right text-ink-500">{% translate "Za 4 razem" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+        <tr class="border-b border-line-soft last:border-b-0">
+          <th scope="row" class="data py-4 pr-4 text-data-lg text-ink">{{ row.year }}</th>
+          <td class="data py-4 pr-4 text-right text-ink-700">{{ row.students }}</td>
+          {% for count, percent in row.attempts %}
+            <td class="py-4 text-right{% if not forloop.last %} pr-4{% endif %}">
+              <span class="data block text-data-lg{% if forloop.first %} text-ink{% else %} text-ink-700{% endif %}">{{ count }}</span>
+              <span class="data mt-1 block text-small text-ink-500">{{ percent }}%</span>
+            </td>
+          {% endfor %}
+        </tr>
+        {% if row.note %}
+          <tr>
+            <td colspan="6" class="pb-4 text-small text-ink-500">{{ row.note }}</td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

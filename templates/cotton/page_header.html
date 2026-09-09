@@ -1,0 +1,37 @@
+<c-vars eyebrow="" title="" lead="" class="" />
+{% comment %}
+Page header, BLOCKS.md B1.
+
+The opening band of every inner page: an eyebrow in the label face, the h1, one
+sentence of lead, and — when the page has one worth putting there — a card in
+the right hand column.
+
+Two columns from lg, and the aside is 5 of 12 rather than half: a heading that
+gets only half the width breaks onto three lines at "Zapisy i dokumenty", which
+is the longest one this site has.
+
+The aside slot is what makes the block worth having. Without it the right half
+of every inner page was empty, which is the defect BLOCKS.md A1 was written
+against. With nothing in the slot the heading simply spans the full width and
+no empty column is drawn.
+
+Takes: eyebrow, title, lead; slots: aside, below.
+{% endcomment %}
+<header class="u-section-compact border-b border-line-soft {{ class }}" {{ attrs }}>
+  <div class="u-container">
+    <div class="grid items-start gap-10 {% if aside %}lg:grid-cols-12{% endif %}">
+      <div class="{% if aside %}lg:col-span-7{% endif %} min-w-0">
+        {% if eyebrow %}<p class="label text-ink-500">{{ eyebrow }}</p>{% endif %}
+        <h1 class="{% if eyebrow %}mt-4{% endif %}">{{ title }}</h1>
+        {% if lead %}<p class="u-narrow mt-6 text-body-lg text-ink-700">{{ lead }}</p>{% endif %}
+        {% if slot %}<div class="mt-8">{{ slot }}</div>{% endif %}
+      </div>
+
+      {% if aside %}
+        <div class="min-w-0 lg:col-span-5">{{ aside }}</div>
+      {% endif %}
+    </div>
+
+    {% if below %}<div class="mt-10">{{ below }}</div>{% endif %}
+  </div>
+</header>

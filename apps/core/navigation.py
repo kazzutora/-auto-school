@@ -30,17 +30,19 @@ class NavItem:
 
 # Kontakt is a first level item. Hiding it in a submenu is forbidden: that was
 # the main defect of the old site, tech.md section 7.
+#
+# Seven items, one level, no submenus. The school sells one category, so there
+# is no course tree to fold away — what a visitor wants is the price, how to
+# sign up, and the proof that people pass here.
 NAV: tuple[NavItem, ...] = (
-    NavItem(_("Kursy"), "courses:list"),
-    # pgettext, not gettext: the same polish words head a page and a section,
-    # where there is room for them, and sit in a menu bar that has none. In
-    # russian the full phrase is 118px wider than the polish and pushed the row
-    # into the language switcher. The heading keeps the full wording; only the
-    # menu gets the short one.
-    NavItem(pgettext_lazy("nav", "Kierowca zawodowy"), "courses:pro_hub"),
+    NavItem(_("Kurs kat. B"), "courses:detail", kwargs={"slug": "kat-b"}),
     NavItem(_("Cennik"), "courses:pricing"),
-    NavItem(pgettext_lazy("nav", "Terminy"), "courses:intakes"),
+    # pgettext, not gettext: the full polish phrase heads the page, where there
+    # is room for it, and the menu bar has none. Russian runs 40% longer than
+    # polish and pushed the row into the language switcher.
+    NavItem(pgettext_lazy("nav", "Zapisy"), "core:page", kwargs={"slug": "zapisy"}),
+    NavItem(_("Zdawalność"), "core:pass_rates"),
     NavItem(_("O nas"), "core:page", kwargs={"slug": "o-nas"}),
-    NavItem(_("Galeria"), "gallery:index"),
+    NavItem(_("Do pobrania"), "core:downloads"),
     NavItem(_("Kontakt"), "core:contact"),
 )

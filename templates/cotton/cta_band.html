@@ -1,0 +1,37 @@
+{% load i18n %}
+<c-vars title="" text="" href="" action="" phone="" ground="ink" class="" />
+{% comment %}
+Closing call to action, BLOCKS.md B11.
+
+The last band of every inner page. tech.md section 1 says the whole site exists
+for two actions — a form or a phone call — so both are here, and the page never
+ends on a paragraph.
+
+Ground ink, never deep: the footer is deep, and two dark purple bands touching
+read as one very long block with a hairline lost in the middle.
+
+Takes: title, text, href, action, phone, ground.
+{% endcomment %}
+<section class="u-section-compact
+{% if ground == 'accent' %} u-ground-accent{% elif ground == 'paper' %} bg-paper-50{% else %} u-ground-ink{% endif %} {{ class }}"
+  {{ attrs }}>
+  <div class="u-container flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="u-narrow">
+      <h2{% if ground == 'paper' %} class="text-ink"{% endif %}>{{ title }}</h2>
+      {% if text %}
+        <p class="mt-4 text-body-lg{% if ground == 'paper' %} text-ink-700{% elif ground == 'accent' %} u-fixed-ink{% endif %}">{{ text }}</p>
+      {% endif %}
+    </div>
+
+    <div class="flex shrink-0 flex-wrap gap-4">
+      {% if href %}
+        <c-button variant="primary" size="lg" href="{{ href }}">{{ action|default:_("Zapisz się") }}</c-button>
+      {% endif %}
+      {% if phone %}
+        <c-button variant="secondary" size="lg" href="tel:{{ phone|cut:' ' }}">
+          <c-icon name="phone" size="sm" /> <span class="data">{{ phone }}</span>
+        </c-button>
+      {% endif %}
+    </div>
+  </div>
+</section>

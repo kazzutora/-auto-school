@@ -1,0 +1,47 @@
+{% load i18n %}
+<c-vars items="" class="" />
+{% comment %}
+Document list, tech.md section 7.
+
+Regulamin, umowa, oświadczenia — the papers a candidate needs before the first
+lesson. A card each: name, one line of what it is for, the file size in the
+data face, and a button.
+
+The size is passed in already formatted ("1,2 MB"), because formatting is
+apps/core/services.py and a template has no business dividing by 1024.
+
+download plus rel=noopener on every link. The button is a full 44px tall, which
+is what A.11 asks of a touch target and what a phone actually needs on a page
+whose whole purpose is tapping one of these.
+
+A row without a file never gets here: apps/core/selectors.py excludes it, so a
+document waiting on the owner is a shorter list rather than a broken link.
+
+Takes: items — rows carrying .title, .description, .url and .size.
+{% endcomment %}
+<ul class="grid gap-4 sm:grid-cols-2 {{ class }}" {{ attrs }}>
+  {% for item in items %}
+    <li>
+      <c-card class="flex h-full flex-col gap-4">
+        <div class="flex items-start gap-4">
+          <span aria-hidden="true"
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-line-soft bg-paper-50 text-ink-500">
+            <c-icon name="download" size="sm" />
+          </span>
+          <div class="min-w-0">
+            <h3 class="text-h3">{{ item.title }}</h3>
+            {% if item.description %}<p class="mt-2 text-ink-700">{{ item.description }}</p>{% endif %}
+            {% if item.size %}
+              <p class="data mt-2 text-small text-ink-500">PDF · {{ item.size }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mt-auto">
+          <c-button variant="secondary" href="{{ item.url }}" download rel="noopener" full="1">
+            {% translate "Pobierz" %} <c-icon name="download" size="sm" />
+          </c-button>
+        </div>
+      </c-card>
+    </li>
+  {% endfor %}
+</ul>
