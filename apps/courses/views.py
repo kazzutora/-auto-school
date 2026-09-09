@@ -26,7 +26,7 @@ def _crumbs(trail: list[tuple[Label, str]]) -> list[dict[str, Label]]:
 
 
 def seo_subject(course: Course) -> str:
-    """tech.md section 8 wants "Prawo jazdy kat. B — OSK Nawrocki Wieluń"."""
+    """tech.md section 8 wants "Prawo jazdy kat. B — OSK Ostrycharz Wieluń"."""
     if course.kind == Course.Kind.LICENSE and course.code:
         return f"Prawo jazdy kat. {course.code}"
     return course.title

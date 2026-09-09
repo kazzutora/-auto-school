@@ -137,6 +137,9 @@ STATICFILES_DIRS = [
     ("js", BASE_DIR / "static" / "js"),
     ("fonts", BASE_DIR / "static" / "fonts"),
     ("icons", BASE_DIR / "static" / "icons"),
+    # The logo kit: lettering, mark, favicon and the og card. Self hosted like
+    # everything else, tech.md section 2.
+    ("brand", BASE_DIR / "static" / "brand"),
 ]
 
 MEDIA_URL = "media/"
@@ -176,7 +179,7 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@naukajazdywielun.pl"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@oskostrycharz.pl"
 
 SMSAPI_TOKEN = env("SMSAPI_TOKEN", default="")
 

@@ -22,7 +22,7 @@ class TimeStampedModel(models.Model):
 
 class SiteSettings(SingletonModel, TimeStampedModel):
     legal_name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length=80, default="OSK Nawrocki")
+    short_name = models.CharField(max_length=80, default="OSK Ostrycharz")
     street = models.CharField(max_length=120)
     postal_code = models.CharField(max_length=10)
     city = models.CharField(max_length=80)

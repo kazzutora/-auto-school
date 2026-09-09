@@ -16,7 +16,7 @@ from typing import Any
 
 from django.utils.functional import Promise
 
-TITLE_SUFFIX = "OSK Nawrocki Wieluń"
+TITLE_SUFFIX = "OSK Ostrycharz Wieluń"
 TITLE_SEPARATOR = " — "
 TITLE_LIMIT = 70
 DESCRIPTION_LIMIT = 170
@@ -67,7 +67,7 @@ def build_description(text: Label, limit: int = DESCRIPTION_LIMIT) -> str:
 
 
 def build_title(subject: Label, limit: int = TITLE_LIMIT) -> str:
-    """Compose "<subject> — OSK Nawrocki Wieluń" within the limit."""
+    """Compose "<subject> — OSK Ostrycharz Wieluń" within the limit."""
     room = limit - len(TITLE_SEPARATOR) - len(TITLE_SUFFIX)
     if room <= 0:
         return truncate_text(str(subject), limit)

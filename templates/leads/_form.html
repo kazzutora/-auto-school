@@ -75,7 +75,7 @@ Takes:
   <div class="flex flex-col gap-3">
     <c-checkbox name="consent_rodo" checked="{% if form.consent_rodo.value %}1{% endif %}"
                 error="{{ form.consent_rodo.errors.0|default:'' }}">
-      {% translate "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —" %}
+      {% translate "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Ostrycharz w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —" %}
       <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4 hover:text-ink">{% translate "pełna informacja RODO" %}</a>.
     </c-checkbox>
 

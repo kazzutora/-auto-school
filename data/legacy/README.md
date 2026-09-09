@@ -1,25 +1,22 @@
-# Legacy export
+# Legacy url table
 
-tech.md section 15 describes an export of the old `naukajazdywielun.pl` site:
-one markdown file per page, plus `redirects.csv` and `links.csv`.
+The site this one replaces is `oskostrycharz.pl` — a single page with anchor
+navigation. There is no page export to import, because there were no pages:
+everything lived in one document, and its content is transcribed in
+`OSTRYCHARZ.md` part A instead.
 
-**These course pages are a reconstruction, not that export.** The real one was
-never added to the repository. Every file carries `source: reconstructed` in its
-header, and `scripts/import_legacy.py` prints a warning for each one it reads.
+What is left here is `redirects.csv`, the old url space mapped onto the new one.
 
-What is faithful to tech.md and must stay that way when the real export lands:
+It has two halves and `apps/core/redirects.py` splits them:
 
-- the fifteen slugs match the url map in section 5 and the redirect table in 4.8;
-- all five source typos from the section 15 table appear verbatim, so the
-  importer's correction is tested against real input rather than against itself;
-- the two fragments section 15 reports as unreadable are marked, in the places
-  it names: the first entitlement of `kat-a2` and the category D age range in
-  `kwalifikacja-wstepna-przyspieszona`.
+- rows without a `#` are real request paths. `load_redirects()` writes them into
+  `django.contrib.redirects` and the middleware answers them 301.
+- rows with a `#` are the anchors of the old one-page site. A browser never
+  sends a fragment, so no server can redirect one. `fragment_map()` hands them
+  to the home page and `static/js/app.js` performs the jump on arrival.
 
-The prose itself is written for this repository and is not the school's copy.
-Replace these files with the real export, keep the header block, and rerun
-`python -m scripts.import_legacy`. Nothing in the importer needs to change.
+Both halves come out of the same file so the table cannot drift in two places.
 
-`redirects.csv` and `links.csv` are still missing. The redirect table is frozen
-in tech.md section 4.8, so the data migration that fills
-`django.contrib.redirects` can be written from there.
+Run the loader with:
+
+    docker compose exec web python manage.py load_redirects

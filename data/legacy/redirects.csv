@@ -1,39 +1,16 @@
 old_path,new_path
-/KAT. AM,/kursy/kat-am/
-/KAT.%20AM,/kursy/kat-am/
-/KAT. A1,/kursy/kat-a1/
-/KAT.%20A1,/kursy/kat-a1/
-/KAT. A2,/kursy/kat-a2/
-/KAT.%20A2,/kursy/kat-a2/
-/KAT. A,/kursy/kat-a/
-/KAT.%20A,/kursy/kat-a/
-/KAT. B,/kursy/kat-b/
-/KAT.%20B,/kursy/kat-b/
-/KAT. BE,/kursy/kat-be/
-/KAT.%20BE,/kursy/kat-be/
-/KAT. C,/kursy/kat-c/
-/KAT.%20C,/kursy/kat-c/
-/KAT. CE,/kursy/kat-ce/
-/KAT.%20CE,/kursy/kat-ce/
-/KAT. D,/kursy/kat-d/
-/KAT.%20D,/kursy/kat-d/
-/Szkolenia okresowe,/kierowca-zawodowy/szkolenia-okresowe/
-/Szkolenia%20okresowe,/kierowca-zawodowy/szkolenia-okresowe/
-/Kwalifikacja wstępna,/kierowca-zawodowy/kwalifikacja-wstepna/
-/Kwalifikacja%20wst%C4%99pna,/kierowca-zawodowy/kwalifikacja-wstepna/
-/Kwalifikacja wstępna przyspieszona,/kierowca-zawodowy/kwalifikacja-wstepna-przyspieszona/
-/Kwalifikacja%20wst%C4%99pna%20przyspieszona,/kierowca-zawodowy/kwalifikacja-wstepna-przyspieszona/
-/Badania psychologiczne,/badania-psychologiczne/
-/Badania%20psychologiczne,/badania-psychologiczne/
-/Kurs ADR,/kierowca-zawodowy/adr/
-/Kurs%20ADR,/kierowca-zawodowy/adr/
-/Wózki widłowe,/wozki-widlowe/
-/W%C3%B3zki%20wid%C5%82owe,/wozki-widlowe/
-/Oferta,/kursy/
-/O nas,/o-nas/
-/O%20nas,/o-nas/
-/Kontakt,/kontakt/
-/Galeria,/galeria/
-/Certyfikaty,/certyfikaty/
-/Przydatne strony,/przydatne-linki/
-/Przydatne%20strony,/przydatne-linki/
+/index.html,/
+/index.php,/
+/#ofirmie,/o-nas/
+/#informacje,/zapisy/
+/#pliki,/do-pobrania/
+/#galeriavideo,/galeria/
+/#galeriazdjecia,/galeria/
+/#galeriazdjecia_stat,/zdawalnosc/
+/#kontakt,/kontakt/
+/pliki/Regulamin - OSK Ostrycharz.pdf,/do-pobrania/
+/pliki/Regulamin%20-%20OSK%20Ostrycharz.pdf,/do-pobrania/
+/pliki/umowa_z_kursantem_OSK_Ostrycharz.pdf,/do-pobrania/
+/pliki/oswiadczenie_dot_stanu_zdrowia.pdf,/do-pobrania/
+/pliki/wzor_oplata_za_egzamin.pdf,/do-pobrania/
+/pliki/zgoda_rodzicow_niepelnoletni.pdf,/do-pobrania/

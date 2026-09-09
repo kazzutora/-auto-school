@@ -21,7 +21,7 @@ point 10 and tech.md section 1 both say it never appears on a public page.
 
       <div class="flex flex-col gap-4">
         <p class="label u-muted-on-ground">{% translate "Dane firmy" %}</p>
-        <p class="font-display text-h3 font-bold">{{ site_settings.legal_name|default:"OSK Nawrocki" }}</p>
+        <p class="font-display text-h3 font-bold">{{ site_settings.legal_name|default:"OSK Ostrycharz" }}</p>
         <address class="not-italic">
           {{ site_settings.street }}<br>
           <span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}
@@ -71,7 +71,7 @@ point 10 and tech.md section 1 both say it never appears on a public page.
 
     <div class="u-rule-on-ground mt-10 flex flex-col gap-4 border-t pt-8 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-small u-muted-on-ground">
-        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Nawrocki" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
+        &copy; <span class="data">{% now "Y" %}</span> {{ site_settings.legal_name|default:"OSK Ostrycharz" }}{% if site_settings.founded_year %} &middot; {% translate "na rynku od" %} <span class="data">{{ site_settings.founded_year }}</span>{% endif %}
       </p>
       <c-lang-switcher />
     </div>

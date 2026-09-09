@@ -134,8 +134,8 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
 ENROL_URL = "/zapisz-sie/"
 
 CONTACT_DESCRIPTION = _(
-    "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. "
-    "Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
+    "Adres, telefon i godziny otwarcia OSK Ostrycharz w Wieluniu. "
+    "Biuro i dojazd na ul. Asnyka 7. Zapisy telefoniczne."
 )
 
 # FRONTEND.md A.9: three rows of terms, five questions, and the reviews strip.
@@ -145,8 +145,8 @@ TESTIMONIALS_ON_HOME = 3
 # A.9 point 7: fewer than two and the section does not render at all.
 TESTIMONIALS_MINIMUM = 2
 
-# tech.md section 8 fixes the suffix as "— OSK Nawrocki Wieluń", so the subject
-# does not repeat the town: "Prawo jazdy — OSK Nawrocki Wieluń" carries the same
+# tech.md section 8 fixes the suffix as "— OSK Ostrycharz Wieluń", so the subject
+# does not repeat the town: "Prawo jazdy — OSK Ostrycharz Wieluń" carries the same
 # two keywords FRONTEND.md F3 asks for without saying Wieluń twice.
 HOME_SUBJECT = _("Prawo jazdy")
 HOME_DESCRIPTION = _(
