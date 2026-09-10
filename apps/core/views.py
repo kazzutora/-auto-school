@@ -517,6 +517,56 @@ REQUIRED_DOCUMENTS: tuple[tuple[Label, Label], ...] = (
 )
 
 
+def _about_facts(site: SiteSettings, instructors: list[Any]) -> list[dict[str, Any]]:
+    """The about page in figures, tech.md section 1.
+
+    The previous client counted instructors, categories and cars, and this
+    school has published none of those. What it has published is a pass rate and
+    a price, so those are the facts — read from the same rows the rest of the
+    site reads, never written down here.
+
+    Two queries, and no more: the pass rate and the course. The instructors are
+    handed in already loaded, because the page prints them further down and this
+    row has no business asking for them a second time. The count of licence
+    categories is deliberately not a tile — "1 kategoria" is not a fact anybody
+    is impressed by, and it would cost a third query to say so.
+
+    A tile whose number does not exist is absent rather than zero: a row of
+    figures reading "0 instruktorów" is worse than a row of three.
+    """
+    from apps.core.selectors import latest_pass_rate
+    from apps.courses.models import Course
+
+    facts: list[dict[str, Any]] = []
+
+    latest = latest_pass_rate()
+    if latest:
+        facts.append(
+            {
+                "value": f"{first_attempt_percent(latest)}%",
+                "label": _("zdaje egzamin za pierwszym razem"),
+            }
+        )
+        facts.append({"value": str(latest.students), "label": _("kursantów w ostatnim roczniku")})
+
+    if site.founded_year:
+        facts.append({"value": str(site.founded_year), "label": _("rok założenia")})
+
+    course = Course.objects.filter(slug=MAIN_COURSE_SLUG, is_active=True).first()
+    if course and course.price_gross:
+        facts.append(
+            {
+                "value": f"{course.price_gross:.0f} zł",
+                "label": _("kurs kat. B, dowóz na egzamin w cenie"),
+            }
+        )
+
+    if instructors:
+        facts.append({"value": str(len(instructors)), "label": _("instruktorów prowadzi zajęcia")})
+
+    return facts
+
+
 def _enrolment_steps(site: SiteSettings) -> list[dict[str, Label]]:
     """How to sign up, tech.md section 1. Five steps, the first is a phone call."""
     phone = site.phone_primary or ""
@@ -573,6 +623,8 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
     ]
 
     fleet = people.vehicles_by_course() if about else []
+    # Loaded once. The facts row counts them and the team section prints them.
+    instructors = list(people.active_instructors()) if about else []
     documents = (
         [
             {
@@ -601,6 +653,7 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "body": render_markdown(page.body),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "about": about,
+            "facts": _about_facts(site, instructors) if about else [],
             "enrolment": enrolment,
             "steps": _enrolment_steps(site) if enrolment else [],
             "required_documents": (
@@ -609,7 +662,7 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
                 else []
             ),
             "documents": documents,
-            "instructors": people.active_instructors() if about else [],
+            "instructors": instructors,
             "vehicle_groups": fleet,
             # Counted from what is already loaded rather than asked for again:
             # the about page has a query budget and this is not worth one.

@@ -2,6 +2,7 @@
 
 import json
 import re
+from decimal import Decimal
 from typing import Any
 
 import pytest
@@ -111,9 +112,12 @@ def test_route_matches_the_url_map(client: Client, about_page: Page) -> None:
 
 
 def test_the_nav_can_reach_the_page(about_page: Page) -> None:
+    """core:page answers for four slugs, so the route alone is not an address."""
     from apps.core.navigation import NAV
 
-    o_nas = next(item for item in NAV if item.route == "core:page")
+    o_nas = next(
+        item for item in NAV if item.route == "core:page" and item.kwargs.get("slug") == "o-nas"
+    )
     assert o_nas.url() == ABOUT
 
 
@@ -203,25 +207,39 @@ def test_the_page_body_is_rendered_markdown(client: Client, about_page: Page) ->
 def test_the_facts_come_from_the_database(
     client: Client, about_page: Page, category: Course
 ) -> None:
+    """Every figure is read from a row, never written into the template.
+
+    The count of licence categories is deliberately not among them: "1
+    kategoria" is not a fact anybody is impressed by, and it would cost a third
+    query on a page that has a budget.
+    """
+    from apps.core.models import PassRate
+
     for number in range(3):
         make_instructor(full_name=f"Instruktor {number}", photo=None)
-    Course.objects.create(kind=Course.Kind.LICENSE, slug="kat-c", code="C", title="Kategoria C")
-    # Neither an inactive category nor another kind is a licence category.
-    Course.objects.create(
-        kind=Course.Kind.LICENSE, slug="kat-a", title="Kategoria A", is_active=False
+    PassRate.objects.create(
+        year=2025, students=92, passed_1st=68, passed_2nd=16, passed_3rd=3, passed_4th=3
     )
-    Course.objects.create(kind=Course.Kind.PSYCHOTEST, slug="psycho", title="Badania")
+    Course.objects.filter(pk=category.pk).update(price_gross=Decimal("3700"))
 
     facts = block(page(client), "facts")
 
-    # The year is the figure now, with what it means underneath, A.9 point 6.
+    # The year is the figure, with what it means underneath, A.9 point 6.
     assert "1996" in facts
     assert "rok założenia" in facts
-    assert tile(facts, "instruktorów") == "3"
-    assert tile(facts, "kategorii prawa jazdy") == "2"
-    # The fourth tile is the fleet count, and it is only there when there are
-    # cars: a row of figures does not print a zero to keep its shape.
-    assert "plac manewrowy" not in facts
+    assert tile(facts, "zdaje egzamin za pierwszym razem") == "74%"
+    assert tile(facts, "kursantów w ostatnim roczniku") == "92"
+    assert tile(facts, "instruktorów prowadzi zajęcia") == "3"
+
+
+def test_a_fact_with_no_number_behind_it_is_absent(
+    client: Client, about_page: Page, category: Course
+) -> None:
+    """A row of figures reading "0 instruktorów" is worse than a row of two."""
+    facts = block(page(client), "facts")
+
+    assert "instruktorów prowadzi zajęcia" not in facts
+    assert "zdaje egzamin za pierwszym razem" not in facts
 
 
 def test_the_facts_stay_off_the_other_flat_pages(client: Client) -> None:
@@ -329,7 +347,7 @@ def test_the_page_holds_its_query_count(
 
     # page, instructors, their categories, vehicles, the category count, then
     # site settings twice: the context processor and the DrivingSchool block.
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(9):
         client.get(ABOUT)
 
 
@@ -340,12 +358,12 @@ def test_more_people_and_more_cars_do_not_add_queries(
     _load(category, instructors=1, vehicles=1)
     client.get(ABOUT)
 
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(9):
         client.get(ABOUT)
 
     _load(category, instructors=15, vehicles=15)
 
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(9):
         client.get(ABOUT)
 
 

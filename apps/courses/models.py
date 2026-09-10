@@ -7,11 +7,14 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.models import TimeStampedModel
 
 
-# django-stubs cannot synthesise the reverse managers for intakes and vehicles
-# when the related models inherit their manager from an abstract base in
-# another module. Runtime is unaffected. warn_unused_ignores will flag this
-# the day the plugin learns to resolve it.
-class Course(TimeStampedModel):  # type: ignore[django-manager-missing]
+# The reverse managers for intakes and vehicles used to need a
+# `# type: ignore[django-manager-missing]` here: django-stubs could not
+# synthesise them while the related models inherited their manager from an
+# abstract base in another module. apps/core/models.py declares `objects` on
+# TimeStampedModel explicitly, which is what lets the plugin resolve them, and
+# the ignore is gone. Check with `mypy --no-incremental`: an incremental run
+# reports this one both ways depending on what is cached.
+class Course(TimeStampedModel):
     class Kind(models.TextChoices):
         LICENSE = "license", "Kategoria prawa jazdy"
         PROFESSIONAL = "professional", "Kierowca zawodowy"

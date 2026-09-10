@@ -121,9 +121,7 @@ def test_a_course_is_not_reachable_under_the_wrong_section(client: Client) -> No
 
 def test_the_listing_only_shows_its_own_kind(client: Client, offer: list[Course]) -> None:
     """One page on two urls is duplicate content, so each listing pins its kind."""
-    make_course(
-        kind=Course.Kind.PROFESSIONAL, slug="adr", code="ADR", title="ADR", min_age=None
-    )
+    make_course(kind=Course.Kind.PROFESSIONAL, slug="adr", code="ADR", title="ADR", min_age=None)
 
     licences = body_of(client, "/kursy/")
     professional = body_of(client, "/kierowca-zawodowy/")
@@ -421,6 +419,7 @@ def test_the_listing_tile_sits_at_the_level_the_page_gives_it(client: Client) ->
 
     assert len(tiles) == 1
     assert re.search(r"<h2[ >]", tiles[0]), "the tile under an h1 must be an h2"
+
 
 def test_the_listing_never_prints_a_zero_price(client: Client) -> None:
     """F4: cena na zapytanie, never 0 zł."""

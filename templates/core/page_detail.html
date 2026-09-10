@@ -138,8 +138,26 @@ nothing.
   </c-section>
 {% endif %}
 
+{# The school in figures, A.9 point 6: big numbers, no circle icons, hairlines
+   between them. Every one is counted from a row somewhere else on the site, so
+   none of them can drift away from what the site actually says. A tile whose
+   number does not exist is absent rather than zero. #}
+{% if about and facts %}
+  <c-section id="fakty" size="compact">
+    <c-slot name="heading">{% translate "W liczbach" %}</c-slot>
+    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
+      {% for fact in facts %}
+        <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
+          <p class="data text-data-xl text-ink">{{ fact.value }}</p>
+          <p class="mt-2 text-ink-700">{{ fact.label }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </c-section>
+{% endif %}
+
 {% if instructors %}
-  <c-section id="instruktorzy" size="compact">
+  <c-section id="instruktorzy" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
@@ -167,7 +185,7 @@ nothing.
 {% endif %}
 
 {% if vehicle_groups %}
-  <c-section id="pojazdy" tone="muted" size="compact">
+  <c-section id="pojazdy" size="compact">
     <c-slot name="heading">{% translate "Nasze pojazdy" %}</c-slot>
     <c-slot name="sub">{% translate "Uczysz się na aucie, na którym potem zdajesz." %}</c-slot>
     <div class="flex flex-col gap-12" data-testid="vehicles">

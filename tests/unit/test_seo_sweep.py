@@ -171,11 +171,15 @@ def test_every_language_link_answers(client: Client, whole_site: None, url: str)
 
 @pytest.mark.seo
 @pytest.mark.parametrize("url", PUBLIC_URLS)
-def test_page_carries_the_school_and_its_trail(client: Client, whole_site: None, url: str) -> None:
-    types = [block["@type"] for block in jsonld(body_of(client, url))]
+def test_page_carries_the_school(client: Client, whole_site: None, url: str) -> None:
+    assert "DrivingSchool" in [block["@type"] for block in jsonld(body_of(client, url))]
 
-    assert "DrivingSchool" in types
-    assert "BreadcrumbList" in types
+
+@pytest.mark.seo
+@pytest.mark.parametrize("url", [url for url in PUBLIC_URLS if url != "/"])
+def test_an_inner_page_carries_its_trail(client: Client, whole_site: None, url: str) -> None:
+    """The home page is the root and has no trail. Everything else does."""
+    assert "BreadcrumbList" in [block["@type"] for block in jsonld(body_of(client, url))]
 
 
 @pytest.mark.a11y
@@ -235,9 +239,24 @@ def test_a_course_shares_its_own_picture(client: Client, whole_site: None) -> No
     assert course.hero_image.url in found.group(1)
 
 
-def test_a_course_without_a_picture_claims_none(client: Client, whole_site: None) -> None:
-    """An og:image tag pointing at nothing is worse than no tag."""
-    assert 'property="og:image"' not in body_of(client, "/kursy/kat-a/")
+def test_a_course_without_a_picture_falls_back_to_the_brand_card(
+    client: Client, whole_site: None
+) -> None:
+    """Every page has a share image now, and it is one that exists.
+
+    DEV.md S8 wanted the default to come from SiteSettings, which has no image
+    field. It comes from static/brand/og-image.png instead — a 1200x630 card
+    carrying the school's own wordmark — so a page with no photograph of its own
+    still shares as something rather than as a bare link. What is still
+    forbidden is a tag pointing at a file that is not there.
+    """
+    body = body_of(client, "/kursy/kat-b/")
+
+    image = re.search(r'property="og:image" content="([^"]+)"', body)
+
+    assert image, "every page ships an og:image"
+    assert image.group(1).startswith("http"), "og:image must be absolute"
+    assert "og-image" in image.group(1)
 
 
 @pytest.mark.parametrize("url", PUBLIC_URLS)
