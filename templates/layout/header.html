@@ -38,9 +38,13 @@ which half of A.9 point 0 to honour.
        is fixed and width follows, so the row cannot reflow while it loads. #}
     <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
        aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
+      {# 18px tall below sm, 23px from there. The lockup is 12:1, so those are
+         218px and 278px of row: at 320px the container has 280px to spend and
+         the burger needs 44 of them, which the taller one does not leave. It is
+         a height, not a second file — one request either way. #}
       <img src="{% static 'brand/logo-lockup-dark.svg' %}" width="278" height="23"
            alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-           class="h-[23px] w-auto">
+           class="h-[18px] w-auto sm:h-[23px]">
     </a>
 
     {% include "layout/nav.html" %}

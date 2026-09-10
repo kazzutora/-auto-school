@@ -1,0 +1,37 @@
+# A second site block, for the Caddyfile of the stack that owns ports 80 and
+# 443 on this box. tech.md section 17.
+#
+# This is not a Caddyfile of its own and is never mounted anywhere. Paste both
+# blocks below into the live deploy/Caddyfile of the OTHER stack, replacing the
+# domain, and reload:
+#
+#     docker compose -f deploy/docker-compose.prod.yml exec caddy caddy reload \
+#       --config /etc/caddy/Caddyfile
+#
+# Caddy picks the block by the Host header, so the two schools never see each
+# other's requests, and each gets its own certificate from the same acme
+# account. The upstream is a container name on the shared osk-edge network —
+# see deploy/docker-compose.edge.yml for how this stack joins it.
+#
+# The upstream name is <COMPOSE_PROJECT_NAME>-web-1. With the default in
+# .env.example that is osk-ostrycharz-web-1. Check it with `docker ps` rather
+# than trusting this comment: a renamed project renames the container.
+
+www.oskostrycharz.pl {
+	redir https://oskostrycharz.pl{uri} permanent
+}
+
+oskostrycharz.pl {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+	}
+
+	# No handle_path for /static/ and /media/ here. Those files live in the
+	# other stack's volumes and this Caddy does not mount them, so they go
+	# through to gunicorn and WhiteNoise answers with the manifest hashes and
+	# the long cache headers it already sets.
+	reverse_proxy osk-ostrycharz-web-1:8000
+}

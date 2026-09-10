@@ -130,9 +130,20 @@ same server. Nothing is shared at runtime and nothing may become shared:
   `pgdata` volume and one client's database answers for the other.
 - `POSTGRES_PORT` and `WEB_PORT` differ per stack, or whichever comes up second
   cannot bind.
-- `deploy/Caddyfile` is one site block. The second school has its own checkout
-  and its own block; ports 80 and 443 are already open and Caddy serves both by
-  host name.
+- there is one pair of ports 80 and 443 on the box. One stack keeps its Caddy
+  and terminates TLS for both; the other runs without one and is reached by
+  container name over a shared network:
+
+  ```bash
+  docker network create osk-edge          # once, on the box
+
+  docker compose --env-file .env     -f deploy/docker-compose.prod.yml     -f deploy/docker-compose.edge.yml     up -d --scale caddy=0
+  ```
+
+  Then paste `deploy/Caddyfile.second-site` into the live `Caddyfile` of the
+  stack that does own the edge and reload it. Caddy picks the block by the Host
+  header, so neither school ever sees the other's requests and each gets its own
+  certificate.
 
 The rule for anything that differs between the two schools: it lives in the
 database or in `.env`, never in a template. A `{% if school == "ostrycharz" %}`

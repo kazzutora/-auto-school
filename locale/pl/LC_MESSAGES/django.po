@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 03:36+0200\n"
+"POT-Creation-Date: 2026-09-10 04:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,40 +61,38 @@ msgstr ""
 msgid "Documents"
 msgstr ""
 
-#: apps/core/navigation.py:43
+#: apps/core/navigation.py:45
 msgctxt "nav"
 msgid "Kurs B"
 msgstr ""
 
-#: apps/core/navigation.py:44 apps/courses/views.py:333 templates/404.html:24
-#: templates/500.html:37 templates/core/page_detail.html:128
-#: templates/courses/pricing.html:26 templates/layout/footer.html:41
+#: apps/core/navigation.py:46
+msgctxt "nav"
 msgid "Cennik"
 msgstr ""
 
-#: apps/core/navigation.py:45
+#: apps/core/navigation.py:47
 msgctxt "nav"
 msgid "Zapisy"
 msgstr ""
 
-#: apps/core/navigation.py:46 apps/core/views.py:173 apps/core/views.py:369
-#: templates/core/page_detail.html:122 templates/core/pass_rates.html:23
-#: templates/layout/footer.html:42 templates/pages/home.html:79
+#: apps/core/navigation.py:48
+msgctxt "nav"
 msgid "Zdawalność"
 msgstr ""
 
-#: apps/core/navigation.py:47 templates/layout/footer.html:61
+#: apps/core/navigation.py:49
+msgctxt "nav"
 msgid "O nas"
 msgstr ""
 
-#: apps/core/navigation.py:48
+#: apps/core/navigation.py:50
 msgctxt "nav"
 msgid "Pliki"
 msgstr ""
 
-#: apps/core/navigation.py:49 apps/core/views.py:466 apps/core/views.py:474
-#: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
-#: templates/core/contact.html:23 templates/layout/footer.html:63
+#: apps/core/navigation.py:51
+msgctxt "nav"
 msgid "Kontakt"
 msgstr ""
 
@@ -108,6 +106,12 @@ msgstr ""
 
 #: apps/core/views.py:168
 msgid "Kurs prawa jazdy kategorii B w Wieluniu: standardowy, przyspieszony w dwa tygodnie i na skrzyni automatycznej. Ceny, zdawalność i zapisy. Dowóz na egzamin gratis."
+msgstr ""
+
+#: apps/core/views.py:173 apps/core/views.py:369
+#: templates/core/page_detail.html:122 templates/core/pass_rates.html:23
+#: templates/layout/footer.html:42 templates/pages/home.html:79
+msgid "Zdawalność"
 msgstr ""
 
 #: apps/core/views.py:175
@@ -146,6 +150,12 @@ msgstr ""
 #: apps/leads/views.py:68 apps/leads/views.py:86 apps/links/views.py:47
 #: apps/links/views.py:103
 msgid "Start"
+msgstr ""
+
+#: apps/core/views.py:466 apps/core/views.py:474 templates/404.html:25
+#: templates/500.html:38 templates/core/contact.html:22
+#: templates/core/contact.html:23 templates/layout/footer.html:63
+msgid "Kontakt"
 msgstr ""
 
 #: apps/core/views.py:512
@@ -387,6 +397,12 @@ msgstr ""
 msgid "Cennik kursu prawa jazdy kat. B w Wieluniu: kurs 3700 zł, przyspieszony i automat po 4300 zł, jazdy doszkalające od 140 zł/h. Ceny brutto, dowóz na egzamin gratis."
 msgstr ""
 
+#: apps/courses/views.py:333 templates/404.html:24 templates/500.html:37
+#: templates/core/page_detail.html:128 templates/courses/pricing.html:26
+#: templates/layout/footer.html:41
+msgid "Cennik"
+msgstr ""
+
 #: apps/courses/views.py:342
 msgid "Cennik kursu prawa jazdy"
 msgstr ""
@@ -585,7 +601,7 @@ msgstr ""
 #: templates/courses/course_detail.html:140
 #: templates/courses/course_detail.html:212 templates/courses/intakes.html:62
 #: templates/courses/pricing.html:35 templates/courses/pricing.html:107
-#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:96
+#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:88
 #: templates/links/faq.html:95 templates/links/useful_links.html:87
 #: templates/pages/home.html:53
 msgid "Zapisz się"
@@ -1533,41 +1549,45 @@ msgstr ""
 msgid "Filtr sekcji"
 msgstr ""
 
-#: templates/gallery/gallery.html:44 templates/gallery/gallery.html:76
-msgid "Rok założenia"
-msgstr ""
-
-#: templates/gallery/gallery.html:51
+#: templates/gallery/gallery.html:43
 msgid "Nic w tej sekcji"
 msgstr ""
 
-#: templates/gallery/gallery.html:53
+#: templates/gallery/gallery.html:45
 #, python-format
 msgid "W sekcji „%(label)s” nie ma jeszcze zdjęć."
 msgstr ""
 
-#: templates/gallery/gallery.html:55
+#: templates/gallery/gallery.html:47
 msgid "Zobacz całą galerię"
 msgstr ""
 
-#: templates/gallery/gallery.html:66
+#: templates/gallery/gallery.html:58
 msgid "Galeria w przygotowaniu"
 msgstr ""
 
-#: templates/gallery/gallery.html:67
+#: templates/gallery/gallery.html:59
 msgid "Zdjęcia pojawią się wkrótce."
 msgstr ""
 
-#: templates/gallery/gallery.html:92 templates/gallery/gallery.html:107
+#: templates/gallery/gallery.html:68
+msgid "Rok założenia"
+msgstr ""
+
+#: templates/gallery/gallery.html:84 templates/gallery/gallery.html:99
 msgid "Chcesz zobaczyć ośrodek na żywo?"
 msgstr ""
 
-#: templates/gallery/gallery.html:93
+#: templates/gallery/gallery.html:85
 msgid "Umów się — pokażemy plac, sale i pojazdy."
 msgstr ""
 
 #: templates/layout/footer.html:50
 msgid "Zapisy i dokumenty"
+msgstr ""
+
+#: templates/layout/footer.html:61
+msgid "O nas"
 msgstr ""
 
 #: templates/layout/footer.html:86
@@ -1582,7 +1602,7 @@ msgstr ""
 msgid "strona główna"
 msgstr ""
 
-#: templates/layout/header.html:53 templates/layout/mobile_menu.html:22
+#: templates/layout/header.html:54 templates/layout/mobile_menu.html:22
 msgid "Menu"
 msgstr ""
 

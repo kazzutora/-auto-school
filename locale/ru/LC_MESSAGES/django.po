@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 03:36+0200\n"
+"POT-Creation-Date: 2026-09-10 04:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,42 +61,40 @@ msgstr "Документ"
 msgid "Documents"
 msgstr "Документы"
 
-#: apps/core/navigation.py:43
+#: apps/core/navigation.py:45
 msgctxt "nav"
 msgid "Kurs B"
 msgstr "Курс B"
 
-#: apps/core/navigation.py:44 apps/courses/views.py:333 templates/404.html:24
-#: templates/500.html:37 templates/core/page_detail.html:128
-#: templates/courses/pricing.html:26 templates/layout/footer.html:41
+#: apps/core/navigation.py:46
+msgctxt "nav"
 msgid "Cennik"
 msgstr "Цены"
 
-#: apps/core/navigation.py:45
+#: apps/core/navigation.py:47
 msgctxt "nav"
 msgid "Zapisy"
 msgstr "Запись"
 
-#: apps/core/navigation.py:46 apps/core/views.py:173 apps/core/views.py:369
-#: templates/core/page_detail.html:122 templates/core/pass_rates.html:23
-#: templates/layout/footer.html:42 templates/pages/home.html:79
+#: apps/core/navigation.py:48
+msgctxt "nav"
 msgid "Zdawalność"
-msgstr "Сдача экзамена"
+msgstr "Сдача"
 
-#: apps/core/navigation.py:47 templates/layout/footer.html:61
+#: apps/core/navigation.py:49
+msgctxt "nav"
 msgid "O nas"
 msgstr "О нас"
 
-#: apps/core/navigation.py:48
+#: apps/core/navigation.py:50
 msgctxt "nav"
 msgid "Pliki"
 msgstr "Файлы"
 
-#: apps/core/navigation.py:49 apps/core/views.py:466 apps/core/views.py:474
-#: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
-#: templates/core/contact.html:23 templates/layout/footer.html:63
+#: apps/core/navigation.py:51
+msgctxt "nav"
 msgid "Kontakt"
-msgstr "Контакты"
+msgstr "Контакт"
 
 #: apps/core/views.py:154
 msgid "Adres, telefon i dojazd do OSK Ostrycharz w Wieluniu. Zapisy po wcześniejszym ustaleniu telefonicznym."
@@ -109,6 +107,12 @@ msgstr "Права категории B"
 #: apps/core/views.py:168
 msgid "Kurs prawa jazdy kategorii B w Wieluniu: standardowy, przyspieszony w dwa tygodnie i na skrzyni automatycznej. Ceny, zdawalność i zapisy. Dowóz na egzamin gratis."
 msgstr "Курс на права категории B в Велюне: обычный, ускоренный за две недели и на автомате. Цены, сдаваемость и запись. Доставка на экзамен бесплатно."
+
+#: apps/core/views.py:173 apps/core/views.py:369
+#: templates/core/page_detail.html:122 templates/core/pass_rates.html:23
+#: templates/layout/footer.html:42 templates/pages/home.html:79
+msgid "Zdawalność"
+msgstr "Сдача экзамена"
 
 #: apps/core/views.py:175
 msgid "Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. Wyniki rok po roku, liczby bez zaokrągleń."
@@ -147,6 +151,12 @@ msgstr "среднее число попыток на экзамене"
 #: apps/links/views.py:103
 msgid "Start"
 msgstr "Главная"
+
+#: apps/core/views.py:466 apps/core/views.py:474 templates/404.html:25
+#: templates/500.html:38 templates/core/contact.html:22
+#: templates/core/contact.html:23 templates/layout/footer.html:63
+msgid "Kontakt"
+msgstr "Контакты"
 
 #: apps/core/views.py:512
 msgid "Orzeczenie lekarskie"
@@ -387,6 +397,12 @@ msgstr "бесплатно"
 msgid "Cennik kursu prawa jazdy kat. B w Wieluniu: kurs 3700 zł, przyspieszony i automat po 4300 zł, jazdy doszkalające od 140 zł/h. Ceny brutto, dowóz na egzamin gratis."
 msgstr "Цены на курс категории B в Велюне: курс 3700 zł, ускоренный и автомат по 4300 zł, дополнительное вождение от 140 zł/час. Цены брутто, доставка на экзамен бесплатно."
 
+#: apps/courses/views.py:333 templates/404.html:24 templates/500.html:37
+#: templates/core/page_detail.html:128 templates/courses/pricing.html:26
+#: templates/layout/footer.html:41
+msgid "Cennik"
+msgstr "Цены"
+
 #: apps/courses/views.py:342
 msgid "Cennik kursu prawa jazdy"
 msgstr "Цены на курс вождения"
@@ -585,7 +601,7 @@ msgstr "Профиль кандидата в водители (PKK) выдаёт
 #: templates/courses/course_detail.html:140
 #: templates/courses/course_detail.html:212 templates/courses/intakes.html:62
 #: templates/courses/pricing.html:35 templates/courses/pricing.html:107
-#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:96
+#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:88
 #: templates/links/faq.html:95 templates/links/useful_links.html:87
 #: templates/pages/home.html:53
 msgid "Zapisz się"
@@ -1533,42 +1549,46 @@ msgstr "Центр, площадка, учебные автомобили и з�
 msgid "Filtr sekcji"
 msgstr "Фильтр разделов"
 
-#: templates/gallery/gallery.html:44 templates/gallery/gallery.html:76
-msgid "Rok założenia"
-msgstr "Год основания"
-
-#: templates/gallery/gallery.html:51
+#: templates/gallery/gallery.html:43
 msgid "Nic w tej sekcji"
 msgstr "В этом разделе пусто"
 
-#: templates/gallery/gallery.html:53
+#: templates/gallery/gallery.html:45
 #, python-format
 msgid "W sekcji „%(label)s” nie ma jeszcze zdjęć."
 msgstr "В разделе «%(label)s» пока нет фотографий."
 
-#: templates/gallery/gallery.html:55
+#: templates/gallery/gallery.html:47
 msgid "Zobacz całą galerię"
 msgstr "Смотреть всю галерею"
 
-#: templates/gallery/gallery.html:66
+#: templates/gallery/gallery.html:58
 msgid "Galeria w przygotowaniu"
 msgstr "Галерея готовится"
 
-#: templates/gallery/gallery.html:67
+#: templates/gallery/gallery.html:59
 msgid "Zdjęcia pojawią się wkrótce."
 msgstr "Фотографии появятся скоро."
 
-#: templates/gallery/gallery.html:92 templates/gallery/gallery.html:107
+#: templates/gallery/gallery.html:68
+msgid "Rok założenia"
+msgstr "Год основания"
+
+#: templates/gallery/gallery.html:84 templates/gallery/gallery.html:99
 msgid "Chcesz zobaczyć ośrodek na żywo?"
 msgstr "Хотите увидеть автошколу вживую?"
 
-#: templates/gallery/gallery.html:93
+#: templates/gallery/gallery.html:85
 msgid "Umów się — pokażemy plac, sale i pojazdy."
 msgstr "Договоритесь о визите — покажем площадку, классы и машины."
 
 #: templates/layout/footer.html:50
 msgid "Zapisy i dokumenty"
 msgstr "Запись и документы"
+
+#: templates/layout/footer.html:61
+msgid "O nas"
+msgstr "О нас"
 
 #: templates/layout/footer.html:86
 msgid "na rynku od"
@@ -1582,7 +1602,7 @@ msgstr "Велюнь"
 msgid "strona główna"
 msgstr "главная страница"
 
-#: templates/layout/header.html:53 templates/layout/mobile_menu.html:22
+#: templates/layout/header.html:54 templates/layout/mobile_menu.html:22
 msgid "Menu"
 msgstr "Меню"
 

@@ -35,16 +35,18 @@ class NavItem:
 # is no course tree to fold away — what a visitor wants is the price, how to
 # sign up, and the proof that people pass here.
 NAV: tuple[NavItem, ...] = (
-    # pgettext, not gettext, on three of these: the same polish words head a
-    # page, where there is room for them, and sit in a menu bar that has none.
-    # Measured at xl the row has 583px for the menu; the full labels came to
-    # 550px in polish and overflowed outright in russian, which is 40% longer.
-    # The short forms come to 465px and leave the row somewhere to grow.
+    # pgettext on every one of them, and that is the point. The same polish
+    # words head a page, where there is room for them, and sit in a menu bar
+    # that has none — but the binding case is not polish. Measured at xl the row
+    # has 583px for the menu; the full polish labels came to 550px and the
+    # russian translations of them to 1136px of header against 1104px of
+    # container. A nav context on every item is what lets each language pick a
+    # label that fits without any of them dragging the others short.
     NavItem(pgettext_lazy("nav", "Kurs B"), "courses:detail", kwargs={"slug": "kat-b"}),
-    NavItem(_("Cennik"), "courses:pricing"),
+    NavItem(pgettext_lazy("nav", "Cennik"), "courses:pricing"),
     NavItem(pgettext_lazy("nav", "Zapisy"), "core:page", kwargs={"slug": "zapisy"}),
-    NavItem(_("Zdawalność"), "core:pass_rates"),
-    NavItem(_("O nas"), "core:page", kwargs={"slug": "o-nas"}),
+    NavItem(pgettext_lazy("nav", "Zdawalność"), "core:pass_rates"),
+    NavItem(pgettext_lazy("nav", "O nas"), "core:page", kwargs={"slug": "o-nas"}),
     NavItem(pgettext_lazy("nav", "Pliki"), "core:downloads"),
-    NavItem(_("Kontakt"), "core:contact"),
+    NavItem(pgettext_lazy("nav", "Kontakt"), "core:contact"),
 )

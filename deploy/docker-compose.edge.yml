@@ -1,0 +1,40 @@
+# Overlay for the stack that does NOT own the edge, tech.md section 17.
+#
+# Two driving schools run from two checkouts on one box and there is one pair of
+# ports 80 and 443 between them. One stack keeps its own Caddy and terminates
+# TLS for both; the other runs without a Caddy of its own and is reached by
+# container name over a shared network.
+#
+# On the box, once:
+#
+#     docker network create osk-edge
+#
+# Then bring this stack up with the overlay and no Caddy:
+#
+#     docker compose --env-file .env \
+#       -f deploy/docker-compose.prod.yml \
+#       -f deploy/docker-compose.edge.yml \
+#       up -d --scale caddy=0
+#
+# And add deploy/Caddyfile.second-site to the Caddyfile of the stack that does
+# own the edge. Nothing else changes: the web container still listens on 8000,
+# still serves /healthz to its own healthcheck over loopback, and still knows
+# nothing about who is proxying to it.
+#
+# The static and media volumes stay inside this stack. The edge Caddy does not
+# mount them — it proxies /static/ and /media/ through to gunicorn, where
+# WhiteNoise answers. That is a little slower than a file_server and it is the
+# price of not sharing a volume between two clients.
+
+services:
+  web:
+    networks:
+      # The stack's own network, which compose would otherwise replace outright
+      # the moment this key appears.
+      - default
+      - edge
+
+networks:
+  edge:
+    external: true
+    name: osk-edge
