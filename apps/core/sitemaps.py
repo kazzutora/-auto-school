@@ -28,14 +28,18 @@ from apps.core.views import FLAT_PAGE_SLUGS
 from apps.courses.models import Course
 
 # Routes that are not a row in any table, tech.md section 5.
-# Psychotests and forklifts are courses with a url of their own, so
-# CourseSitemap already lists them and repeating them here would put the same
-# location in the file twice.
+#
+# Psychotests, forklifts and the professional courses are gone from this list:
+# they are courses with a url of their own, and this school sells none of them,
+# so their pages answer 404. A sitemap that advertises a 404 spends crawl budget
+# proving the site is broken.
 STATIC_ROUTES = (
+    "core:home",
     "courses:list",
-    "courses:pro_hub",
     "courses:pricing",
     "courses:intakes",
+    "core:pass_rates",
+    "core:downloads",
     "gallery:index",
     "gallery:certificates",
     "links:useful",

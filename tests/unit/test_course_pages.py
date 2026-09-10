@@ -67,9 +67,22 @@ def test_the_routes_match_the_url_map() -> None:
 
 
 def test_every_course_answers_200(client: Client, offer: list[Course]) -> None:
-    assert len(offer) == 15
+    """One course. tech.md section 1: this school teaches category B only."""
+    assert len(offer) == 1
     for course in offer:
         assert client.get(course.get_absolute_url()).status_code == 200, course.slug
+
+
+def test_the_routes_for_what_this_school_does_not_sell_answer_404(client: Client) -> None:
+    """The url map still carries them; no Course stands behind any of them.
+
+    A listing with nothing in it is not a page: /kierowca-zawodowy/ used to
+    answer 200 with a heading over an empty grid, which is a thin page in the
+    sitemap competing with the pages that do have something to say. They are
+    absent from the sitemap now and they fail cleanly rather than half render.
+    """
+    for url in ("/kierowca-zawodowy/", "/badania-psychologiczne/", "/wozki-widlowe/"):
+        assert client.get(url).status_code == 404, url
 
 
 def test_every_course_page_has_exactly_one_h1(client: Client, offer: list[Course]) -> None:
@@ -78,10 +91,7 @@ def test_every_course_page_has_exactly_one_h1(client: Client, offer: list[Course
         assert len(re.findall(r"<h1[ >]", body)) == 1, course.slug
 
 
-@pytest.mark.parametrize(
-    ("url", "title"),
-    [("/kursy/", "Kursy prawa jazdy"), ("/kierowca-zawodowy/", "Kierowca zawodowy")],
-)
+@pytest.mark.parametrize(("url", "title"), [("/kursy/", "Kursy prawa jazdy")])
 def test_a_listing_prints_its_title_once(
     client: Client, offer: list[Course], url: str, title: str
 ) -> None:
@@ -110,6 +120,11 @@ def test_a_course_is_not_reachable_under_the_wrong_section(client: Client) -> No
 
 
 def test_the_listing_only_shows_its_own_kind(client: Client, offer: list[Course]) -> None:
+    """One page on two urls is duplicate content, so each listing pins its kind."""
+    make_course(
+        kind=Course.Kind.PROFESSIONAL, slug="adr", code="ADR", title="ADR", min_age=None
+    )
+
     licences = body_of(client, "/kursy/")
     professional = body_of(client, "/kierowca-zawodowy/")
 
@@ -141,12 +156,11 @@ def test_a_course_without_a_price_asks_for_one(client: Client) -> None:
 
 
 def test_a_course_with_a_price_shows_it(client: Client) -> None:
-    make_course(price_gross=Decimal("3200"), price_note="cena od")
+    make_course(price_gross=Decimal("3700"), price_note="cena od")
 
-    body = body_of(client, "/kursy/kat-b/")
+    body = body_of(client, "/kursy/kat-b/").replace(" ", " ")
 
-    assert "3" in body and "200" in body
-    assert "cena od" in body
+    assert "3 700,00 zł" in body
     assert "Zapytaj o cenę" not in body
 
 
@@ -179,7 +193,12 @@ def test_only_the_next_three_intakes_are_listed(client: Client) -> None:
         )
 
     body = body_of(client, "/kursy/kat-b/")
-    assert body.count("Zapisy otwarte") == 3
+    # The schedule block left this page: the school enrols by telephone and has
+    # no calendar to publish. What is left is the next start, on the card, and
+    # it is the soonest of the five rather than whichever came back first.
+    assert body.count("Zapisy otwarte") == 0
+    assert (today + timedelta(days=5)).strftime("%d.%m") in body
+    assert (today + timedelta(days=10)).strftime("%d.%m") not in body
 
 
 def test_past_and_closed_intakes_stay_off_the_page(client: Client) -> None:
@@ -243,7 +262,7 @@ def test_the_title_follows_the_contract(client: Client) -> None:
 
 @pytest.mark.seo
 def test_every_page_meets_the_seo_contract(client: Client, offer: list[Course]) -> None:
-    urls = ["/kursy/", "/kierowca-zawodowy/"] + [c.get_absolute_url() for c in offer]
+    urls = ["/kursy/"] + [c.get_absolute_url() for c in offer]
 
     for url in urls:
         body = body_of(client, url)
@@ -278,7 +297,7 @@ def test_a_detail_page_carries_course_json_ld(client: Client, offer: list[Course
 
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt(client: Client, offer: list[Course]) -> None:
-    for url in ("/kursy/", "/kierowca-zawodowy/", "/kursy/kat-b/"):
+    for url in ("/kursy/", "/kursy/kat-b/"):
         images = re.findall(r"<img[^>]*>", body_of(client, url))
         assert not [img for img in images if not re.search(r'alt="[^"]+"', img)], url
 
@@ -309,8 +328,10 @@ def test_the_detail_page_holds_its_query_count(client: Client, django_assert_num
     # processor, the DrivingSchool block and the Course block each call
     # get_solo(). django-solo can cache that, see the note in the handover.
     # The seventh is the course select in the enrolment form the page now ends
-    # with, DEV.md S3.1 — one query for the whole list, not one per option.
-    with django_assert_num_queries(8):
+    # with, DEV.md S3.1 — one query for the whole list, not one per option. The
+    # ninth is the three price variants, which is the choice this page exists to
+    # help with: one query for the group, not one per card.
+    with django_assert_num_queries(9):
         client.get("/kursy/kat-b/")
 
 
@@ -322,12 +343,12 @@ def test_more_intakes_and_vehicles_do_not_add_queries(
     _load(client, course, intakes=1, vehicles=1)
     client.get("/kursy/kat-b/")
 
-    with django_assert_num_queries(8):
+    with django_assert_num_queries(9):
         client.get("/kursy/kat-b/")
 
     _load(client, course, intakes=20, vehicles=20)
 
-    with django_assert_num_queries(8):
+    with django_assert_num_queries(9):
         client.get("/kursy/kat-b/")
 
 
@@ -385,35 +406,21 @@ def test_the_listing_draws_one_tile_per_active_course(client: Client) -> None:
     assert len(tiles) == Course.objects.filter(is_active=True).count() == 4
 
 
-def test_the_tile_is_the_same_markup_as_on_the_home_page(client: Client) -> None:
-    """F4's first acceptance criterion, checked the only way that settles it.
+def test_the_listing_tile_sits_at_the_level_the_page_gives_it(client: Client) -> None:
+    """The grid used to be shared with the home page and this test kept the two
+    in step. The home page has no category grid any more — one category is not
+    a grid, and what stands there instead is three cards for three ways to take
+    the same course — so what is left to hold is the heading level.
 
-    Both pages include courses/_category_grid.html, so this passes by
-    construction — and fails the moment someone copies the grid into one of
-    them and edits it there.
-
-    The heading tag is the one thing allowed to differ, and it has to: on the
-    listing the grid sits straight under the h1, so its titles are h2, while on
-    the home page they sit inside a section that already has one and stay h3.
-    Identical there would mean a skipped level on one of the two pages. Nothing
-    visual changes — the tag carries no styling of its own.
+    On the listing the grid sits straight under the h1, so its titles are h2.
+    Identical anywhere else would mean a skipped level on one of the two pages.
     """
     make_course()
 
-    on_home = category_tiles(body_of(client, reverse("core:home")))
-    on_listing = category_tiles(body_of(client, "/kursy/"))
+    tiles = category_tiles(body_of(client, "/kursy/"))
 
-    assert len(on_home) == len(on_listing) == 1
-
-    def without_heading_level(tile: str) -> list[str]:
-        return re.sub(r"</?h[1-6]([ >])", r"<h", tile).split()
-
-    assert without_heading_level(on_home[0]) == without_heading_level(on_listing[0])
-
-    # And the levels really are the ones each page needs.
-    assert re.search(r"<h3[^>]*>\s*Kategoria B", on_home[0])
-    assert re.search(r"<h2[^>]*>\s*Kategoria B", on_listing[0])
-
+    assert len(tiles) == 1
+    assert re.search(r"<h2[ >]", tiles[0]), "the tile under an h1 must be an h2"
 
 def test_the_listing_never_prints_a_zero_price(client: Client) -> None:
     """F4: cena na zapytanie, never 0 zł."""
@@ -527,16 +534,20 @@ def test_the_course_page_alternates_its_grounds(client: Client) -> None:
     assert grounds[-1] == "ink", "the page does not end on the invitation"
 
 
-def test_the_closing_words_follow_the_kind_of_course(client: Client) -> None:
-    """X3 point 8: a category and a professional qualification are not booked
-    for the same reason."""
-    category = make_course(slug="kat-b", code="B", title="Kategoria B")
-    assert "Nie wiesz, czy ta kategoria" in body_of(client, category.get_absolute_url())
+def test_the_page_closes_on_the_choice_it_actually_asks_the_reader_to_make(
+    client: Client,
+) -> None:
+    """X3 point 8, narrowed to one category.
 
-    pro = make_course(
-        slug="adr", code="", title="ADR", kind=Course.Kind.PROFESSIONAL, price_gross=None
-    )
-    assert "Potrzebujesz tych uprawnień do pracy?" in body_of(client, pro.get_absolute_url())
+    The previous client sold fifteen courses and the closing words had to know
+    which kind they were closing. This one sells one, and the only decision left
+    on the page is which of the three variants to take.
+    """
+    course = make_course(slug="kat-b", code="B", title="Prawo jazdy kat. B")
+
+    body = body_of(client, course.get_absolute_url())
+
+    assert "Nie wiesz, który wariant wybrać?" in body
 
 
 def test_the_sticky_card_clears_the_header(client: Client) -> None:
@@ -615,19 +626,21 @@ def test_every_vehicle_named_is_in_the_sprite() -> None:
             assert f"i-{icon}" in declared, f"the sprite has no i-{icon} at its root"
 
 
-def test_a_course_with_no_photo_shows_the_slot_it_will_go_into(client: Client) -> None:
-    """The owner is filling hero_image with their own photographs.
+def test_a_course_with_no_photo_leaves_no_broken_frame(client: Client) -> None:
+    """No marker panel, and no gap pretending to be one.
 
-    Until one arrives the page shows a framed panel with the marker of what the
-    category is taught on, rather than a gap where a picture belongs — a gap
-    reads as a page that broke, not as one still being filled. The branch goes
-    away by itself the day the photo is uploaded.
+    The previous client had eight categories that each looked different and a
+    framed placeholder per kind. One category needs one photograph: until the
+    owner uploads it the page simply runs without a picture, and the section on
+    our cars is where it asks for them.
     """
-    make_course(slug="kat-b", code="B", title="Kategoria B")
+    make_course(slug="kat-b", code="B", title="Prawo jazdy kat. B")
 
     body = body_of(client, "/kursy/kat-b/")
-    assert "#i-car" in body
-    assert "Miejsce na zdjęcie" in body, "the panel does not say what it is holding"
+
+    assert "Miejsce na zdjęcie" not in body
+    assert "Nasze samochody" in body
+    assert "Zdjęcia aut w przygotowaniu" in body
 
 
 def test_a_course_with_no_licence_letter_still_names_its_vehicle(client: Client) -> None:

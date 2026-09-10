@@ -39,7 +39,10 @@ def settings_row() -> SiteSettings:
     return row
 
 
-def body(client: Client, url: str = "/kursy/") -> str:
+def body(client: Client, url: str = "/") -> str:
+    """The chrome is the same on every page, so the test takes the one page that
+    always renders. /kursy/ used to be it; a listing with no courses is a 404
+    now, and these tests are about the header and the footer, not the offer."""
     response = client.get(url)
     assert response.status_code == 200
     return response.content.decode()
@@ -118,17 +121,33 @@ def test_the_footer_carries_the_four_columns(client: Client, settings_row: SiteS
     footer = re.search(r"<footer.*?</footer>", html, re.S)
     assert footer
     labels = re.findall(r'<p class="label u-muted-on-ground">([^<]+)</p>', footer.group())
-    assert labels == ["Dane firmy", "Kursy", "Informacje", "Formalności"]
+    assert labels == ["Dane firmy", "Kurs", "Formalności", "Ośrodek"]
     for url in (
-        reverse("courses:list"),
+        reverse("courses:detail", kwargs={"slug": "kat-b"}),
         reverse("courses:pricing"),
-        reverse("courses:intakes"),
+        reverse("core:pass_rates"),
+        reverse("core:downloads"),
+        reverse("core:page", kwargs={"slug": "zapisy"}),
         reverse("gallery:index"),
         reverse("links:useful"),
         reverse("core:page", kwargs={"slug": "polityka-prywatnosci"}),
         reverse("core:page", kwargs={"slug": "rodo"}),
     ):
         assert f'href="{url}"' in footer.group(), f"{url} missing from the footer"
+
+
+def test_the_footer_names_no_route_this_school_does_not_sell(
+    client: Client, settings_row: SiteSettings
+) -> None:
+    """The professional courses and the psychotests are the previous client's.
+
+    Their routes still exist in the url map with no course behind them, so a
+    footer link to one is a 404 on every page of the site.
+    """
+    footer = re.search(r"<footer.*?</footer>", body(client), re.S).group()
+
+    for absent in ("/kierowca-zawodowy/", "/badania-psychologiczne/", "/wozki-widlowe/"):
+        assert absent not in footer
 
 
 def test_the_footer_never_shows_the_bank_account(

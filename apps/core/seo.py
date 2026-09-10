@@ -93,8 +93,6 @@ def driving_school_jsonld(site: Any) -> dict[str, Any]:
         "alternateName": site.short_name,
         "email": site.email,
         "telephone": site.phone_primary,
-        "vatID": site.nip,
-        "foundingDate": str(site.founded_year),
         "address": {
             "@type": "PostalAddress",
             "streetAddress": site.street,
@@ -103,6 +101,14 @@ def driving_school_jsonld(site: Any) -> dict[str, Any]:
             "addressCountry": "PL",
         },
     }
+
+    # Absent, not empty. This school publishes neither a tax number nor a
+    # founding year, and str(None) put the literal "None" in the markup as the
+    # date it was founded — a claim that is not merely missing but wrong.
+    if site.nip:
+        data["vatID"] = site.nip
+    if site.founded_year:
+        data["foundingDate"] = str(site.founded_year)
 
     phones = [site.phone_secondary, site.phone_tertiary]
     extra = [phone for phone in phones if phone]

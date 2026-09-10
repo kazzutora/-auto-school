@@ -161,7 +161,7 @@ def test_the_bank_account_shows_once_it_is_public(client: Client, site: SiteSett
 
 def test_the_call_bar_carries_the_first_number(client: Client, site: SiteSettings) -> None:
     """The sticky call button is the point of the page on a phone."""
-    assert 'href="tel:438432911"' in block(page(client), "call-bar")
+    assert 'href="tel:691570489"' in block(page(client), "call-bar")
 
 
 # --------------------------------------------------------------------------

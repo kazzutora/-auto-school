@@ -155,7 +155,13 @@ only action on the page.
         </dl>
 
         <div class="mt-8 flex flex-col gap-3">
-          <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
+          {# A course with no figure has nothing to sign up to yet, so the
+             button asks for the price instead of pretending there is one. This
+             school prices everything it sells, but the engine serves whoever
+             is next and an empty price is a state it has to survive. #}
+          <c-button variant="primary" size="lg" full="1" href="{{ enrol_url }}">
+            {% if course.price_gross %}{% translate "Zapisz się" %}{% else %}{% translate "Zapytaj o cenę" %}{% endif %}
+          </c-button>
           {% if site_settings.phone_primary %}
             <c-button variant="secondary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
               <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
@@ -168,21 +174,12 @@ only action on the page.
 
 </c-section>
 
-{% if intakes %}
-  <c-section tone="muted" size="compact">
-    <div>
-      <c-heading level="2">{% translate "Najbliższe terminy" %}</c-heading>
-      <div class="mt-6">
-        {% for intake in intakes %}<c-intake-row :intake="intake" />{% endfor %}
-      </div>
-      <p class="mt-8">
-        <c-button variant="ghost" href="{% url 'courses:intakes' %}">
-          {% translate "Wszystkie terminy" %} <c-icon name="arrow-right" size="sm" />
-        </c-button>
-      </p>
-    </div>
-  </c-section>
-{% endif %}
+{# The schedule block that used to sit here is gone. This school enrols by
+   telephone, one group at a time, and has no calendar to publish; a list of
+   "najbliższe terminy" beside a card that says "zadzwoń, ustalimy termin" asks
+   the reader which of the two to believe. The next start, when there is one, is
+   in the card above. /terminy/ still exists for the day the owner starts
+   planning groups ahead. #}
 
 {# --------------------------------------------------------------- our cars
    The school's own copy says klimatyzowane and bogato wyposażone, tech.md
@@ -191,7 +188,7 @@ only action on the page.
    stands here until they arrive is the claim and a phone number, in a frame
    that plainly reads as a placeholder.
    --------------------------------------------------------------- #}
-<c-section id="auta" size="compact">
+<c-section id="auta" tone="muted" size="compact">
   <c-slot name="heading">{% translate "Nasze samochody" %}</c-slot>
   <c-slot name="sub">{% translate "Uczysz się na aucie, którym potem zdajesz — i którym Cię na ten egzamin dowozimy." %}</c-slot>
 
@@ -226,7 +223,7 @@ only action on the page.
    already chosen — the visitor has just read about it and should not have to
    say so again. DEV.md S3.1.
    ------------------------------------------------------------ #}
-<c-section tone="muted">
+<c-section>
   <div class="u-narrow">
     <c-heading level="2">{% blocktranslate with title=course.title %}Zapisz się na {{ title }}{% endblocktranslate %}</c-heading>
     <p class="mt-4 text-body-lg text-ink-700">

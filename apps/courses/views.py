@@ -6,7 +6,7 @@ shape, the view assembles the section 8 SEO contract and renders.
 
 from typing import Any
 
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -63,6 +63,13 @@ def _grid(
     intro: Label,
 ) -> HttpResponse:
     courses = list(selectors.active_courses(kind))
+    # A listing with nothing in it is not a page. This school sells one kind, so
+    # /kierowca-zawodowy/ has no courses behind it and used to answer 200 with a
+    # heading over an empty grid — a thin page, in the sitemap, competing with
+    # the pages that do have something to say.
+    if not courses:
+        raise Http404(f"no active courses of kind {kind}")
+
     trail: list[tuple[Label, str]] = [(_("Start"), "/"), (heading, reverse(route))]
 
     return render(
