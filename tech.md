@@ -1,9 +1,10 @@
-# tech.md — ядро проекта OSK Nawrocki
+# tech.md — ядро проекта OSK Ostrycharz
 
-**Версия ядра: v23**
+**Версия ядра: v24**
 
 | Версия | Изменение |
 |---|---|
+| v24 | Движок переведён на второго клиента, OSK Ostrycharz. §1 переписан целиком: одна категория B в трёх вариантах, реальные цены, статистика сдачи. Добавлены модели `PassRate` (год, кандидаты, четыре попытки; проценты не хранятся, считаются в `apps/core/services.py`) и `DownloadFile` (`size_bytes` заполняется в `save()` из самого файла); в `SiteSettings` — `youtube_url`, `youtube_video_url`, `youtube_poster`, `youtube_poster_alt`, а `founded_year` стал nullable, потому что школа его нигде не публикует, и шаблон с фоллбэком печатал бы выдуманный факт. Роуты `/zdawalnosc/` и `/do-pobrania/`, навигация из семи пунктов без подменю. Новые компоненты: `<c-page-header>`, `<c-callout>`, `<c-spec-list>`, `<c-anchor-nav>`, `<c-empty>`, `<c-stat-band>`, `<c-cta-band>`, `<c-passrate-table>`, `<c-download-list>`, `<c-video-embed>`. Логотип в шапке — комплект из `static/brand/`, а не леттеринг в шаблоне; `og:image` по умолчанию берётся оттуда же, чем закрыт CONTRACT GAP в `apps/core/seo.py`. Пустой листинг курсов отвечает 404, а не 200 с заголовком над пустотой, и убран из sitemap. Из json-ld убраны пустой `vatID` и `foundingDate: "None"`. `COMPOSE_PROJECT_NAME` разводит тома двух школ на одной машине |
 | v23 | `CSRF_TRUSTED_ORIGINS` перестал быть пустым: `config/settings/prod.py` собирает его из `ALLOWED_HOSTS`, схема `https`, а при `HTTPS_ENABLED=0` — `http`. Запись вида `.example.com` даёт `https://*.example.com`, одиночная `*` пропускается. Домен по-прежнему пишется в `.env` ровно один раз, второй копии, которая разъедется, нет. Отдельно описан третий режим переезда: бесплатное dynamic-dns имя вместо голого ip. Оно получает настоящий сертификат, поэтому `CADDYFILE` и `HTTPS_ENABLED` не нужны — хватает `SITE_DOMAIN` и `DJANGO_ALLOWED_HOSTS` плюс открытых 80 и 443, а www-редирект боевого `Caddyfile` работает, потому что такой провайдер резолвит все под-имена в тот же адрес Выход из режима предпросмотра вскрыл две поломки, обе закрыты. `SECURE_REDIRECT_EXEMPT = [r"^healthz$"]`: healthcheck контейнера и smoke-шаг деплоя ходят на `/healthz` по обычному http через loopback, где никакой прокси не ставит `X-Forwarded-Proto`, и `SECURE_SSL_REDIRECT` отвечал им 301 на порт 443, которого у контейнера нет. Наружу это ничего не открывает: запрос снаружи сперва встречает Caddy, а тот редиректит весь хост на https. И smoke-шаг в `deploy.yml` перестал дёргать `http://localhost/healthz`: боевой `Caddyfile` отвечает только на каноническое имя, на `localhost` он отдаёт 404. Теперь шаг читает режим из `.env`: в предпросмотре бьёт по-старому в `http://localhost/healthz`, а на боевом — в `SITE_DOMAIN`, прибитый к loopback через `--resolve`, тот же путь, что у публики, вместе с сертификатом. Правка `deploy.yml` в день переезда домена больше не нужна, и порядок «сперва `.env`, потом push» перестал быть обязательным |
 | v22 | Добавлен режим предпросмотра на голом ip, пока домен не переехал. Две переменные: `CADDYFILE=Caddyfile.preview` подменяет конфиг Caddy на `deploy/Caddyfile.preview` — HTTP на порту 80, любое имя хоста, без ACME, без HSTS и без www-редиректа; `HTTPS_ENABLED=0` снимает в `config/settings/prod.py` ровно три настройки — `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE` и `CSRF_COOKIE_SECURE` — плюс обнуляет HSTS. По умолчанию обе выключены, боевой путь не меняется. Работают только парой: без второй django редиректит на несуществующий сертификат, без первой Caddy не отвечает на запрос с ip в заголовке `Host` |
 | v21 | `DATABASE_URL` убран из `.env`: оба compose-файла собирают DSN из `POSTGRES_USER`, `POSTGRES_PASSWORD` и `POSTGRES_DB`, и значение из окружения больше не читается. Пароль базы был записан дважды — в `POSTGRES_PASSWORD` и внутри строки подключения, — и смена его в одном месте оставляла django с прежним паролем. Внешняя база теперь задаётся правкой compose-файла, а не переменной. Побочно: у `WEB_IMAGE` появился дефолт `osk:local`, а продовый стек получил `build`, чтобы машина с чекаутом, но без логина в реестр, собирала образ на месте |
@@ -30,7 +31,7 @@
 
 Файл читают все сессии. Правится только в режиме LEAD, только append-only, каждое изменение контракта бампает версию и добавляет строку в changelog.
 
-**Комплект проекта — восемь файлов.** `tech.md` — ядро и все контракты (этот файл). `DEV.md` — порядок сборки скелета, чек-листы и стадийный список задач бэкенда. `PROMPTS.md` — промпты бэкенда, по одному на шаг. `FRONTEND.md` — дизайн-контракт и промпты фронтенда. `FRONTEND_POLISH.md` — блоки и ритм внутренних страниц. `FRONTEND_FIXES.md` — аудит работающего сайта и промпты на починку. `BLOCKS.md` — каталог блоков с набором по каждой странице. `CLAUDE.md` — указатель для сессии.
+**Комплект проекта — девять файлов.** `tech.md` — ядро и все контракты (этот файл). `DEV.md` — порядок сборки скелета, чек-листы и стадийный список задач бэкенда. `PROMPTS.md` — промпты бэкенда, по одному на шаг. `FRONTEND.md` — дизайн-контракт и промпты фронтенда. `FRONTEND_POLISH.md` — блоки и ритм внутренних страниц. `FRONTEND_FIXES.md` — аудит работающего сайта и промпты на починку. `BLOCKS.md` — каталог блоков с набором по каждой странице. `OSTRYCHARZ.md` — данные этого клиента и промпты переноса. `CLAUDE.md` — указатель для сессии.
 
 **Команда — один человек в двух режимах.** Режим **LEAD**: скелет, контракты, миграции, общие файлы, CI/CD, ревью. Режим **DEV**: фичи, один вертикальный слайс за сессию. Режимы не смешиваются в одной сессии — это единственное, что физически мешает фиче-сессии походя переписать общий контракт, чтобы стало удобнее.
 
@@ -165,7 +166,7 @@ osk/
 ```python
 class SiteSettings(SingletonModel):
     legal_name          = CharField(max_length=200)
-    short_name          = CharField(max_length=80, default="OSK Nawrocki")
+    short_name          = CharField(max_length=80, default="OSK Ostrycharz")
     street              = CharField(max_length=120)
     postal_code         = CharField(max_length=10)
     city                = CharField(max_length=80)
@@ -177,13 +178,49 @@ class SiteSettings(SingletonModel):
     whatsapp            = CharField(max_length=32, blank=True)
     bank_account        = CharField(max_length=40, blank=True)
     bank_account_public = BooleanField(default=False)
-    founded_year        = PositiveSmallIntegerField(default=1996)
+    # v24: nullable. Школа год основания не публикует, а шаблон с фоллбэком
+    # печатал бы выдуманный факт. Каждое место, где он выводится, проверяет.
+    founded_year        = PositiveSmallIntegerField(null=True, blank=True)
     map_lat             = DecimalField(max_digits=9,  decimal_places=6, null=True)
     map_lng             = DecimalField(max_digits=9,  decimal_places=6, null=True)
     facebook_url        = URLField(blank=True)
     google_business_url = URLField(blank=True)
+    # v24. Ролик и канал. Плюс кадр-постер: превью с i.ytimg.com — это запрос
+    # в Google до того, как читатель что-либо нажал, §2 такое запрещает.
+    youtube_url         = URLField(blank=True)
+    youtube_video_url   = URLField(blank=True)
+    youtube_poster      = ImageField(upload_to="site/", blank=True)
+    youtube_poster_alt  = CharField(max_length=160, blank=True)
     lead_notify_emails  = CharField(max_length=300, help_text="через запятую")
     analytics_enabled   = BooleanField(default=False)
+
+# v24. Главный актив школы: сколько кандидатов сдаёт с первого раза.
+class PassRate(models.Model):
+    year         = PositiveSmallIntegerField(unique=True, db_index=True)
+    students     = PositiveSmallIntegerField()          # всего сдавало
+    passed_1st   = PositiveSmallIntegerField()
+    passed_2nd   = PositiveSmallIntegerField(default=0)
+    passed_3rd   = PositiveSmallIntegerField(default=0)
+    passed_4th   = PositiveSmallIntegerField(default=0)
+    note         = CharField(max_length=200, blank=True)   [tr]
+    is_published = BooleanField(default=True)
+    class Meta: ordering = ("-year",)
+    # Проценты в БД не хранятся: хранимый процент и хранимый счёт — два факта,
+    # которые могут разойтись, и разойдётся тот, что на экране. Считаются в
+    # apps/core/services.py: pass_rate_percent, attempt_percents,
+    # average_attempts, not_passed.
+
+# v24. Документы: regulamin, umowa, oświadczenia.
+class DownloadFile(models.Model):
+    title        = CharField(max_length=200)               [tr]
+    description  = CharField(max_length=300, blank=True)   [tr]
+    file         = FileField(upload_to="documents/", blank=True)
+    size_bytes   = PositiveIntegerField(null=True, blank=True)  # save() из файла
+    order        = PositiveSmallIntegerField(default=100)
+    is_published = BooleanField(default=True)
+    class Meta: ordering = ("order", "id")
+    # Строка без файла на страницу не попадает: apps/core/selectors.py её
+    # отсекает. Кнопка «Pobierz» в никуда хуже, чем список короче.
 
 class OpeningHours(models.Model):
     DEPT = TextChoices("OFFICE", "PSYCHOLOGY")
@@ -427,16 +464,19 @@ class Testimonial(models.Model):
 
 | URL | View | Модель |
 |---|---|---|
-| `/` | `core.views.home` | Course, CourseIntake, Testimonial |
+| `/` | `core.views.home` | Course, PriceItem, PassRate, Testimonial |
 | `/kursy/` | `courses.views.course_list` | Course(kind=license) |
-| `/kursy/<slug>/` | `courses.views.course_detail` | Course |
-| `/kierowca-zawodowy/` | `courses.views.pro_hub` | Course(kind=professional) |
-| `/kierowca-zawodowy/<slug>/` | `courses.views.course_detail` | Course |
-| `/badania-psychologiczne/` | `courses.views.course_detail` | Course(slug=badania-psychologiczne) |
-| `/wozki-widlowe/` | `courses.views.course_detail` | Course(slug=wozki-widlowe) |
-| `/cennik/` | `courses.views.pricing` | Course, PriceItem |
+| `/kursy/<slug>/` | `courses.views.course_detail` | Course, PriceItem |
+| `/kierowca-zawodowy/` | `courses.views.pro_hub` | Course(kind=professional) — **404 у этого клиента** |
+| `/kierowca-zawodowy/<slug>/` | `courses.views.course_detail` | Course — 404 |
+| `/badania-psychologiczne/` | `courses.views.course_detail` | Course — 404 |
+| `/wozki-widlowe/` | `courses.views.course_detail` | Course — 404 |
+| `/cennik/` | `courses.views.pricing` | PriceItem |
 | `/terminy/` | `courses.views.intakes` | CourseIntake |
-| `/o-nas/` | `core.views.page_detail` | Page + Instructor + Vehicle |
+| `/zdawalnosc/` | `core.views.pass_rates` | PassRate, Testimonial — **v24** |
+| `/do-pobrania/` | `core.views.downloads` | DownloadFile — **v24** |
+| `/zapisy/` | `core.views.page_detail` | Page + DownloadFile + LeadForm — **v24** |
+| `/o-nas/` | `core.views.page_detail` | Page + PassRate + Instructor + Vehicle |
 | `/galeria/` | `gallery.views.gallery` | GalleryImage |
 | `/certyfikaty/` | `gallery.views.certificates` | Certificate |
 | `/przydatne-linki/` | `links.views.useful_links` | UsefulLink |
@@ -446,6 +486,8 @@ class Testimonial(models.Model):
 | `/zapisz-sie/dziekujemy/` | `leads.views.thanks` | — |
 | `/polityka-prywatnosci/`, `/rodo/` | `core.views.page_detail` | Page |
 | `/sitemap.xml`, `/robots.txt` | contrib.sitemaps / static view | — |
+
+Четыре роута из этой таблицы у OSK Ostrycharz отвечают 404: школа учит только категории B, `Course(kind=professional|psychotest|operator)` пуст, а листинг без единого курса — не страница, а тонкий заголовок над пустотой, конкурирующий в выдаче с настоящими. Они убраны из `sitemap.xml` и ни с одной страницы на них не ведёт ссылка. Роуты остаются в карте: контракт не сужаем, следующему клиенту они пригодятся.
 
 HTMX-эндпоинты (частичные ответы, всегда `_partial` в имени шаблона):
 
@@ -506,6 +548,16 @@ class SmsClient(Protocol):
 | Шаги | `<c-steps>` | `steps` (строки с `.title` и `.text`) |
 | Карточка факта | `<c-fact-card>` | `label`, `value`, `note`, `href`, слот `action`, слот по умолчанию |
 | Строка цены | `<c-price-row>` | `title`, `price`, `note`, `badge`, `href` |
+| Шапка страницы | `<c-page-header>` | `eyebrow`, `title`, `lead`, слот `aside`, слот `below`, слот по умолчанию — **v24** |
+| Выноска | `<c-callout>` | `tone=default\|accent\|ink`, `title`, `icon`, слот — **v24** |
+| Список характеристик | `<c-spec-list>` | `title`, `items` (строки с `.title`, `.text`, `.numeric`), слот — **v24** |
+| Якорная навигация | `<c-anchor-nav>` | `label`, `items` (строки с `.id` и `.title`) — **v24** |
+| Пустое состояние | `<c-empty>` | `title`, `phone`, `href`, `action`, слот — **v24** |
+| Полоса цифр | `<c-stat-band>` | `ground=ink\|accent\|deep\|paper`, `items` (`.value`, `.label`, `.note`), слот `heading`, слот — **v24** |
+| Финальный CTA | `<c-cta-band>` | `title`, `text`, `href`, `action`, `phone`, `ground` — **v24** |
+| Таблица сдачи | `<c-passrate-table>` | `rows` (дикты из `apps/core/views.py`: `.year`, `.students`, `.attempts`, `.note`) — **v24** |
+| Список документов | `<c-download-list>` | `items` (`.title`, `.description`, `.url`, `.size` — размер уже отформатирован) — **v24** |
+| Видео | `<c-video-embed>` | `id`, `url`, `poster`, `alt`, `title`; ни одного запроса к youtube до клика — **v24** |
 | Секция | `<c-section>` | `id`, `tone=default|muted|brand|deep|accent`, `size=compact|normal|tall`, слот `heading`, слот `sub` |
 | Заголовок секции | `<c-heading>` | `level=1..4`, `eyebrow`, слот |
 | Таблица | `<c-table>` | `headers` (list), слот строк |
@@ -590,7 +642,7 @@ state:  { ok:"#1E7A56", warn:"#B27C00", err:"#B3382B" }
 ```python
 @dataclass
 class Seo:
-    title: str          # ≤ 70 символов, формат "<Тема> — OSK Nawrocki Wieluń"
+    title: str          # ≤ 70 символов, формат "<Тема> — OSK Ostrycharz Wieluń"
     description: str    # ≤ 170 символов
     canonical: str      # абсолютный URL
     og_image: str | None = None

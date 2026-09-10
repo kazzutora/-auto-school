@@ -49,6 +49,39 @@ def course_jsonld(course: Course, url: str, site: Any) -> dict[str, Any]:
     }
     if course.min_age:
         data["typicalAgeRange"] = f"{course.min_age}-"
+
+    # The price, which is the one thing the previous client could not publish
+    # and this one leads with. schema.org wants it on an Offer rather than on
+    # the Course, and it wants the currency: a bare 3700 is not a price.
+    if course.price_gross:
+        data["offers"] = {
+            "@type": "Offer",
+            "price": f"{course.price_gross:.2f}",
+            "priceCurrency": "PLN",
+            "category": "Paid",
+            "url": url,
+            "availability": "https://schema.org/InStock",
+        }
+
+    # Google asks a Course for at least one instance of it. This school runs the
+    # same course continuously and enrols by telephone, so what is honest here
+    # is the mode and the language, not a date it never published.
+    data["hasCourseInstance"] = {
+        "@type": "CourseInstance",
+        "courseMode": "onsite",
+        "courseWorkload": "P3M" if course.kind == Course.Kind.LICENSE else "P1M",
+        "location": {
+            "@type": "Place",
+            "name": site.legal_name or site.short_name,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": site.street,
+                "postalCode": site.postal_code,
+                "addressLocality": site.city,
+                "addressCountry": "PL",
+            },
+        },
+    }
     return data
 
 
