@@ -13,6 +13,7 @@ contract, canonical and hreflang included, already speaks the host that asked.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
@@ -47,13 +48,53 @@ STATIC_ROUTES = (
     "core:contact",
 )
 
+# Routes that exist, answer 200 and have nothing in them yet. Every one of these
+# renders its empty state — "Galeria w przygotowaniu" and a phone number — which
+# is the right page for somebody who followed a link to it, and the wrong thing
+# to hand a crawler as a url worth indexing. A sitemap of placeholders is how a
+# small site teaches Google that most of it is thin.
+#
+# The predicate is evaluated per request, so a route rejoins the file the moment
+# the owner uploads the first photograph. Nothing has to be remembered.
+CONDITIONAL_ROUTES: dict[str, Callable[[], bool]] = {}
+
+
+def _has_rows(app_label: str, model_name: str, **filters: Any) -> Callable[[], bool]:
+    """True when that model has at least one row matching. Imported lazily:
+    apps/core is shared and must not depend on a feature slice at import time."""
+
+    def check() -> bool:
+        from django.apps import apps as registry
+
+        model = registry.get_model(app_label, model_name)
+        return model._default_manager.filter(**filters).exists()
+
+    return check
+
+
+CONDITIONAL_ROUTES.update(
+    {
+        "gallery:index": _has_rows("gallery", "GalleryImage", is_published=True),
+        "gallery:certificates": _has_rows("gallery", "Certificate", is_published=True),
+        "courses:intakes": _has_rows("courses", "CourseIntake"),
+        "links:useful": _has_rows("links", "UsefulLink", is_active=True),
+        "links:faq": _has_rows("links", "Faq", is_published=True),
+        "core:pass_rates": _has_rows("core", "PassRate", is_published=True),
+        "core:downloads": _has_rows("core", "DownloadFile", is_published=True),
+    }
+)
+
 
 class StaticSitemap(Sitemap):
     changefreq = "weekly"
     priority = 0.6
 
     def items(self) -> list[str]:
-        return list(STATIC_ROUTES)
+        return [
+            route
+            for route in STATIC_ROUTES
+            if route not in CONDITIONAL_ROUTES or CONDITIONAL_ROUTES[route]()
+        ]
 
     def location(self, item: str) -> str:
         return reverse(item)
