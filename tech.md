@@ -912,10 +912,10 @@ tech.md                     @lead
 `deploy/Caddyfile`. Один канонический хост, всё остальное 301. Сертификат Let's Encrypt берётся автоматически — это закрывает главную поломку старого сайта.
 
 ```
-naukajazdywielun.pl, www.naukajazdywielun.pl {
-    redir https://naukajazdywielun.pl{uri} permanent
+oskostrycharz.pl, www.oskostrycharz.pl {
+    redir https://oskostrycharz.pl{uri} permanent
 }
-naukajazdywielun.pl {
+oskostrycharz.pl {
     encode zstd gzip
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
@@ -944,7 +944,7 @@ naukajazdywielun.pl {
 
 | Что | Зачем | Кто даёт |
 |---|---|---|
-| Доступ к DNS `naukajazdywielun.pl` | переключить A-запись, выпустить сертификат | владелец / текущий хостер |
+| Доступ к DNS `oskostrycharz.pl` | переключить A-запись, выпустить сертификат | владелец / текущий хостер |
 | Почтовый ящик или SMTP-доступ | уведомления о заявках | владелец |
 | Аккаунт SMSAPI.pl (опционально) | SMS о заявке | владелец |
 | Доступ к Google Business Profile | отзывы, карта, локальный поиск | владелец |

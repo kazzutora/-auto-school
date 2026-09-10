@@ -29,7 +29,7 @@ def site() -> SiteSettings:
     settings.street = "ul. Asnyka 7"
     settings.postal_code = "98-300"
     settings.city = "Wieluń"
-    settings.nip = "8321916014"
+    settings.nip = "7671234567"
     settings.email = "oskostrycharz@poczta.onet.pl"
     settings.phone_primary, settings.phone_secondary, settings.phone_tertiary = PHONES
     settings.map_lat = Decimal("51.220600")

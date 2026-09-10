@@ -30,7 +30,7 @@ def settings_row() -> SiteSettings:
     row.street = "ul. Asnyka 7"
     row.postal_code = "98-300"
     row.city = "Wieluń"
-    row.nip = "8321916014"
+    row.nip = "7671234567"
     row.email = "biuro@example.com"
     row.phone_primary = "691 570 489"
     row.bank_account = "12 3456 7890 1234 5678 9012 3456"

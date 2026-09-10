@@ -84,6 +84,10 @@ class Migration(migrations.Migration):
             name='founded_year',
             field=models.PositiveSmallIntegerField(blank=True, null=True),
         ),
+        # The default in 0001 still names the previous client this engine was
+        # built for. That line is history and stays as it is — rewriting an
+        # applied migration changes what an existing database was built from.
+        # This is where the default becomes OSK Ostrycharz.
         migrations.AlterField(
             model_name='sitesettings',
             name='short_name',

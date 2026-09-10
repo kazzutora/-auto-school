@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 04:09+0200\n"
+"POT-Creation-Date: 2026-09-10 04:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,37 +61,37 @@ msgstr "Документ"
 msgid "Documents"
 msgstr "Документи"
 
-#: apps/core/navigation.py:45
+#: apps/core/navigation.py:44
 msgctxt "nav"
 msgid "Kurs B"
 msgstr "Курс B"
 
-#: apps/core/navigation.py:46
+#: apps/core/navigation.py:45
 msgctxt "nav"
 msgid "Cennik"
 msgstr "Ціни"
 
-#: apps/core/navigation.py:47
+#: apps/core/navigation.py:46
 msgctxt "nav"
 msgid "Zapisy"
 msgstr "Запис"
 
-#: apps/core/navigation.py:48
+#: apps/core/navigation.py:47
 msgctxt "nav"
 msgid "Zdawalność"
 msgstr "Складання"
 
-#: apps/core/navigation.py:49
+#: apps/core/navigation.py:48
 msgctxt "nav"
 msgid "O nas"
 msgstr "Про нас"
 
-#: apps/core/navigation.py:50
+#: apps/core/navigation.py:49
 msgctxt "nav"
 msgid "Pliki"
 msgstr "Файли"
 
-#: apps/core/navigation.py:51
+#: apps/core/navigation.py:50
 msgctxt "nav"
 msgid "Kontakt"
 msgstr "Контакт"
@@ -787,8 +787,8 @@ msgid "Dojazd"
 msgstr "Як доїхати"
 
 #: templates/core/contact.html:114
-msgid "Wieluń, ul. Zielona 45. Parking przed budynkiem."
-msgstr "Велюнь, вул. Зелена 45. Парковка перед будівлею."
+msgid "Wieluń, ul. Asnyka 7. Zapisy po wcześniejszym ustaleniu telefonicznym."
+msgstr "Велюнь, вул. Асника 7. Запис за попередньою домовленістю телефоном."
 
 #: templates/core/contact.html:124 templates/pages/home.html:254
 msgid "Wyznacz trasę"

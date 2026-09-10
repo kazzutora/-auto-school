@@ -117,13 +117,13 @@ def test_the_file_advertises_the_host_that_asked(
     A sitemap naming another domain sends every crawler that reads it away from
     the site it was meant to describe.
     """
-    settings.ALLOWED_HOSTS = ["naukajazdywielun.pl"]
+    settings.ALLOWED_HOSTS = ["oskostrycharz.pl"]
 
-    body = client.get("/sitemap.xml", headers={"host": "naukajazdywielun.pl"}).content.decode()
+    body = client.get("/sitemap.xml", headers={"host": "oskostrycharz.pl"}).content.decode()
 
     assert locations(body)
     for url in locations(body):
-        assert url.startswith("http://naukajazdywielun.pl/"), url
+        assert url.startswith("http://oskostrycharz.pl/"), url
 
 
 def test_the_file_is_not_itself_indexed(client: Client, offer: Course) -> None:

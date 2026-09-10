@@ -16,7 +16,7 @@ def make_seo(**overrides: object) -> Seo:
     base = {
         "title": "Kat. B — OSK Ostrycharz Wieluń",
         "description": "Kurs prawa jazdy kategorii B w Wieluniu.",
-        "canonical": "https://naukajazdywielun.pl/kursy/kat-b/",
+        "canonical": "https://oskostrycharz.pl/kursy/kat-b/",
     }
     return Seo(**{**base, **overrides})  # type: ignore[arg-type]
 

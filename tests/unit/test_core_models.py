@@ -79,7 +79,7 @@ def test_driving_school_jsonld_from_site_settings() -> None:
     site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.nip = "8321916014"
+    site.nip = "7671234567"
     site.email = "oskostrycharz@poczta.onet.pl"
     site.phone_primary = "691 570 489"
     site.phone_secondary = "605 065 795"

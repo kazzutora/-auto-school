@@ -14,7 +14,7 @@ from apps.core.tasks import SEARCH_ENGINES, ping_sitemap
 
 pytestmark = pytest.mark.django_db
 
-DOMAIN = "naukajazdywielun.pl"
+DOMAIN = "oskostrycharz.pl"
 SITEMAP = f"https%3A%2F%2F{DOMAIN}%2Fsitemap.xml"
 
 

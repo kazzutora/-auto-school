@@ -79,7 +79,7 @@ def site(db: None) -> SiteSettings:
     settings_row.street = "ul. Asnyka 7"
     settings_row.postal_code = "98-300"
     settings_row.city = "Wieluń"
-    settings_row.nip = "8321916014"
+    settings_row.nip = "7671234567"
     settings_row.email = "biuro@example.com"
     settings_row.phone_primary = "691 570 489"
     settings_row.phone_secondary = "605 065 795"
