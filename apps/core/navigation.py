@@ -35,14 +35,16 @@ class NavItem:
 # is no course tree to fold away — what a visitor wants is the price, how to
 # sign up, and the proof that people pass here.
 NAV: tuple[NavItem, ...] = (
-    NavItem(_("Kurs kat. B"), "courses:detail", kwargs={"slug": "kat-b"}),
+    # pgettext, not gettext, on three of these: the same polish words head a
+    # page, where there is room for them, and sit in a menu bar that has none.
+    # Measured at xl the row has 583px for the menu; the full labels came to
+    # 550px in polish and overflowed outright in russian, which is 40% longer.
+    # The short forms come to 465px and leave the row somewhere to grow.
+    NavItem(pgettext_lazy("nav", "Kurs B"), "courses:detail", kwargs={"slug": "kat-b"}),
     NavItem(_("Cennik"), "courses:pricing"),
-    # pgettext, not gettext: the full polish phrase heads the page, where there
-    # is room for it, and the menu bar has none. Russian runs 40% longer than
-    # polish and pushed the row into the language switcher.
     NavItem(pgettext_lazy("nav", "Zapisy"), "core:page", kwargs={"slug": "zapisy"}),
     NavItem(_("Zdawalność"), "core:pass_rates"),
     NavItem(_("O nas"), "core:page", kwargs={"slug": "o-nas"}),
-    NavItem(_("Do pobrania"), "core:downloads"),
+    NavItem(pgettext_lazy("nav", "Pliki"), "core:downloads"),
     NavItem(_("Kontakt"), "core:contact"),
 )

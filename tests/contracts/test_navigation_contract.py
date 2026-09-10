@@ -5,18 +5,38 @@ from apps.core.navigation import NAV, NavItem
 # tech.md section 7, in order. Seven items, one level, no submenus: this school
 # sells one category, so there is no course tree to fold away.
 TECH_MD_NAV = [
-    ("Kurs kat. B", "courses:detail"),
+    ("Kurs B", "courses:detail"),
     ("Cennik", "courses:pricing"),
     ("Zapisy", "core:page"),
     ("Zdawalność", "core:pass_rates"),
     ("O nas", "core:page"),
-    ("Do pobrania", "core:downloads"),
+    ("Pliki", "core:downloads"),
     ("Kontakt", "core:contact"),
 ]
+
+# Measured at xl: the header gives the menu 583px once the lettering and the
+# right hand cluster have taken theirs. Three labels carry a short form in the
+# nav context for exactly this, and the row has to keep some slack — it has now
+# been the binding constraint twice.
+NAV_BUDGET_CHARS = 55
 
 
 def test_nav_matches_tech_md() -> None:
     assert [(item.title, item.route) for item in NAV] == TECH_MD_NAV
+
+
+def test_the_menu_still_fits_the_row_it_has() -> None:
+    """A menu wider than the header prints its last item over the switcher.
+
+    Characters rather than pixels, because a test cannot measure a font: the
+    labels come to 55 characters at the width that was measured to fit, and this
+    is the tripwire for the next person who adds an item or a longer word.
+    """
+    total = sum(len(str(item.title)) for item in NAV)
+
+    assert total <= NAV_BUDGET_CHARS, (
+        f"{total} characters of menu; see the CONTRACT GAP in templates/cotton/nav.html"
+    )
 
 
 def test_kontakt_is_a_first_level_item() -> None:

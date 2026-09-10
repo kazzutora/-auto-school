@@ -554,11 +554,20 @@
    * BLOCKS is right that this is honest: inventing data to fill a slot would
    * be worse than an ornament that admits to being one.
    */
+  /* BLOCKS.md A4, the outlined numeral. The stroke follows the ground rather
+   * than naming ink: the stat band puts one of these on the inverted block, and
+   * a near black outline on a near black ground is a number nobody can see.
+   * --on-ground is defined on :root as well, so on the page it still resolves
+   * to ink and nothing about the light version changes.
+   *
+   * No text-align either. It used to be right aligned for the one place it was
+   * born in, a figure at the end of a row, and every later caller had to undo
+   * it. Alignment is the caller's, the outline is the class's. */
   .u-bignum {
-    @apply font-display text-right font-extrabold leading-none;
+    @apply font-display font-extrabold leading-none;
     font-size: 120px;
     color: transparent;
-    -webkit-text-stroke: 2px rgb(var(--ink));
+    -webkit-text-stroke: 2px rgb(var(--on-ground));
   }
 
   .u-section {

@@ -45,7 +45,7 @@ here is decorative: every image is content, so every alt says what it shows.
     </div>
 
     <div class="hidden lg:block">
-      <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
+      <p aria-hidden="true" class="u-bignum text-right">{{ site_settings.founded_year }}</p>
       <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
     </div>
   </div>
@@ -73,10 +73,15 @@ here is decorative: every image is content, so every alt says what it shows.
   {% endif %}
     </div>
 
-    <div class="hidden lg:block">
-      <p aria-hidden="true" class="u-bignum">{{ site_settings.founded_year }}</p>
-      <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
-    </div>
+    {# The figure is absent when the owner never gave us one: an outlined
+       numeral with nothing inside it is a rectangle of empty air, and this
+       school has never published a founding year. #}
+    {% if site_settings.founded_year %}
+      <div class="hidden lg:block">
+        <p aria-hidden="true" class="u-bignum text-right">{{ site_settings.founded_year }}</p>
+        <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
+      </div>
+    {% endif %}
   </div>
 </c-section>
 

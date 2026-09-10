@@ -20,16 +20,20 @@ remember: a row of seven first level items would otherwise push a 320px page
 sideways, which A.4 forbids outright.
 
 CONTRACT GAP: A.9 point 0 puts the switch at lg and this is at xl. Measured on
-the real menu, the header row needs 201px of lettering, 574px of menu and 338px
-of language switcher and phone button. That is 1113px inside a container that
-is 1104px wide at xl and 960px at lg, so at lg the menu either collides with
-the switcher or scrolls the page, and both are worse than a panel.
+the real menu, the header row has 583px for the menu inside a 1200px container
+once the lettering and the right hand cluster have taken theirs. At lg the
+container is 960px and there is no menu that fits, so below xl it is a panel.
 
-Even at xl it only fits because the item padding here is 6px a side. The row
-has no slack left: one more first level item, or a longer label than Kierowca
-zawodowy at 170px, and it overflows again. Closing it properly means shorter
-labels or fewer items, and NAV is a contract in tech.md section 7. Owner's
-call — this is the second time the width has been the binding constraint.
+The gap the previous version left open — "the row has no slack, closing it
+means shorter labels or fewer items" — has been closed the way it said: three
+of the seven items carry a short form in the nav context, apps/core/navigation
+explains which and why, and the row now measures 465px. The item padding here
+is still 6px a side and that is still load bearing.
+
+The nav is shrink-0 in layout/nav.html. It used to be min-w-0, which let the
+flex row squeeze it to 487px around 550px of nowrap items — the overflow was
+not clipped, it was printed, and "Kontakt" landed on top of the language
+switcher. A row that does not fit has to be visibly wrong, not quietly wrong.
 {% endcomment %}
 {% nav_items as items %}
 <nav aria-label="{% translate 'Główna nawigacja' %}" class="hidden xl:block {{ class }}" {{ attrs }}>
