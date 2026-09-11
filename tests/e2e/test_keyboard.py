@@ -424,7 +424,10 @@ def test_the_current_page_keeps_its_underline(
     context = browser.new_context(viewport=DESKTOP)
     page = context.new_page()
     try:
-        page.goto(f"{live_server.url}/kursy/")
+        # A page the menu actually names. /kursy/ used to be one and is not any
+        # more: this school sells a single category, so the menu points at the
+        # course itself and a listing nobody navigates to has no marker to keep.
+        page.goto(f"{live_server.url}/cennik/")
         page.wait_for_selector("h1")
 
         current = page.locator('.u-header .u-navlink[aria-current="page"]').first

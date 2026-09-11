@@ -6,12 +6,19 @@
   {% seo_meta %}
   {% jsonld %}
 
-  {# The three faces A.3 names are the first paint on every page, so the two a
+  {# The three faces A.3 names are the first paint on every page, so the ones a
      polish page always needs are fetched alongside the stylesheet instead of
      after it. crossorigin is not optional on a font preload: without it the
      browser fetches the file twice, once anonymously for the preload and once
-     credentialed for the @font-face. #}
+     credentialed for the @font-face.
+
+     The expanded cut is here because .display asks for font-stretch 125%,
+     which is a different file — and .display is the h1 on the home page, the
+     largest text anywhere on the site. Left to arrive on its own it landed
+     after first paint and reflowed the whole hero down by 42px, which is most
+     of the CLS budget spent on one heading. #}
   <link rel="preload" href="{% static 'fonts/archivo-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/archivo-expanded-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{% static 'fonts/public-sans-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
 
   {# The brand mark, self hosted like everything else. The svg is what a modern

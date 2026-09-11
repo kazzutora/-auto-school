@@ -12,8 +12,8 @@ from urllib.parse import urlsplit
 import pytest
 from playwright.sync_api import Page
 
-from apps.core.models import SiteSettings
-from apps.courses.models import Course, CourseIntake
+from apps.core.models import PassRate, SiteSettings
+from apps.courses.models import Course, CourseIntake, PriceItem
 
 pytestmark = pytest.mark.django_db
 
@@ -51,6 +51,23 @@ def school() -> SiteSettings:
         language="pl",
         status=CourseIntake.Status.OPEN,
     )
+    # The three ways to take that one category. Without them the home page
+    # renders no course section at all, which is the right behaviour for an
+    # empty database and the wrong fixture for a test about the section.
+    for order, (title, note, price) in enumerate(
+        (
+            ("Kurs kategorii B", "pełny kurs, dowóz na egzamin w cenie", "3200"),
+            ("Kurs przyspieszony", "ten sam program w dwa tygodnie", "4300"),
+            ("Skrzynia automatyczna", "cały kurs na automacie", "4300"),
+        ),
+        start=10,
+    ):
+        PriceItem.objects.create(
+            title=title, note=note, group="Kurs", price_gross=Decimal(price), order=order
+        )
+    PassRate.objects.create(
+        year=2025, students=92, passed_1st=68, passed_2nd=16, passed_3rd=3, passed_4th=3
+    )
     return site
 
 
@@ -81,10 +98,20 @@ def test_the_call_button_is_reachable_with_a_thumb(
     call.click(trial=True)
 
 
-def test_a_category_tile_opens_its_course(live_server, school: SiteSettings, page: Page) -> None:
+def test_a_course_card_opens_the_course(live_server, school: SiteSettings, page: Page) -> None:
+    """One category, three ways to take it, and every card opens the same page.
+
+    The grid of nine categories this replaced was the home page's main
+    navigation node for the previous client. Here the decision is not which
+    category but which variant, so the cards carry prices and all lead to
+    /kursy/kat-b/.
+    """
     page.goto(live_server.url)
 
-    tile = page.locator("#kategorie a[href='/kursy/kat-b/']").first
+    cards = page.locator("#kurs a[href='/kursy/kat-b/']")
+    assert cards.count() >= 1, "the home page offers no way into the course"
+
+    tile = cards.first
     tile.wait_for(state="visible")
     tile.click()
 

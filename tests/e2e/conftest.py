@@ -67,6 +67,9 @@ def site(db: None) -> SiteSettings:
     from datetime import date, time, timedelta
     from decimal import Decimal
 
+    from django.core.files.base import ContentFile
+
+    from apps.core.models import DownloadFile, PassRate
     from apps.core.models import Page as FlatPage
     from apps.courses.models import Course, CourseIntake, PriceItem
     from apps.links.models import Faq, UsefulLink
@@ -140,9 +143,28 @@ def site(db: None) -> SiteSettings:
         seats_total=20,
         seats_taken=17,
     )
-    PriceItem.objects.create(
-        title="Jazda doszkalająca", group="Jazdy", price_gross=Decimal("120"), unit="za godzinę"
+    # The real shape of this school's price list, tech.md section 1: what the
+    # course costs, what an extra hour costs, and what goes to a doctor and an
+    # exam centre. One item per group would give /cennik/ a single section,
+    # which is not the page anybody sees.
+    for group, title, unit, price in (
+        ("Kurs", "Kurs kategorii B", "", "3200"),
+        ("Kurs", "Kurs przyspieszony", "", "4300"),
+        ("Jazdy doszkalające", "Jazda doszkalająca", "za godzinę", "160"),
+        ("Opłaty zewnętrzne", "Badanie lekarskie", "", "200"),
+        ("Opłaty zewnętrzne", "Egzamin państwowy", "", "230"),
+        # Free, and it must never print as 0,00 zł.
+        ("W cenie kursu", "Dowóz na egzamin", "", "0"),
+    ):
+        PriceItem.objects.create(
+            title=title, group=group, unit=unit, price_gross=Decimal(price)
+        )
+
+    PassRate.objects.create(
+        year=2025, students=92, passed_1st=68, passed_2nd=16, passed_3rd=3, passed_4th=3
     )
+    document = DownloadFile(title="Regulamin", description="Zasady szkolenia.")
+    document.file.save("regulamin.pdf", ContentFile(b"%PDF-1.4 " + b"x" * 2048), save=True)
 
     for slug, title in (("o-nas", "O nas"), ("rodo", "RODO")):
         FlatPage.objects.create(

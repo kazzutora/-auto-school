@@ -60,7 +60,10 @@ def test_the_page_does_not_scroll_sideways(live_server, page: Page, course: Cour
 def test_the_listing_leads_to_the_course(live_server, page: Page, course: Course) -> None:
     page.goto(f"{live_server.url}/kursy/")
 
-    page.locator('a[href="/kursy/kat-b/"]').first.click()
+    # Scoped to the page, not the chrome: the menu now points at this same url,
+    # and an unscoped .first picks the nav link — which is hidden at this
+    # viewport, so the click waited for a visibility that was never coming.
+    page.locator('main a[href="/kursy/kat-b/"]').first.click()
     page.wait_for_url("**/kursy/kat-b/")
 
     assert page.locator("h1").inner_text() == "Kategoria B"

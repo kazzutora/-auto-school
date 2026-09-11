@@ -26,9 +26,18 @@ switcher and the phone number.
         class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
   <div class="flex h-full flex-col">
     <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-soft">
-      <img src="{% static 'brand/logo-lockup.svg' %}" width="278" height="23"
-           alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-           class="h-[18px] w-auto sm:h-[23px]">
+      {# The mark plus the name as type, not the second lockup file.
+         This panel is inside the header and is display:none until the burger
+         opens it — and a browser fetches images inside a hidden element all
+         the same, so the lockup here was 16 KB of the first screen budget
+         spent on something nobody had asked to see. The mark is 256 bytes. #}
+      <p class="flex items-center gap-3">
+        <img src="{% static 'brand/mark.svg' %}" width="24" height="24" alt=""
+             class="h-6 w-6">
+        <span class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight">
+          {{ site_settings.short_name|default:"OSK Ostrycharz" }}
+        </span>
+      </p>
       {% translate "Zamknij menu" as t_zamknij_menu %}
       <c-button variant="ghost" size="icon" data-modal-close aria-label="{{ t_zamknij_menu }}" class="-mr-2">
         <c-icon name="close" />

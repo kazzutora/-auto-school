@@ -218,8 +218,12 @@ def test_the_page_stays_inside_its_weight_budget(live_server, page: Page) -> Non
                .filter(entry => entry.initiatorType === 'img')
                .map(entry => entry.transferSize || entry.encodedBodySize || 0)"""
     )
+    # Photographs only. The header wordmark is an svg whose intrinsic box is
+    # 1168px wide and which weighs 6 KB — asking a vector how many pixels it is
+    # tells you nothing about whether a rendition was bypassed.
     widths = page.evaluate(
-        "() => Array.from(document.images).filter(img => img.complete && img.naturalWidth)"
+        "() => Array.from(document.images)"
+        ".filter(img => img.complete && img.naturalWidth && !/\.svg(\?|$)/i.test(img.currentSrc))"
         ".map(img => img.naturalWidth)"
     )
 
