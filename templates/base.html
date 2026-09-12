@@ -6,20 +6,23 @@
   {% seo_meta %}
   {% jsonld %}
 
-  {# The three faces A.3 names are the first paint on every page, so the ones a
-     polish page always needs are fetched alongside the stylesheet instead of
-     after it. crossorigin is not optional on a font preload: without it the
-     browser fetches the file twice, once anonymously for the preload and once
-     credentialed for the @font-face.
+  {# The faces a polish page always needs are fetched alongside the stylesheet
+     instead of after it. crossorigin is not optional on a font preload: without
+     it the browser fetches the file twice, once anonymously for the preload and
+     once credentialed for the @font-face.
 
-     The expanded cut is here because .display asks for font-stretch 125%,
-     which is a different file — and .display is the h1 on the home page, the
-     largest text anywhere on the site. Left to arrive on its own it landed
-     after first paint and reflowed the whole hero down by 42px, which is most
-     of the CLS budget spent on one heading. #}
-  <link rel="preload" href="{% static 'fonts/archivo-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+     The expanded cut is here because h1, h2 and .display all ask for
+     font-stretch 125%, which is a different file — and .display is the hero's
+     heading, the largest text anywhere on the site. Left to arrive on its own
+     it lands after first paint and reflows the hero, which is most of the CLS
+     budget in C.6 spent on one line.
+
+     Roboto Mono is deliberately not preloaded: the data face carries prices and
+     phone numbers, none of which are the largest thing on the first screen, and
+     a fourth preload competes with the hero photograph for the same early
+     bandwidth. #}
   <link rel="preload" href="{% static 'fonts/archivo-expanded-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="{% static 'fonts/public-sans-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/manrope-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
 
   {# The brand mark, self hosted like everything else. The svg is what a modern
      browser picks and it scales to any tab size; the png is the fallback for
@@ -27,22 +30,35 @@
      on a home screen. #}
   <link rel="icon" href="{% static 'brand/favicon.svg' %}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="{% static 'brand/mark-512.png' %}">
-  <meta name="theme-color" content="#0E0E10">
+
+  {# Two, one per theme. A single dark value painted the phone's chrome black
+     over a warm grey page in the light theme, which is the one combination B.2
+     never has on screen. #}
+  <meta name="theme-color" content="#E9E8E4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121216" media="(prefers-color-scheme: dark)">
 
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {# The motion layer is a second file rather than part of the first because it
+     is plain css that needs no build step, REDESIGN.md C.2. It is render
+     blocking on purpose: it carries the header's own height and background, and
+     a header that paints at one size and then resizes is the CLS the budget is
+     there to prevent. #}
+  <link rel="stylesheet" href="{% static 'css/motion.css' %}">
   {% block head %}{% endblock %}
 
-  {# Self hosted, tech.md section 2 bans third party scripts on public pages. #}
+  {# Self hosted, tech.md section 2 bans third party scripts on public pages.
+     No animation library: REDESIGN.md C.2 does the arithmetic on why. #}
   <script src="{% static 'js/htmx.min.js' %}" defer></script>
   <script src="{% static 'js/alpine.min.js' %}" defer></script>
   <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'js/motion.js' %}" defer></script>
 </head>
-<body class="flex min-h-screen flex-col bg-paper text-ink">
-  {# First focusable thing on the page, FRONTEND.md F2 point 1. Off screen until
-     it takes focus, then it lands in the top left corner where a keyboard user
-     expects it. #}
+<body class="flex min-h-screen flex-col bg-paper u-on-ground">
+  {# First focusable thing on the page, R4 point 5. Off screen until it takes
+     focus, then it lands in the top left corner where a keyboard user expects
+     it. #}
   <a href="#content"
-     class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:h-12 focus:items-center focus:rounded focus:border-2 focus:border-ink focus:bg-paper focus:px-6 focus:font-semibold focus:text-ink">
+     class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:h-13 focus:items-center focus:rounded focus:bg-primary focus:px-6 focus:font-bold focus:u-fixed-paper">
     {% translate "Przejdź do treści" %}
   </a>
 

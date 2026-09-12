@@ -11,9 +11,9 @@ the number, and what happens after they press send.
 
 {% block content %}
 <c-section>
-  <c-breadcrumbs :items="breadcrumbs" />
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <c-heading level="1" eyebrow="OSK Ostrycharz Wieluń" class="mt-6">{% translate "Zapisz się na kurs" %}</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+  <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
     {% translate "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz." %}
   </p>
 
@@ -38,7 +38,7 @@ the number, and what happens after they press send.
           {% endfor %}
         </div>
         <div class="mt-8">
-          <p class="label text-ink-500">{% translate "Godziny biura" %}</p>
+          <p class="label u-muted-on-ground">{% translate "Godziny biura" %}</p>
           <div class="mt-3"><c-hours-table department="office" /></div>
         </div>
       </c-card>
@@ -50,6 +50,15 @@ the number, and what happens after they press send.
   <c-slot name="heading">{% translate "Jak zapisać się na kurs" %}</c-slot>
   <c-steps :steps="steps" />
 </c-section>
+
+{# B.8 point 4, and the one page where the closing action is not "zapisz się":
+   the form for that is halfway up this page, and a band inviting the reader to
+   do the thing they are already doing reads as a page that has lost track of
+   them. So the way out here is the telephone. #}
+<c-cta-band ground="paper"
+            title="{% translate 'Wolisz porozmawiać?' %}"
+            text="{% translate 'Zadzwoń w godzinach pracy biura — zapiszemy Cię przez telefon i odpowiemy na pytania od razu.' %}"
+            phone="{{ site_settings.phone_primary }}" />
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% translate "Zapisz się na kurs" as t_zapisz_sie_na %}

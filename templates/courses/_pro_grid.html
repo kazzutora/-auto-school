@@ -21,11 +21,11 @@ Takes:
         {% if course.lead %}<p>{{ course.lead }}</p>{% endif %}
         <p class="mt-6 flex items-center justify-between gap-3">
           {% if course.total_hours %}
-            <span class="data text-ink">{{ course.total_hours }} h</span>
+            <span class="data u-on-ground">{{ course.total_hours }} h</span>
           {% else %}
-            <span class="text-small text-ink-500">{% translate "program indywidualny" %}</span>
+            <span class="text-small u-muted-on-ground">{% translate "program indywidualny" %}</span>
           {% endif %}
-          <c-icon name="arrow-right" size="sm" class="text-ink-500" />
+          <c-icon name="arrow-right" size="sm" class="u-muted-on-ground" />
         </p>
       </c-card>
     </li>

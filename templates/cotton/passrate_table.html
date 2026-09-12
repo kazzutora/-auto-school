@@ -27,29 +27,29 @@ Takes: rows — the dicts apps/core/views.py builds, carrying .year, .students,
     <caption class="sr-only">{% translate "Zdawalność egzaminu państwowego rok po roku" %}</caption>
     <thead>
       <tr class="border-b-2 border-line">
-        <th scope="col" class="label py-3 pr-4 text-ink-500">{% translate "Rok" %}</th>
-        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Kursantów" %}</th>
-        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 1 razem" %}</th>
-        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 2 razem" %}</th>
-        <th scope="col" class="label py-3 pr-4 text-right text-ink-500">{% translate "Za 3 razem" %}</th>
-        <th scope="col" class="label py-3 text-right text-ink-500">{% translate "Za 4 razem" %}</th>
+        <th scope="col" class="label py-3 pr-4 u-muted-on-ground">{% translate "Rok" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right u-muted-on-ground">{% translate "Kursantów" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right u-muted-on-ground">{% translate "Za 1 razem" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right u-muted-on-ground">{% translate "Za 2 razem" %}</th>
+        <th scope="col" class="label py-3 pr-4 text-right u-muted-on-ground">{% translate "Za 3 razem" %}</th>
+        <th scope="col" class="label py-3 text-right u-muted-on-ground">{% translate "Za 4 razem" %}</th>
       </tr>
     </thead>
     <tbody>
       {% for row in rows %}
-        <tr class="border-b border-line-soft last:border-b-0">
-          <th scope="row" class="data py-4 pr-4 text-data-lg text-ink">{{ row.year }}</th>
-          <td class="data py-4 pr-4 text-right text-ink-700">{{ row.students }}</td>
+        <tr class="border-b border-line last:border-b-0">
+          <th scope="row" class="data py-4 pr-4 text-data-lg u-on-ground">{{ row.year }}</th>
+          <td class="data py-4 pr-4 text-right u-body-on-ground">{{ row.students }}</td>
           {% for count, percent in row.attempts %}
             <td class="py-4 text-right{% if not forloop.last %} pr-4{% endif %}">
-              <span class="data block text-data-lg{% if forloop.first %} text-ink{% else %} text-ink-700{% endif %}">{{ count }}</span>
-              <span class="data mt-1 block text-small text-ink-500">{{ percent }}%</span>
+              <span class="data block text-data-lg{% if forloop.first %} u-on-ground{% else %} u-body-on-ground{% endif %}">{{ count }}</span>
+              <span class="data mt-1 block text-small u-muted-on-ground">{{ percent }}%</span>
             </td>
           {% endfor %}
         </tr>
         {% if row.note %}
           <tr>
-            <td colspan="6" class="pb-4 text-small text-ink-500">{{ row.note }}</td>
+            <td colspan="6" class="pb-4 text-small u-muted-on-ground">{{ row.note }}</td>
           </tr>
         {% endif %}
       {% endfor %}

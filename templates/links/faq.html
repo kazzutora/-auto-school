@@ -27,16 +27,16 @@ the fastest way to lose the rich result altogether.
      }">
 
   <c-section size="compact">
-    <c-breadcrumbs :items="breadcrumbs" />
+    <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
     {% translate "Pytania" as t_pytania %}
     <c-heading level="1" eyebrow="{{ t_pytania }}" class="mt-6">{% translate "Najczęstsze pytania" %}</c-heading>
-    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
       {% translate "To, o co pytacie przez telefon najczęściej. Czegoś brakuje? Zadzwoń, odpowiemy od ręki." %}
     </p>
 
     {% if groups %}
       <div class="u-narrow mt-8 flex flex-col gap-2">
-        <label for="faq-search" class="font-semibold text-ink">{% translate "Szukaj w pytaniach" %}</label>
+        <label for="faq-search" class="font-bold u-on-ground">{% translate "Szukaj w pytaniach" %}</label>
         {% translate "np. PKK, cena, terminy" as t_np_pkk_cena %}
         <c-input name="faq-search" type="search" placeholder="{{ t_np_pkk_cena }}"
                  x-model="q" autocomplete="off" />

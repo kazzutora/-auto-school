@@ -1,54 +1,16 @@
 {% load i18n %}
-<c-vars id="" url="" poster="" alt="" title="" class="" />
+<c-vars id="" url="" poster="" photo="" alt="" title="" class="" />
 {% comment %}
-Video, tech.md section 2.
+Video, tech.md section 7. Kept as the name the existing pages call, and now a
+thin wrapper over <c-video-card>, which REDESIGN.md B.5 introduced.
 
-No youtube script, and no youtube image either. The player's iframe pulls
-google's javascript and its cookies; the thumbnail on i.ytimg.com is a request
-to google that happens before the reader has clicked anything, which is exactly
-what section 2 and the cookie rules are about. So: a poster the owner uploaded,
-or a branded panel drawn from tokens, and a link that opens the clip in a new
-tab.
-
-The clickable thing is an anchor, not a div with a handler: it works without
-javascript, it can be opened in a background tab, and the browser gives it a
-focus ring for free.
-
-The play triangle is drawn here rather than taken from the sprite — A.7's icons
-are 24px line pictograms and this is a 64px filled target.
-
-Takes: id (the video id, for the watch url), url (fallback link), poster, alt,
-title.
+The only thing this adds is the watch url: callers pass a bare youtube id and
+this turns it into a link. Everything else — the poster, the scrim, the play
+target, the promise that nothing reaches Google before a click — lives in
+c-video-card and is described there.
 {% endcomment %}
 {% if id or url %}
-  <a href="{% if id %}https://www.youtube.com/watch?v={{ id }}{% else %}{{ url }}{% endif %}"
-     target="_blank" rel="noopener noreferrer"
-     class="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded border border-line-soft bg-ink {{ class }}"
-     {{ attrs }}>
-    {% if poster %}
-      <img src="{{ poster }}" alt="{{ alt }}" loading="lazy" decoding="async"
-           class="absolute inset-0 h-full w-full object-cover">
-      <span aria-hidden="true" class="absolute inset-0 bg-ink/40"></span>
-    {% else %}
-      {# The branded stand-in: the same yellow mark the header uses, at the size
-         of a poster. It is a placeholder and looks like one, rather than a grey
-         rectangle that reads as a picture which failed to load. #}
-      <span aria-hidden="true"
-            class="absolute inset-0 flex items-end p-6 font-display text-h2 font-extrabold uppercase leading-none tracking-tight text-paper/15 [font-stretch:125%]">
-        OSK Ostrycharz
-      </span>
-    {% endif %}
-
-    <span aria-hidden="true"
-          class="relative flex h-16 w-16 items-center justify-center rounded-full bg-accent transition group-hover:scale-[1.08]">
-      <svg viewBox="0 0 24 24" class="ml-1 h-7 w-7" fill="rgb(var(--fixed-ink))" focusable="false">
-        <path d="M8 5v14l11-7z" />
-      </svg>
-    </span>
-
-    <span class="absolute inset-x-0 bottom-0 flex items-center gap-2 p-4 text-small text-paper">
-      <c-icon name="external" size="sm" />
-      {{ title|default:_("Obejrzyj na YouTube") }}
-    </span>
-  </a>
+  <c-video-card url="{% if id %}https://www.youtube.com/watch?v={{ id }}{% else %}{{ url }}{% endif %}"
+                poster="{{ poster }}" photo="{{ photo }}" alt="{{ alt }}" title="{{ title }}"
+                class="{{ class }}" {{ attrs }} />
 {% endif %}

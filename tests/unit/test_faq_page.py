@@ -11,6 +11,8 @@ from django.urls import reverse
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.links.models import Faq
 
+from tests.conftest import images_without_alt
+
 pytestmark = pytest.mark.django_db
 
 PAGE = "/faq/"
@@ -91,8 +93,7 @@ def test_page_meets_the_seo_contract(client: Client, questions: list[Faq]) -> No
 
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt(client: Client, questions: list[Faq]) -> None:
-    images = re.findall(r"<img[^>]*>", page(client))
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    assert not images_without_alt(page(client))
 
 
 # --------------------------------------------------------------------------

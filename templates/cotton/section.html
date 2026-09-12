@@ -1,22 +1,30 @@
 {% comment %}
-Section, tech.md section 7. Rhythm and container from FRONTEND.md A.4.
+Section, tech.md section 7. Rhythm and container from REDESIGN.md B.4, the
+alternation rule from B.8 point 2.
 
-tone carries the ground. default and muted are the page itself; brand is the
-inverted block A.9 puts at the top of the home page, which A.1 grounds in ink
-rather than the purple. accent is the fifth value: A.9 point 5 needs a full
-width yellow strip and the section 7 enum has no name for it, so A.9 extends
-the enum the way A.5 extends the badge's.
+tone carries the ground:
 
-deep is deliberately absent. A.1 allows it for inverted blocks and the footer,
-and the footer is layout, not a section.
+  default   the page itself, warm grey
+  muted     paper-50, a half step for two sections that would otherwise touch
+  surface   a white band, for a block that is mostly cards
+  dark      the ink ground. **One per page**, B.8 point 2 and R10 point 16.
+  accent    the yellow strip, for the rare full width state
+
+`brand` is kept as an alias of `dark` so the pages written against the old
+contract keep rendering while they are moved over; `deep` is gone with the
+purple, which B.1 dropped when it cut the palette to two accents.
+
+The reveal class is on the section rather than on each block inside it: B.7
+animates the arrival of a section, and a page whose every paragraph fades in
+separately is a page nobody can skim. C.4 names that outright.
 {% endcomment %}
-<c-vars id="" tone="default" size="normal" class="" />
-<section data-reveal {% if id %}id="{{ id }}"{% endif %}
-  class="u-section{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-paper-50{% elif tone == 'brand' %} u-ground-ink{% elif tone == 'deep' %} u-ground-deep{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
+<c-vars id="" tone="default" size="normal" reveal="1" class="" />
+<section {% if id %}id="{{ id }}"{% endif %}
+  class="u-section{% if reveal %} reveal{% endif %}{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-paper-50{% elif tone == 'surface' %} bg-surface{% elif tone == 'dark' or tone == 'brand' %} u-dark-card rounded-none{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container">
     {% if heading %}<h2>{{ heading }}</h2>{% endif %}
-    {% if sub %}<p class="u-narrow mt-4 text-body-lg{% if tone == 'accent' %} u-fixed-ink{% elif tone == 'brand' or tone == 'deep' %}{% else %} text-ink-700{% endif %}">{{ sub }}</p>{% endif %}
-    <div class="{% if heading or sub %}mt-12{% endif %}">{{ slot }}</div>
+    {% if sub %}<p class="u-narrow mt-4 text-body-lg u-muted-on-ground">{{ sub }}</p>{% endif %}
+    <div class="{% if heading or sub %}mt-10 md:mt-14{% endif %}">{{ slot }}</div>
   </div>
 </section>

@@ -10,9 +10,14 @@ javascript and its cookies; its thumbnail on i.ytimg.com is a request to google
 before the reader has done anything at all. So the clip is a poster the owner
 uploaded plus a link that opens in a new tab, and this module is what keeps it
 that way.
+
+The map went the same way in core v26. It is google's now, and it is a button
+until somebody presses it: static/js/app.js builds the frame on the click, so
+the markup names no google url at all.
 """
 
 import re
+from decimal import Decimal
 
 import pytest
 from django.test import Client
@@ -45,7 +50,16 @@ FORBIDDEN_HOSTS = (
 # a link is a thing the reader chooses to follow, which is the whole design.
 FETCHED_ATTRIBUTES = ("src", "srcset", "data-src", "poster", "action", "content")
 
-PAGES = ("/", "/kursy/kat-b/", "/cennik/", "/zdawalnosc/", "/do-pobrania/", "/zapisy/", "/o-nas/")
+PAGES = (
+    "/",
+    "/kursy/kat-b/",
+    "/cennik/",
+    "/zdawalnosc/",
+    "/do-pobrania/",
+    "/zapisy/",
+    "/o-nas/",
+    "/kontakt/",
+)
 
 
 @pytest.fixture
@@ -61,6 +75,9 @@ def filled_site(db: None) -> SiteSettings:
     site.youtube_url = "https://www.youtube.com/channel/UCbXki-U-CJjcQ36tZ5GZ4lw"
     site.youtube_video_url = "https://www.youtube.com/watch?v=abeQhB0RfV4"
     site.facebook_url = "https://pl-pl.facebook.com/osrodekostrycharz/"
+    # Coordinates switch the map on, on the home page and on /kontakt/.
+    site.map_lat = Decimal("51.220600")
+    site.map_lng = Decimal("18.569700")
     site.save()
 
     from apps.core.models import Page
@@ -126,13 +143,20 @@ def test_the_clip_is_a_link_the_reader_chooses_to_follow(
     assert "noopener" in anchor.group(0)
 
 
-def test_no_page_embeds_a_google_map(client: Client, filled_site: SiteSettings) -> None:
-    """tech.md section 2: the map is Leaflet on OpenStreetMap tiles.
+def test_the_map_is_a_button_until_somebody_presses_it(
+    client: Client, filled_site: SiteSettings
+) -> None:
+    """tech.md section 2, core v26: the map is google's, and it waits for a click.
 
-    A google map is a script and a cookie, which is what puts a consent gate on
-    a page that otherwise does not need one.
+    A google map is a script and a cookie, which is what would put a consent
+    gate on a page that otherwise does not need one. Behind a button it is the
+    visitor's choice, so the page carries the button and the coordinates, and
+    neither a frame nor a google url.
     """
     for url in ("/", "/kontakt/"):
         body = client.get(url).content.decode()
+        assert "data-map-load" in body, f"{url} rendered no map; the test is vacuous"
+        assert "<iframe" not in body, url
+        assert "google.com/maps" not in body, url
         assert "maps.google" not in body, url
         assert "maps.googleapis" not in body, url

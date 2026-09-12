@@ -10,8 +10,12 @@ javascript never arrives, so the filter is not a javascript feature.
 {% endcomment %}
 
 {% block content %}
-<c-section tone="deep">
-  <c-breadcrumbs :items="breadcrumbs" />
+{# B.8 point 2's one dark block per page, and it sits mid page rather than at
+   the foot: the footer is a dark card the full width of the page, so a dark
+   section directly above it makes one very tall dark region and the footer's
+   28px rounded top has nothing to read against. #}
+<c-section tone="dark">
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% translate "Zapisy" as t_zapisy %}
   <c-heading level="1" eyebrow="{{ t_zapisy }}" class="mt-6">{% translate "Terminy" %}</c-heading>
   <p class="u-narrow mt-4 text-body-lg u-muted-on-ground">
@@ -26,15 +30,15 @@ javascript never arrives, so the filter is not a javascript feature.
         hx-push-url="true"
         class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     <div class="flex flex-col gap-2">
-      <label for="id_course" class="font-semibold">{% translate "Kurs" %}</label>
+      <label for="id_course" class="font-bold">{% translate "Kurs" %}</label>
       <c-select name="course" :options="course_options" value="{{ chosen.course }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_language" class="font-semibold">{% translate "Język" %}</label>
+      <label for="id_language" class="font-bold">{% translate "Język" %}</label>
       <c-select name="language" :options="language_options" value="{{ chosen.language }}" />
     </div>
     <div class="flex flex-col gap-2">
-      <label for="id_mode" class="font-semibold">{% translate "Tryb" %}</label>
+      <label for="id_mode" class="font-bold">{% translate "Tryb" %}</label>
       <c-select name="mode" :options="mode_options" value="{{ chosen.mode }}" />
     </div>
     {# Only reached without javascript: with htmx the change trigger has
@@ -55,7 +59,7 @@ javascript never arrives, so the filter is not a javascript feature.
   </div>
 </c-section>
 
-<c-section tone="brand" size="compact">
+<c-section tone="surface" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <c-heading level="2">{% translate "Nie ma pasującego terminu?" %}</c-heading>

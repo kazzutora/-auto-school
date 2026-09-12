@@ -19,17 +19,17 @@ and it is the thing that pushes the page sideways on a phone.
      fact to fill the space with. #}
   <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
     <div>
-    <c-breadcrumbs :items="breadcrumbs" />
+    <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
     {% translate "Dla kursanta" as t_dla_kursanta %}
     <c-heading level="1" eyebrow="{{ t_dla_kursanta }}" class="mt-6">{% translate "Przydatne linki" %}</c-heading>
-    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
       {% translate "Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy." %}
     </p>
     </div>
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum text-right">{{ groups|length }}</p>
-      <p class="label mt-2 text-right text-ink-500">{% translate "Grupy odnośników" %}</p>
+      <p class="label mt-2 text-right u-muted-on-ground">{% translate "Grupy odnośników" %}</p>
     </div>
   </div>
 </c-section>
@@ -51,13 +51,13 @@ and it is the thing that pushes the page sideways on a phone.
               <c-slot name="title">
                 <span class="flex items-start justify-between gap-3">
                   <span class="min-w-0">{{ link.title }}</span>
-                  <c-icon name="external" size="sm" class="mt-1 shrink-0 text-ink-500" />
+                  <c-icon name="external" size="sm" class="mt-1 shrink-0 u-muted-on-ground" />
                 </span>
               </c-slot>
               {% if link.description %}
-                <p class="text-small text-ink-500">{{ link.description }}</p>
+                <p class="text-small u-muted-on-ground">{{ link.description }}</p>
               {% endif %}
-              <p class="label mt-auto pt-6 text-ink-500">{{ link.url|domain }}</p>
+              <p class="label mt-auto pt-6 u-muted-on-ground">{{ link.url|domain }}</p>
               <span class="sr-only">{% translate "otwiera się w nowej karcie" %}</span>
             </c-card>
           </li>

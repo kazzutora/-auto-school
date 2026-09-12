@@ -25,14 +25,14 @@ Takes: items — rows carrying .title, .description, .url and .size.
       <c-card class="flex h-full flex-col gap-4">
         <div class="flex items-start gap-4">
           <span aria-hidden="true"
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-line-soft bg-paper-50 text-ink-500">
+                class="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-line bg-paper-50 u-muted-on-ground">
             <c-icon name="download" size="sm" />
           </span>
           <div class="min-w-0">
             <h3 class="text-h3">{{ item.title }}</h3>
-            {% if item.description %}<p class="mt-2 text-ink-700">{{ item.description }}</p>{% endif %}
+            {% if item.description %}<p class="mt-2 u-body-on-ground">{{ item.description }}</p>{% endif %}
             {% if item.size %}
-              <p class="data mt-2 text-small text-ink-500">PDF · {{ item.size }}</p>
+              <p class="data mt-2 text-small u-muted-on-ground">PDF · {{ item.size }}</p>
             {% endif %}
           </div>
         </div>

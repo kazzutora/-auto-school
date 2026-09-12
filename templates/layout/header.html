@@ -1,50 +1,70 @@
 {% load i18n static %}
 {% comment %}
-Header, FRONTEND.md A.9 point 0.
+Header, REDESIGN.md B.7 point 0.
 
-Sticky, 72px, and a dark band over a light page — the owner's call, after a
-dark theme put a near black page under a near black header and the two grounds
-dissolved into each other. The height is fixed rather than derived from the
-contents, so the band is the same depth on every page.
+Sticky, 76px, shrinking to 64px with a hairline once the page has scrolled. The
+band is the page's own paper with a saturating blur behind it, not the black
+strip of the old contract — B.1 moved the darkness into the cards, and a dark
+band over a light page was a decision the old palette forced rather than one
+anybody wanted.
 
-Nothing in here names a colour: the band publishes the ink ground and its
-contents read --on-ground, so the lettering, the outlined phone button and the
-language codes all turn themselves the right way round.
+**The height change is a class, not a scroll handler.** A sentinel one pixel
+tall sits above the header and an IntersectionObserver in static/js/motion.js
+toggles .is-stuck when it leaves the viewport. R4 point 1 asks for it that way,
+and the reason is that a scroll listener runs on every frame of every scroll for
+the life of the page to answer a question whose value changes twice.
+
+The blur has an opaque fallback, R4's acceptance criterion: the translucent
+background is declared only inside an @supports, so a browser without
+backdrop-filter keeps a solid band and the menu never becomes text floating over
+the content underneath it.
 
 Three clusters: the wordmark, the menu in the middle, and the two things a
-visitor reaches for. A.9 point 0 used to say the logo was type rather than a
-picture, and it was, until the school's brand kit arrived with a proper lockup
-— the same Archivo at the expanded width, plus the yellow mark. It is now one
-cached svg instead of a font the band has to wait for.
+visitor reaches for. The right hand button is the one `outline-accent` B.5
+allows per screen — the callback offer.
 
-The phone is a secondary button in the data face, because a phone number is a
-fact and A.3 puts facts in the mono.
+Nothing in here names a colour. The band publishes the page ground and its
+contents read --on-ground, so the lettering, the outlined button and the
+language codes all turn themselves the right way round in either theme.
 
-The whole right hand cluster and the menu appear together at xl and are replaced
-by the burger below it — see the CONTRACT GAP in templates/cotton/nav.html. The
-row is all of it or none of it on purpose: a header that keeps the phone but
-drops the language switcher to buy 110px is a header that has started deciding
-which half of A.9 point 0 to honour.
+The wordmark switches file with the theme rather than colour: it is an <img>,
+not an inline <use>, because it is a logo that never takes the colour of the
+text around it and one cached file serves every page. The -dark file is the one
+with white letters, so it is the one the dark theme needs — hence two <source>
+elements rather than two <img> tags, which would fetch both.
 {% endcomment %}
-<header class="u-header">
-  <div class="u-container flex h-[var(--header-h)] items-center justify-between gap-2">
-    {# The wordmark from static/brand, not lettering typed into the template.
-       The -dark file is the one with white letters, which is what a dark band
-       needs; the yellow mark is the same in both. An <img> rather than an
-       inline <use>: it is a logo, it never changes colour with the text around
-       it, and the browser caches one file across every page.
 
-       The alt is the school's name because that is what the mark says. Height
-       is fixed and width follows, so the row cannot reflow while it loads. #}
+{# The sentinel. Outside the header because the header is sticky and never
+   leaves the viewport, so it can never observe itself. #}
+<div data-header-sentinel aria-hidden="true" class="h-px"></div>
+
+<header data-header class="u-header sticky top-0 z-30">
+  <div class="u-header-bar u-container flex items-center justify-between gap-2">
     <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
        aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
       {# 18px tall below sm, 23px from there. The lockup is 12:1, so those are
-         218px and 278px of row: at 320px the container has 280px to spend and
-         the burger needs 44 of them, which the taller one does not leave. It is
-         a height, not a second file — one request either way. #}
-      <img src="{% static 'brand/logo-lockup-dark.svg' %}" width="278" height="23"
+         218px and 278px of row: at 320px the container has 288px to spend and
+         the burger needs 44 of them, which the taller one does not leave. #}
+      {# Two files and the dark: variant, not a <picture> with a
+         prefers-color-scheme source.
+
+         <picture> would fetch only the matching file, which is the cheaper
+         thing — but its media query reads the system preference and nothing
+         else, so the explicit theme switch would leave a white wordmark on the
+         light page. That is exactly the failure R9 point 1 is written to hunt
+         down, one element further out. The dark: variant follows both doors,
+         because tailwind.config.js defines it as both.
+
+         The second file costs 6.5 KB on the first load and is cached from
+         then on. The alt sits on the light one only: two <img> with the same
+         alt make a screen reader read the school's name twice, so the hidden
+         one is decorative by definition. #}
+      <img src="{% static 'brand/logo-lockup.svg' %}" width="278" height="23"
            alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-           class="h-[18px] w-auto sm:h-[23px]">
+           class="h-[18px] w-auto sm:h-[23px] dark:hidden">
+      <img src="{% static 'brand/logo-lockup-dark.svg' %}" width="278" height="23"
+           alt="" aria-hidden="true"
+           class="hidden h-[18px] w-auto sm:h-[23px] dark:block">
     </a>
 
     {% include "layout/nav.html" %}
@@ -57,15 +77,23 @@ which half of A.9 point 0 to honour.
       <c-lang-switcher class="hidden md:flex" />
 
       {% if site_settings.phone_primary %}
-        <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="data hidden xl:inline-flex">
-          {{ site_settings.phone_primary }}
+        {# B.7 point 0 names this button and B.5 allows exactly one
+           outline-accent per screen. It is an offer, which is a state, which is
+           what the yellow is for — B.1. The blue on this row would compete with
+           "Zapisz się" further down every page. #}
+        {# The route by name, not `enrol_url`: that variable is set by the
+           views that happen to need it and the header is on every page,
+           including the ones that do not. #}
+        <c-button variant="outline-accent" href="{% url 'leads:enroll' %}"
+                  class="hidden xl:inline-flex">
+          {% translate "Oddzwonimy do Ciebie" %}
         </c-button>
       {% endif %}
 
-      {# The burger is one of the two icons A.7 lets stand without a word beside
-         it, so it carries the label instead. aria-expanded is kept in step with
-         the panel by static/js/app.js, which is the only thing that knows
-         whether the dialog is open. #}
+      {# The burger is one of the two controls B.6 lets stand without a word
+         beside it, so it carries the label instead. aria-expanded is kept in
+         step with the panel by static/js/app.js, which is the only thing that
+         knows whether the dialog is open. #}
       <c-button variant="ghost" size="icon" data-modal-open="main-menu"
                 aria-controls="main-menu" aria-expanded="false" aria-label="{% translate 'Menu' %}"
                 class="-mr-2 xl:hidden">

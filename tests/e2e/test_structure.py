@@ -96,15 +96,24 @@ def test_every_target_is_big_enough_for_a_finger(
 
 BANDED = ["/terminy/", "/kontakt/", "/galeria/", "/certyfikaty/", "/cennik/", "/o-nas/"]
 
-RHYTHM = """() => {
+RHYTHM = r"""() => {
     const sections = [...document.querySelectorAll('main section')];
+    // The grounds REDESIGN.md B.2 gives a section, tested in the order the
+    // class list has to be read: the two that are utilities before the two
+    // that are a background colour, because a dark card carries no bg- class.
+    const groundOf = (s) =>
+          s.classList.contains('u-dark-card') || s.classList.contains('u-ground-ink') ? 'dark'
+        : s.classList.contains('u-ground-accent') ? 'accent'
+        : s.classList.contains('bg-surface') ? 'surface'
+        : s.classList.contains('bg-paper-50') ? 'muted'
+        : 'paper';
+
     const report = sections.map(s => ({
-        ground: s.classList.contains('bg-paper-50') ? 'muted'
-              : s.classList.contains('u-ground-ink') ? 'ink'
-              : s.classList.contains('u-ground-deep') ? 'deep' : 'paper',
+        ground: groundOf(s),
         height: Math.round(s.getBoundingClientRect().height),
         chars: s.textContent.replace(/\s+/g, ' ').trim().length,
         media: !!s.querySelector('img, picture, iframe, [data-map]'),
+        action: !!s.querySelector('a[href^="tel:"], a[href*="/zapisz-sie/"], a[href*="/kontakt/"]'),
     }));
     let repeats = 0;
     for (let i = 1; i < report.length; i++) {
@@ -114,7 +123,9 @@ RHYTHM = """() => {
         count: report.length,
         grounds: report.map(r => r.ground),
         repeats: repeats,
+        dark: report.filter(r => r.ground === 'dark').length,
         last: report.length ? report[report.length - 1].ground : null,
+        lastActs: report.length ? report[report.length - 1].action : false,
         // A section whose content is a map or a wall of photographs is tall
         // for a reason, and counting its characters says nothing about it.
         // The rule is about text with air around it, so only text sections
@@ -123,7 +134,6 @@ RHYTHM = """() => {
                     .map(r => r.height + 'px for ' + r.chars + ' characters'),
     };
 }"""
-
 
 @pytest.mark.parametrize("path", BANDED)
 def test_the_page_has_a_rhythm(live_server, site: SiteSettings, page: Page, path: str) -> None:
@@ -139,8 +149,27 @@ def test_the_page_has_a_rhythm(live_server, site: SiteSettings, page: Page, path
     found = page.evaluate(RHYTHM)
     assert found["count"] >= 3, f"{path} has {found['count']} block(s): {found['grounds']}"
     assert not found["repeats"], f"{path} repeats a ground: {found['grounds']}"
-    assert found["last"] == "ink", f"{path} ends on {found['last']}, not an invitation"
     assert not found["airy"], f"{path} has air instead of rhythm: {found['airy']}"
+
+    # B.8 point 2: at most one dark block, and it is not the last one.
+    #
+    # "At most", not "exactly": a privacy policy has nothing that deserves the
+    # treatment, and forcing a dark band onto it is decoration. What the rule
+    # is against is several of them.
+    assert found["dark"] <= 1, f"{path} has {found['dark']} dark blocks: {found['grounds']}"
+
+    # Not the last, because the footer is a dark card the full width of the
+    # page: a dark section directly above it makes one very tall dark region
+    # and the footer's 28px rounded top has nothing to read against.
+    assert found["last"] != "dark", (
+        f"{path} ends on a dark section, straight above the dark footer"
+    )
+
+    # B.8 point 4: the page still ends on an action — it is the ground that
+    # changed, not the rule. The old form of this assertion checked the ground
+    # instead, which had been a fair proxy while the closing band was the only
+    # inverted thing on the page.
+    assert found["lastActs"], f"{path} does not end on an action"
 
 
 @pytest.mark.parametrize("path", BANDED)

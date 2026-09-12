@@ -1,20 +1,21 @@
 {% load i18n %}
 {% comment %}
-Sticky CTA, tech.md section 7, FRONTEND.md A.5 and A.9 point 11.
+Sticky call bar, tech.md section 7, REDESIGN.md B.7 point 12.
 
-Below md only. 64px tall on a paper ground with a 2px ink rule along the top,
-two buttons side by side: calling is primary because it is the action people on
-a phone actually take, and enrolling is secondary beside it.
+Below md only. 64px tall on a white card with a hairline along the top, two
+buttons side by side: calling is primary because it is the action people on a
+phone actually take, and enrolling is secondary beside it.
 
 safe-area-inset-bottom keeps it off the home indicator on an iPhone. The z
-index sits under the cookie banner on purpose — A.5 says the banner is always
-above, and a bar covering the consent buttons is a bar that cannot be dismissed.
+index sits under the cookie banner on purpose — B.7 point 12 says the banner is
+always above, and a bar covering the consent buttons is a bar that cannot be
+dismissed.
 
 The title is desktop copy and there is no desktop here, so it rides as the
 accessible name of the bar rather than as text nobody below md would see.
 {% endcomment %}
 <c-vars title="" phone="" href="" class="" />
-<div class="fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-paper pb-[env(safe-area-inset-bottom)] md:hidden {{ class }}"
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface shadow-card-hover pb-[env(safe-area-inset-bottom)] md:hidden {{ class }}"
   {% if title %}role="region" aria-label="{{ title }}"{% endif %} {{ attrs }}>
   <div class="flex h-16 items-center gap-3 px-5">
     {% if phone %}<c-button variant="primary" full="1" href="tel:{{ phone|cut:' ' }}">

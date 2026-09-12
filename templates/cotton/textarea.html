@@ -1,11 +1,11 @@
 {% comment %}
-Textarea, tech.md section 7. Same box as c-input, states from FRONTEND.md A.5.
+Textarea, tech.md section 7. Same box as c-input, states from REDESIGN.md B.5.
 Height comes from rows, so no fixed height here; the padding matches the input
 so a stacked form lines up.
 {% endcomment %}
 <c-vars name="" rows="5" value="" error="" class="" />
 <textarea name="{{ name }}" id="id_{{ name }}" rows="{{ rows }}"
   {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-  class="w-full rounded border bg-paper px-4 py-3 text-ink transition focus:border-ink disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
+  class="u-field w-full rounded border-1.5 px-4 py-3 transition disabled:cursor-not-allowed disabled:text-ink-300{% if error %} border-state-err{% else %} border-line{% endif %} {{ class }}"
   {{ attrs }}>{{ value }}</textarea>
 {% if error %}<p id="err_{{ name }}" class="mt-2 text-small text-state-err">{{ error }}</p>{% endif %}

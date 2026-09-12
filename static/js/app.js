@@ -7,92 +7,52 @@
 (function () {
   "use strict";
 
-  /* Leaflet map, tech.md section 7. OpenStreetMap tiles, no google script.
+  /* Google map, tech.md sections 2 and 7, core v26.
    *
-   * Built when the map comes into view rather than on load. The tiles are the
-   * only third party request the site makes at all, and on the home page the
-   * map sits in the last section: fetching a dozen of them before the visitor
-   * has scrolled past the hero spends the first screen budget in A.11 on
-   * something nobody is looking at yet. rootMargin starts the work a screen
-   * early, so it is ready by the time it is on screen.
-   */
-  /* Fetch leaflet the first time a map is about to be seen, and only then.
+   * Nothing goes to google until the visitor presses the button c-map renders.
+   * The iframe is built here, on that click, so no page carries a google url a
+   * browser would fetch on its own — which is what still lets the site run
+   * without a cookie gate. An embedded google map hands the visitor's address
+   * to google and sets cookies; behind a button, that is their choice.
    *
-   * defer delays execution, not the download: the tags in the page head cost
-   * 157 KB on load for a map that sits below the fold on both pages that have
-   * one, and that is what took the home page past the 400 KB first screen
-   * budget in A.11.
+   * The keyless embed rather than the Maps JavaScript API: no key to guard, no
+   * google script running on our page, nothing downloaded before the click.
    */
-  var leafletPromise = null;
-
-  function loadLeaflet(node) {
-    if (window.L) {
-      return Promise.resolve();
-    }
-    if (leafletPromise) {
-      return leafletPromise;
-    }
-    leafletPromise = new Promise(function (resolve, reject) {
-      var styles = document.createElement("link");
-      styles.rel = "stylesheet";
-      styles.href = node.dataset.leafletCss;
-      document.head.appendChild(styles);
-
-      var script = document.createElement("script");
-      script.src = node.dataset.leafletJs;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-    return leafletPromise;
-  }
-
-  function buildMap(node) {
+  function loadMap(node) {
     var lat = parseFloat(node.dataset.lat);
     var lng = parseFloat(node.dataset.lng);
     if (isNaN(lat) || isNaN(lng) || node.dataset.mapReady) {
       return;
     }
     node.dataset.mapReady = "1";
-    var map = window.L.map(node).setView([lat, lng], parseInt(node.dataset.zoom, 10) || 16);
-    window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-    var marker = window.L.marker([lat, lng]).addTo(map);
-    if (node.dataset.label) {
-      marker.bindPopup(node.dataset.label);
-    }
-  }
+    var zoom = parseInt(node.dataset.zoom, 10) || 16;
+    var lang = document.documentElement.lang || "pl";
 
-  function reveal(node) {
-    loadLeaflet(node).then(function () {
-      buildMap(node);
-    });
+    var frame = document.createElement("iframe");
+    frame.src =
+      "https://www.google.com/maps?q=" + lat + "," + lng +
+      "&z=" + zoom + "&hl=" + encodeURIComponent(lang) + "&output=embed";
+    frame.title = node.dataset.label || "Mapa dojazdu";
+    frame.allowFullscreen = true;
+
+    /* Removed rather than hidden: the placeholder is a flex box, and a display
+     * utility beats the hidden attribute. The button that had focus goes with
+     * it, so focus moves to the map instead of dropping to the document. */
+    var placeholder = node.querySelector("[data-map-placeholder]");
+    if (placeholder) {
+      node.removeChild(placeholder);
+    }
+    node.appendChild(frame);
+    frame.focus();
   }
 
   function initMaps() {
-    var nodes = document.querySelectorAll("[data-map]");
-    if (!nodes.length) {
-      return;
-    }
-    if (typeof window.IntersectionObserver === "undefined") {
-      Array.prototype.forEach.call(nodes, reveal);
-      return;
-    }
-    var observer = new window.IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            observer.unobserve(entry.target);
-            reveal(entry.target);
-          }
-        });
-      },
-      { rootMargin: "100% 0px" }
-    );
-    Array.prototype.forEach.call(nodes, function (node) {
-      observer.observe(node);
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-map-load]");
+      var node = button ? button.closest("[data-map]") : null;
+      if (node) {
+        loadMap(node);
+      }
     });
   }
 
@@ -210,139 +170,22 @@
     });
   }
 
-  /* The accordion opens and closes over 180ms, FRONTEND.md A.6 point 2.
+  /* The accordion and the section reveal both moved into css at core v25.
    *
-   * <details> has no animation of its own: the content is not rendered while
-   * it is shut, so there is no height to travel from. The element is opened
-   * first, measured, then walked from zero to that height — and on the way out
-   * the reverse, with the open attribute dropped only once the box has closed.
+   * The accordion was ~55 lines here that opened <details>, measured the
+   * panel, then walked its height from zero — the only way to animate to a
+   * height nobody knows in advance, before grid-template-rows could go from
+   * 0fr to 1fr. static/src/css/motion.css does it in four declarations now.
    *
-   * Without this script <details> still opens and closes on its own, instantly,
-   * which is what it did before and what a reader with no javascript gets.
+   * The reveal was ~60 lines of IntersectionObserver plus a passive scroll
+   * listener to catch the sections an anchor jump skipped over. CSS
+   * scroll-driven animations have no such gap: animation-timeline: view()
+   * is evaluated per element against the scroll position, so a jump to the
+   * bottom of the page leaves nothing behind it hidden.
+   *
+   * REDESIGN.md C.2 point 1 is what asked for both, and the budget in C.6
+   * is what it bought: those two were most of this file's weight.
    */
-  var PANEL_MS = 180;
-
-  function animateAccordion(details, body, opening) {
-    var height = body.scrollHeight;
-    body.style.overflow = "hidden";
-    body.style.height = (opening ? 0 : height) + "px";
-
-    // Reading offsetHeight forces the start height to be applied before the
-    // end one lands; without it the browser sees a single value and no move.
-    void body.offsetHeight;
-
-    body.style.transition = "height " + PANEL_MS + "ms ease-out";
-    body.style.height = (opening ? height : 0) + "px";
-
-    window.setTimeout(function () {
-      body.style.transition = "";
-      body.style.height = "";
-      body.style.overflow = "";
-      if (!opening) {
-        details.open = false;
-      }
-      details.removeAttribute("data-animating");
-    }, PANEL_MS);
-  }
-
-  function initAccordion() {
-    var reduced =
-      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      return;
-    }
-
-    Array.prototype.forEach.call(document.querySelectorAll("[data-accordion]"), function (details) {
-      var summary = details.querySelector("summary");
-      var body = details.querySelector("[data-accordion-body]");
-      if (!summary || !body) {
-        return;
-      }
-
-      summary.addEventListener("click", function (event) {
-        if (details.hasAttribute("data-animating")) {
-          event.preventDefault();
-          return;
-        }
-        event.preventDefault();
-        details.setAttribute("data-animating", "");
-
-        var opening = !details.open;
-        if (opening) {
-          // Opened first, because a shut <details> has nothing to measure.
-          details.open = true;
-        }
-        animateAccordion(details, body, opening);
-      });
-    });
-  }
-
-  /* Section reveal, FRONTEND.md A.6 point 3.
-   *
-   * Hides a section only when it starts watching it, and only when it is below
-   * the fold: what is already on screen is left alone, so there is no flash of
-   * content being taken away and handed back. A section is revealed once and
-   * then let go — a reveal that can play twice is a flicker on the way back up
-   * the page.
-   *
-   * The hiding lives here rather than in the stylesheet on purpose. Hidden by
-   * css and revealed by script means a script that fails to arrive leaves a
-   * blank page, which is the worst failure a marketing site has.
-   */
-  function initReveal() {
-    var nodes = document.querySelectorAll("[data-reveal]");
-    var reduced =
-      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!nodes.length || typeof window.IntersectionObserver === "undefined" || reduced) {
-      return;
-    }
-
-    var pending = [];
-    var observer;
-
-    /* Reveal everything that has reached the fold, not only what triggered the
-     * callback. Watching each section on its own leaves the skipped ones
-     * hidden for good when the viewport jumps rather than scrolls — an anchor,
-     * the End key, a link from the contents list. Ask any of those for the
-     * bottom of a page and seven sections above it stay blank. */
-    function flush() {
-      pending = pending.filter(function (node) {
-        if (node.getBoundingClientRect().top >= window.innerHeight) {
-          return true;
-        }
-        observer.unobserve(node);
-        node.classList.remove("is-waiting");
-        return false;
-      });
-      if (!pending.length) {
-        observer.disconnect();
-        window.removeEventListener("scroll", flush);
-      }
-    }
-
-    /* The observer alone is not enough. Jump to the very bottom of a page and
-     * the last thing on screen is the footer, which nothing is watching — so
-     * no callback fires and every section above stays hidden. The listener is
-     * passive, does nothing but walk a list that only shrinks, and takes
-     * itself off the moment that list is empty. */
-    window.addEventListener("scroll", flush, { passive: true });
-
-    observer = new window.IntersectionObserver(flush, {
-      // A little before the edge, so a section has finished arriving by the
-      // time it is properly in view.
-      rootMargin: "0px 0px -10% 0px",
-      threshold: 0.01,
-    });
-
-    Array.prototype.forEach.call(nodes, function (node) {
-      if (node.getBoundingClientRect().top < window.innerHeight) {
-        return;
-      }
-      node.classList.add("is-waiting");
-      pending.push(node);
-      observer.observe(node);
-    });
-  }
 
   /* The burger says whether the panel it controls is open. <dialog> fires close
    * for every way out — Esc, the button, a click on the backdrop — so one
@@ -429,8 +272,6 @@
     initModals();
     linkFieldErrors();
     initTableOfContents();
-    initReveal();
-    initAccordion();
   });
 
   /* htmx replaces the enrolment form with a version carrying its errors, and

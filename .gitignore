@@ -61,3 +61,14 @@ node_modules/
 # OS
 Thumbs.db
 .DS_Store
+
+# Generated crops, REDESIGN.md D.6. The sources in static/src/img/ are
+# committed together with their CREDITS.txt; what optimize_photos.py derives
+# from them is a build artifact like the stylesheet, and committing twelve
+# files per photograph would put the repository's weight in renditions.
+# One line per crop in optimize_photos.py: keep the two lists in step.
+/static/img/hero/
+/static/img/hero-tall/
+/static/img/card/
+/static/img/band/
+/static/img/poster/

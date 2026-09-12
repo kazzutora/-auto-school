@@ -1,39 +1,52 @@
 {% comment %}
-Button, tech.md section 7, states from FRONTEND.md A.5.
+Button, tech.md section 7, states from REDESIGN.md B.5.
 
-Heights 40/48/56 for sm/md/lg, radius 2px, 24px of horizontal padding, and the
-1px downward nudge on :active that all three variants share.
+Heights 44/52/60 for sm/md/lg, radius 12px, and four variants with the two
+accents kept strictly apart — B.1 is blunt about it: a yellow "Zapisz się" and a
+blue "nabór otwarty" are the same mistake twice.
 
-The primary sits on the yellow, and the yellow does not swap with the theme, so
-neither its text nor its focus ring may: text-ink would turn near white in the
-dark and put the button on white-on-yellow at 1.3:1, the one pair A.2 forbids
-outright. u-fixed-ink carries both the near black text and the near black ring
-A.2 asks for on a yellow ground.
+  primary          blue fill, white label. The action. One per screen, usually.
+  secondary        transparent, 1.5px frame in whatever reads on the ground.
+  outline-accent   yellow frame, fills yellow on hover. B.5 allows exactly one
+                   per screen and names it: the callback offer in the header.
+  ghost            text and an arrow, nothing else.
 
-secondary and ghost name no colour at all. Ghost inherits whatever ground it is
-standing on, and secondary reads that ground's own pair through u-btn-secondary,
-so one button is an ink frame on the page, the paper frame A.9 point 1 asks for
-on the inverted hero, and a near black one on the yellow strip. Overriding the
-colour with a utility from outside does not work: two text- utilities have the
-same specificity and the winner is whichever tailwind happened to emit last.
+primary carries u-fixed-paper rather than text-surface. The blue does not swap
+with the theme and neither may its label: --surface is a card colour, so in the
+dark theme text-surface would print near black on blue at 3.6:1. B.2 fixes the
+pair as white on blue and the token is fixed to match.
+
+secondary and outline-accent name no colour at all. Both read --on-ground, so
+one button is an ink frame on the page, a near-white frame on a dark card, and a
+near-black one on the yellow strip. Overriding that with a utility from outside
+does not work: two text- utilities have the same specificity and the winner is
+whichever tailwind happened to emit last.
+
+**No shadow on any variant, and that is not an oversight.** B.4 gives the two
+shadows to cards; B.5 describes a button by its height, its radius and its four
+states and mentions neither. The primary carried `shadow-card` for one
+afternoon, and it silently took the focus halo with it: a `shadow-*` utility
+lands in @layer utilities, the `:focus-visible` halo is a box-shadow in @layer
+base, and the utility wins — so the button focused with a bare yellow outline at
+1.43:1 on a white card, which is WCAG 1.4.11 failed on the one control the whole
+site is built around. The same trap is documented on the field rule in app.css.
 
 size="icon" is a 44px square with no horizontal padding, for the handful of
-controls A.7 lets stand without a word beside them — a close, a burger. It is
-44 rather than 48 because that is the number A.11 asks of a touch target, and a
-square that size is the smallest honest one. Such a button has no visible text,
-so it must carry an aria-label; there is nothing else for a screen reader to
-read.
+controls B.6 lets stand without a word beside them — a close, a burger, a
+carousel arrow. Such a button has no visible text, so it must carry an
+aria-label; there is nothing else for a screen reader to read.
 
 A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej.
 {% endcomment %}
 <c-vars variant="primary" size="md" type="button" href="" full="" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %}
-  class="u-btn inline-flex items-center justify-center gap-2 rounded border-2 px-6 text-center font-semibold leading-none transition active:translate-y-px
+  class="u-btn inline-flex items-center justify-center gap-2 rounded border-1.5 px-6 text-center font-bold leading-none transition
 {% if full %} w-full{% endif %}
-{% if size == 'sm' %} h-10 text-small{% elif size == 'lg' %} h-14 text-body-lg{% elif size == 'icon' %} h-11 w-11 !px-0 text-body{% else %} h-12 text-body{% endif %}
+{% if size == 'sm' %} h-11 text-small{% elif size == 'lg' %} h-15 text-body-lg{% elif size == 'icon' %} h-11 w-11 !px-0 text-body{% else %} h-13 text-body{% endif %}
 {% if variant == 'secondary' %} u-btn-secondary bg-transparent
+{% elif variant == 'outline-accent' %} u-btn-outline-accent bg-transparent
 {% elif variant == 'ghost' %} border-transparent bg-transparent px-0 underline-offset-4 hover:underline disabled:text-ink-300 disabled:no-underline
-{% else %} border-accent bg-accent u-fixed-ink hover:border-accent-600 hover:bg-accent-600 disabled:border-paper-200 disabled:bg-paper-200 disabled:text-ink-300
+{% else %} border-primary bg-primary u-fixed-paper hover:border-primary-600 hover:bg-primary-600 disabled:border-line disabled:bg-line disabled:text-ink-300
 {% endif %}
-disabled:cursor-not-allowed disabled:active:translate-y-0 {{ class }}"
+disabled:cursor-not-allowed {{ class }}"
   {{ attrs }}>{{ slot }}{% if href %}</a>{% else %}</button>{% endif %}

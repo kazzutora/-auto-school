@@ -15,6 +15,8 @@ from apps.courses.models import Course
 from apps.people.models import Instructor, Vehicle
 from tests.factories import image_bytes
 
+from tests.conftest import images_without_alt, section_grounds
+
 pytestmark = pytest.mark.django_db
 
 ABOUT = "/o-nas/"
@@ -176,10 +178,11 @@ def test_every_photo_carries_an_alt(client: Client, about_page: Page, category: 
     """DEV.md S5: every photo goes through c-picture with a non empty alt."""
     make_instructor()
     make_vehicle(category)
-    images = re.findall(r"<img[^>]*>", page(client))
+    body = page(client)
+    images = re.findall(r"<img[^>]*>", body)
 
     assert len(images) >= 2
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    assert not images_without_alt(body)
 
 
 def test_the_photos_are_served_as_webp(client: Client, about_page: Page, category: Course) -> None:
@@ -293,15 +296,35 @@ def test_the_page_survives_an_empty_team_and_an_empty_fleet(
     assert 'data-testid="facts"' in body
 
 
-def test_an_instructor_without_a_photo_still_renders(
+def test_a_vehicle_without_a_photo_still_renders_but_an_instructor_does_not(
     client: Client, about_page: Page, category: Course
 ) -> None:
+    """The line REDESIGN.md D.2 draws, and it is drawn between things and people.
+
+    A car card without a photograph is a specification: make, model, year,
+    gearbox. Every one of those is a fact out of the database and reads as one,
+    so the card is honest with an empty frame or none at all.
+
+    A person card without a photograph is a name in an empty box, and the box
+    is an invitation to fill it. D.2's example is exactly that: a stock portrait
+    captioned "Piotr, instruktor od 8 lat", a person who does not exist, and a
+    client who turns up at the school asking for him. So the instructor half of
+    this rule is the strict one — no real photograph, no card — and the vehicle
+    half is unchanged.
+
+    This test used to assert that both still rendered. Half of it was reversed
+    at core v25 and the half that was not is still here, on purpose: the rule is
+    a distinction, not a blanket, and a blanket in either direction would be
+    wrong.
+    """
     make_instructor(photo=None)
     make_vehicle(category, photo=None)
     body = page(client)
 
-    assert "Adam Kowalski" in body
-    assert "Skoda Fabia" in body
+    assert "Skoda Fabia" in body, "a vehicle is a specification and reads as one"
+    assert "Adam Kowalski" not in body, (
+        "an instructor with no photograph was rendered as a card; REDESIGN.md D.2"
+    )
     assert "<img" not in block(body, "instructors")
 
 
@@ -393,25 +416,49 @@ def test_every_figure_in_the_row_is_a_figure(client: Client, about_page: Page) -
         assert figure.isdigit(), f"{figure!r} is not a number"
 
 
-def test_the_page_ends_on_an_inverted_invitation(client: Client, about_page: Page) -> None:
-    """X2 point 6: it used to end on a light section, with the dark block
-    stranded in the middle."""
-    body = page(client)
-    inside = body[body.index("<main") : body.index("</main>")]
-    last = inside.rindex("<section")
-    assert "u-ground-ink" in inside[last : last + 400]
-    assert "Chcesz zacząć kurs?" in inside[last:]
+def test_the_page_ends_on_an_invitation_that_is_not_dark(
+    client: Client, about_page: Page
+) -> None:
+    """B.8 point 4, and B.8 point 2 on where the dark block may not be.
 
+    The rule moved at core v25, and the geometry is why.
 
-def test_exactly_one_block_is_inverted(client: Client, about_page: Page) -> None:
-    """More than one and neither carries any weight.
+    B.7 point 11 makes the footer a dark card the full width of the page with a
+    28px radius along its top. A dark section directly above it merges into one
+    very tall dark region, and the radius — the shape whose whole job is to say
+    "this is where the page ends" — has nothing to read against.
 
-    Counted inside main: the footer is a deep ground of its own and is not one
-    of the page's blocks.
+    So the page's one dark block sits mid page and the closing band takes the
+    page ground. What has not moved is B.8 point 4: the page still ends on an
+    action. It is the ground that changed, not the rule, and the old assertion
+    checked the ground because that had been a fair proxy while the closing
+    band was the only inverted thing on the page.
     """
     body = page(client)
     inside = body[body.index("<main") : body.index("</main>")]
-    assert inside.count("u-ground-ink") + inside.count("u-ground-deep") == 1
+    last = inside.rindex("<section")
+    closing = inside[last:]
+
+    assert "Zaczynamy?" in closing, "the page does not close on an invitation"
+    assert "tel:" in closing or "/zapisz-sie/" in closing, "the invitation has no action in it"
+    assert section_grounds(inside)[-1] != "dark", (
+        "the last section is dark, straight above the dark footer"
+    )
+
+
+def test_at_most_one_block_is_dark(client: Client, about_page: Page) -> None:
+    """B.8 point 2. More than one and neither carries any weight.
+
+    "At most", not "exactly": a privacy policy has nothing that deserves the
+    treatment, and forcing a dark band onto it is decoration. What the rule is
+    against is several of them.
+
+    Counted inside main: the footer is a dark card of its own and is layout
+    rather than one of the page's blocks.
+    """
+    body = page(client)
+    inside = body[body.index("<main") : body.index("</main>")]
+    assert section_grounds(inside).count("dark") <= 1
 
 
 def test_the_body_headings_read_as_headings(client: Client, about_page: Page) -> None:
@@ -429,17 +476,88 @@ def test_the_body_headings_read_as_headings(client: Client, about_page: Page) ->
     assert "u-prose" in body
 
 
-def test_a_legal_page_gets_no_invitation(client: Client) -> None:
-    """A privacy policy has nothing to invite anyone to.
+def test_a_legal_page_asks_about_the_document_and_never_for_a_signup(
+    client: Client,
+) -> None:
+    """A privacy policy has nothing to sell, but it is not a dead end either.
 
-    The sticky call bar stays — it is the site's, not the page's, and it is how
-    somebody reaches the school from anywhere. What the page does not get is
-    the inverted block asking them to sign up in the middle of a privacy
-    notice.
+    The original rule here was "a legal page gets no closing block at all", and
+    what it was protecting against is right and still enforced below: an
+    inverted band asking somebody to sign up in the middle of a privacy notice
+    reads as a school that was not listening.
+
+    REDESIGN.md B.8 point 4 asks every page to end on an action, and the two
+    only look like a conflict. The action on a legal page is not enrolment — it
+    is reaching a person about the document, which is exactly what somebody who
+    has just read a data notice may want. So the band is there, it offers the
+    telephone, and it carries no enrolment link and no enrolment words.
+
+    The sticky call bar is unaffected either way: it is the site's, not the
+    page's, and it is below md only.
     """
     Page.objects.create(slug="rodo", title="RODO", body="# Klauzula", is_published=True)
 
     body = page(client, "/rodo/")
     inside = body[body.index("<main") : body.index("</main>")]
-    assert "u-ground-ink" not in inside
+
+    # The closing band itself, not everything after the last section: the
+    # sticky call bar sits below it and is the site's, not the page's.
+    closing = inside[inside.rindex("<section") :]
+    closing = closing[: closing.index("</section>")]
+
+    # Ends on an action, B.8 point 4. The contact page rather than the phone,
+    # because the phone is conditional on SiteSettings and this band must not
+    # be able to render with nothing in it.
+    assert "/kontakt/" in closing, "a legal page still has to offer a way to reach a person"
+
+    # And the action is not a signup, which is what the original rule was for.
     assert "Zostaw numer albo zadzwoń" not in inside
+    assert "Zapisz się" not in closing
+    assert "/zapisz-sie/" not in closing
+
+
+# --------------------------------------------------------------------------
+# photographs, REDESIGN.md part D
+
+
+def test_an_instructor_without_a_photograph_gets_no_card(
+    client: Client, about_page: Page
+) -> None:
+    """D.2, and R8's acceptance criterion in as many words.
+
+    An instructor card exists to put a face to a name. Without the face it is a
+    name in an empty box, and an empty box on a page about people is an
+    invitation to fill it — which is exactly how a stock portrait ends up
+    captioned "Piotr, instruktor od 8 lat" on a commercial site, describing
+    somebody who does not exist. D.2 says what happens next: a client walks into
+    the school and asks for him.
+
+    So the rule is not "prefer a photograph". It is: no real photograph, no
+    card. This test is what stops that being softened back into a placeholder.
+    """
+    make_instructor(full_name="Z Fotografią", photo=image_bytes())
+    make_instructor(full_name="Bez Fotografii", photo=None)
+
+    body = page(client)
+
+    assert "Z Fotografią" in body
+    assert "Bez Fotografii" not in body, (
+        "an instructor with no photograph was rendered as a card; REDESIGN.md D.2"
+    )
+
+
+def test_a_block_with_no_photographs_says_so_instead_of_showing_empty_frames(
+    client: Client, about_page: Page
+) -> None:
+    """The other half of D.2: the block does not quietly vanish either.
+
+    Somebody scrolling to "Instruktorzy" came looking for exactly that, so they
+    get a sentence and a telephone number rather than a gap — <c-empty>, which
+    is the component BLOCKS.md B8 exists for.
+    """
+    make_instructor(full_name="Bez Fotografii", photo=None)
+
+    body = page(client)
+    assert 'data-testid="instructors-empty"' in body
+    assert "Zdjęcia instruktorów w przygotowaniu" in body
+    assert "Bez Fotografii" not in body

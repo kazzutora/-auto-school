@@ -8,6 +8,8 @@ from django.test import RequestFactory, override_settings
 
 from apps.core.views import kitchen_sink
 
+from tests.conftest import images_without_alt
+
 pytestmark = pytest.mark.django_db
 
 
@@ -33,10 +35,10 @@ def test_exactly_one_h1() -> None:
 @override_settings(DEBUG=True)
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt() -> None:
-    images = re.findall(r"<img[^>]*>", render_sink())
-    assert images
-    without_alt = [img for img in images if not re.search(r'alt="[^"]+"', img)]
-    assert not without_alt, f"{len(without_alt)} images with an empty alt"
+    body = render_sink()
+    assert re.findall(r"<img[^>]*>", body), "no images rendered; the check would be vacuous"
+    offenders = images_without_alt(body)
+    assert not offenders, f"{len(offenders)} images with an empty alt: {offenders}"
 
 
 @override_settings(DEBUG=True)

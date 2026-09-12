@@ -1,6 +1,7 @@
 <c-vars class="" />
 {% comment %}
-Accordion, tech.md section 7. Native details/summary, FRONTEND.md A.5.
-The group is a bordered stack; each item draws its own divider.
+Accordion, tech.md section 7. Native details/summary, REDESIGN.md B.5.
+A stack of cards rather than a bordered box: B.4 rounds the language, and the
+group reads as a list of things you can open.
 {% endcomment %}
-<div class="rounded border border-line-soft {{ class }}" {{ attrs }}>{{ slot }}</div>
+<div class="flex flex-col gap-3 {{ class }}" {{ attrs }}>{{ slot }}</div>

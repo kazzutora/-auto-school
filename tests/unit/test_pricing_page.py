@@ -11,6 +11,8 @@ from apps.core.models import Page
 from apps.courses.models import Course, PriceItem
 from apps.courses.services import CURRENCY
 
+from tests.conftest import repeated_grounds, section_grounds
+
 pytestmark = pytest.mark.django_db
 
 
@@ -361,14 +363,30 @@ def test_the_most_wanted_variant_is_marked(client: Client) -> None:
 
 
 def test_the_page_ends_on_an_invitation(client: Client) -> None:
-    """X1 point 9: it used to end on a list of things with no price."""
+    """B.8 point 4: it used to end on a list of things with no price.
+
+    The rule moved at core v25, and the geometry is why.
+
+    B.7 point 11 makes the footer a dark card the full width of the page with a
+    28px radius along its top. A dark section directly above it merges into one
+    very tall dark region, and the radius — the shape whose whole job is to say
+    "this is where the page ends" — has nothing to read against.
+
+    So the page's one dark block sits mid page and the closing band takes the
+    page ground. What has not moved is B.8 point 4: the page still ends on an
+    action. It is the ground that changed, not the rule, and the old assertion
+    checked the ground because that had been a fair proxy while the closing
+    band was the only inverted thing on the page.
+    """
     make_item(title="Kurs kategorii B", group="Kurs", unit="", price_gross=Decimal("3700"))
 
     body = body_of(client)
-    tail = body[body.rindex("</main>") - 2500 : body.rindex("</main>")]
+    inside = body[body.index("<main") : body.index("</main>")]
+    tail = inside[inside.rindex("<section") :]
 
     assert "Zaczynamy?" in tail
-    assert "u-ground-ink" in tail
+    assert "tel:" in tail or "/zapisz-sie/" in tail, "the invitation has no action in it"
+    assert section_grounds(inside)[-1] != "dark"
 
 
 def test_no_two_sections_share_a_ground(client: Client) -> None:
@@ -379,10 +397,6 @@ def test_no_two_sections_share_a_ground(client: Client) -> None:
         title="Badanie lekarskie", group="Opłaty zewnętrzne", price_gross=Decimal("200")
     )
 
-    sections = re.findall(r'<section[^>]*class="([^"]*)"', body_of(client))
-    grounds = [
-        "muted" if "bg-paper-50" in cls else "ink" if "u-ground-ink" in cls else "paper"
-        for cls in sections
-    ]
-    repeats = [i for i in range(1, len(grounds)) if grounds[i] == grounds[i - 1]]
+    grounds = section_grounds(body_of(client))
+    repeats = repeated_grounds(body_of(client))
     assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"

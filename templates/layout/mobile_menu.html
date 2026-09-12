@@ -1,6 +1,6 @@
 {% load core_ui i18n static %}
 {% comment %}
-Mobile menu, FRONTEND.md F2 point 4.
+Mobile menu, REDESIGN.md B.7 point 0 and R4 point 2.
 
 A native dialog opened with showModal(), for the same reason c-modal is one: the
 focus lock, Esc and the focus restore are the browser's job and it does them
@@ -20,20 +20,25 @@ switcher and the phone number.
 {% endcomment %}
 {% nav_items as items %}
 <dialog id="main-menu" data-modal aria-label="{% translate 'Menu' %}"
-        {# u-ground-paper: the panel lives inside the header element, so without
-     it the ink ground the band publishes would reach in here and every
-     control reading --on-ground would come out white on white. #}
-        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 text-ink backdrop:bg-ink/60 xl:hidden">
+        {# u-ground-paper: the panel lives inside the header element, so it
+     takes the page ground back explicitly rather than inheriting whatever
+     the band is publishing. #}
+        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 u-on-ground backdrop:bg-ink/60 xl:hidden">
   <div class="flex h-full flex-col">
-    <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line-soft">
+    <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between">
       {# The mark plus the name as type, not the second lockup file.
          This panel is inside the header and is display:none until the burger
          opens it — and a browser fetches images inside a hidden element all
          the same, so the lockup here was 16 KB of the first screen budget
          spent on something nobody had asked to see. The mark is 256 bytes. #}
       <p class="flex items-center gap-3">
+        {# Decorative: the school's name is spelled out in the text beside it,
+           so alt text here would have a screen reader read the name twice.
+           tech.md section 8 and c-picture both fix the convention — an empty
+           alt is only allowed together with aria-hidden, which is what says the
+           emptiness was meant. #}
         <img src="{% static 'brand/mark.svg' %}" width="24" height="24" alt=""
-             class="h-6 w-6">
+             aria-hidden="true" class="h-6 w-6">
         <span class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight">
           {{ site_settings.short_name|default:"OSK Ostrycharz" }}
         </span>
@@ -45,14 +50,21 @@ switcher and the phone number.
     </div>
 
     <nav aria-label="{% translate 'Główna nawigacja' %}" class="u-container grow overflow-y-auto py-6">
-      <ul class="flex flex-col">
+      <ul class="flex flex-col gap-1">
         {% for item in items %}
           {% nav_url item as url %}
-          <li class="border-b border-line-soft last:border-b-0">
+          <li>
+            {# The row is a card shape now rather than a line in a ruled list,
+               B.4. The current page keeps the yellow, which is a state.
+
+               The pale yellow swaps with the theme since core v27 — cream in
+               the light one, a dark warm tint in the dark — so the text follows
+               the ground rather than a fixed ink, which would be dark on dark. #}
             <a href="{% if url %}{{ url }}{% else %}#{% endif %}"
                {% if request.path == url %}aria-current="page"{% endif %}
-               class="u-menurow flex min-h-[56px] items-center text-h3 font-bold transition hover:translate-x-1{% if request.path == url %} border-l-4 border-accent pl-4{% endif %}">
+               class="u-menurow{% if request.path == url %} bg-accent-100 u-on-ground{% endif %}">
               {{ item.title }}
+              <c-icon name="arrow-right" size="sm" class="u-muted-on-ground" />
             </a>
             {% if item.children %}
               <ul class="pb-3 pl-4">
@@ -60,7 +72,7 @@ switcher and the phone number.
                   {% nav_url child as child_url %}
                   <li>
                     <a href="{% if child_url %}{{ child_url }}{% else %}#{% endif %}"
-                       class="flex min-h-[48px] items-center text-ink-700 transition hover:text-ink">{{ child.title }}</a>
+                       class="flex min-h-[48px] items-center px-4 u-body-on-ground transition hover:u-on-ground">{{ child.title }}</a>
                   </li>
                 {% endfor %}
               </ul>
@@ -70,7 +82,7 @@ switcher and the phone number.
       </ul>
     </nav>
 
-    <div class="u-container flex shrink-0 flex-col gap-4 border-t border-line-soft py-6">
+    <div class="u-container u-rule-on-ground flex shrink-0 flex-col gap-4 border-t py-6">
       {% if site_settings.phone_primary %}
         <c-button variant="primary" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>

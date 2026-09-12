@@ -2,136 +2,331 @@
 {% load static l10n i18n %}
 
 {% comment %}
-Home page, FRONTEND.md A.9, rebuilt around what this school actually sells.
-
-The previous client had fifteen courses and no prices; this one has one category
-and publishes every figure it charges. So the tiles for nine categories are gone
-and in their place stand three ways to take the same course, each with its price
-on the card.
-
-The order below puts the school's own numbers second, straight under the hero.
-tech.md section 1 is explicit that 76% at the first attempt is the single
-strongest thing this business has to say, and it spent years buried between a
-photo gallery and a list of files.
+Home page, REDESIGN.md B.7. Twelve blocks, in the order that section fixes them,
+each answering the next question a visitor has.
 
 Sections that have nothing to say do not render: no confirmed pass rate, no
-video, fewer than two verifiable reviews, no published questions. A block that
-says nothing is worse than one section fewer.
+video, no instructors, fewer than two verifiable reviews, no published
+questions. A block that says nothing is worse than one section fewer, and B.7
+names that rule on four of the twelve separately.
 
 Nothing here writes its own button, card, badge or field. Every one of those
 comes from templates/cotton/, tech.md section 7.
+
+CONTRACT GAP — block 7, Instruktorzy. B.7 point 7 asks for a carousel of
+instructor cards with a photograph, a name, years of experience and stars. The
+`people` app has the model, but apps/core/views.home does not put instructors in
+the context and this is a template session: the fix is one line in a view, which
+belongs to LEAD. The block is written below and is inert until `instructors`
+appears — which is also exactly what B.7 asks for when there is no data. Part D
+would stop it rendering anyway: a stock portrait captioned with a name is a
+forgery, not a placeholder, so the block needs real photographs before it can
+ever be shown.
+
+CONTRACT GAP — block 5, the tabs. B.7 point 5 puts a tab strip above the three
+group cards, one tab per branch of the school's offer. This school has exactly
+one: prawo jazdy kat. B, in three variants, and the three variants are the
+cards. A strip with a single chip in it is chrome that says nothing, so it is
+rendered only when there is a second group to switch to. c-tabs exists and is on
+the kitchen sink; what is missing is a second offer, which is the owner's to
+have rather than ours to invent.
 {% endcomment %}
 
 {% block content %}
 
-{# ------------------------------------------------------------------ 1. Hero
-   The only inverted block on the page, A.9 point 1. No background image and no
-   stock photograph of anyone holding car keys, A.1.
+{# ============================================================== 1. HERO
+   B.7 point 1. A dark card inset from the page edge, radius 28, roughly 78vh.
 
-   Two columns from lg: the claim on the left, the one number that backs it on
-   the right, so the proof is beside the promise rather than a scroll below it.
-   ------------------------------------------------------------------ #}
-<section class="u-ground-ink relative overflow-hidden">
-  {# A single quiet graphic behind the band: the yellow mark at poster scale,
-     clipped by the section. It is the brand's own shape, not decoration bought
-     from anywhere, and it costs no request beyond the css. #}
-  <span aria-hidden="true"
-        class="pointer-events-none absolute -right-24 top-1/2 hidden h-[34rem] w-[34rem] -translate-y-1/2 lg:block">
-    <svg viewBox="0 0 512 512" class="h-full w-full opacity-[0.07]" focusable="false">
-      <path d="M148 382V129h75v193h163v60Z" fill="rgb(var(--accent))" />
-    </svg>
-  </span>
+   The photograph is the block's material, not an ornament. It is stock, chosen
+   by eye rather than by keyword; the ZDJĘCIE POGLĄDOWE mark goes on it only in
+   the owner's demo build, make watermark-demo — PHOTOS.md section 6. Nobody in the frame is
+   captioned as anything, which is the line part D draws.
 
-  <div class="u-container relative grid min-h-[78vh] items-center gap-12 py-16 lg:grid-cols-12">
-    <div class="lg:col-span-7">
-      <h1 class="display max-w-[15ch]">
-        {% translate "Prawo jazdy kat. B w" %}
-        {# The yellow slab sits behind the baseline rather than under it, so the
-           descenders cut through it the way a marker would. #}
-        <span class="relative inline-block">
-          <span aria-hidden="true" class="absolute inset-x-0 bottom-[0.04em] h-[0.18em] bg-accent"></span>
-          <span class="relative">{% translate "Wieluniu" %}</span>
-        </span>
-      </h1>
+   The heading is three lines with 60ms between them, C.3 row 2. The stagger is
+   on the wrapper and each line carries its index — motion.css turns it off
+   entirely under prefers-reduced-motion and where the animation is unsupported,
+   in both cases leaving the lines exactly where they are.
+   ============================================================== #}
+<section class="px-4 pt-4 md:px-6 xl:px-10">
+  <div class="u-photo-ground relative flex min-h-[78vh] items-end overflow-hidden rounded-hero">
 
-      <p class="u-narrow mt-8 text-body-lg">
-        {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
-      </p>
+    {# PHOTOS.md section 1: a photograph that is dark by nature, so the scrim
+       barely has to work and the picture stays a picture rather than a grey
+       field.
 
-      <div class="mt-10 flex flex-wrap gap-4">
-        <c-button variant="primary" size="lg" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
-        {% if site_settings.phone_primary %}
-          <c-button variant="secondary" size="lg" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-            <c-icon name="phone" size="sm" /> {% translate "Zadzwoń" %} <span class="data">{{ site_settings.phone_primary }}</span>
-          </c-button>
-        {% endif %}
-      </div>
+       Two crops, not one scaled. A 16:9 hero on a portrait phone is a
+       letterbox with the subject cropped out of it, so the phone gets its own
+       4:5 cut — PHOTOS.md section 4 gives it a lower ceiling for the same
+       reason it exists: it is a smaller screen.
 
-      {# A.11 caps the accents on the first screen at three. The slab under
-         "Wieluniu", the primary button and the figure in the card opposite are
-         those three, so the dots between these facts are hairlines, not
-         yellow. #}
-      <ul class="label mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
-        {% if first_attempt %}
-          <li><span class="data">{{ first_attempt }}%</span> {% translate "za pierwszym razem" %}</li>
-          <li aria-hidden="true" class="u-rule-on-ground h-4 w-px border-l"></li>
-        {% endif %}
-        {% if course.price_gross %}
-          <li>{% translate "kurs" %} <span class="data">{{ course.price_gross|floatformat:0 }} zł</span></li>
-          <li aria-hidden="true" class="u-rule-on-ground h-4 w-px border-l"></li>
-        {% endif %}
-        <li>{% translate "dowóz na egzamin gratis" %}</li>
-      </ul>
-    </div>
+       fetchpriority high and eager: this is the LCP element, C.6. Everything
+       else on the site is lazy. width and height are the desktop crop's, so
+       the box is reserved before the file lands and the CLS budget survives. #}
+    {% translate "Kierowca za kierownicą, deska rozdzielcza i droga o zmierzchu" as t_hero_alt %}
+    <c-photo stem="hero-dusk" crop="hero" crop_mobile="hero-tall" alt="{{ t_hero_alt }}"
+             priority="1" class="absolute inset-0 h-full w-full object-cover object-[70%_center]" />
 
-    {# The proof, beside the promise. Absent until the owner confirms a year,
-       and the hero simply runs one column wide instead. #}
-    {% if pass_rate %}
-      <div class="lg:col-span-5 lg:justify-self-end">
-        <div class="u-ground-paper w-full max-w-sm rounded border-2 border-accent bg-paper p-8 text-ink">
-          <p class="label text-ink-500">{% translate "Zdawalność" %}</p>
-          <p class="u-bignum data mt-4 text-ink">{{ pass_rate.first_percent }}%</p>
-          <p class="mt-3 text-body-lg text-ink-700">{% translate "kursantów zdaje egzamin za pierwszym razem" %}</p>
-          <p class="data mt-6 text-small text-ink-500">
-            {% blocktranslate with students=pass_rate.students year=pass_rate.year %}na {{ students }} kursantów w {{ year }} roku{% endblocktranslate %}
-          </p>
-          <p class="mt-6">
-            <c-button variant="ghost" href="{% url 'core:pass_rates' %}">
-              {% translate "Zobacz wyniki" %} <c-icon name="arrow-right" size="sm" />
+    {# The scrim, PHOTOS.md section 2.
+
+       Not a flat wash over the whole frame: that turns a photograph into mud.
+       It is opaque where the text sits and gone where it does not — 94% at the
+       left edge, nothing past 88% of the width. The photograph is offset to
+       70% for the same reason, so the interesting part of it is not the part
+       under the heading.
+
+       On a phone the text lies over the whole picture, so the gradient turns
+       vertical instead. Section 3 is what decides whether either is strong
+       enough, and it is measured rather than eyeballed:
+       scripts/check_photo_contrast.py. #}
+    <span aria-hidden="true" class="u-hero-scrim absolute inset-0"></span>
+
+    <div class="relative w-full p-6 pt-24 md:p-12 xl:p-16">
+      <div class="max-w-[46rem] lg:max-w-[38rem]">
+        {# The stagger is on the heading and nothing else.
+
+           C.3 row 2 asks for "три строки со сдвигом 60ms" — the three lines of
+           the h1. It was on the whole block for one afternoon, subtitle and
+           buttons included, and that cost the page its LCP budget: the subtitle
+           is the largest element on the first screen, an element at opacity 0
+           is not painted, and 180ms of delay plus 500ms of fade put the largest
+           contentful paint at 3.19s against C.6's 2.2s ceiling.
+
+           So the lines rise and everything under them is simply there. #}
+        {# leading-[1.14] on the hero only. B.3 sets the display step at 1.02,
+           which is right for one line and too tight for three with a slab
+           behind the middle one: an inline background paints the font's full
+           ascent and descent, so at 1.02 the yellow bled into the boxes of the
+           lines above and below and touched their glyphs.
+           scripts/check_photo_contrast.py is what noticed. The scale is
+           untouched — this is leading between three block lines inside one
+           heading, not a new type step. #}
+        <h1 class="display reveal-stagger leading-[1.14]">
+          <span class="block" style="--i: 0">{% translate "Prawo jazdy" %}</span>
+          <span class="block" style="--i: 1">
+            {# The yellow slab sits behind the baseline rather than under it, so
+               the descenders cut through it the way a marker would. B.7 point 1
+               names this word specifically. #}
+            {# The yellow slab, B.7 point 1: "слово KAT. B подчёркнуто жёлтой
+               плашкой".
+
+               It is the word's own background rather than a band positioned
+               near it, and that is the whole point: a background covers the
+               inline box exactly, so the pair under every glyph is known —
+               near black on #FFD400, 11.98:1. White on that yellow is 1.43:1,
+               the one pair B.2 forbids by name.
+
+               Two earlier versions failed here and scripts/check_photo_contrast.py
+               caught both. Behind the word with the word left white: white on
+               yellow. Below the baseline as a rule: with the display step's
+               1.02 line-height there is no leading to put it in, so it landed
+               inside the next line's box and put yellow under "w Wieluniu".
+               A background has neither problem because it cannot be anywhere
+               but exactly behind its own text. #}
+            <span class="bg-accent u-fixed-ink px-[0.08em]">{% translate "kat. B" %}</span>
+          </span>
+          <span class="block" style="--i: 2">{% translate "w Wieluniu" %}</span>
+        </h1>
+
+        <p class="u-narrow mt-8 text-body-lg u-muted-on-ground">
+          {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
+        </p>
+
+        <div class="mt-10 flex flex-wrap gap-4">
+          <c-button variant="primary" size="lg" href="{{ enrol_url }}">{% translate "Zapisz się" %}</c-button>
+          {% if course.price_gross %}
+            <c-button variant="secondary" size="lg" href="{% url 'courses:pricing' %}">
+              {% translate "Cennik od" %} <span class="data">{{ course.price_gross|floatformat:0 }} zł</span>
             </c-button>
-          </p>
+          {% endif %}
         </div>
       </div>
-    {% endif %}
+
+      {# B.7 point 1 closes the card with the social links and the phone in the
+         data face. The rule above them is drawn from the ground, so it holds in
+         both themes. #}
+      <div class="u-rule-on-ground mt-16 flex flex-wrap items-center gap-x-8 gap-y-4 border-t pt-6">
+        {% if site_settings.phone_primary %}
+          <a href="tel:{{ site_settings.phone_primary|cut:' ' }}"
+             class="data flex min-h-[44px] items-center gap-2 text-data-lg underline-offset-4 hover:underline">
+            <c-icon name="phone" size="sm" /> {{ site_settings.phone_primary }}
+          </a>
+        {% endif %}
+        <ul class="flex items-center gap-4">
+          {% if site_settings.facebook_url %}
+            <li><a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank"
+                   class="inline-flex min-h-[44px] items-center gap-2 text-small u-muted-on-ground underline-offset-4 hover:underline">
+              Facebook <c-icon name="external" size="sm" />
+            </a></li>
+          {% endif %}
+          {% if site_settings.youtube_url %}
+            <li><a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank"
+                   class="inline-flex min-h-[44px] items-center gap-2 text-small u-muted-on-ground underline-offset-4 hover:underline">
+              YouTube <c-icon name="external" size="sm" />
+            </a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
-{# ------------------------------------------------------- 2. The three courses
-   The main navigation node of the page. One category, three ways to take it,
-   each with the figure on the card — which is the question a visitor arrived
-   with and the one the previous site could not answer at all.
-   ------------------------------------------------------- #}
+{# ======================================================= 2. DLACZEGO MY
+   B.7 point 2. Four cards in a bento: one large on the left across both rows,
+   two across the top right, one below them. The four facts are the ones point 2
+   names, and every one of them is from the school's own copy — OSTRYCHARZ.md
+   part A, quoted rather than improved on.
+   ======================================================= #}
+<c-section id="dlaczego-my">
+  <c-slot name="heading">{% translate "Dlaczego my" %}</c-slot>
+  <c-slot name="sub">{% translate "Cztery rzeczy, które ta szkoła ma, a które trzeba było wcześniej wyczytać z jednej długiej strony." %}</c-slot>
+
+  <c-bento>
+    {# One photograph, on the card that has room for it. photos.txt carries a
+       single bento frame and PHOTOS.md section 6 forbids repeating one to fill
+       the other three — three more candidates are listed in section 1 if the
+       owner wants the full set. #}
+    {% translate "Wnętrze auta, ręce na kierownicy" as t_bento_alt %}
+    <c-bento.item large="1" cover="1" photo="bento-white" alt="{{ t_bento_alt }}"
+                  title="{% translate 'Rozłożenie płatności' %}"
+                  text="{% translate 'Kurs opłacasz w ratach, bez pośrednika, bez umowy z bankiem i bez dopłaty za samo rozłożenie.' %}" />
+    <c-bento.item title="{% translate 'Doświadczeni instruktorzy' %}"
+                  text="{% translate 'Uczą spokojnie i konkretnie, a na egzamin jedziesz tym samym autem, którym jeździłeś na kursie.' %}" />
+    <c-bento.item title="{% translate 'Własne auta, automat i manual' %}"
+                  text="{% translate 'Klimatyzowane, z bogatym wyposażeniem. Jeśli manual Cię blokuje, robisz kurs na automacie.' %}" />
+    <c-bento.item title="{% translate 'Dowóz na egzamin gratis' %}"
+                  text="{% translate 'W cenie kursu, a nie jako dopłata na końcu.' %}" />
+  </c-bento>
+</c-section>
+
+{# ========================================================= 3. ZDAWALNOŚĆ
+   B.7 point 3. A dark card the width of the container: the heading on the left,
+   the figures on the right, counted up when the block arrives.
+
+   This is the block the whole site is built around. tech.md section 1 is
+   explicit that the first-attempt pass rate is the strongest thing this
+   business has to say, and that it spent years buried in the middle of a
+   one-page site.
+
+   The figures carry their final value as text and data-count-to beside it, so
+   the number is correct before the script runs, if the script never runs, and
+   under prefers-reduced-motion. C.5 requires the last of those and the e2e
+   suite checks it.
+   ========================================================= #}
+{% if stat_items %}
+  <section class="reveal u-container">
+    {# A photograph behind the figures, PHOTOS.md section 2's third case: the
+       text runs right across the block, so the wash is even rather than
+       directional — there is nowhere on the frame the text is not. #}
+    <div class="u-photo-ground u-band-photo overflow-hidden rounded-card p-8 md:p-12 xl:p-16">
+      {# <picture>, not a bare <img>. The JPEG is the fallback and nothing
+         modern receives it: at 1440 this frame is 50 KB as AVIF against 141 as
+         JPEG, and handing the browser only the JPEG spent that difference on
+         every visitor. It put the first screen at 499 KB against C.6's 500. #}
+      <c-photo stem="band-day" crop="band" decorative="1" />
+      <div class="grid gap-10 lg:grid-cols-12 lg:items-start">
+        <div class="lg:col-span-4">
+          <h2>{% translate "Zdawalność" %}</h2>
+          <p class="mt-4 u-muted-on-ground">
+            {% blocktranslate with year=pass_rate.year %}Rocznik {{ year }}, liczony od wszystkich kandydatów, którzy przystąpili do egzaminu.{% endblocktranslate %}
+          </p>
+          <p class="mt-8">
+            <c-button variant="secondary" href="{% url 'core:pass_rates' %}">
+              {% translate "Jak to liczymy" %} <c-icon name="arrow-right" size="sm" />
+            </c-button>
+          </p>
+        </div>
+
+        <dl class="grid gap-8 sm:grid-cols-2 lg:col-span-8 lg:gap-10">
+          {% for item in stat_items %}
+            <div>
+              {# The percent sign is cut off the attribute and left in the text:
+                 the script animates a number and puts the suffix back from what
+                 it found. The polish decimal comma is normalised in motion.js,
+                 not here — see the note on countUp. #}
+              <dt class="u-bignum" data-count-to="{{ item.value|cut:'%' }}">{{ item.value }}</dt>
+              <dd class="mt-3 u-muted-on-ground">{{ item.label }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{# ============================================== 4. KILKA SŁÓW O SZKOLE
+   B.7 point 4. The heading on the left, a paragraph on the right, and the video
+   card the full width underneath.
+
+   The video card disappears entirely when the owner has not given us a clip,
+   and the two-column text above it stays — this block is the school's own
+   sentence about itself and does not depend on a film.
+   ============================================== #}
+<c-section id="o-szkole" tone="muted">
+  <div class="grid gap-10 lg:grid-cols-12 lg:items-start">
+    <div class="lg:col-span-5">
+      <h2>{% translate "Kilka słów o szkole" %}</h2>
+    </div>
+    <div class="lg:col-span-7">
+      <p class="text-body-lg u-body-on-ground">
+        {% translate "Ośrodek szkolenia kierowców w Wieluniu. Szkolimy na kategorię B — od pierwszej godziny teorii do egzaminu państwowego, na własnych autach i z instruktorami, którzy jeżdżą tu od lat." %}
+      </p>
+      <p class="mt-6">
+        <c-button variant="ghost" href="{% url 'core:page' slug='o-nas' %}">
+          {% translate "Więcej o nas" %} <c-icon name="arrow-right" size="sm" />
+        </c-button>
+      </p>
+    </div>
+  </div>
+
+  {% if video_id or video_url %}
+    {# The id stays on the clip itself even though B.7 point 4 folded the video
+       into this block rather than giving it a section of its own. It is a real
+       anchor: the old one-page site linked to #wideo, and the contract test
+       that proves nothing on this page fetches from Google looks for it to know
+       the clip actually rendered. #}
+    <div id="wideo" class="mt-12">
+      {# The owner's own poster frame when they have uploaded one, and the
+         stock training-ground photograph until then. Not a grey box: PHOTOS.md
+         picked this one because it is the single frame in the set that reads
+         as "learning to drive" rather than "somebody in a car". #}
+      {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
+      <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
+                     poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
+                     photo="{% if not site_settings.youtube_poster %}about-plac{% endif %}"
+                     alt="{% if site_settings.youtube_poster_alt %}{{ site_settings.youtube_poster_alt }}{% else %}{{ t_poster_alt }}{% endif %}" />
+      <p class="mt-4 text-small u-muted-on-ground">
+        {% translate "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google." %}
+      </p>
+    </div>
+  {% endif %}
+</c-section>
+
+{# ==================================================== 5. USŁUGI I PROGRAM
+   B.7 point 5. Three group cards: the name, what is in it, the price in the
+   data face and the way in. One is featured and filled with the blue; a full
+   group would be the dimmed one with a BRAK MIEJSC badge.
+
+   The tab strip above them is the CONTRACT GAP in the header of this file: this
+   school has one branch of offer, and a strip with one chip in it says nothing.
+
+   `featured` is the first variant, which is the order the owner set in the
+   admin — the cards follow the data rather than a number written here.
+   ==================================================== #}
 {% if variants %}
   <c-section id="kurs">
     <c-slot name="heading">{% translate "Trzy sposoby na kategorię B" %}</c-slot>
     <c-slot name="sub">{% translate "Ta sama kategoria, ten sam egzamin. Różni się tempo i skrzynia biegów." %}</c-slot>
 
-    <ul class="grid gap-6 md:grid-cols-3">
+    <ul class="grid gap-5 md:grid-cols-3">
       {% for variant in variants %}
         <li class="flex">
-          <c-card href="{% url 'courses:detail' slug='kat-b' %}" class="flex w-full flex-col">
-            {% if forloop.first %}
-              <p class="mb-4"><c-badge tone="accent">{% translate "Najczęściej wybierany" %}</c-badge></p>
-            {% endif %}
-            <c-slot name="title">{{ variant.title }}</c-slot>
-            {% if variant.note %}<p class="text-ink-700">{{ variant.note }}</p>{% endif %}
-            <p class="data mt-auto pt-6 text-data-xl text-ink">{{ variant.price_gross|floatformat:0 }} zł</p>
-          </c-card>
+          <c-group-card :intake="variant" href="{{ enrol_url }}?kurs={{ variant.id }}"
+                        featured="{% if forloop.first %}1{% endif %}" class="w-full" />
         </li>
       {% endfor %}
     </ul>
 
-    <p class="mt-8 flex flex-wrap gap-6">
+    <p class="mt-10 flex flex-wrap gap-8">
       <c-button variant="ghost" href="{% url 'courses:pricing' %}">
         {% translate "Pełny cennik" %} <c-icon name="arrow-right" size="sm" />
       </c-button>
@@ -142,95 +337,207 @@ comes from templates/cotton/, tech.md section 7.
   </c-section>
 {% endif %}
 
-{# ---------------------------------------------------------- 3. The numbers
-   The band the whole letter to this owner is built on. Counts, not adjectives.
-   ---------------------------------------------------------- #}
-{% if pass_rate %}
-  <c-stat-band ground="ink" :items="stat_items">
-    <c-button variant="secondary" href="{% url 'core:pass_rates' %}">
-      {% translate "Jak liczymy zdawalność" %} <c-icon name="arrow-right" size="sm" />
-    </c-button>
-  </c-stat-band>
-{% endif %}
+{# ========================================================== 6. ZGŁOSZENIE
+   B.7 point 6. A dark card: the heading on the left with its first word in the
+   yellow, one line of explanation, and the short form on the right — name,
+   phone, RODO, button.
 
-{# ------------------------------------------------------------------ 4. Video
-   No youtube script and no youtube thumbnail: c-video-embed explains why. The
-   section disappears entirely when the owner has not given us a clip.
-   ------------------------------------------------------------------ #}
-{% if video_id or video_url %}
-  <c-section id="wideo" tone="muted">
-    <c-slot name="heading">{% translate "Zobacz, jak uczymy" %}</c-slot>
-    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
-      <div class="lg:col-span-7">
-        <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
-                       poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
-                       alt="{{ site_settings.youtube_poster_alt }}" />
-      </div>
+   The form is the same LeadForm the full page uses, in its compact mode. The
+   fields left out are the ones apps/leads/forms.py does not mark required, so
+   nothing here can produce a submission the server then rejects.
+   ========================================================== #}
+<section class="reveal u-container u-section-compact">
+  <div class="u-photo-ground u-band-photo overflow-hidden rounded-card p-8 md:p-12">
+    <c-photo stem="band-road" crop="band" decorative="1" />
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-start">
       <div class="lg:col-span-5">
-        <p class="text-body-lg text-ink-700">
-          {% translate "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google." %}
+        <h2>
+          <span class="text-accent">{% translate "Zostaw" %}</span> {% translate "numer" %}
+        </h2>
+        <p class="mt-4 u-muted-on-ground">
+          {% translate "Oddzwonimy tego samego dnia i umówimy pierwsze zajęcia. Bez zobowiązania." %}
         </p>
-        {% if site_settings.youtube_url %}
-          <p class="mt-6">
-            <c-button variant="secondary" href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank">
-              {% translate "Nasz kanał" %} <c-icon name="external" size="sm" />
-            </c-button>
+        {% if site_settings.phone_primary %}
+          <p class="mt-8">
+            <a href="tel:{{ site_settings.phone_primary|cut:' ' }}"
+               class="data inline-flex min-h-[44px] items-center gap-2 text-data-lg underline-offset-4 hover:underline">
+              <c-icon name="phone" size="sm" /> {{ site_settings.phone_primary }}
+            </a>
           </p>
         {% endif %}
       </div>
+
+      <div class="min-w-0 lg:col-span-7">
+        {% include "leads/_form.html" with form=lead_form form_id="home-lead-form" compact=1 %}
+      </div>
     </div>
+  </div>
+</section>
+
+{# ========================================================= 7. INSTRUKTORZY
+   B.7 point 7, and the CONTRACT GAP at the top of this file. Nothing in the
+   context fills `instructors`, so the block does not render — which is also
+   what point 7 asks for when there is no data.
+
+   Part D is the harder constraint and it stays true even once the view passes
+   them: an instructor card without a real photograph shows <c-empty>, never a
+   stock portrait with a name under it. D.2 is blunt about why — a client turns
+   up at the school and asks for somebody who does not exist.
+   ========================================================= #}
+{% if instructors %}
+  <c-section id="instruktorzy" tone="muted">
+    <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
+    {% translate "Instruktorzy" as t_instruktorzy %}
+    <c-carousel id="instruktorzy-rail" per_view="4" label="{{ t_instruktorzy }}">
+      {% for person in instructors %}
+        <c-card>
+          {% if person.photo %}
+            <div class="u-photo -m-6 mb-6">
+              <c-picture :image="person.photo" alt="{{ person.full_name }}" ratio="portrait" sizes="(min-width: 1024px) 25vw, 85vw" />
+            </div>
+            <c-slot name="title">{{ person.full_name }}</c-slot>
+            {% if person.years %}
+              <p class="data u-muted-on-ground">
+                {% blocktranslate with years=person.years %}instruktor od {{ years }} lat{% endblocktranslate %}
+              </p>
+            {% endif %}
+          {% else %}
+            <c-empty title="{{ person.full_name }}">
+              <p>{% translate "Zdjęcie w przygotowaniu." %}</p>
+            </c-empty>
+          {% endif %}
+        </c-card>
+      {% endfor %}
+    </c-carousel>
   </c-section>
 {% endif %}
 
-{# ------------------------------------------------------- 5. What you get
-   Straight out of the school's own copy, tech.md section 1. Four facts, no
-   circle icons, hairlines between them — the A.9 point 6 layout.
-   ------------------------------------------------------- #}
-<c-section id="w-cenie">
-  <c-slot name="heading">{% translate "Co dostajesz w cenie" %}</c-slot>
-  <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-    <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "gratis" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "dowóz na egzamin państwowy, autem, którym jeździsz na kursie" %}</p>
-    </li>
-    <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "klimatyzacja" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "auta z bogatym wyposażeniem, także latem" %}</p>
-    </li>
-    <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "automat" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "kurs na skrzyni automatycznej, jeśli manual Cię blokuje" %}</p>
-    </li>
-    <li class="lg:border-l lg:border-line-soft lg:px-8">
-      <p class="font-display text-h2 font-bold text-ink">{% translate "pl / ru / ua" %}</p>
-      <p class="mt-2 text-ink-700">{% translate "strona i materiały w trzech językach" %}</p>
-    </li>
-  </ul>
+{# ============================================================== 8. OPINIE
+   B.7 point 8. Fewer than two and the block does not render — the view has
+   already emptied the list in that case. Every review carries a link to its
+   source: tech.md section 4.7 and CLAUDE.md rule 6b both forbid an invented
+   one, and an aggregate rating without sources is what Google strips rich
+   results for.
+   ============================================================== #}
+{% if testimonials %}
+  <c-section id="opinie">
+    <c-slot name="heading">{% translate "Co mówią kursanci" %}</c-slot>
+    {% translate "Opinie kursantów" as t_opinie %}
+    <c-carousel id="opinie-rail" per_view="3" label="{{ t_opinie }}">
+      {% for testimonial in testimonials %}
+        <c-card>
+          <p class="u-body-on-ground">{{ testimonial.text }}</p>
+          <p class="mt-6 font-bold">{{ testimonial.author_name }}</p>
+          {% if testimonial.source_url %}
+            <p class="mt-1">
+              <a href="{{ testimonial.source_url }}" rel="noopener nofollow" target="_blank"
+                 class="inline-flex items-center gap-2 text-small u-muted-on-ground underline-offset-4 hover:underline">
+                {% translate "źródło" %} <c-icon name="external" size="sm" />
+              </a>
+            </p>
+          {% endif %}
+        </c-card>
+      {% endfor %}
+    </c-carousel>
+  </c-section>
+{% endif %}
+
+{# ============================================================= 9. KONTAKT
+   B.7 point 9: the phone, the address, the hours and the socials on a card,
+   and the map with a 20px radius.
+
+   Beside the map, not over it — core v26 narrows B.7 point 9 here. The card
+   used to float on the map's top left corner, which is where a google map
+   keeps its own controls and the place card with the route link, and it ran
+   past the map's bottom edge whenever the hours made it the taller of the two.
+   ============================================================= #}
+<c-section id="kontakt" tone="muted">
+  <c-slot name="heading">{% translate "Kontakt i dojazd" %}</c-slot>
+
+  {# Card in the first column and map in the second, so neither covers the
+     other. Before this they shared one grid cell with the card laid on top, and
+     the map inside kept a fixed 420px while the row grew around the card.
+
+     The map keeps a height of its own and sticks below the header while the
+     card scrolls past it. The card is long — seven rows of hours in a 24rem
+     column — and a map stretched to match it came out over 1000px tall on a
+     desktop: a portrait strip of street, with its button half a screen down.
+
+     Below lg they stack in source order, the map first. #}
+  <div class="grid gap-6 [&>*]:min-w-0{% if site_settings.map_lat and site_settings.map_lng %} lg:grid-cols-[24rem_minmax(0,1fr)]{% endif %}">
+    {% if site_settings.map_lat and site_settings.map_lng %}
+      {# min-w-0 on both children of the grid above, and it is not decoration: a
+         grid item defaults to min-width: auto and refuses to shrink below its
+         own content, so the map's fixed-width placeholder pushed the whole
+         document to 392px inside a 320px viewport. B.4: the page never moves
+         sideways. #}
+      <div class="min-w-0 overflow-hidden rounded-card lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:self-start">
+        {# unlocalize: the polish locale writes a decimal with a comma, and
+           parseFloat stops at it — 51,2206 becomes 51 and the marker lands in
+           the Atlantic. #}
+        <c-map lat="{{ site_settings.map_lat|unlocalize }}" lng="{{ site_settings.map_lng|unlocalize }}"
+               zoom="16" height="lg" class="lg:h-[32rem]"
+               label="{{ site_settings.short_name }}, {{ site_settings.street }}" />
+      </div>
+    {% endif %}
+
+    <div class="lg:col-start-1 lg:row-start-1">
+      <c-card class="flex h-full flex-col gap-6">
+        <address class="flex flex-col gap-4 not-italic">
+          <p class="flex items-start gap-3">
+            <c-icon name="pin" size="sm" class="mt-1 u-muted-on-ground" />
+            <span>{{ site_settings.street }}<br><span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}</span>
+          </p>
+          {% for phone in site_settings.phones %}
+            <p class="flex items-center gap-3">
+              <c-icon name="phone" size="sm" class="u-muted-on-ground" />
+              <a href="tel:{{ phone|cut:' ' }}" class="data text-data-lg underline-offset-4 hover:underline">{{ phone }}</a>
+            </p>
+          {% endfor %}
+          {% if site_settings.email %}
+            <p class="flex items-center gap-3">
+              <c-icon name="mail" size="sm" class="u-muted-on-ground" />
+              <a href="mailto:{{ site_settings.email }}" class="underline-offset-4 hover:underline">{{ site_settings.email }}</a>
+            </p>
+          {% endif %}
+        </address>
+
+        <div class="min-w-0">
+          <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
+          <c-hours-table department="office" />
+        </div>
+
+        {% if directions.geo or directions.osm %}
+          <div class="mt-auto flex flex-wrap gap-4 pt-2">
+            {% if directions.geo %}<c-button variant="ghost" href="{{ directions.geo }}">{% translate "Nawiguj" %}</c-button>{% endif %}
+            {% if directions.osm %}
+              <c-button variant="ghost" href="{{ directions.osm }}">
+                {% translate "Wyznacz trasę" %} <c-icon name="external" size="sm" />
+              </c-button>
+            {% endif %}
+          </div>
+        {% endif %}
+      </c-card>
+    </div>
+  </div>
 </c-section>
 
-{# ---------------------------------------------------------- 6. Testimonials
-   A.9 point 7: fewer than two and the section does not render. The view has
-   already emptied the list in that case, and every one of them carries a link
-   to its source — no invented reviews under any circumstances.
-   ---------------------------------------------------------- #}
-{% if testimonials %}
-  <c-section id="opinie" tone="muted">
-    <c-slot name="heading">{% translate "Co mówią kursanci" %}</c-slot>
-    <c-testimonials :items="testimonials" />
-  </c-section>
-{% endif %}
+{# ================================================================= 10. FAQ
+   B.7 point 10. The first question open, which is what point 10 asks for and
+   also what stops the block reading as a list of closed boxes.
 
-{# ------------------------------------------------------------------ 7. FAQ
-   Five questions, A.9 point 8. The same five go into the FAQPage json-ld the
-   view builds: marking up an answer that is not on the page is hidden content.
-   ------------------------------------------------------------------ #}
+   The same questions go into the FAQPage json-ld the view builds: marking up an
+   answer that is not on the page is hidden content, tech.md section 8.
+   ================================================================= #}
 {% if faqs %}
   <c-section id="faq">
     <c-slot name="heading">{% translate "Częste pytania" %}</c-slot>
     <div class="u-narrow">
       <c-accordion>
         {% for faq in faqs %}
-          <c-accordion.item title="{{ faq.question }}">{{ faq.answer|linebreaks }}</c-accordion.item>
+          <c-accordion.item title="{{ faq.question }}" open="{% if forloop.first %}1{% endif %}">
+            {{ faq.answer|linebreaks }}
+          </c-accordion.item>
         {% endfor %}
       </c-accordion>
       <p class="mt-8">
@@ -242,77 +549,12 @@ comes from templates/cotton/, tech.md section 7.
   </c-section>
 {% endif %}
 
-{# ------------------------------------------------------------- 8. Contact
-   A.9 point 9: two columns on lg, the details on the left with the map under
-   them, the way to sign up on the right.
+{# 11. The footer is layout, built in R4, and this page does not touch it. #}
 
-   The form on the right is the one from S3.1, posted over htmx: the answer
-   swaps in place and the reader never loses the map they were looking at.
-   ------------------------------------------------------------- #}
-<c-section id="kontakt" tone="muted">
-  <c-slot name="heading">{% translate "Kontakt i zapisy" %}</c-slot>
-  <div class="grid gap-12 lg:grid-cols-2">
-
-    <div class="flex min-w-0 flex-col gap-8">
-      <address class="flex flex-col gap-4 not-italic">
-        <p class="flex items-start gap-3">
-          <c-icon name="pin" size="sm" class="mt-1 text-ink-500" />
-          <span>{{ site_settings.street }}<br><span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}</span>
-        </p>
-        {% for phone in site_settings.phones %}
-          <p class="flex items-center gap-3">
-            <c-icon name="phone" size="sm" class="text-ink-500" />
-            <a href="tel:{{ phone|cut:' ' }}" class="data text-data-lg underline-offset-4 hover:underline">{{ phone }}</a>
-          </p>
-        {% endfor %}
-        {% if site_settings.email %}
-          <p class="flex items-center gap-3">
-            <c-icon name="mail" size="sm" class="text-ink-500" />
-            <a href="mailto:{{ site_settings.email }}" class="underline-offset-4 hover:underline">{{ site_settings.email }}</a>
-          </p>
-        {% endif %}
-      </address>
-
-      <div class="min-w-0">
-        <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
-        <c-hours-table department="office" />
-      </div>
-
-      {% if site_settings.map_lat and site_settings.map_lng %}
-        <div>
-          {# unlocalize: the polish locale writes a decimal with a comma, and
-             parseFloat stops at it — 51,2206 becomes 51 and the marker lands in
-             the Atlantic. #}
-          <c-map lat="{{ site_settings.map_lat|unlocalize }}" lng="{{ site_settings.map_lng|unlocalize }}"
-                 zoom="16" height="md"
-                 label="{{ site_settings.short_name }}, {{ site_settings.street }}" />
-          {% if directions.geo or directions.osm %}
-            <p class="mt-4 flex flex-wrap gap-4">
-              {% if directions.geo %}<c-button variant="ghost" href="{{ directions.geo }}">{% translate "Nawiguj" %}</c-button>{% endif %}
-              {% if directions.osm %}
-                <c-button variant="ghost" href="{{ directions.osm }}">
-                  {% translate "Wyznacz trasę" %} <c-icon name="external" size="sm" />
-                </c-button>
-              {% endif %}
-            </p>
-          {% endif %}
-        </div>
-      {% endif %}
-    </div>
-
-    <div class="min-w-0">
-      <c-heading level="3">{% translate "Zostaw numer, oddzwonimy" %}</c-heading>
-      <div class="mt-6">{% include "leads/_form.html" with form=lead_form %}</div>
-    </div>
-  </div>
-</c-section>
-
-{# 9. The footer is layout, built in F2, and this page does not touch it. #}
-
-{# ------------------------------------------------------------ 10. Sticky CTA
-   Below md only, and always under the cookie banner, A.5. The padding below
+{# ====================================================== 12. STICKY CALL BAR
+   B.7 point 12, below md only, and always under the cookie banner. The spacer
    keeps the bar off the last section instead of on top of it.
-   ------------------------------------------------------------ #}
+   ====================================================== #}
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
 <c-cta-bar title="{{ t_zapisz_sie_na }}" phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />

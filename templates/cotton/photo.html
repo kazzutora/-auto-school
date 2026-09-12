@@ -1,0 +1,72 @@
+{% load static %}
+{% comment %}
+A photograph from the pipeline, PHOTOS.md section 4. Props: stem, crop,
+crop_mobile, alt, sizes, priority, decorative, class.
+
+scripts/optimize_photos.py writes every crop to one predictable shape —
+static/img/<crop>/<stem>-<width>.<ext> — so a component can build the whole
+<picture> from two strings instead of every call site writing nine paths by
+hand. That is not only shorter: the first version of the home page handed the
+browser the bare JPEG for the two bands, which is the fallback nobody modern
+receives, and spent 180 KB of the 500 KB first-screen budget in C.6 on the
+difference. A typo in one of nine paths does the same thing silently.
+
+`crop_mobile` is the hero's case: a 16:9 hero on a portrait phone is a letterbox
+with the subject cropped out of it, so the phone gets a 4:5 cut of its own. Both
+live in ONE <picture> with a media query on the mobile sources — two pictures
+hidden from each other by a css class would download both files, which is the
+opposite of the point.
+
+`priority` marks the LCP element: fetchpriority high, eager, and no lazy. Every
+other photograph on the site is lazy, C.6.
+
+`decorative` is for a photograph used as a background with text over it. That is
+decoration by definition, and it passes alt="" together with aria-hidden — the
+pair tech.md section 8 fixes, never a bare empty alt.
+{% endcomment %}
+<c-vars stem="" crop="card" crop_mobile="" alt="" sizes="100vw" priority="" decorative="" class="" />
+
+{# The widths below are the ones each crop is actually written at. They live in
+   the component rather than in the call because they are a property of the
+   crop: asking a caller to remember that hero-tall stops at 960 is asking for
+   the fourth path to be wrong. #}
+<picture>
+  {% if crop_mobile %}
+    <source type="image/avif" media="(max-width: 767px)" sizes="{{ sizes }}"
+            srcset="{% static 'img/' %}{{ crop_mobile }}/{{ stem }}-480.avif 480w, {% static 'img/' %}{{ crop_mobile }}/{{ stem }}-960.avif 960w">
+    <source type="image/webp" media="(max-width: 767px)" sizes="{{ sizes }}"
+            srcset="{% static 'img/' %}{{ crop_mobile }}/{{ stem }}-480.webp 480w, {% static 'img/' %}{{ crop_mobile }}/{{ stem }}-960.webp 960w">
+  {% endif %}
+
+  {% if crop == 'hero' or crop == 'band' %}
+    <source type="image/avif" sizes="{{ sizes }}"
+            srcset="{% static 'img/' %}{{ crop }}/{{ stem }}-960.avif 960w, {% static 'img/' %}{{ crop }}/{{ stem }}-1440.avif 1440w, {% static 'img/' %}{{ crop }}/{{ stem }}-1920.avif 1920w">
+    <source type="image/webp" sizes="{{ sizes }}"
+            srcset="{% static 'img/' %}{{ crop }}/{{ stem }}-960.webp 960w, {% static 'img/' %}{{ crop }}/{{ stem }}-1440.webp 1440w, {% static 'img/' %}{{ crop }}/{{ stem }}-1920.webp 1920w">
+  {% elif crop == 'poster' %}
+    <source type="image/avif" sizes="{{ sizes }}"
+            srcset="{% static 'img/poster/' %}{{ stem }}-960.avif 960w, {% static 'img/poster/' %}{{ stem }}-1440.avif 1440w">
+    <source type="image/webp" sizes="{{ sizes }}"
+            srcset="{% static 'img/poster/' %}{{ stem }}-960.webp 960w, {% static 'img/poster/' %}{{ stem }}-1440.webp 1440w">
+  {% elif crop == 'hero-tall' %}
+    <source type="image/avif" sizes="{{ sizes }}"
+            srcset="{% static 'img/hero-tall/' %}{{ stem }}-480.avif 480w, {% static 'img/hero-tall/' %}{{ stem }}-960.avif 960w">
+    <source type="image/webp" sizes="{{ sizes }}"
+            srcset="{% static 'img/hero-tall/' %}{{ stem }}-480.webp 480w, {% static 'img/hero-tall/' %}{{ stem }}-960.webp 960w">
+  {% else %}
+    <source type="image/avif" sizes="{{ sizes }}"
+            srcset="{% static 'img/card/' %}{{ stem }}-480.avif 480w, {% static 'img/card/' %}{{ stem }}-960.avif 960w, {% static 'img/card/' %}{{ stem }}-1440.avif 1440w">
+    <source type="image/webp" sizes="{{ sizes }}"
+            srcset="{% static 'img/card/' %}{{ stem }}-480.webp 480w, {% static 'img/card/' %}{{ stem }}-960.webp 960w, {% static 'img/card/' %}{{ stem }}-1440.webp 1440w">
+  {% endif %}
+
+  {# The fallback, and the intrinsic size. width and height are the crop's own
+     ratio, so the box is reserved before the file lands — the CLS budget in
+     C.6 is 0.05 and an unreserved hero spends all of it in one frame. #}
+  <img src="{% static 'img/' %}{{ crop }}/{{ stem }}-{% if crop == 'card' %}960{% elif crop == 'hero-tall' %}960{% else %}1440{% endif %}.jpg"
+       {% if decorative %}alt="" aria-hidden="true"{% else %}alt="{{ alt }}"{% endif %}
+       width="{% if crop == 'card' %}960{% elif crop == 'hero-tall' %}960{% else %}1920{% endif %}"
+       height="{% if crop == 'card' %}640{% elif crop == 'hero-tall' %}1200{% elif crop == 'band' %}823{% else %}1080{% endif %}"
+       {% if priority %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
+       decoding="async" class="{{ class }}" {{ attrs }}>
+</picture>

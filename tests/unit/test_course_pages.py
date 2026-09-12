@@ -15,6 +15,8 @@ from apps.courses.models import Course, CourseIntake
 from apps.people.models import Vehicle
 from scripts import seed
 
+from tests.conftest import images_without_alt, repeated_grounds, section_grounds
+
 pytestmark = pytest.mark.django_db
 
 
@@ -296,8 +298,7 @@ def test_a_detail_page_carries_course_json_ld(client: Client, offer: list[Course
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt(client: Client, offer: list[Course]) -> None:
     for url in ("/kursy/", "/kursy/kat-b/"):
-        images = re.findall(r"<img[^>]*>", body_of(client, url))
-        assert not [img for img in images if not re.search(r'alt="[^"]+"', img)], url
+        assert not images_without_alt(body_of(client, url)), url
 
 
 # --------------------------------------------------------------------------
@@ -519,18 +520,32 @@ def test_the_card_only_sticks_from_lg(client: Client) -> None:
 
 
 def test_the_course_page_alternates_its_grounds(client: Client) -> None:
-    """X3 point 5: the whole page used to be one section, so nothing changed."""
+    """The page used to be one section, so nothing changed down its whole length.
+
+    The dark block's position moved at core v25, and the geometry is why. B.7
+    point 11 makes the footer a dark card the full width of the page with a
+    28px radius along its top. A dark section directly above it merges into one
+    very tall dark region, and the radius — the shape whose whole job is to say
+    "this is where the page ends" — has nothing to read against.
+
+    So the page's one dark block sits mid page and the closing band takes the
+    page ground. What has not moved is B.8 point 4: the page still ends on an
+    action. It is the ground that changed, not the rule, and the old assertion
+    checked the ground because that had been a fair proxy while the closing
+    band was the only inverted thing on the page.
+    """
     course = make_course()
 
     body = body_of(client, course.get_absolute_url())
-    sections = re.findall(r'<section[^>]*class="([^"]*)"', body)
-    grounds = [
-        "muted" if "bg-paper-50" in cls else "ink" if "u-ground-ink" in cls else "paper"
-        for cls in sections
-    ]
-    repeats = [i for i in range(1, len(grounds)) if grounds[i] == grounds[i - 1]]
+    grounds = section_grounds(body)
+    repeats = repeated_grounds(body)
     assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"
-    assert grounds[-1] == "ink", "the page does not end on the invitation"
+    assert grounds.count("dark") <= 1, f"more than one dark block: {grounds}"
+    assert grounds[-1] != "dark", "the last section is dark, straight above the dark footer"
+
+    inside = body[body.index("<main") : body.index("</main>")]
+    tail = inside[inside.rindex("<section") :]
+    assert "tel:" in tail or "/zapisz-sie/" in tail, "the page does not end on an action"
 
 
 def test_the_page_closes_on_the_choice_it_actually_asks_the_reader_to_make(

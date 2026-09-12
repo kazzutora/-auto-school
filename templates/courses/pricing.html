@@ -2,7 +2,7 @@
 {% load core_ui i18n %}
 
 {% comment %}
-The price list, FRONTEND.md A.10 and F6.
+The price list, REDESIGN.md B.8 and BLOCKS.md B and D.
 
 This is a strong page for this school rather than a placeholder, which is the
 one real difference from the first project: every figure here is published on
@@ -25,7 +25,7 @@ złoty column line up digit under digit, A.5.
 
 <c-page-header eyebrow="{% translate 'Cennik' %}" title="{% translate 'Cennik' %}"
                lead="{% translate 'Ceny brutto, bez ukrytych kosztów. Dowóz na egzamin państwowy jest w cenie kursu.' %}">
-  <c-breadcrumbs :items="breadcrumbs" />
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 
   <c-slot name="aside">
     {% if headline_price %}
@@ -44,10 +44,14 @@ złoty column line up digit under digit, A.5.
 {% endif %}
 
 {% if groups %}
-  {# Ground alternates group by group, X1 point 7: two sections of the same
-     colour in a row read as one long block. #}
+  {# Ground alternates group by group, REDESIGN.md B.8 point 2: two sections
+     of the same colour in a row read as one long block.
+
+     paper and surface, not paper and paper-50. B.2 gave the page a warm grey
+     of its own and the cards a white, so the alternation is now between the
+     page and a white band rather than between two greys a hair apart. #}
   {% for label, rows in groups %}
-    <c-section tone="{% cycle 'default' 'muted' %}" size="compact" id="grupa-{{ forloop.counter }}">
+    <c-section tone="{% cycle 'default' 'surface' %}" size="compact" id="grupa-{{ forloop.counter }}">
       {% translate "Pozostałe usługi" as fallback %}
       <c-heading level="2">{{ label|default:fallback }}</c-heading>
 
@@ -102,7 +106,7 @@ złoty column line up digit under digit, A.5.
   </c-section>
 {% endif %}
 
-<c-cta-band ground="ink"
+<c-cta-band ground="paper"
             title="{% translate 'Zaczynamy?' %}"
             text="{% translate 'Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — powiemy, kiedy startuje najbliższa grupa.' %}"
             href="{{ enrol_url }}"

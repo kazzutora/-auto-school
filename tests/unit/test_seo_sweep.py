@@ -185,9 +185,23 @@ def test_an_inner_page_carries_its_trail(client: Client, whole_site: None, url: 
 @pytest.mark.a11y
 @pytest.mark.parametrize("url", PUBLIC_URLS)
 def test_no_image_ships_an_empty_alt(client: Client, whole_site: None, url: str) -> None:
+    """Every rendered img has alt text, or says it is decorative.
+
+    The same pair tests/unit/test_template_images.py accepts, and for the same
+    reason: an empty alt on its own is a forgotten attribute, while an empty alt
+    beside aria-hidden is the documented way to say a picture carries no
+    information — the school's mark sitting next to the school's name in text.
+    tech.md section 8 and cotton/picture.html both fix the convention.
+    """
     images = re.findall(r"<img[^>]*>", body_of(client, url))
 
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    offenders = [
+        image
+        for image in images
+        if not re.search(r'alt="[^"]+"', image)
+        and not (re.search(r'alt=""', image) and re.search(r'aria-hidden="true"', image))
+    ]
+    assert not offenders
 
 
 # --------------------------------------------------------------------------

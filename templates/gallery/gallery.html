@@ -17,10 +17,10 @@ here is decorative: every image is content, so every alt says what it shows.
      fact to fill the space with. #}
   <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
     <div>
-    <c-breadcrumbs :items="breadcrumbs" />
+    <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
     {% translate "Ośrodek" as t_osrodek %}
     <c-heading level="1" eyebrow="{{ t_osrodek }}" class="mt-6">{% translate "Galeria" %}</c-heading>
-    <p class="u-narrow mt-4 text-body-lg text-ink-700">
+    <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
       {% translate "Ośrodek, plac manewrowy, pojazdy szkoleniowe i zajęcia. Kliknij zdjęcie, żeby je powiększyć." %}
     </p>
   
@@ -30,10 +30,10 @@ here is decorative: every image is content, so every alt says what it shows.
       <nav aria-label="{% translate 'Filtr sekcji' %}" class="mt-10 flex flex-wrap gap-3" data-testid="filters">
         {% for filter in filters %}
           <a href="{{ filter.url }}"{% if filter.is_active %} aria-current="page"{% endif %}
-             class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-semibold transition
-  {% if filter.is_active %} border-accent bg-accent u-fixed-ink{% else %} border-line-soft text-ink hover:border-ink{% endif %}">
+             class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-bold transition
+  {% if filter.is_active %} border-accent bg-accent u-fixed-ink{% else %} border-line u-on-ground hover:border-ink{% endif %}">
             {{ filter.label }}
-            <span class="data text-small {% if filter.is_active %}u-fixed-ink{% else %}text-ink-500{% endif %}">{{ filter.total }}</span>
+            <span class="data text-small {% if filter.is_active %}u-fixed-ink{% else %}u-muted-on-ground{% endif %}">{{ filter.total }}</span>
           </a>
         {% endfor %}
       </nav>
@@ -46,7 +46,7 @@ here is decorative: every image is content, so every alt says what it shows.
 
     <div class="hidden lg:block">
       <p aria-hidden="true" class="u-bignum text-right">{{ site_settings.founded_year }}</p>
-      <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
+      <p class="label mt-2 text-right u-muted-on-ground">{% translate "Rok założenia" %}</p>
     </div>
   </div>
 </c-section>. #}
@@ -79,7 +79,7 @@ here is decorative: every image is content, so every alt says what it shows.
     {% if site_settings.founded_year %}
       <div class="hidden lg:block">
         <p aria-hidden="true" class="u-bignum text-right">{{ site_settings.founded_year }}</p>
-        <p class="label mt-2 text-right text-ink-500">{% translate "Rok założenia" %}</p>
+        <p class="label mt-2 text-right u-muted-on-ground">{% translate "Rok założenia" %}</p>
       </div>
     {% endif %}
   </div>
@@ -92,7 +92,11 @@ here is decorative: every image is content, so every alt says what it shows.
   </c-section>
 {% endfor %}
 
-<c-section tone="brand" size="compact">
+{# The page ground, not a dark band: the footer below is a dark card, and the
+   block above it has to be light for the footer's rounded top to read. On a
+   gallery the photographs are the page's strongest thing anyway — a dark band
+   competing with them would be the wrong block to darken. #}
+<c-section tone="surface" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <c-heading level="2">{% translate "Chcesz zobaczyć ośrodek na żywo?" %}</c-heading>

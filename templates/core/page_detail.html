@@ -23,8 +23,7 @@ nothing.
 
 <c-page-header eyebrow="{% if enrolment %}{% translate 'Formalności' %}{% else %}{% translate 'O szkole' %}{% endif %}"
                title="{{ page.title }}" lead="{{ page.lead }}">
-  <c-breadcrumbs :items="breadcrumbs" />
-
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% if enrolment %}
     <c-slot name="aside">
       <c-fact-card label="{% translate 'Zapisy telefoniczne' %}" value="{{ site_settings.phone_primary }}"
@@ -103,8 +102,8 @@ nothing.
        sections is longer than the thing it indexes. Hidden until then, so a
        reader without javascript sees the text and no empty box. #}
     <nav data-toc="[data-prose]" hidden aria-label="{% translate 'Spis treści' %}"
-         class="u-narrow mb-12 flex flex-col gap-3 border-l-2 border-line-soft py-1 pl-6 text-ink-700">
-      <p class="label text-ink-500">{% translate "Na tej stronie" %}</p>
+         class="u-narrow mb-12 flex flex-col gap-3 border-l-2 border-line py-1 pl-6 u-body-on-ground">
+      <p class="label u-muted-on-ground">{% translate "Na tej stronie" %}</p>
     </nav>
 
     <div data-prose>{% include "courses/_prose.html" with html=body %}</div>
@@ -119,19 +118,19 @@ nothing.
       <li class="flex">
         <c-card href="{% url 'courses:detail' slug='kat-b' %}" class="flex w-full flex-col">
           <c-slot name="title">{% translate "Kurs kat. B" %}</c-slot>
-          <p class="text-small text-ink-500">{% translate "standardowy, przyspieszony i na automacie" %}</p>
+          <p class="text-small u-muted-on-ground">{% translate "standardowy, przyspieszony i na automacie" %}</p>
         </c-card>
       </li>
       <li class="flex">
         <c-card href="{% url 'core:pass_rates' %}" class="flex w-full flex-col">
           <c-slot name="title">{% translate "Zdawalność" %}</c-slot>
-          <p class="text-small text-ink-500">{% translate "wyniki rok po roku, bez zaokrągleń" %}</p>
+          <p class="text-small u-muted-on-ground">{% translate "wyniki rok po roku, bez zaokrągleń" %}</p>
         </c-card>
       </li>
       <li class="flex">
         <c-card href="{% url 'courses:pricing' %}" class="flex w-full flex-col">
           <c-slot name="title">{% translate "Cennik" %}</c-slot>
-          <p class="text-small text-ink-500">{% translate "ceny brutto, dowóz na egzamin gratis" %}</p>
+          <p class="text-small u-muted-on-ground">{% translate "ceny brutto, dowóz na egzamin gratis" %}</p>
         </c-card>
       </li>
     </ul>
@@ -143,13 +142,18 @@ nothing.
    none of them can drift away from what the site actually says. A tile whose
    number does not exist is absent rather than zero. #}
 {% if about and facts %}
-  <c-section id="fakty" size="compact">
+  {# The page's one dark block, B.8 point 2. It goes on the strongest thing the
+   page has to say and it goes mid page: the footer is a dark card the full
+   width of the page, so a dark section directly above it makes one very tall
+   dark region with nothing for the footer's 28px rounded top to read against.
+   #}
+<c-section id="fakty" tone="dark" size="compact">
     <c-slot name="heading">{% translate "W liczbach" %}</c-slot>
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0" data-testid="facts">
       {% for fact in facts %}
-        <li class="lg:border-l lg:border-line-soft lg:px-8 lg:first:border-l-0 lg:first:pl-0">
-          <p class="data text-data-xl text-ink">{{ fact.value }}</p>
-          <p class="mt-2 text-ink-700">{{ fact.label }}</p>
+        <li class="lg:border-l lg:u-rule-on-ground lg:px-8 lg:first:border-l-0 lg:first:pl-0">
+          <p class="data text-data-xl u-on-ground">{{ fact.value }}</p>
+          <p class="mt-2 u-body-on-ground">{{ fact.label }}</p>
         </li>
       {% endfor %}
     </ul>
@@ -160,27 +164,55 @@ nothing.
   <c-section id="instruktorzy" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
-    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-testid="instructors">
-      {% for instructor in instructors %}
-        <li class="flex">
-          <c-card padded="" class="w-full">
-            {% if instructor.photo %}
-              {# 1:1, A.8. alt carries the name: the person is the content. #}
-              <c-picture :image="instructor.photo" alt="{{ instructor.full_name }}" ratio="square"
-                         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
-            {% endif %}
-            <div class="flex grow flex-col p-6">
-              <h3 class="text-h3">{{ instructor.full_name }}</h3>
-              {% if instructor.role %}<p class="mt-1 text-ink-500">{{ instructor.role }}</p>{% endif %}
-              {% if instructor.since_year %}
-                <p class="mt-3 text-small text-ink-500">{% blocktranslate with year=instructor.since_year %}Szkoli od {{ year }} roku{% endblocktranslate %}</p>
-              {% endif %}
-              {% if instructor.bio %}<p class="mt-4 text-ink-700">{{ instructor.bio }}</p>{% endif %}
-            </div>
-          </c-card>
-        </li>
-      {% endfor %}
-    </ul>
+    {# REDESIGN.md D.2, and the one rule in part D that is not negotiable.
+       An instructor card exists to put a face to a name. Without the face it is
+       a name in a box, and the box is an invitation to fill it — which is how a
+       stock portrait ends up captioned "Piotr, instruktor od 8 lat" on a
+       commercial site, describing a person who does not exist. D.2 spells out
+       what happens next: somebody walks into the school and asks for him.
+
+       So a card needs a real photograph or there is no card, and a block with
+       no photographs at all says so plainly instead of rendering a row of
+       empty frames. tests/unit/test_about_page.py holds this. #}
+    {# CONTRACT GAP: the clean form of this is one line in apps/core/views.py —
+       `[person for person in instructors if person.photo]` — and a template
+       session may not write it. So the filtering happens in the loop and the
+       "none of them" case is carried by :empty on the collapsed list.
+
+       {% spaceless %} is load bearing, not tidiness: :empty matches an element
+       with no children *and no text*, and a whitespace text node counts. Without
+       it the <ul> always contains a newline and never matches, so the fallback
+       would never appear. #}
+    {% spaceless %}
+      <ul data-testid="instructors" class="u-empty-hides grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {% for instructor in instructors %}{% if instructor.photo %}
+          <li class="flex">
+            <c-card padded="" class="w-full overflow-hidden">
+              {# alt carries the name: the person is the content. #}
+              <div class="u-photo rounded-b-none">
+                <c-picture :image="instructor.photo" alt="{{ instructor.full_name }}" ratio="square"
+                           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+              </div>
+              <div class="flex grow flex-col p-6">
+                <h3 class="text-h3">{{ instructor.full_name }}</h3>
+                {% if instructor.role %}<p class="mt-1 u-muted-on-ground">{{ instructor.role }}</p>{% endif %}
+                {% if instructor.since_year %}
+                  <p class="mt-3 text-small u-muted-on-ground">{% blocktranslate with year=instructor.since_year %}Szkoli od {{ year }} roku{% endblocktranslate %}</p>
+                {% endif %}
+                {% if instructor.bio %}<p class="mt-4 u-body-on-ground">{{ instructor.bio }}</p>{% endif %}
+              </div>
+            </c-card>
+          </li>
+        {% endif %}{% endfor %}
+      </ul>
+    {% endspaceless %}
+
+    <div data-testid="instructors-empty" class="u-shown-when-empty max-w-[900px]">
+      <c-empty title="{% translate 'Zdjęcia instruktorów w przygotowaniu' %}"
+               phone="{{ site_settings.phone_primary }}">
+        {% translate "Nie pokazujemy cudzych twarzy jako naszych. Zadzwoń albo wpadnij do biura — poznasz instruktora, zanim się zapiszesz." %}
+      </c-empty>
+    </div>
   </c-section>
 {% endif %}
 
@@ -208,7 +240,7 @@ nothing.
                       <c-badge tone="neutral">{{ vehicle.get_gearbox_display }}</c-badge>
                       {% if vehicle.is_exam_spec %}<c-badge tone="success">{% translate "Zgodny z egzaminem" %}</c-badge>{% endif %}
                     </p>
-                    {% with shown=vehicle.note|owner_ready %}{% if shown %}<p class="mt-3 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
+                    {% with shown=vehicle.note|owner_ready %}{% if shown %}<p class="mt-3 text-small u-muted-on-ground">{{ shown }}</p>{% endif %}{% endwith %}
                   </div>
                 </c-card>
               </li>
@@ -230,12 +262,31 @@ nothing.
   </c-section>
 {% endif %}
 
+{# B.8 point 4: every page ends on an action, the legal ones included.
+   Somebody who has just read the privacy policy is still a visitor, and the
+   page used to leave them at the bottom of a wall of text with nowhere to go
+   but Back. The band is also each page's one dark block, B.8 point 2.
+
+   The invitation differs: on a page about the course it is "zaczynamy", on a
+   legal page it would be tone deaf, so that one offers the telephone and says
+   what it is for. #}
 {% if about or enrolment %}
-  <c-cta-band ground="ink"
+  <c-cta-band ground="paper"
               title="{% translate 'Zaczynamy?' %}"
               text="{% translate 'Zadzwoń albo zostaw numer — ustalimy termin startu i powiemy, czego brakuje w papierach.' %}"
               href="{{ enrol_url }}"
               action="{% translate 'Zapisz się' %}"
+              phone="{{ site_settings.phone_primary }}" />
+{% else %}
+  {# The contact page rather than the telephone alone. The phone is the better
+     action when there is one, but SiteSettings may not carry it, and a closing
+     band whose only control is conditional is a band that renders empty — the
+     exact failure B.8 point 4 is written against. /kontakt/ always resolves. #}
+  <c-cta-band ground="paper"
+              title="{% translate 'Masz pytanie do tego dokumentu?' %}"
+              text="{% translate 'Zadzwoń albo napisz — odpowiemy, jakie dane przetwarzamy i po co.' %}"
+              href="{% url 'core:contact' %}"
+              action="{% translate 'Kontakt' %}"
               phone="{{ site_settings.phone_primary }}" />
 {% endif %}
 

@@ -1,5 +1,6 @@
 """Shared fixtures."""
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -49,3 +50,75 @@ def default_language() -> Any:
     translation.activate(settings.LANGUAGE_CODE)
     yield
     translation.activate(settings.LANGUAGE_CODE)
+
+
+# --------------------------------------------------------------------------
+# a11y helpers shared by every page test
+#
+# The alt rule was written out by hand in eight test modules, which is eight
+# copies of one decision. It changed once — when tech.md section 8's convention
+# for a decorative image finally had to be honoured — and that meant editing all
+# eight. It lives here now so the next change is one edit.
+
+
+_IMG = re.compile(r"<img[^>]*>")
+_ALT_TEXT = re.compile(r'alt="[^"]+"')
+_ALT_EMPTY = re.compile(r'alt=""')
+_ARIA_HIDDEN = re.compile(r'aria-hidden="true"')
+
+
+def images_without_alt(html: str) -> list[str]:
+    """Every <img> in the markup that carries neither alt text nor a reason.
+
+    tech.md section 8 wants alt on every image. The single exception, fixed by
+    cotton/picture.html's own contract, is a decorative image that declares
+    itself: alt="" *together with* aria-hidden="true". The pair is what makes
+    the emptiness a decision rather than a forgotten attribute, which is why
+    neither half is accepted on its own.
+    """
+    return [
+        tag
+        for tag in _IMG.findall(html)
+        if not _ALT_TEXT.search(tag)
+        and not (_ALT_EMPTY.search(tag) and _ARIA_HIDDEN.search(tag))
+    ]
+
+
+# The grounds a section can sit on, REDESIGN.md B.2, in the order the class
+# list has to be tested: the two that are utilities of their own before the two
+# that are a background colour, because a dark card also carries no bg- class.
+#
+# Shared for the same reason images_without_alt is: two page tests had their own
+# copy, neither knew about `surface` when B.2 introduced it, and both quietly
+# reported every white band as the page itself — which made the alternation they
+# were checking look broken where it was not.
+_GROUNDS = (
+    ("dark", ("u-dark-card", "u-ground-ink")),
+    ("accent", ("u-ground-accent",)),
+    ("primary", ("u-ground-primary",)),
+    ("surface", ("bg-surface",)),
+    ("muted", ("bg-paper-50",)),
+)
+
+
+def section_grounds(html: str) -> list[str]:
+    """The ground of every <section> on the page, in document order."""
+    grounds = []
+    for classes in re.findall(r'<section[^>]*class="([^"]*)"', html):
+        for name, markers in _GROUNDS:
+            if any(marker in classes for marker in markers):
+                grounds.append(name)
+                break
+        else:
+            grounds.append("paper")
+    return grounds
+
+
+def repeated_grounds(html: str) -> list[int]:
+    """Indices of sections whose ground repeats the one before them.
+
+    B.8 point 2: two sections of the same colour in a row read as one long
+    block, and the reader loses the seam between two different things.
+    """
+    grounds = section_grounds(html)
+    return [i for i in range(1, len(grounds)) if grounds[i] == grounds[i - 1]]

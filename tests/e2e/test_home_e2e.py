@@ -17,8 +17,6 @@ from apps.courses.models import Course, CourseIntake, PriceItem
 
 pytestmark = pytest.mark.django_db
 
-TILE_HOST = "tile.openstreetmap.org"
-
 
 @pytest.fixture
 def school() -> SiteSettings:
@@ -145,15 +143,14 @@ def test_the_sticky_bar_never_covers_the_consent_buttons(
 def test_the_first_screen_reaches_no_third_party(
     live_server, school: SiteSettings, page: Page
 ) -> None:
-    """The tiles are the one third party allowed, and the map is the last
-    section: nothing should be fetched from it before the visitor scrolls."""
+    """Nothing on the first screen reaches a third party, and the map least of
+    all: google is framed only when somebody presses its button, core v26."""
     hosts: list[str] = []
     page.on("request", lambda request: hosts.append(urlsplit(request.url).netloc))
 
     page.goto(live_server.url)
     page.wait_for_selector("h1")
 
-    assert TILE_HOST not in hosts, "the map loaded before anyone scrolled to it"
     assert set(hosts) <= {urlsplit(live_server.url).netloc}, (
         f"unexpected hosts: {sorted(set(hosts) - {urlsplit(live_server.url).netloc})}"
     )

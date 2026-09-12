@@ -1,6 +1,6 @@
 {% load i18n %}
 {% comment %}
-The enrolment form, DEV.md S3.1 and FRONTEND.md F7.
+The enrolment form, DEV.md S3.1 and REDESIGN.md B.7 point 6.
 
 One template for all three places it appears: its own page, the contact page
 and every course page. Everything is a cotton primitive — tech.md section 7
@@ -28,9 +28,20 @@ hx-target is "this" rather than the id: the form replaces itself, so nothing
 depends on there being exactly one of them on the page. form_id exists for the
 kitchen sink, which shows several at once and would otherwise repeat an id.
 
+`compact` is B.7 point 6: the short form on the dark card of the home page —
+name, phone, RODO consent, button. It is a subset, not a second form. Only
+first_name, phone and consent_rodo are required on LeadForm (apps/leads/forms.py
+sets the flags), so the fields left out simply post empty and validate; nothing
+is hidden that the server would then reject.
+
+The fields are omitted rather than hidden. A required field inside a display:none
+wrapper is the classic way to produce a form that cannot be submitted and will
+not say why, and a hidden optional one is dead weight in the DOM.
+
 Takes:
   form     the bound or unbound LeadForm.
   form_id  optional, defaults to lead-form.
+  compact  optional, renders the short version described above.
 {% endcomment %}
 <form id="{{ form_id|default:'lead-form' }}" method="post" action="{% url 'leads:submit' %}"
       hx-post="{% url 'leads:submit' %}" hx-target="this" hx-swap="outerHTML"
@@ -61,27 +72,36 @@ Takes:
     {{ form.website }}
   </div>
 
-  <div class="grid gap-6 sm:grid-cols-2">
-    <c-field :field="form.first_name" />
-    <c-field :field="form.last_name" />
-    <c-field :field="form.phone" />
-    <c-field :field="form.email" />
-  </div>
+  {% if compact %}
+    <div class="grid gap-6 sm:grid-cols-2">
+      <c-field :field="form.first_name" />
+      <c-field :field="form.phone" />
+    </div>
+  {% else %}
+    <div class="grid gap-6 sm:grid-cols-2">
+      <c-field :field="form.first_name" />
+      <c-field :field="form.last_name" />
+      <c-field :field="form.phone" />
+      <c-field :field="form.email" />
+    </div>
 
-  <c-field :field="form.course" />
-  {{ form.intake }}
-  <c-field :field="form.message" />
+    <c-field :field="form.course" />
+    {{ form.intake }}
+    <c-field :field="form.message" />
+  {% endif %}
 
   <div class="flex flex-col gap-3">
     <c-checkbox name="consent_rodo" checked="{% if form.consent_rodo.value %}1{% endif %}"
                 error="{{ form.consent_rodo.errors.0|default:'' }}">
       {% translate "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Ostrycharz w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —" %}
-      <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4 hover:text-ink">{% translate "pełna informacja RODO" %}</a>.
+      <a href="{% url 'core:page' slug='rodo' %}" class="underline underline-offset-4 hover:u-on-ground">{% translate "pełna informacja RODO" %}</a>.
     </c-checkbox>
 
-    <c-checkbox name="consent_marketing" checked="{% if form.consent_marketing.value %}1{% endif %}">
-      {% translate "Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe." %}
-    </c-checkbox>
+    {% if not compact %}
+      <c-checkbox name="consent_marketing" checked="{% if form.consent_marketing.value %}1{% endif %}">
+        {% translate "Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe." %}
+      </c-checkbox>
+    {% endif %}
   </div>
 
   {% if form.non_field_errors %}

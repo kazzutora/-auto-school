@@ -67,7 +67,11 @@ def test_htmx_swaps_only_the_rows(live_server, page: Page, schedule: None) -> No
 
     assert "Kategoria C" in visible_courses(page)
     # The page itself never reloaded, only the rows changed.
-    assert page.locator("h1").inner_text() == "Terminy"
+    # casefold, because REDESIGN.md B.3 sets every h1 and h2 in upper case and
+    # inner_text() returns what is painted. The words are unchanged; only the
+    # rendering is, and asserting on the rendering would pin a design decision
+    # in a test about routing.
+    assert page.locator("h1").inner_text().casefold() == "terminy"
 
 
 def test_the_filter_still_works_without_javascript(

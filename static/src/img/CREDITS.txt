@@ -1,0 +1,7 @@
+# Источник: Unsplash. Лицензия: https://unsplash.com/license
+# файл | страница фотографии
+hero-dusk.jpg | https://unsplash.com/photos/1577977799980-cd7053d89661
+about-plac.jpg | https://unsplash.com/photos/1630406144797-821be1f35d75
+bento-white.jpg | https://unsplash.com/photos/1612709060421-596380268eaf
+band-road.jpg | https://unsplash.com/photos/1523821393989-a61a1f006c8b
+band-day.jpg | https://unsplash.com/photos/1516862523118-a3724eb136d7

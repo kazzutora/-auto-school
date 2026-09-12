@@ -1,0 +1,58 @@
+{% comment %}
+Carousel, REDESIGN.md B.5. Props: id, per_view, and the slot.
+
+No carousel library, and C.2 is what forbids it: the scrolling, the snapping,
+the momentum and the swipe are all the browser's own, and a library would be
+20-plus KB to reimplement them worse. What is left for javascript is two
+buttons, and static/js/motion.js answers them with scrollBy — about twenty
+lines, shared with every other rail on the site.
+
+Keyboard: the track is a focusable scroll container, so Left and Right scroll
+it natively once it has focus, and Tab walks the cards in order because they are
+in the document in order. That is the whole keyboard story and none of it is
+written here. tabindex="0" on the track is what a scrollable region needs to be
+reachable at all — without it a keyboard user can reach the cards but never the
+scrollbar, and a screen reader has no way to announce the region.
+
+The arrows are hidden below md. A phone swipes; a row of 44px targets over the
+content is what you get instead of the content.
+
+per_view is the count at lg. Below that the basis steps down on its own rather
+than reading the prop, because tailwind needs whole class names at build time
+and a basis- glued together at render is a class it never sees.
+{% endcomment %}
+<c-vars id="carousel" per_view="3" label="" class="" />{% load i18n %}
+<div data-carousel class="relative {{ class }}" {{ attrs }}>
+
+  {# The heading row is optional: a rail under a section heading needs no second
+     one, and the arrows still have to go somewhere. #}
+  <div class="mb-6 flex items-center justify-end gap-2">
+    <c-button variant="secondary" size="icon" data-carousel-prev
+              aria-controls="{{ id }}-track" aria-label="{% translate 'Poprzednie' %}"
+              class="hidden disabled:opacity-40 md:inline-flex">
+      <c-icon name="arrow-left" />
+    </c-button>
+    <c-button variant="secondary" size="icon" data-carousel-next
+              aria-controls="{{ id }}-track" aria-label="{% translate 'Następne' %}"
+              class="hidden disabled:opacity-40 md:inline-flex">
+      <c-icon name="arrow-right" />
+    </c-button>
+  </div>
+
+  {# role="group" with a name, not role="region": a rail is a part of the
+     section above it, and a landmark per carousel would clutter the rotor on a
+     page that has three of them.
+
+     The negative margin and the matching padding let a card's shadow and its
+     focus ring show outside the track without being clipped by overflow, and
+     put the first card back on the container's own left edge. #}
+  <div id="{{ id }}-track" data-carousel-track tabindex="0" role="group"
+       {% if label %}aria-label="{{ label }}"{% endif %}
+       class="u-carousel -mx-1 gap-5 px-1 pb-2
+              [grid-auto-columns:85%] sm:[grid-auto-columns:60%]
+              {% if per_view == '2' or per_view == 2 %}lg:[grid-auto-columns:calc(50%-0.625rem)]
+              {% elif per_view == '4' or per_view == 4 %}lg:[grid-auto-columns:calc(25%-0.9375rem)]
+              {% else %}lg:[grid-auto-columns:calc(33.333%-0.834rem)]{% endif %}">
+    {{ slot }}
+  </div>
+</div>

@@ -14,15 +14,23 @@ carries the momentum and the hidden scrollbar.
 
 Takes: label (the aria-label), items — rows carrying .id and .title.
 {% endcomment %}
+{# The same treatment the header takes, B.7 point 0: the page's own ground with
+   a blur behind it rather than a colour of its own. u-header carries the
+   @supports fallback, so where backdrop-filter is missing this bar stays opaque
+   instead of turning the section headings into text floating over the page.
+
+   B.1 rules out glassmorphism, and this is not that: a blur on a bar that
+   scrolling content passes under is what B.7 asks for by name. What B.1 forbids
+   is the frosted panel as ornament. #}
 <nav aria-label="{{ label }}"
-     class="sticky top-[var(--header-h)] z-10 border-y border-line-soft bg-paper/95 backdrop-blur {{ class }}"
+     class="u-header sticky top-[var(--header-h)] z-10 border-b border-line {{ class }}"
      {{ attrs }}>
   <div class="u-container">
     <ul class="u-scroll-x flex items-center gap-1 py-1">
       {% for item in items %}
         <li>
           <a href="#{{ item.id }}"
-             class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded px-3 text-small font-semibold text-ink-700 transition hover:bg-paper-100 hover:text-ink">
+             class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded px-3 text-small font-bold u-body-on-ground transition hover:bg-paper-100 hover:u-on-ground">
             {{ item.title }}
           </a>
         </li>

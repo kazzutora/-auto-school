@@ -66,4 +66,8 @@ def test_the_listing_leads_to_the_course(live_server, page: Page, course: Course
     page.locator('main a[href="/kursy/kat-b/"]').first.click()
     page.wait_for_url("**/kursy/kat-b/")
 
-    assert page.locator("h1").inner_text() == "Kategoria B"
+    # casefold, because REDESIGN.md B.3 sets every h1 and h2 in upper case and
+    # inner_text() returns what is painted. The words are unchanged; only the
+    # rendering is, and asserting on the rendering would pin a design decision
+    # in a test about routing.
+    assert page.locator("h1").inner_text().casefold() == "kategoria b"

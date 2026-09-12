@@ -168,6 +168,24 @@ def test_nothing_hangs_out_of_a_card(
 
         spills = page.evaluate(
             """() => {
+                // A box that some ancestor clips is not hanging out of anything:
+                // the reader sees the card's edge, not the overflow. The closed
+                // panel of an accordion is exactly that — REDESIGN.md C.3 row 8
+                // animates it with grid-template-rows 0fr, which collapses the
+                // track while the content inside keeps its own height, so its
+                // rect still reports the full box it would occupy if opened.
+                //
+                // What this test is for is content the reader can actually see
+                // outside the card's rounded edge, so the clipped ones are
+                // skipped and the visible ones still fail.
+                const clipped = (el, stopAt) => {
+                    for (let n = el.parentElement; n && n !== stopAt.parentElement; n = n.parentElement) {
+                        const o = getComputedStyle(n);
+                        if (o.overflow !== 'visible' || o.overflowY !== 'visible') return true;
+                    }
+                    return false;
+                };
+
                 const bad = [];
                 for (const card of document.querySelectorAll('.u-card')) {
                     const cr = card.getBoundingClientRect();
@@ -175,7 +193,7 @@ def test_nothing_hangs_out_of_a_card(
                         const kr = kid.getBoundingClientRect();
                         if (kr.height === 0) continue;
                         const over = Math.round(kr.bottom - cr.bottom);
-                        if (over > 1) {
+                        if (over > 1 && !clipped(kid, card)) {
                             bad.push(kid.tagName.toLowerCase() + ' by ' + over + 'px');
                             break;
                         }

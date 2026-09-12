@@ -18,8 +18,7 @@ sending the pdfs over.
 
 <c-page-header eyebrow="{% translate 'Dokumenty' %}" title="{% translate 'Do pobrania' %}"
                lead="{% translate 'Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować.' %}">
-  <c-breadcrumbs :items="breadcrumbs" />
-
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <c-slot name="aside">
     <c-fact-card label="{% translate 'Pytania o papiery' %}" value="{{ site_settings.phone_primary }}"
                  href="tel:{{ site_settings.phone_primary|cut:' ' }}"
@@ -59,7 +58,7 @@ sending the pdfs over.
   </div>
 </c-section>
 
-<c-cta-band ground="ink"
+<c-cta-band ground="paper"
             title="{% translate 'Masz komplet? Zaczynamy.' %}"
             text="{% translate 'Zapisy po wcześniejszym ustaleniu telefonicznym. Zostaw numer — oddzwonimy i umówimy termin.' %}"
             href="{{ enrol_url }}"

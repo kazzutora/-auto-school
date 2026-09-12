@@ -22,8 +22,7 @@ still renders — as an empty state with a phone number, not a blank.
 
 <c-page-header eyebrow="{% translate 'Wyniki' %}" title="{% translate 'Zdawalność' %}"
                lead="{% translate 'Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. Liczby, nie deklaracje.' %}">
-  <c-breadcrumbs :items="breadcrumbs" />
-
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <c-slot name="aside">
     {% if latest %}
       <c-fact-card label="{% translate 'Za pierwszym razem' %}" value="{{ latest.first_percent }}%"
@@ -95,7 +94,11 @@ still renders — as an empty state with a phone number, not a blank.
   </c-section>
 {% endif %}
 
-<c-cta-band ground="ink"
+{# The page ground, not ink. B.8 point 2 allows one dark block and on this
+   page it is the figures at the top — they are the whole reason the page
+   exists. A second dark band at the foot would make the two compete, and
+   the blue button carries the action on its own. #}
+<c-cta-band ground="paper"
             title="{% translate 'Chcesz zdać za pierwszym razem?' %}"
             text="{% translate 'Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — ustalimy termin startu.' %}"
             href="{{ enrol_url }}"

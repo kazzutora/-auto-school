@@ -1,6 +1,6 @@
 {% load static i18n %}<!doctype html>
 {% comment %}
-500, FRONTEND.md A.10.
+500, REDESIGN.md B.8 and R4 point 6.
 
 Standalone on purpose. django renders this through server_error, which calls
 template.render() with no context and no request: the context processors never
@@ -21,31 +21,33 @@ it: /kontakt/ is a plain link and needs no database to resolve.
   <title>{% translate "Błąd serwera" %} — OSK Ostrycharz</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <meta name="theme-color" content="#E9E8E4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121216" media="(prefers-color-scheme: dark)">
 </head>
-<body class="flex min-h-screen flex-col bg-paper text-ink">
+<body class="flex min-h-screen flex-col bg-paper u-on-ground">
   <main class="u-container u-section grow">
-    <p class="label text-ink-500">{% translate "Błąd 500" %}</p>
+    <p class="label u-muted-on-ground">{% translate "Błąd 500" %}</p>
     <h1 class="mt-4">{% translate "Coś poszło nie tak" %}</h1>
-    <p class="u-narrow mt-6 text-body-lg text-ink-700">
+    <p class="u-narrow mt-6 text-body-lg u-body-on-ground">
       {% translate "Strona chwilowo nie odpowiada. Spróbuj ponownie za chwilę albo zadzwoń — zapisy przyjmujemy też telefonicznie." %}
     </p>
 
     <ul class="mt-12 flex flex-wrap gap-x-8 gap-y-3">
-      <li><a href="/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Strona główna" %}</a></li>
-      <li><a href="/kursy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Kursy" %}</a></li>
-      <li><a href="/terminy/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Terminy" %}</a></li>
-      <li><a href="/cennik/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Cennik" %}</a></li>
-      <li><a href="/kontakt/" class="font-semibold underline underline-offset-4 hover:text-ink-700">{% translate "Kontakt" %}</a></li>
+      <li><a href="/" class="font-bold underline underline-offset-4 hover:u-body-on-ground">{% translate "Strona główna" %}</a></li>
+      <li><a href="/kursy/" class="font-bold underline underline-offset-4 hover:u-body-on-ground">{% translate "Kursy" %}</a></li>
+      <li><a href="/terminy/" class="font-bold underline underline-offset-4 hover:u-body-on-ground">{% translate "Terminy" %}</a></li>
+      <li><a href="/cennik/" class="font-bold underline underline-offset-4 hover:u-body-on-ground">{% translate "Cennik" %}</a></li>
+      <li><a href="/kontakt/" class="font-bold underline underline-offset-4 hover:u-body-on-ground">{% translate "Kontakt" %}</a></li>
     </ul>
 
     <div class="mt-12 flex flex-wrap gap-4">
       {% if site_settings.phone_primary %}
         <a href="tel:{{ site_settings.phone_primary|cut:' ' }}"
-           class="inline-flex h-12 items-center justify-center rounded border-2 border-accent bg-accent px-6 font-semibold u-fixed-ink">
+           class="inline-flex h-12 items-center justify-center rounded border-2 border-accent bg-accent px-6 font-bold u-fixed-ink">
           <span class="data">{{ site_settings.phone_primary }}</span>
         </a>
       {% endif %}
-      <a href="/kontakt/" class="u-btn-secondary inline-flex h-12 items-center justify-center rounded border-2 bg-transparent px-6 font-semibold">
+      <a href="/kontakt/" class="u-btn-secondary inline-flex h-12 items-center justify-center rounded border-2 bg-transparent px-6 font-bold">
         {% translate "Dane kontaktowe" %}
       </a>
     </div>

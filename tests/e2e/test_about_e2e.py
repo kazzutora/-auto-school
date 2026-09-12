@@ -95,6 +95,9 @@ def test_the_team_and_the_fleet_are_both_on_screen(
     narrow_page.goto(f"{live_server.url}/o-nas/")
     text = narrow_page.locator("body").inner_text()
 
-    assert "Instruktorzy" in text
-    assert "Nasze pojazdy" in text
+    # casefold: REDESIGN.md B.3 sets every h2 in upper case, and inner_text()
+    # returns what is painted. The words have not changed, only the rendering.
+    folded = text.casefold()
+    assert "instruktorzy" in folded
+    assert "nasze pojazdy" in folded
     assert "Skoda Fabia 0" in text

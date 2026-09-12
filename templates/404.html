@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% comment %}
-404, FRONTEND.md A.10. Large type, the way back to the sections that matter, and
+404, REDESIGN.md B.8 and R4 point 6. Large type, the way back to the sections that matter, and
 the phone — because someone who lands here from an old link is usually trying to
 reach the school rather than to browse.
 
@@ -12,9 +12,9 @@ here. 500.html cannot say the same and stands on its own.
 
 {% block content %}
 <div class="u-container u-section">
-  <p class="label text-ink-500">{% translate "Błąd 404" %}</p>
+  <p class="label u-muted-on-ground">{% translate "Błąd 404" %}</p>
   <h1 class="mt-4">{% translate "Nie ma takiej strony" %}</h1>
-  <p class="u-narrow mt-6 text-body-lg text-ink-700">
+  <p class="u-narrow mt-6 text-body-lg u-body-on-ground">
     {% translate "Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca." %}
   </p>
 

@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-// Design tokens are frozen in FRONTEND.md part A. tech.md section 7 carries an
-// earlier sketch of the palette and says outright that FRONTEND.md A.2 wins
-// where the two disagree, so this file follows A.2 and nothing else.
+// Design tokens are frozen in REDESIGN.md part B, which replaced FRONTEND.md
+// part A at core v25. Where the two disagree, REDESIGN.md wins — part A is kept
+// in the repository as the record of why the old decisions were what they were,
+// not as a source of values.
 //
 // Every colour resolves to a CSS variable defined in static/src/css/app.css.
 // That is what lets the dark theme be a swap of roles rather than a second set
@@ -22,8 +23,11 @@ module.exports = {
 
   // The layout classes in app.css live in @layer components, which tailwind
   // purges like anything else. They are the base layer the pages are built on
-  // and have to exist before the first page uses one, so they are kept by
-  // name rather than by whether a template happens to mention them yet.
+  // and have to exist before the first page uses one, so they are kept by name
+  // rather than by whether a template happens to mention them yet.
+  //
+  // The motion classes need no entry here: static/src/css/motion.css carries no
+  // @tailwind directive, so nothing in it is generated and nothing is purged.
   safelist: [{ pattern: /^u-/ }],
 
   // The dark: variant follows the same two doors the variables do: the system
@@ -39,8 +43,8 @@ module.exports = {
   ],
 
   theme: {
-    // FRONTEND.md A.4. Replacing rather than extending: a 2xl breakpoint that
-    // is not in the contract has no business being reachable.
+    // B.4. Replacing rather than extending: a 2xl breakpoint that is not in the
+    // contract has no business being reachable.
     screens: {
       sm: "480px",
       md: "768px",
@@ -48,7 +52,8 @@ module.exports = {
       xl: "1280px",
     },
 
-    // A.2. Three colours and a ground for inverted blocks, nothing else.
+    // B.2. Two accents with separated roles, a ground, two card surfaces and an
+    // ink ramp — nothing else.
     //
     // Replacing rather than extending is deliberate: with no `gray` in the
     // palette, `text-gray-400` cannot be typed by accident. The price is two
@@ -56,147 +61,190 @@ module.exports = {
     // colour through theme('colors.gray.400', '#9ca3af') and its shadow
     // defaults through '#0000', so both fall back to the literal. Neither
     // paints anything: '#0000' is transparent, and the placeholder rule in
-    // app.css matches preflight's selector and comes after it. Adding a `gray`
-    // alias would clear them and hand every session an off-contract class in
-    // exchange, which is the worse trade.
+    // app.css matches preflight's selector and comes after it.
     colors: {
       transparent: "transparent",
       current: "currentColor",
       inherit: "inherit",
+
+      // The page itself. Warm grey in the light theme, near black in the dark.
       paper: {
         DEFAULT: token("paper"),
         50: token("paper-50"),
         100: token("paper-100"),
-        200: token("paper-200"),
       },
+
+      // The white cards that sit on it.
+      surface: {
+        DEFAULT: token("surface"),
+        muted: token("surface-muted"),
+      },
+
+      // Text, and the dark cards. One ramp does both because a dark card is
+      // the ink token used as a ground — B.2's role swap in one value.
       ink: {
         DEFAULT: token("ink"),
+        800: token("ink-800"),
         700: token("ink-700"),
         500: token("ink-500"),
-        // Disabled text and hairlines only: 3.4:1 on paper is under the body
-        // threshold on purpose, A.2.
+        // Disabled text and hairlines only. Below the body threshold on
+        // purpose: WCAG exempts a disabled control, and a disabled button that
+        // reads at full strength is a button people keep pressing.
         300: token("ink-300"),
       },
-      // line.DEFAULT is the heavy frame, line.soft the divider.
-      line: {
-        DEFAULT: token("line"),
-        soft: token("line-soft"),
+
+      // Action. The button that signs somebody up, the submit on a form.
+      // Never a badge: B.1 splits the two accents by role and a blue badge
+      // would say "press me" about a fact.
+      primary: {
+        DEFAULT: token("primary"),
+        600: token("primary-600"),
+        100: token("primary-100"),
       },
+
+      // State. "Nabór otwarty", the slab under a word in the hero, the mark.
+      // Never a button fill, for the mirror of the same reason.
       accent: {
         DEFAULT: token("accent"),
         600: token("accent-600"),
         100: token("accent-100"),
       },
-      // Inverted blocks and the footer. Never a button or a chip fill, A.1.
-      deep: {
-        DEFAULT: token("deep"),
-        700: token("deep-700"),
-      },
+
       state: {
         ok: token("state-ok"),
         warn: token("state-warn"),
         err: token("state-err"),
       },
+
+      line: {
+        DEFAULT: token("line"),
+        dark: token("line-dark"),
+      },
     },
 
-    // A.3. Display carries the width axis: font-stretch picks Expanded.
+    // B.3. Display carries the width axis: font-stretch picks Expanded.
     fontFamily: {
       display: ["Archivo", "ui-sans-serif", "system-ui", "sans-serif"],
-      sans: ["Public Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+      sans: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
       mono: ["Roboto Mono", "ui-monospace", "SFMono-Regular", "monospace"],
     },
 
-    // A.3, the whole scale and only the scale. clamp() carries the step from
+    // B.3, the whole scale and only the scale. clamp() carries the step from
     // the 320px phone to the 1280px desktop, so there are no per-breakpoint
     // type utilities to keep in step.
     fontSize: {
-      display: ["clamp(2.75rem, 7vw, 5.5rem)", { lineHeight: "0.95", letterSpacing: "-0.02em" }],
-      h1: ["clamp(2.25rem, 5vw, 3.75rem)", { lineHeight: "1.02", letterSpacing: "-0.02em" }],
-      h2: ["clamp(1.75rem, 3.2vw, 2.5rem)", { lineHeight: "1.08", letterSpacing: "-0.01em" }],
+      display: ["clamp(2.5rem, 6vw, 4.5rem)", { lineHeight: "1.02", letterSpacing: "-0.02em" }],
+      h1: ["clamp(2rem, 4.5vw, 3.5rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
+      h2: ["clamp(1.6rem, 3vw, 2.25rem)", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
       h3: ["1.25rem", { lineHeight: "1.25", letterSpacing: "0" }],
       "body-lg": ["1.125rem", { lineHeight: "1.6" }],
       body: ["1rem", { lineHeight: "1.65" }],
       small: ["0.875rem", { lineHeight: "1.5" }],
-      label: ["0.75rem", { lineHeight: "1.2", letterSpacing: "0.12em" }],
-      // A.3 gives data as a range from 1rem to 2rem. Three steps of it: a
-      // price in a table, a start date in a row, the number in a fact strip.
-      data: ["1rem", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
-      "data-lg": ["1.5rem", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
-      "data-xl": ["2rem", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
+      label: ["0.75rem", { lineHeight: "1.2", letterSpacing: "0.1em" }],
+      // B.3 gives data as a range from 1rem to 2.5rem. Four steps of it: a
+      // price in a table, a start date in a row, a figure on a card, and the
+      // pass-rate numbers that carry their own block.
+      data: ["1rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
+      "data-lg": ["1.5rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
+      "data-xl": ["2rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
+      "data-2xl": ["2.5rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
     },
 
-    // A.3 uses exactly five: Public Sans 400/600, Roboto Mono 400/500,
-    // Archivo 700/800. The woff2 subsets are sliced to those ranges, so a
+    // B.3 uses exactly seven cuts: Archivo 700/800, Manrope 400/500/700,
+    // Roboto Mono 400/500. The woff2 subsets are sliced to those ranges, so a
     // weight outside this list would be synthesised by the browser.
     fontWeight: {
       normal: "400",
       medium: "500",
-      semibold: "600",
       bold: "700",
       extrabold: "800",
     },
 
-    // A.1: 0 for sections and slabs, 2px for buttons, fields and cards.
-    // Nothing rounder exists, so rounded-2xl cannot be typed by accident.
+    // B.4. Five radii and the pill, and nothing between them: a card is 20,
+    // a hero 28, a control 12, a picture inside a card 16.
     borderRadius: {
       none: "0",
-      DEFAULT: "2px",
-      full: "9999px",
+      image: "16px",
+      DEFAULT: "12px",
+      card: "20px",
+      hero: "28px",
+      full: "999px",
     },
 
     borderWidth: {
       DEFAULT: "1px",
       0: "0",
+      // B.5 draws a secondary button and a field at 1.5px.
+      1.5: "1.5px",
       2: "2px",
     },
 
-    // A.1: borders instead of shadows. The one exception is the hard 2px offset
-    // a clickable card grows on hover, and it has no blur.
-    //
-    // The focused field's second pixel of ink used to be a `field` token here.
-    // It moved into the base layer: a `focus:shadow-field` class outranks
-    // :focus-visible, so it replaced the focus halo rather than joining it, and
-    // the two have to be one declaration.
+    // B.4: exactly two levels, and no third is to be added. Both are the same
+    // near black at low alpha, so they read as one light source rather than as
+    // two different rooms.
     boxShadow: {
       none: "none",
-      card: "0 2px 0 0 rgb(var(--ink))",
+      card: "0 1px 2px rgba(27, 27, 32, .05), 0 12px 28px -20px rgba(27, 27, 32, .35)",
+      "card-hover": "0 2px 4px rgba(27, 27, 32, .06), 0 20px 40px -24px rgba(27, 27, 32, .45)",
     },
 
     extend: {
-      // A.4 sets the rhythm at 4px with 4 8 12 16 24 32 48 64 96 128 as the
+      // B.4 sets the rhythm at 4px with 4 8 12 16 24 32 48 64 96 128 as the
       // layout steps, which are 1 2 3 4 6 8 12 16 24 32 in tailwind units and
       // already in the default scale. The scale is not narrowed to them because
-      // component sizes in A.5 (button 40/48/56, touch target 44) sit outside
-      // the rhythm and still have to be expressible.
+      // component sizes in B.5 (button 44/52/60, field 52, badge 26) sit
+      // outside the rhythm and still have to be expressible.
       maxWidth: {
-        container: "1200px",
-        // A.3: a line of text is 60 to 75 characters.
+        container: "1280px",
+        // B.3: a line of text is 60 to 72 characters.
         narrow: "68ch",
       },
-      // A.6 names what may move: colour, border, background, and since core v7
-      // the two hover moves the owner asked for — a card lifting and an icon
-      // growing. transform is in the list for those and nothing else.
-      //
-      // box-shadow, filter and opacity are still out. tailwind's own
-      // `transition` carries all of them, which is why this replaces it rather
-      // than extending: the focus halo rides on box-shadow and should never
-      // fade in.
+
+      // The three button heights in B.5 are 44, 52 and 60. 44 is h-11 already;
+      // the other two fall in the gaps of the default scale, which jumps 12,
+      // 14, 16. Named by their step rather than in brackets so the contract
+      // value appears once and `h-[52px]` never has to be typed.
+      spacing: {
+        13: "3.25rem",
+        15: "3.75rem",
+        // The play target on a video card, B.5. 72px, between the scale's 64
+        // and 80.
+        18: "4.5rem",
+      },
+
+      // C.3 names what may move. transform, colour, background, border and
+      // shadow are the whole list — a card lifts, a button fills, an arrow
+      // travels. opacity is on it too, for the reveal.
       transitionProperty: {
-        DEFAULT: "color, background-color, border-color, outline-color, transform",
+        DEFAULT:
+          "color, background-color, border-color, outline-color, box-shadow, transform, opacity",
       },
+
+      // C.3's table, to the millisecond. Nothing picks a duration of its own.
+      //
+      // Read out of the variables app.css publishes rather than written twice.
+      // static/src/css/motion.css is plain css and cannot call theme(), so the
+      // durations had to exist as variables anyway; pointing the config at the
+      // same ones is what stops `duration-card` and `var(--dur-card)` drifting.
       transitionDuration: {
-        // A.6: the only three durations in the design.
-        DEFAULT: "120ms",
-        panel: "180ms",
-        reveal: "300ms",
+        DEFAULT: "var(--dur)",
+        card: "var(--dur-card)",
+        header: "var(--dur-header)",
+        tab: "var(--dur-tab)",
+        menu: "var(--dur-menu)",
+        panel: "var(--dur-panel)",
+        hero: "var(--dur-hero)",
       },
+
+      // C.3: one curve on the whole site. No springs, no bounces, no
+      // ease-in-out mixed in.
       transitionTimingFunction: {
-        DEFAULT: "ease-out",
+        DEFAULT: "cubic-bezier(.22, .61, .36, 1)",
       },
     },
   },
 
-  // The focus ring in A.2 is an outline, not a box-shadow. Leaving the ring
+  // The focus ring in B.5 is an outline, not a box-shadow. Leaving the ring
   // plugins on would put tailwind's default blue and white into the built css
   // as hex literals nothing on the site ever uses.
   corePlugins: {

@@ -1,20 +1,28 @@
 {% comment %}
-Accordion item, tech.md section 7, behaviour from FRONTEND.md A.5.
+Accordion item, tech.md section 7, behaviour from REDESIGN.md B.5.
 
 details/summary, so it opens, closes and takes the keyboard with no javascript
-at all — which is the requirement, not a fallback. Alpine is not involved:
-there is nothing here for it to smooth that the browser does not already do,
-and pulling it in would make a working control depend on a script.
+at all — which is the requirement, not a fallback. Alpine is not involved: there
+is nothing here for it to smooth that the browser does not already do.
 
-The indicator is plus and minus from the sprite, not a chevron. A.5 is explicit
-about that, and the two symbols say open-me and close-me rather than pointing.
+The opening animates in css now, C.3 row 8, on the browser's own
+::details-content. That replaced about fifty lines in static/js/app.js which
+opened the element, measured the panel and walked its height — the only way to
+do it before. Where the pseudo element is not supported the panel simply
+appears, which is what a native details has always done.
+
+The indicator is one plus that rotates 45 degrees into a cross, B.5. One glyph
+rather than two swapped at the wrong moment, and it costs one icon instead of
+two.
 {% endcomment %}
 <c-vars title="" open="" class="" />
-<details data-accordion class="group border-b border-line-soft last:border-b-0 {{ class }}" {% if open %}open{% endif %} {{ attrs }}>
-  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-semibold text-ink transition hover:bg-paper-50 [&::-webkit-details-marker]:hidden">
+<details class="u-card group overflow-hidden {{ class }}" {% if open %}open{% endif %} {{ attrs }}>
+  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-bold u-on-ground transition hover:bg-surface-muted [&::-webkit-details-marker]:hidden">
     {{ title }}
-    <span class="text-ink-500 group-open:hidden"><c-icon name="plus" /></span>
-    <span class="hidden text-ink-500 group-open:block"><c-icon name="minus" /></span>
+    <span class="u-accordion-mark u-muted-on-ground"><c-icon name="plus" /></span>
   </summary>
-  <div data-accordion-body class="overflow-hidden px-4 pb-4 text-ink-700">{{ slot }}</div>
+  {# One div. The browser's own ::details-content is what the animation runs
+     on, and it wraps everything after the summary whether the element is open
+     or shut — so the two extra wrappers the grid technique needed are gone. #}
+  <div class="u-accordion-panel px-5 pb-5 u-muted-on-ground">{{ slot }}</div>
 </details>

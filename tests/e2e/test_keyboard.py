@@ -127,10 +127,17 @@ def test_the_focus_ring_stands_out_from_what_is_behind_it(
 ) -> None:
     """WCAG 1.4.11: a focus indicator needs 3:1 against what surrounds it.
 
-    A.2 asks for the ring to be yellow, and #FFD400 is 1.6:1 on white paper and
-    1.3:1 on the inverted hero once the dark theme turns it near white — so the
-    yellow on its own fails on most of the site. The halo under it is what
-    carries the contrast; this measures the pair that actually reads.
+    B.5 asks for the ring to be yellow — focus is a state, which is what B.1
+    reserves the yellow for — and #FFD400 is 1.43:1 on a white card and 1.17 on
+    the warm grey page, so the yellow on its own fails almost everywhere. The
+    halo under it is what carries the contrast; this measures the pair that
+    actually reads.
+
+    It has caught two real ones. A  utility on the primary button
+    replaced the halo outright, because a utility outranks the base layer the
+    halo is written in; and a field on a dark card kept the page's warm grey
+    from a class written in python, which put a near-white halo on a near-white
+    box at 1.17:1.
     """
     page.goto(f"{live_server.url}{path}")
     page.wait_for_selector("h1")
@@ -196,7 +203,7 @@ def test_the_focus_ring_stands_out_from_what_is_behind_it(
         if found["best"] < 3.0:
             worst.append(found)
 
-    assert not worst, f"{path}: focus rings under 3:1 against their ground: {worst[:3]}"
+    assert not worst, f"{path}: focus rings under 3:1 against their ground: {worst}"
 
 
 # --------------------------------------------------------------------------
@@ -290,16 +297,24 @@ READERS = {
 # itself; the button moves the icon inside it, so the two cannot share a reader
 # — "the svg in here, or failing that the element" quietly measured the arrow
 # inside a card and reported that nothing had moved.
+#
+# The numbers are REDESIGN.md C.3's table, which replaced FRONTEND.md A.6 at
+# core v25. Two of them moved with it:
+#
+#   the card lift   4px -> 2px. B.5 sets it, and the shadow does most of the
+#                   work now: with the card-hover step under it, 4px read as
+#                   the card jumping rather than answering.
+#   the photograph  1.04 -> 1.03, for the same reason.
+#
+# Two left the table entirely, and neither is untested — they are just not
+# hover moves any more. The accordion indicator no longer scales on hover: B.5
+# turns one plus 45 degrees into a cross when the panel opens, which says open
+# and shut rather than just "something happened", and it is checked by
+# test_the_indicator_turns_into_a_cross below. The category tile's code letter
+# had a move of its own, which went when the tile became a plain card.
 HOVER_MOVES = [
-    # A card and a price tile rise; the tile had no answer to a pointer at all
-    # before, and neither did a schedule row or the accordion's own indicator.
-    ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -4)"),
-    # c-price-tile is not in the table any more. X1 turned the price page into
-    # rows, so the component is left on the kitchen sink alone — and that page
-    # only exists under DEBUG, so under test settings there is nothing to
-    # point at. The lift itself is the one .u-card is checked for above.
-    ("/galeria/", ".u-photo", "img", "matrix(1.04, 0, 0, 1.04, 0, 0)"),
-    ("/faq/", "summary", "svg", "matrix(1.15, 0, 0, 1.15, 0, 0)"),
+    ("/kursy/", ".u-card[href]", "self", "matrix(1, 0, 0, 1, 0, -2)"),
+    ("/galeria/", ".u-photo", "img", "matrix(1.03, 0, 0, 1.03, 0, 0)"),
     # An arrow travels along its own axis rather than swelling in place.
     (
         "/kontakt/",
@@ -307,10 +322,6 @@ HOVER_MOVES = [
         "svg",
         "matrix(1, 0, 0, 1, 2, -2)",
     ),
-    # The category tile is the first thing anyone touches on the home page and
-    # it had a border and a shadow but never moved. Its code letter leads.
-    ("/kursy/", ".u-card.group", "self", "matrix(1, 0, 0, 1, 0, -4)"),
-    ("/kursy/", ".u-card.group", "code", "matrix(1, 0, 0, 1, 0, -2)"),
 ]
 
 
@@ -324,10 +335,12 @@ def test_the_two_hover_moves_happen(
     measure: str,
     expected: str,
 ) -> None:
-    """A.6 point 4, added at the owner's request in core v7.
+    """REDESIGN.md C.3's table, and it is a table rather than a taste.
 
-    A card lifts 2px and an icon inside a button grows to 1.08. Both over the
-    same 120ms everything else uses, and neither moves anything but itself.
+    A card lifts 2px, a photograph leans to 1.03 inside its clipped frame, and
+    an arrow travels 4px along its own axis instead of swelling in place. Every
+    one of them over a duration C.3 names, on the one curve B.4 gives the site,
+    and none of them moving anything but itself.
     """
     page.goto(f"{live_server.url}{path}")
     page.wait_for_selector("h1")
@@ -372,8 +385,13 @@ def test_neither_hover_move_happens_under_reduced_motion(
 
 
 def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, page: Page) -> None:
-    """A.6 point 1 — background, which needed no new permission and had simply
-    never been used on the one thing people scan straight down."""
+    """A row people scan straight down answers the pointer with a fill.
+
+    The value moved with the palette: paper-50 is #F2F1EE now rather than
+    #FAFAFA, because B.2 gave the page a warm grey ground and the half step
+    above it had to move with it. Read off the token rather than written out
+    again, so the next change to B.2 does not need an edit here.
+    """
     page.goto(f"{live_server.url}/terminy/")
     page.wait_for_selector("h1")
 
@@ -383,7 +401,13 @@ def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, pag
 
     row.hover()
     page.wait_for_timeout(300)
-    assert row.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(250, 250, 250)"
+    expected = page.evaluate(
+        "() => getComputedStyle(document.documentElement).getPropertyValue('--paper-50').trim()"
+    )
+    settled = row.evaluate("el => getComputedStyle(el).backgroundColor")
+    assert settled == f"rgb({expected.replace(' ', ', ')})", (
+        f"the row settled on {settled}, not --paper-50 ({expected})"
+    )
 
 
 # The row of menu items only exists from xl; below that it is a burger and a
@@ -438,14 +462,22 @@ def test_the_current_page_keeps_its_underline(
 
 
 def test_the_map_never_covers_the_header(live_server, site: SiteSettings, page: Page) -> None:
-    """Leaflet numbers its panes from 400 and its controls to 1000, and those
-    are absolute figures. Straight on the page they beat a sticky header at
-    z-30, so scrolling drove the map over the menu."""
+    """Leaflet numbered its panes from 400 and its controls to 1000, absolute
+    figures that beat a sticky header at z-30, so scrolling drove the map over
+    the menu. The google frame of core v26 is checked the same way, loaded."""
+    # Answered here rather than by google: this is about stacking, not google.
+    page.route(
+        "https://www.google.com/maps**",
+        lambda route: route.fulfill(
+            body="<!doctype html><title>map</title>", content_type="text/html"
+        ),
+    )
     page.goto(f"{live_server.url}/kontakt/")
     page.wait_for_selector("h1")
 
     page.locator("[data-map]").scroll_into_view_if_needed()
-    page.wait_for_selector(".leaflet-tile")
+    page.locator("[data-map] [data-map-load]").click()
+    page.locator("[data-map] iframe").wait_for()
     page.wait_for_timeout(300)
 
     # What is actually painted in the middle of the header band.
@@ -465,25 +497,71 @@ def test_the_map_never_covers_the_header(live_server, site: SiteSettings, page: 
 
 
 def test_an_answer_opens_over_time(live_server, site: SiteSettings, page: Page) -> None:
-    """A.6 point 2 gives the accordion 180ms and <details> has none of its own:
-    the content is not rendered while it is shut, so there is no height to
-    travel from."""
+    """C.3 row 8 gives the accordion 260ms, and it is css that spends it now.
+
+    <details> has no animation of its own — the content is not rendered while it
+    is shut, so there is no height to travel from. That used to be about fifty
+    lines in static/js/app.js which opened the element, measured the panel and
+    walked its height. grid-template-rows from 0fr to 1fr does the same thing in
+    four declarations, and it does it with the script switched off.
+
+    So this measures the panel rather than the old body wrapper, and it measures
+    the same thing either way: caught mid-open, it is shorter than it ends up.
+    """
     page.goto(f"{live_server.url}/faq/")
     page.wait_for_selector("h1")
 
-    item = page.locator("[data-accordion]").first
-    body = item.locator("[data-accordion-body]")
+    # The locator is `details`, not `details:not([open])`. A playwright locator
+    # resolves every time it is used, so a selector that matches on "closed"
+    # stops matching the moment the click opens it, and everything derived from
+    # it then waits thirty seconds for an element that no longer exists.
+    item = page.locator("details").first
+    assert not item.evaluate("el => el.open"), "this one is already open; nothing to travel"
+
+    shut = item.evaluate("el => el.getBoundingClientRect().height")
     item.locator("summary").click()
 
-    # Caught in the middle: open, but not yet at its full height.
+    # The <details> itself, not the panel inside it. The animation runs on
+    # ::details-content, which clips the panel — so the panel is at its full
+    # height from the first frame and the element around it is what grows.
     page.wait_for_timeout(60)
-    mid = body.evaluate("el => el.getBoundingClientRect().height")
-    page.wait_for_timeout(400)
-    settled = body.evaluate("el => el.getBoundingClientRect().height")
+    mid = item.evaluate("el => el.getBoundingClientRect().height")
+    page.wait_for_timeout(500)
+    settled = item.evaluate("el => el.getBoundingClientRect().height")
+
+    assert mid > shut, f"nothing opened at all: {shut} then {mid}"
 
     assert settled > 0, "the answer never appeared"
     assert mid < settled, f"it arrived at once: {mid} then {settled}"
     assert item.evaluate("el => el.open")
+
+
+def test_the_indicator_turns_into_a_cross(live_server, site: SiteSettings, page: Page) -> None:
+    """B.5: one plus rotated 45 degrees, not two glyphs swapped.
+
+    One icon instead of two, and the turn says open and shut rather than merely
+    "something happened" — which is what the old scale-on-hover said.
+    """
+    page.goto(f"{live_server.url}/faq/")
+    page.wait_for_selector("h1")
+
+    # The locator is `details`, not `details:not([open])`. A playwright locator
+    # resolves every time it is used, so a selector that matches on "closed"
+    # stops matching the moment the click opens it, and everything derived from
+    # it then waits thirty seconds for an element that no longer exists.
+    item = page.locator("details").first
+    mark = item.locator(".u-accordion-mark")
+    assert not item.evaluate("el => el.open"), "this one is already open"
+    assert mark.evaluate("el => getComputedStyle(el).transform") == "none"
+
+    item.locator("summary").click()
+    page.wait_for_timeout(500)
+
+    # 45 degrees is matrix(cos, sin, -sin, cos) with all four at √2/2.
+    turned = mark.evaluate("el => getComputedStyle(el).transform")
+    assert turned != "none", "the plus did not turn"
+    numbers = [float(n) for n in turned[7:-1].split(", ")[:4]]
+    assert all(abs(abs(n) - 0.7071) < 0.02 for n in numbers), turned
 
 
 def test_an_answer_still_opens_without_javascript(
@@ -496,9 +574,9 @@ def test_an_answer_still_opens_without_javascript(
     try:
         page.goto(f"{live_server.url}/faq/")
         page.wait_for_selector("h1")
-        item = page.locator("[data-accordion]").first
+        item = page.locator("details").first
         item.locator("summary").click()
         assert item.evaluate("el => el.open")
-        assert item.locator("[data-accordion-body]").is_visible()
+        assert item.locator(".u-accordion-panel").is_visible()
     finally:
         context.close()

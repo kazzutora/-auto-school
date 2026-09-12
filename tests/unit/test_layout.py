@@ -69,6 +69,18 @@ def test_the_skip_link_is_hidden_until_it_takes_focus(
     assert "focus:not-sr-only" in link.group()
 
 
+def first_level_titles(markup: str) -> list[str]:
+    """The text of every first level menu item, however it is marked up.
+
+    The anchors carry more than a word now — B.7 gives each row in the mobile
+    panel a travelling arrow — so a pattern that only matched bare text stopped
+    seeing any of them and the assertion silently had nothing to look at. This
+    strips the tags instead of assuming there are none.
+    """
+    rows = re.findall(r"<li[^>]*>\s*(<a[^>]*>.*?</a>)", markup, re.S)
+    return [re.sub(r"<[^>]+>", " ", row).strip() for row in rows]
+
+
 def test_kontakt_is_first_level_on_the_desktop_menu(
     client: Client, settings_row: SiteSettings
 ) -> None:
@@ -76,8 +88,7 @@ def test_kontakt_is_first_level_on_the_desktop_menu(
     html = body(client)
     nav = re.search(r'<nav aria-label="Główna nawigacja"(?![^>]*hidden).*?</nav>', html, re.S)
     assert nav, "the desktop nav did not render"
-    top_level = re.findall(r"<li[^>]*>\s*<a[^>]*>([^<]+)</a>", nav.group())
-    assert "Kontakt" in [title.strip() for title in top_level]
+    assert "Kontakt" in first_level_titles(nav.group())
 
 
 def test_kontakt_is_first_level_on_the_mobile_panel(
@@ -86,8 +97,7 @@ def test_kontakt_is_first_level_on_the_mobile_panel(
     html = body(client)
     panel = re.search(r'<dialog id="main-menu".*?</dialog>', html, re.S)
     assert panel, "the mobile panel did not render"
-    top_level = re.findall(r"<li[^>]*>\s*<a[^>]*>\s*([^<]+?)\s*</a>", panel.group())
-    assert "Kontakt" in [title.strip() for title in top_level]
+    assert "Kontakt" in first_level_titles(panel.group())
 
 
 def test_the_burger_announces_the_panel_it_controls(
@@ -161,24 +171,38 @@ def test_the_footer_never_shows_the_bank_account(
     assert settings_row.bank_account.replace(" ", "") not in footer.group()
 
 
-def test_the_footer_sits_on_the_deep_ground(client: Client, settings_row: SiteSettings) -> None:
-    """A.1 allows deep in two places and this is one of them."""
+def test_the_footer_is_a_dark_card(client: Client, settings_row: SiteSettings) -> None:
+    """B.7 point 11: dark, and rounded 28px along the top only.
+
+    The purple ground it used to sit on went with core v25 — B.1 cut the
+    palette to two accents and the purple was a third. The radius is the hero's
+    own, so the page opens and closes on the same shape.
+    """
     footer = re.search(r"<footer[^>]*>", body(client))
     assert footer
-    assert "u-ground-deep" in footer.group()
+    assert "u-dark-card" in footer.group()
+    assert "rounded-t-hero" in footer.group()
 
 
-def test_the_header_is_a_sticky_dark_band(client: Client, settings_row: SiteSettings) -> None:
-    """A.9 point 0, as the owner settled it.
+def test_the_header_shrinks_from_a_sentinel_rather_than_a_scroll_handler(
+    client: Client, settings_row: SiteSettings
+) -> None:
+    """B.7 point 0 and R4 point 1.
 
-    The header used to take the page ground with a hairline underneath that
-    thickened once the page moved — which needed a sentinel above it to know
-    when that was. It is an ink band over a light page now, so the edge is the
-    colour change and there is nothing to observe.
+    76px down to 64px with a hairline appearing, and the class that does it is
+    toggled from an IntersectionObserver on a one pixel sentinel above the
+    header. R4 asks for it that way because the alternative — a scroll
+    listener — runs on every frame of every scroll for the life of the page to
+    answer a question whose value changes twice.
+
+    The sentinel has to be outside the header: the header is sticky and never
+    leaves the viewport, so it can never observe itself.
     """
     html = body(client)
-    assert re.search(r'<header class="[^"]*u-header', html)
-    assert "data-header-sentinel" not in html
+    assert re.search(r'<header[^>]*class="[^"]*u-header', html)
+
+    sentinel = html.index("data-header-sentinel")
+    assert sentinel < html.index("<header"), "the sentinel must sit above the header"
 
 
 @override_settings(DEBUG=False)

@@ -194,7 +194,11 @@ def test_the_filter_works_without_javascript(live_server, browser: Browser) -> N
     # The first h2 is the group. The page closes on an invitation that has one
     # of its own now, so asking for "the" h2 is a strict mode violation rather
     # than a failure of the filter.
-    assert page.locator("main h2").first.inner_text() == "Pojazdy"
+    # casefold, because REDESIGN.md B.3 sets every h1 and h2 in upper case and
+    # inner_text() returns what is painted. The words are unchanged; only the
+    # rendering is, and asserting on the rendering would pin a design decision
+    # in a test about routing.
+    assert page.locator("main h2").first.inner_text().casefold() == "pojazdy"
     context.close()
 
 

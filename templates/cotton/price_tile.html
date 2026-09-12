@@ -1,15 +1,19 @@
 {% load i18n %}
 {% comment %}
 Price tile, tech.md section 7. The number is the point, so it takes the data
-face at the large step with tabular figures, FRONTEND.md A.3.
+face at the large step with tabular figures, REDESIGN.md B.3.
 A tile with no price says so rather than showing an empty line.
+
+A card now rather than a bordered box of its own: B.4 gave the whole language
+one card shape and this was the last thing drawing a second one. u-tile is
+gone with it — c-card carries the hover lift.
 {% endcomment %}
 <c-vars title="" price="" note="" href="" class="" />
-<div class="u-tile flex h-full flex-col rounded border border-line-soft bg-paper p-6 transition{% if href %} hover:-translate-y-1 hover:border-ink hover:shadow-card{% endif %} {{ class }}" {{ attrs }}>
-  <h3 class="text-body font-semibold text-ink">{{ title }}</h3>
-  {% if price %}<p class="data mt-3 text-data-lg text-ink">{{ price }}</p>
-  {% else %}<p class="mt-3 text-ink-500">{% translate "Cena ustalana indywidualnie" %}</p>{% endif %}
-  {% if note %}<p class="mt-1 text-small text-ink-500">{{ note }}</p>{% endif %}
-  {% if slot %}<div class="mt-4 text-ink-700">{{ slot }}</div>{% endif %}
+<c-card class="flex h-full flex-col {% if href %}u-card-link{% endif %} {{ class }}" {{ attrs }}>
+  <h3 class="text-body font-bold u-on-ground">{{ title }}</h3>
+  {% if price %}<p class="data mt-3 text-data-lg u-on-ground">{{ price }}</p>
+  {% else %}<p class="mt-3 u-muted-on-ground">{% translate "Cena ustalana indywidualnie" %}</p>{% endif %}
+  {% if note %}<p class="mt-1 text-small u-muted-on-ground">{{ note }}</p>{% endif %}
+  {% if slot %}<div class="mt-4 u-muted-on-ground">{{ slot }}</div>{% endif %}
   {% if href %}<div class="mt-auto pt-6"><c-button href="{{ href }}" variant="secondary" full="1">{% translate "Szczegóły" %}</c-button></div>{% endif %}
-</div>
+</c-card>
