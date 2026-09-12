@@ -67,6 +67,9 @@ def site(db: None) -> SiteSettings:
     from datetime import date, time, timedelta
     from decimal import Decimal
 
+    from django.core.files.base import ContentFile
+
+    from apps.core.models import DownloadFile, PassRate
     from apps.core.models import Page as FlatPage
     from apps.courses.models import Course, CourseIntake, PriceItem
     from apps.links.models import Faq, UsefulLink
@@ -74,14 +77,14 @@ def site(db: None) -> SiteSettings:
     from tests.factories import CertificateFactory, GalleryImageFactory
 
     settings_row = SiteSettings.get_solo()
-    settings_row.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    settings_row.short_name = "OSK Nawrocki"
-    settings_row.street = "ul. Zielona 45"
+    settings_row.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    settings_row.short_name = "OSK Ostrycharz"
+    settings_row.street = "ul. Asnyka 7"
     settings_row.postal_code = "98-300"
     settings_row.city = "Wieluń"
-    settings_row.nip = "8321916014"
+    settings_row.nip = "7671234567"
     settings_row.email = "biuro@example.com"
-    settings_row.phone_primary = "43 843 29 11"
+    settings_row.phone_primary = "691 570 489"
     settings_row.phone_secondary = "605 065 795"
     settings_row.map_lat = Decimal("51.220600")
     settings_row.map_lng = Decimal("18.569700")
@@ -140,9 +143,28 @@ def site(db: None) -> SiteSettings:
         seats_total=20,
         seats_taken=17,
     )
-    PriceItem.objects.create(
-        title="Jazda doszkalająca", group="Jazdy", price_gross=Decimal("120"), unit="za godzinę"
+    # The real shape of this school's price list, tech.md section 1: what the
+    # course costs, what an extra hour costs, and what goes to a doctor and an
+    # exam centre. One item per group would give /cennik/ a single section,
+    # which is not the page anybody sees.
+    for group, title, unit, price in (
+        ("Kurs", "Kurs kategorii B", "", "3200"),
+        ("Kurs", "Kurs przyspieszony", "", "4300"),
+        ("Jazdy doszkalające", "Jazda doszkalająca", "za godzinę", "160"),
+        ("Opłaty zewnętrzne", "Badanie lekarskie", "", "200"),
+        ("Opłaty zewnętrzne", "Egzamin państwowy", "", "230"),
+        # Free, and it must never print as 0,00 zł.
+        ("W cenie kursu", "Dowóz na egzamin", "", "0"),
+    ):
+        PriceItem.objects.create(
+            title=title, group=group, unit=unit, price_gross=Decimal(price)
+        )
+
+    PassRate.objects.create(
+        year=2025, students=92, passed_1st=68, passed_2nd=16, passed_3rd=3, passed_4th=3
     )
+    document = DownloadFile(title="Regulamin", description="Zasady szkolenia.")
+    document.file.save("regulamin.pdf", ContentFile(b"%PDF-1.4 " + b"x" * 2048), save=True)
 
     for slug, title in (("o-nas", "O nas"), ("rodo", "RODO")):
         FlatPage.objects.create(

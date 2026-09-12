@@ -31,7 +31,7 @@ RATE = "5/h"
 TOO_MANY_REQUESTS = 429
 
 ENROL_DESCRIPTION = _(
-    "Zapisz się na kurs prawa jazdy w OSK Nawrocki w Wieluniu. "
+    "Zapisz się na kurs prawa jazdy w OSK Ostrycharz w Wieluniu. "
     "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin."
 )
 THANKS_DESCRIPTION = _("Zgłoszenie przyjęte. Oddzwonimy w godzinach pracy biura.")

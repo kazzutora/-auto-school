@@ -8,7 +8,7 @@ from django.test import Client
 from django.urls import reverse
 
 from apps.core.models import Page
-from apps.core.sitemaps import STATIC_ROUTES
+from apps.core.sitemaps import CONDITIONAL_ROUTES, STATIC_ROUTES
 from apps.courses.models import Course
 
 pytestmark = pytest.mark.django_db
@@ -42,14 +42,43 @@ def paths(body: str) -> list[str]:
 # what is in the file
 
 
+# Routes that only join the file once they have something in them.
+UNCONDITIONAL = [route for route in STATIC_ROUTES if route not in CONDITIONAL_ROUTES]
+
+
 def test_the_static_routes_are_listed(client: Client, offer: Course) -> None:
-    """Every route the file names by hand, resolved and present."""
+    """Every route the file names by hand and does not gate, resolved and present."""
     listed = paths(sitemap(client))
 
-    for route in STATIC_ROUTES:
+    for route in UNCONDITIONAL:
         assert reverse(route) in listed, route
-    for path in ("/kursy/", "/cennik/", "/terminy/", "/galeria/", "/faq/", "/kontakt/"):
+    for path in ("/", "/kursy/", "/cennik/", "/kontakt/"):
         assert path in listed, path
+
+
+def test_a_page_with_nothing_in_it_is_not_advertised(client: Client, offer: Course) -> None:
+    """It answers 200 and shows its empty state, which is right for a visitor.
+
+    It is the wrong thing to hand a crawler: a sitemap of placeholders is how a
+    small site teaches Google that most of it is thin. This school has no
+    photographs, no certificates and no published intake calendar.
+    """
+    listed = paths(sitemap(client))
+
+    for path in ("/galeria/", "/certyfikaty/", "/terminy/"):
+        assert path not in listed, path
+        assert client.get(path).status_code == 200, f"{path} still has to answer"
+
+
+def test_a_route_rejoins_the_file_the_moment_it_has_content(client: Client, offer: Course) -> None:
+    """Evaluated per request, so nothing has to be remembered or rerun."""
+    from apps.core.models import PassRate
+
+    assert "/zdawalnosc/" not in paths(sitemap(client))
+
+    PassRate.objects.create(year=2025, students=92, passed_1st=68)
+
+    assert "/zdawalnosc/" in paths(sitemap(client))
 
 
 def test_a_course_brings_its_own_url_and_date(client: Client, offer: Course) -> None:
@@ -88,13 +117,13 @@ def test_the_file_advertises_the_host_that_asked(
     A sitemap naming another domain sends every crawler that reads it away from
     the site it was meant to describe.
     """
-    settings.ALLOWED_HOSTS = ["naukajazdywielun.pl"]
+    settings.ALLOWED_HOSTS = ["oskostrycharz.pl"]
 
-    body = client.get("/sitemap.xml", headers={"host": "naukajazdywielun.pl"}).content.decode()
+    body = client.get("/sitemap.xml", headers={"host": "oskostrycharz.pl"}).content.decode()
 
     assert locations(body)
     for url in locations(body):
-        assert url.startswith("http://naukajazdywielun.pl/"), url
+        assert url.startswith("http://oskostrycharz.pl/"), url
 
 
 def test_the_file_is_not_itself_indexed(client: Client, offer: Course) -> None:

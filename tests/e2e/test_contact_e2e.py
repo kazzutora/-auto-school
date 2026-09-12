@@ -1,8 +1,8 @@
 """The contact page in a browser, DEV.md S4.
 
-Three things only a browser answers: does leaflet actually draw the map, does
-the page reach a third party while doing it, and are the numbers tappable on a
-phone.
+Three things only a browser answers: does the google map load when somebody asks
+for it, does the page reach a third party before they do, and are the numbers
+tappable on a phone.
 """
 
 from collections.abc import Iterator
@@ -11,26 +11,27 @@ from decimal import Decimal
 from urllib.parse import urlsplit
 
 import pytest
-from playwright.sync_api import Page
+from playwright.sync_api import Page, Route
 
 from apps.core.models import OpeningHours, SiteSettings
 
 pytestmark = pytest.mark.django_db
 
-# The tiles are the one third party the map is allowed to touch, tech.md
-# section 2: openstreetmap sets no cookies, which is why it beat google maps.
-TILE_HOST = "tile.openstreetmap.org"
+# The map is google's since core v26, and google is the one third party the page
+# may touch — after the visitor presses the button and not before, tech.md
+# section 2.
+GOOGLE_MAPS = "https://www.google.com/maps"
 
 
 @pytest.fixture
 def office() -> SiteSettings:
     site = SiteSettings.get_solo()
-    site.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    site.street = "ul. Zielona 45"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
     site.phone_secondary = "605 065 795"
     site.phone_tertiary = "667 615 184"
     site.map_lat = Decimal("51.220600")
@@ -55,45 +56,62 @@ def watched_page(page: Page) -> Iterator[tuple[Page, list[str]]]:
     yield page, hosts
 
 
-def scroll_to_map(page: Page) -> None:
-    """The map is built when it comes into view, not on load.
+def answer_for_google(route: Route) -> None:
+    """Stands in for google's embed.
 
-    The tiles are the only third party the site touches, so fetching them before
-    anyone has scrolled to the map spends the first screen budget in A.11 on
-    something nobody is looking at. Every assertion about the map therefore has
-    to put it on screen first, exactly as a visitor would.
+    The test is about what the page does with the click, not about google's
+    uptime, and a suite that needs the internet is a suite that fails on a train.
+    """
+    route.fulfill(body="<!doctype html><title>map</title>", content_type="text/html")
+
+
+def scroll_to_map(page: Page) -> None:
+    """Put the map on screen first, exactly as a visitor would.
+
+    Scrolling to it is not asking for it: the button is. Every assertion about
+    what the map fetches has to prove that the scroll alone fetched nothing.
     """
     page.locator("[data-testid='map']").scroll_into_view_if_needed()
 
 
-def test_the_map_draws_a_marker(live_server, office: SiteSettings, page: Page) -> None:
+def test_the_map_loads_when_asked(live_server, office: SiteSettings, page: Page) -> None:
+    page.route(f"{GOOGLE_MAPS}**", answer_for_google)
     page.goto(f"{live_server.url}/kontakt/")
     scroll_to_map(page)
 
-    page.wait_for_selector("[data-testid='map'].leaflet-container")
-    assert page.locator(".leaflet-marker-icon").count() == 1
+    page.locator("[data-testid='map'] [data-map-load]").click()
+
+    frame = page.locator("[data-testid='map'] iframe")
+    frame.wait_for()
+    src = frame.get_attribute("src")
+    assert src is not None
+    assert src.startswith(f"{GOOGLE_MAPS}?q=51.2206,18.5697"), src
+    assert "output=embed" in src
+    assert page.locator("[data-map-load]").count() == 0, "the button outlived the click"
 
 
-def test_the_map_is_not_built_before_anyone_scrolls_to_it(
+def test_the_map_is_not_loaded_before_a_click(
     live_server, office: SiteSettings, page: Page
 ) -> None:
     page.goto(f"{live_server.url}/kontakt/")
-    page.wait_for_selector("h1")
+    scroll_to_map(page)
+    page.wait_for_timeout(300)
 
-    assert page.locator("[data-testid='map'].leaflet-container").count() == 0
+    assert page.locator("[data-testid='map'] iframe").count() == 0
+    assert page.locator("[data-testid='map'] [data-map-load]").is_visible()
 
 
-def test_the_page_talks_to_nobody_but_the_tile_server(
+def test_the_page_talks_to_nobody_before_the_click(
     live_server, office: SiteSettings, watched_page: tuple[Page, list[str]]
 ) -> None:
-    """The acceptance criterion: no analytics host, no google script."""
+    """The acceptance criterion: no analytics host, and no google until asked."""
     page, hosts = watched_page
     page.goto(f"{live_server.url}/kontakt/")
     scroll_to_map(page)
-    page.wait_for_selector(".leaflet-tile")
+    page.wait_for_load_state("networkidle")
 
-    allowed = {urlsplit(live_server.url).netloc, TILE_HOST}
-    assert set(hosts) <= allowed, f"unexpected hosts: {sorted(set(hosts) - allowed)}"
+    ours = {urlsplit(live_server.url).netloc}
+    assert set(hosts) <= ours, f"unexpected hosts: {sorted(set(hosts) - ours)}"
 
 
 def test_every_number_is_tappable_on_a_phone(live_server, office: SiteSettings, page: Page) -> None:
@@ -108,7 +126,12 @@ def test_every_number_is_tappable_on_a_phone(live_server, office: SiteSettings, 
         box = link.bounding_box()
         assert box is not None
         # A finger needs something to hit, not a line of text.
-        assert box["height"] >= 44
+        #
+        # Rounded, because getBoundingClientRect returns a float and an element
+        # sitting at a fractional offset comes back as 43.99993896484375 for a
+        # box whose computed min-height is exactly 44px. The target is the
+        # right size; the comparison was the thing that could not tell.
+        assert round(box["height"]) >= 44
 
 
 def test_the_call_bar_sticks_to_the_bottom(live_server, office: SiteSettings, page: Page) -> None:

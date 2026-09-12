@@ -1,12 +1,12 @@
 {
-	email {$ACME_EMAIL:osk.adam.nawrocki@wp.pl}
+	email {$ACME_EMAIL:oskostrycharz@poczta.onet.pl}
 }
 
-www.{$SITE_DOMAIN:naukajazdywielun.pl} {
-	redir https://{$SITE_DOMAIN:naukajazdywielun.pl}{uri} permanent
+www.{$SITE_DOMAIN:oskostrycharz.pl} {
+	redir https://{$SITE_DOMAIN:oskostrycharz.pl}{uri} permanent
 }
 
-{$SITE_DOMAIN:naukajazdywielun.pl} {
+{$SITE_DOMAIN:oskostrycharz.pl} {
 	encode zstd gzip
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"

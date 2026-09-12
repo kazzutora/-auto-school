@@ -1,7 +1,13 @@
-# OSK Nawrocki
+# OSK Ostrycharz
 
-Website of the driving school Ośrodek Kształcenia i Doskonalenia Zawodowego
-Adam Nawrocki, Mariola Nawrocka S.C., Wieluń. Replaces `naukajazdywielun.pl`.
+Website of the driving school OSK Ostrycharz, ul. Asnyka 7, Wieluń. Replaces
+`oskostrycharz.pl`, a one-page site with anchor navigation.
+
+The school teaches one category — B — three ways: standard, accelerated over two
+weeks, and on an automatic gearbox. It publishes its prices, which is rare, and
+it publishes how many of its candidates pass at the first attempt, which is the
+strongest thing a driving school can say about itself. Both were buried in the
+middle of the old single page with no url of their own. `tech.md` section 1.
 
 Django 5.1, PostgreSQL 16, Celery and Redis, Django Templates with django-cotton,
 HTMX, Tailwind. The full stack is frozen in `tech.md` section 2.
@@ -12,10 +18,11 @@ HTMX, Tailwind. The full stack is frozen in `tech.md` section 2.
 |---|---|
 | `tech.md` | Core, single source of truth. Database schema, Celery contracts, URL map, UI components, `Seo` contract, test doctrine, infrastructure. Append only, every contract change bumps the version. |
 | `DEV.md` | Part I: skeleton build order and checklists (LEAD mode). Part II: staged task list (DEV mode). |
+| `OSTRYCHARZ.md` | This client's data as transcribed from their own site, what was wrong with it, and the prompts that built this. |
 | `CLAUDE.md` | Session pointer. |
 
 Pin the core version from the `tech.md` header at the start of every session.
-Current core version: **v1**.
+Current core version: **v24**.
 
 ## Requirements
 
@@ -66,6 +73,7 @@ development image, so `make e2e` needs no extra setup.
 `pytest.ini` defines four markers, run a group with `pytest -m <marker>`:
 
 - `redirects`, legacy URL table from `data/legacy/redirects.csv` answers 301
+  (and the half of it that is anchors, which the browser has to resolve)
 - `seo`, SEO contract of a public page
 - `a11y`, accessibility checks, non-empty `img` alt above all
 - `owner_data`, content the owner still owes, blocks the production release
@@ -111,6 +119,36 @@ Two one time steps once the repository is on github:
 # 2. Apply branch protection: pull requests only, green CI, linear history.
 .github/branch-protection.sh owner/repo
 ```
+
+## Two schools, one box
+
+This repository is a fork of the engine that runs a second driving school on the
+same server. Nothing is shared at runtime and nothing may become shared:
+
+- `COMPOSE_PROJECT_NAME` namespaces every volume, network and container. Leave
+  it at `osk-ostrycharz`; with the default `osk` the two stacks mount the same
+  `pgdata` volume and one client's database answers for the other.
+- `POSTGRES_PORT` and `WEB_PORT` differ per stack, or whichever comes up second
+  cannot bind.
+- there is one pair of ports 80 and 443 on the box. One stack keeps its Caddy
+  and terminates TLS for both; the other runs without one and is reached by
+  container name over a shared network:
+
+  ```bash
+  docker network create osk-edge          # once, on the box
+
+  docker compose --env-file .env     -f deploy/docker-compose.prod.yml     -f deploy/docker-compose.edge.yml     up -d --scale caddy=0
+  ```
+
+  Then paste `deploy/Caddyfile.second-site` into the live `Caddyfile` of the
+  stack that does own the edge and reload it. Caddy picks the block by the Host
+  header, so neither school ever sees the other's requests and each gets its own
+  certificate.
+
+The rule for anything that differs between the two schools: it lives in the
+database or in `.env`, never in a template. A `{% if school == "ostrycharz" %}`
+in a template is a branch that becomes unmanageable at the third client — at the
+fourth, this stops being a fork and becomes multi-tenant.
 
 ## Production
 

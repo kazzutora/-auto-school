@@ -61,13 +61,13 @@ class LeadFactory(factory.django.DjangoModelFactory):
 def notify_site(recipients: str = "biuro@example.com") -> SiteSettings:
     """SiteSettings with somebody to notify, tech.md section 6."""
     site = SiteSettings.get_solo()
-    site.short_name = "OSK Nawrocki"
-    site.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    site.street = "ul. Zielona 45"
+    site.short_name = "OSK Ostrycharz"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
     site.lead_notify_emails = recipients
     site.save()
     return site

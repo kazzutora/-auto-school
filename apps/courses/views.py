@@ -6,7 +6,7 @@ shape, the view assembles the section 8 SEO contract and renders.
 
 from typing import Any
 
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -26,7 +26,7 @@ def _crumbs(trail: list[tuple[Label, str]]) -> list[dict[str, Label]]:
 
 
 def seo_subject(course: Course) -> str:
-    """tech.md section 8 wants "Prawo jazdy kat. B — OSK Nawrocki Wieluń"."""
+    """tech.md section 8 wants "Prawo jazdy kat. B — OSK Ostrycharz Wieluń"."""
     if course.kind == Course.Kind.LICENSE and course.code:
         return f"Prawo jazdy kat. {course.code}"
     return course.title
@@ -49,6 +49,39 @@ def course_jsonld(course: Course, url: str, site: Any) -> dict[str, Any]:
     }
     if course.min_age:
         data["typicalAgeRange"] = f"{course.min_age}-"
+
+    # The price, which is the one thing the previous client could not publish
+    # and this one leads with. schema.org wants it on an Offer rather than on
+    # the Course, and it wants the currency: a bare 3700 is not a price.
+    if course.price_gross:
+        data["offers"] = {
+            "@type": "Offer",
+            "price": f"{course.price_gross:.2f}",
+            "priceCurrency": "PLN",
+            "category": "Paid",
+            "url": url,
+            "availability": "https://schema.org/InStock",
+        }
+
+    # Google asks a Course for at least one instance of it. This school runs the
+    # same course continuously and enrols by telephone, so what is honest here
+    # is the mode and the language, not a date it never published.
+    data["hasCourseInstance"] = {
+        "@type": "CourseInstance",
+        "courseMode": "onsite",
+        "courseWorkload": "P3M" if course.kind == Course.Kind.LICENSE else "P1M",
+        "location": {
+            "@type": "Place",
+            "name": site.legal_name or site.short_name,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": site.street,
+                "postalCode": site.postal_code,
+                "addressLocality": site.city,
+                "addressCountry": "PL",
+            },
+        },
+    }
     return data
 
 
@@ -63,6 +96,13 @@ def _grid(
     intro: Label,
 ) -> HttpResponse:
     courses = list(selectors.active_courses(kind))
+    # A listing with nothing in it is not a page. This school sells one kind, so
+    # /kierowca-zawodowy/ has no courses behind it and used to answer 200 with a
+    # heading over an empty grid — a thin page, in the sitemap, competing with
+    # the pages that do have something to say.
+    if not courses:
+        raise Http404(f"no active courses of kind {kind}")
+
     trail: list[tuple[Label, str]] = [(_("Start"), "/"), (heading, reverse(route))]
 
     return render(
@@ -168,6 +208,14 @@ def course_detail(request: HttpRequest, slug: str, kind: str) -> HttpResponse:
             "body": render_markdown(course.body),
             "intakes": selectors.prefetched_intakes(course),
             "vehicles": selectors.prefetched_vehicles(course),
+            # The variants of this one course, as price rows. This school sells
+            # category B three ways and the difference between them is the whole
+            # decision a visitor is making on this page.
+            "variants": services.price_item_rows(
+                selectors.active_price_items().filter(group=COURSE_PRICE_GROUP)
+            ),
+            "facts": _course_facts(course),
+            "fleet_facts": FLEET_FACTS,
             "enrol_url": ENROL_URL,
             # The form ends the page with this course already chosen, DEV.md
             # S3.1. Imported inside the function: apps/courses must not depend
@@ -183,28 +231,104 @@ def _lead_form(course: Course) -> Any:
     return LeadForm(initial={"course": course.pk})
 
 
-# tech.md section 4.2 kinds, in the order the price page reads best.
-PRICE_GROUPS = (
-    (Course.Kind.LICENSE, "Kategorie prawa jazdy"),
-    (Course.Kind.PROFESSIONAL, "Kierowca zawodowy"),
-    (Course.Kind.PSYCHOTEST, "Badania psychologiczne"),
-    (Course.Kind.OPERATOR, "Uprawnienia operatora"),
+# The price group that holds the course itself, as opposed to extra lessons and
+# third party fees. Named in one place; apps/core/views.py reads the same one.
+COURSE_PRICE_GROUP = "Kurs"
+
+# What the school says about its own cars, tech.md section 1, transcribed. It
+# stands in for photographs we do not own until the owner sends theirs, and
+# every line here is a claim they already make in print.
+FLEET_FACTS: tuple[dict[str, Label], ...] = (
+    {"title": _("Klimatyzacja"), "text": _("we wszystkich autach szkoleniowych")},
+    {"title": _("Wyposażenie"), "text": _("bogate, w standardzie egzaminacyjnym")},
+    {"title": _("Skrzynia"), "text": _("manualna i automatyczna, do wyboru")},
+    {"title": _("Na egzamin"), "text": _("dowozimy tym samym autem, gratis")},
 )
+
+
+def _course_facts(course: Course) -> list[dict[str, Any]]:
+    """The spec list beside the heading: what applies to me, in four lines.
+
+    Every entry is skipped when the underlying field is empty, so a course with
+    no declared hours shows three facts rather than three facts and a blank.
+    """
+    facts: list[dict[str, Any]] = []
+
+    if course.min_age:
+        facts.append(
+            {
+                "title": _("Wiek"),
+                "text": _("od %(age)s lat") % {"age": course.min_age},
+                "numeric": True,
+            }
+        )
+        months = min_start_age(course)
+        if months:
+            years, rest = split_age(months)
+            facts.append(
+                {
+                    "title": _("Zapisy od"),
+                    "text": _("%(years)s lat %(months)s mies.") % {"years": years, "months": rest},
+                    "numeric": True,
+                }
+            )
+    if course.theory_hours:
+        facts.append({"title": _("Teoria"), "text": f"{course.theory_hours} h", "numeric": True})
+    if course.practice_hours:
+        facts.append(
+            {"title": _("Praktyka"), "text": f"{course.practice_hours} h", "numeric": True}
+        )
+    if course.price_gross:
+        facts.append(
+            {
+                "title": _("Cena"),
+                "text": format_price(course.price_gross),
+                "numeric": True,
+            }
+        )
+    facts.append({"title": _("Dowóz na egzamin"), "text": _("gratis")})
+    return facts
+
+
+# The order the price list reads best in: what the school charges first, then
+# what it charges by the hour, then what somebody pays to a doctor and an exam
+# centre. Groups the seed does not use simply do not appear.
+PRICE_GROUP_ORDER = ("Kurs", "Jazdy doszkalające", "W cenie kursu", "Opłaty zewnętrzne")
 PRICE_HEADERS = ["Usługa", "Cena brutto", "Uwagi"]
+
+# The one group that is not money the school asks for. It gets its own note on
+# the page, because "230 zł egzamin" beside "3700 zł kurs" reads as one bill
+# unless the page says otherwise.
+EXTERNAL_GROUP = "Opłaty zewnętrzne"
+
+PRICING_DESCRIPTION = _(
+    "Cennik kursu prawa jazdy kat. B w Wieluniu: kurs 3700 zł, przyspieszony "
+    "i automat po 4300 zł, jazdy doszkalające od 140 zł/h. Ceny brutto, "
+    "dowóz na egzamin gratis."
+)
+
+
+def _ordered_groups(groups: list[tuple[str, Any]]) -> list[tuple[str, Any]]:
+    """PRICE_GROUP_ORDER first, then whatever else the owner has invented.
+
+    Sorting rather than filtering: a group added in the admin still shows up,
+    at the end, instead of silently disappearing off the price list.
+    """
+    known = {name: position for position, name in enumerate(PRICE_GROUP_ORDER)}
+    return sorted(groups, key=lambda pair: known.get(pair[0], len(known)))
 
 
 def pricing(request: HttpRequest) -> HttpResponse:
-    """One page that answers "how much", tech.md section 5."""
+    """One page that answers "how much", tech.md section 5.
+
+    Built out of PriceItem alone. The previous client had a row per course and
+    no figures at all; this one prices three variants of one course, so the
+    course itself is a price group like any other and a second list of courses
+    beside it would print category B twice.
+    """
     from apps.core.models import Page
 
-    # Every active course, not only the priced ones: see course_rows.
-    offered = list(selectors.active_courses())
-    groups = [
-        (label, services.course_rows(course for course in offered if course.kind == kind))
-        for kind, label in PRICE_GROUPS
-    ]
-    groups = [(label, rows) for label, rows in groups if rows]
-    groups += services.group_price_items(selectors.active_price_items())
+    groups = _ordered_groups(services.group_price_items(selectors.active_price_items()))
 
     trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Cennik"), reverse("courses:pricing"))]
     payments = Page.objects.filter(slug="platnosci", is_published=True).first()
@@ -215,15 +339,23 @@ def pricing(request: HttpRequest) -> HttpResponse:
         {
             "seo": page_seo(
                 request,
-                subject=_("Cennik"),
-                description=(
-                    "Cennik kursów prawa jazdy, szkoleń dla kierowców zawodowych i badań "
-                    "psychologicznych w Wieluniu."
-                ),
+                subject=_("Cennik kursu prawa jazdy"),
+                description=PRICING_DESCRIPTION,
                 breadcrumbs=trail,
             ),
             "breadcrumbs": _crumbs(trail),
             "groups": groups,
+            # The anchors c-anchor-nav jumps between. Built from the groups that
+            # actually rendered, so the nav cannot point at a missing section.
+            "anchors": [
+                {"id": f"grupa-{position}", "title": label}
+                for position, (label, _rows) in enumerate(groups, start=1)
+                if label
+            ],
+            "external_group": EXTERNAL_GROUP,
+            "headline_price": format_price(
+                selectors.active_courses().values_list("price_gross", flat=True).first()
+            ),
             "headers": PRICE_HEADERS,
             "payments": render_markdown(payments.body) if payments else "",
             "payments_title": payments.title if payments else "",

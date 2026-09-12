@@ -2,7 +2,7 @@
 
 from modeltranslation.translator import TranslationOptions, register
 
-from apps.core.models import OpeningHours, Page
+from apps.core.models import DownloadFile, OpeningHours, Page, PassRate
 
 
 @register(OpeningHours)
@@ -13,3 +13,13 @@ class OpeningHoursTranslationOptions(TranslationOptions):
 @register(Page)
 class PageTranslationOptions(TranslationOptions):
     fields = ("title", "lead", "body", "seo_title", "seo_desc")
+
+
+@register(DownloadFile)
+class DownloadFileTranslationOptions(TranslationOptions):
+    fields = ("title", "description")
+
+
+@register(PassRate)
+class PassRateTranslationOptions(TranslationOptions):
+    fields = ("note",)

@@ -1,0 +1,67 @@
+{% comment %}
+Intake group card, REDESIGN.md B.5 and B.7 point 5. Props: intake, featured,
+disabled.
+
+Three of these stand under the tabs on the home page: the name of the group,
+what is in it, the price in the data face, and the way in. B.7 asks for one
+filled with the primary and one unavailable and dimmed with a BRAK MIEJSC
+badge, which is what `featured` and `disabled` are.
+
+`featured` fills with the blue — the action colour, and this is the card the
+school wants pressed. Its badge stays yellow, because a badge is a state and
+B.1 does not let the two swap roles even when they land on the same card. On
+the blue the yellow reads at 4.4:1, which is why the badge there is the solid
+yellow fill with near-black text rather than an outline.
+
+`disabled` is not a `<button disabled>`: the card is still a link to the course
+page, because somebody looking at a full group still wants to know what it is.
+What is gone is the price's promise and the call to sign up.
+
+The whole card is not a link when it carries its own button — two nested
+interactive elements is invalid html and a keyboard trap in practice.
+{% endcomment %}
+<c-vars intake="" featured="" disabled="" href="" class="" />{% load i18n %}
+<article class="u-card flex h-full flex-col p-6
+{% if featured %} u-ground-primary shadow-card-hover
+{% elif disabled %} bg-surface-muted
+{% endif %} {{ class }}" {{ attrs }}>
+
+  <div class="flex items-start justify-between gap-4">
+    <h3 class="text-h3">{{ intake.title }}</h3>
+    {% if disabled %}
+      <c-badge tone="muted">{% translate "Brak miejsc" %}</c-badge>
+    {% elif featured %}
+      <c-badge tone="accent">{% translate "Nabór otwarty" %}</c-badge>
+    {% endif %}
+  </div>
+
+  {% if intake.note %}
+    <p class="mt-3 {% if featured %}opacity-90{% else %}u-muted-on-ground{% endif %}">{{ intake.note }}</p>
+  {% endif %}
+
+  {% if slot %}
+    <div class="mt-5 {% if featured %}opacity-90{% else %}u-muted-on-ground{% endif %}">{{ slot }}</div>
+  {% endif %}
+
+  {# mt-auto pins the price and the button to the bottom, so three cards of
+     different length still line their prices up across the row. #}
+  <div class="mt-auto pt-6">
+    {% if intake.price_gross %}
+      <p class="data text-data-xl{% if not featured %} u-on-ground{% endif %}">
+        {{ intake.price_gross|floatformat:0 }} zł
+      </p>
+    {% endif %}
+
+    {% if not disabled and href %}
+      <p class="mt-5">
+        {# On the blue card the primary button would be blue on blue. The
+           secondary reads --on-ground, which the fill has already set to the
+           fixed white, so it comes out as a white frame that fills white on
+           hover — the right button without naming a colour. #}
+        <c-button variant="{% if featured %}secondary{% else %}primary{% endif %}" href="{{ href }}" full="1">
+          {% translate "Zapisz się" %}
+        </c-button>
+      </p>
+    {% endif %}
+  </div>
+</article>

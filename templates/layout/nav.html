@@ -9,4 +9,8 @@ row hides itself below lg, where layout/mobile_menu.html takes over.
 This file exists so the header includes a name rather than a component, and so
 the two menus stay one route apart in the tree.
 {% endcomment %}
-<c-nav class="min-w-0" />
+{# shrink-0, not min-w-0. As a shrinkable flex item the nav was squeezed to
+   487px around 550px of nowrap items, and the overflow printed the last one on
+   top of the language switcher. It either fits or the row is wrong, and this is
+   what makes the second case visible instead of silent. #}
+<c-nav class="shrink-0" />

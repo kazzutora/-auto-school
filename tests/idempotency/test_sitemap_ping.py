@@ -14,7 +14,7 @@ from apps.core.tasks import SEARCH_ENGINES, ping_sitemap
 
 pytestmark = pytest.mark.django_db
 
-DOMAIN = "naukajazdywielun.pl"
+DOMAIN = "oskostrycharz.pl"
 SITEMAP = f"https%3A%2F%2F{DOMAIN}%2Fsitemap.xml"
 
 
@@ -45,7 +45,7 @@ def internet(monkeypatch: pytest.MonkeyPatch) -> FakeInternet:
 @pytest.fixture
 def live_domain() -> None:
     """The site knows its own name, which is what a ping is worth sending."""
-    Site.objects.filter(pk=1).update(domain=DOMAIN, name="OSK Nawrocki")
+    Site.objects.filter(pk=1).update(domain=DOMAIN, name="OSK Ostrycharz")
 
 
 def run() -> dict[str, Any]:

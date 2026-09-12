@@ -25,15 +25,15 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def site() -> SiteSettings:
     row = SiteSettings.get_solo()
-    row.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    row.short_name = "OSK Nawrocki"
-    row.street = "ul. Zielona 45"
+    row.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    row.short_name = "OSK Ostrycharz"
+    row.street = "ul. Asnyka 7"
     row.postal_code = "98-300"
     row.city = "Wieluń"
-    row.nip = "8321916014"
+    row.nip = ""
     row.email = "biuro@example.com"
-    row.phone_primary = "43 843 29 11"
-    row.founded_year = 1996
+    row.phone_primary = "691 570 489"
+    row.founded_year = None
     row.map_lat = Decimal("51.220600")
     row.map_lng = Decimal("18.569700")
     row.save()
@@ -88,7 +88,7 @@ def test_the_title_and_description_are_filled(client: Client, site: SiteSettings
     title = re.search(r"<title>(.*?)</title>", html, re.S)
     description = re.search(r'<meta name="description" content="([^"]*)"', html)
     assert title and title.group(1).strip()
-    assert title.group(1).strip().endswith("OSK Nawrocki Wieluń")
+    assert title.group(1).strip().endswith("OSK Ostrycharz Wieluń")
     assert "Prawo jazdy" in title.group(1)
     assert description and description.group(1).strip()
     assert len(description.group(1)) <= 170
@@ -108,26 +108,46 @@ def test_it_ships_the_two_json_ld_blocks(client: Client, site: SiteSettings) -> 
     assert "FAQPage" in types
 
 
-def test_the_terms_section_is_absent_without_a_joinable_group(
+def test_the_variants_section_is_absent_until_the_prices_are_in(
     client: Client, site: SiteSettings
 ) -> None:
-    """A.9 point 3, in as many words: the section does not render at all."""
-    assert CourseIntake.objects.count() == 0
-    assert 'id="terminy"' not in body(client)
+    """A section with nothing to say does not render at all, A.9."""
+    assert 'id="kurs"' not in body(client)
 
 
-def test_the_terms_section_appears_once_there_is_one(client: Client, site: SiteSettings) -> None:
-    make_intake(make_course())
-    assert 'id="terminy"' in body(client)
-
-
-def test_a_full_group_does_not_take_one_of_the_three_rows(
+def test_the_variants_section_appears_once_there_are_prices(
     client: Client, site: SiteSettings
 ) -> None:
-    """Every row carries a Zapisz się button, so a group nobody can join is not
-    a row: A.9 point 3 limits the list to open and planned."""
-    make_intake(make_course(), status=CourseIntake.Status.FULL)
-    assert 'id="terminy"' not in body(client)
+    from apps.courses.models import PriceItem
+
+    PriceItem.objects.create(
+        title="Kurs kategorii B", group="Kurs", price_gross=Decimal("3700"), is_active=True
+    )
+
+    body_text = body(client)
+
+    assert 'id="kurs"' in body_text
+    assert "Kurs kategorii B" in body_text
+
+
+def test_a_free_extra_does_not_become_a_course_card(client: Client, site: SiteSettings) -> None:
+    """ "Dowóz na egzamin — GRATIS" is priced at zero and lives in its own group.
+
+    Without the exclusion it turned up as a fourth card offering a 0 zł course,
+    which is neither what it is nor something anybody can buy.
+    """
+    from apps.courses.models import PriceItem
+
+    PriceItem.objects.create(
+        title="Kurs kategorii B", group="Kurs", price_gross=Decimal("3700"), is_active=True
+    )
+    PriceItem.objects.create(
+        title="Dowóz na egzamin", group="Kurs", price_gross=Decimal("0"), is_active=True
+    )
+
+    body_text = body(client)
+
+    assert body_text.count("Dowóz na egzamin</h3>") == 0
 
 
 def test_the_reviews_section_is_absent_below_two(client: Client, site: SiteSettings) -> None:
@@ -167,26 +187,33 @@ def test_a_review_with_nowhere_to_check_it_never_counts(client: Client, site: Si
     assert 'id="opinie"' not in body(client)
 
 
-def test_a_course_without_a_price_says_so(client: Client, site: SiteSettings) -> None:
-    """A.9 point 2: cena na zapytanie, never an empty line where a number goes."""
+def test_the_hero_prints_the_course_price(client: Client, site: SiteSettings) -> None:
+    """The figure a visitor arrived for, on the first screen."""
+    make_course(price_gross=Decimal("3700"))
+
+    assert "3700 zł" in body(client)
+
+
+def test_the_hero_says_nothing_about_price_before_there_is_one(
+    client: Client, site: SiteSettings
+) -> None:
+    """Never an empty slot where a number goes, and never a zero standing in."""
     make_course(price_gross=None)
+
     html = body(client)
-    assert "na zapytanie" in html
 
-
-def test_a_course_with_a_price_prints_it(client: Client, site: SiteSettings) -> None:
-    make_course(price_gross=Decimal("3200"))
-    assert "od 3200 zł" in body(client)
+    assert not re.search(r">\s*0\s*zł", html)
+    assert "None" not in html
 
 
 def test_the_page_survives_an_empty_database(client: Client, site: SiteSettings) -> None:
-    """No courses, no groups, no reviews, no questions: still a page."""
+    """No course, no prices, no results, no reviews, no questions: still a page."""
     html = body(client)
     assert "<h1" in html
-    for absent in ('id="terminy"', 'id="opinie"', 'id="faq"'):
+    for absent in ('id="kurs"', 'id="opinie"', 'id="faq"', 'id="wideo"'):
         assert absent not in html
     # The hero and the way to reach a human are never conditional.
-    assert 'href="tel:43843291' in html
+    assert 'href="tel:691570489"' in html
 
 
 def test_the_map_coordinates_are_not_localised(client: Client, site: SiteSettings) -> None:

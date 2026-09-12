@@ -16,14 +16,14 @@ from the intake alone — free seats come from services.seats_left and are not o
 the model. Needs ratifying in tech.md the next time the core version moves.
 {% endcomment %}
 <c-vars intake="" class="" />
-<div class="-mx-4 flex flex-col gap-4 border-b border-line-soft px-4 py-6 transition last:border-b-0 hover:bg-paper-50 md:flex-row md:items-center md:gap-8 {{ class }}" {{ attrs }}>
+<div class="-mx-4 flex flex-col gap-4 border-b border-line px-4 py-6 transition last:border-b-0 hover:bg-paper-50 md:flex-row md:items-center md:gap-8 {{ class }}" {{ attrs }}>
   <p class="flex shrink-0 items-baseline gap-2 md:w-28 md:flex-col md:items-start md:gap-0">
-    <span class="data text-data-xl text-ink">{{ intake.start_date|date:"d.m" }}</span>
-    <span class="data text-small text-ink-500">{{ intake.start_date|date:"Y" }}</span>
+    <span class="data text-data-xl u-on-ground">{{ intake.start_date|date:"d.m" }}</span>
+    <span class="data text-small u-muted-on-ground">{{ intake.start_date|date:"Y" }}</span>
   </p>
 
   <div class="grow">
-    <p class="font-semibold text-ink">{{ intake.course.title }}</p>
+    <p class="font-bold u-on-ground">{{ intake.course.title }}</p>
     <p class="mt-2 flex flex-wrap gap-2">
       <c-badge tone="neutral">{{ intake.get_mode_display }}</c-badge>
       <c-badge tone="neutral">{{ intake.language|upper }}</c-badge>
@@ -35,10 +35,10 @@ the model. Needs ratifying in tech.md the next time the core version moves.
       {% elif intake.status == 'closed' %}<c-badge tone="danger">{% translate "Zamknięty" %}</c-badge>
       {% else %}<c-badge tone="warning">{% translate "Planowany" %}</c-badge>{% endif %}
     </p>
-    {% with shown=intake.note|owner_ready %}{% if shown %}<p class="mt-2 text-small text-ink-500">{{ shown }}</p>{% endif %}{% endwith %}
+    {% with shown=intake.note|owner_ready %}{% if shown %}<p class="mt-2 text-small u-muted-on-ground">{{ shown }}</p>{% endif %}{% endwith %}
     {# Anything the page knows and the row does not: free seats on /terminy/,
        nothing on the home page. #}
-    {% if slot %}<div class="mt-2 text-small text-ink-500">{{ slot }}</div>{% endif %}
+    {% if slot %}<div class="mt-2 text-small u-muted-on-ground">{{ slot }}</div>{% endif %}
   </div>
 
   <div class="shrink-0">

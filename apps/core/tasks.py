@@ -69,7 +69,7 @@ PLACEHOLDER_DOMAIN = "example.com"
 
 def fetch_status(url: str, *, timeout: float = PING_TIMEOUT) -> int:
     """GET the url and return the status code it answered with."""
-    request = Request(url, headers={"User-Agent": "OSK Nawrocki sitemap ping"})  # noqa: S310
+    request = Request(url, headers={"User-Agent": "OSK Ostrycharz sitemap ping"})  # noqa: S310
     with urlopen(request, timeout=timeout) as response:  # noqa: S310
         return int(response.status)
 

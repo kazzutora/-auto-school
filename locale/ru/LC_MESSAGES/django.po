@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 13:11+0200\n"
+"POT-Creation-Date: 2026-09-11 15:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,153 +17,288 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: apps/core/models.py:43
+#: apps/core/admin.py:40 templates/core/pass_rates.html:28
+msgid "Za pierwszym razem"
+msgstr "С первого раза"
+
+#: apps/core/admin.py:53
+msgid "Rozmiar"
+msgstr "Размер"
+
+#: apps/core/models.py:59
 msgid "comma separated"
 msgstr "через запятую"
 
-#: apps/core/models.py:47
+#: apps/core/models.py:63
 msgid "Site settings"
 msgstr "Настройки сайта"
 
-#: apps/core/models.py:66
+#: apps/core/models.py:82
 msgid "Office"
 msgstr "Офис"
 
-#: apps/core/models.py:67
+#: apps/core/models.py:83
 msgid "Psychology lab"
 msgstr "Психологический кабинет"
 
-#: apps/core/models.py:78
+#: apps/core/models.py:94
 msgid "Opening hours"
 msgstr "Часы работы"
 
-#: apps/core/navigation.py:34 templates/404.html:22 templates/500.html:35
-#: templates/layout/footer.html:38
-msgid "Kursy"
-msgstr "Курсы"
+#: apps/core/models.py:146
+msgid "Pass rate"
+msgstr "Сдача экзамена"
 
-#: apps/core/navigation.py:40
+#: apps/core/models.py:147
+msgid "Pass rates"
+msgstr "Сдача экзамена"
+
+#: apps/core/models.py:175
+msgid "Document"
+msgstr "Документ"
+
+#: apps/core/models.py:176
+msgid "Documents"
+msgstr "Документы"
+
+#: apps/core/navigation.py:44
 msgctxt "nav"
-msgid "Kierowca zawodowy"
-msgstr "Проф. водитель"
+msgid "Kurs B"
+msgstr "Курс B"
 
-#: apps/core/navigation.py:41 apps/courses/views.py:209
-#: apps/courses/views.py:218 templates/404.html:24 templates/500.html:37
-#: templates/courses/pricing.html:26 templates/layout/footer.html:51
+#: apps/core/navigation.py:45
+msgctxt "nav"
 msgid "Cennik"
 msgstr "Цены"
 
-#: apps/core/navigation.py:42
+#: apps/core/navigation.py:46
 msgctxt "nav"
-msgid "Terminy"
-msgstr "Даты"
+msgid "Zapisy"
+msgstr "Запись"
 
-#: apps/core/navigation.py:43 templates/layout/footer.html:50
+#: apps/core/navigation.py:47
+msgctxt "nav"
+msgid "Zdawalność"
+msgstr "Сдача"
+
+#: apps/core/navigation.py:48
+msgctxt "nav"
 msgid "O nas"
 msgstr "О нас"
 
-#: apps/core/navigation.py:44 apps/gallery/views.py:85 apps/gallery/views.py:89
-#: templates/gallery/gallery.html:20 templates/layout/footer.html:53
-msgid "Galeria"
-msgstr "Галерея"
+#: apps/core/navigation.py:49
+msgctxt "nav"
+msgid "Pliki"
+msgstr "Файлы"
 
-#: apps/core/navigation.py:45 apps/core/views.py:255 apps/core/views.py:263
-#: templates/404.html:25 templates/500.html:38 templates/core/contact.html:22
-#: templates/core/contact.html:23 templates/layout/footer.html:64
+#: apps/core/navigation.py:50
+msgctxt "nav"
 msgid "Kontakt"
-msgstr "Контакты"
+msgstr "Контакт"
 
-#: apps/core/views.py:137
-msgid "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
-msgstr "Адрес, телефоны и часы работы OSK Nawrocki в Велюне. Офис, психологический кабинет и проезд на ул. Зелёную 45."
+#: apps/core/views.py:154
+msgid "Adres, telefon i dojazd do OSK Ostrycharz w Wieluniu. Zapisy po wcześniejszym ustaleniu telefonicznym."
+msgstr "Адрес, телефон и как доехать до OSK Ostrycharz в Велюне. Запись по предварительной договорённости по телефону."
 
-#: apps/core/views.py:151 apps/core/views.py:333
-#: templates/layout/footer.html:40
-msgid "Prawo jazdy"
-msgstr "Водительские права"
+#: apps/core/views.py:166 templates/layout/footer.html:66
+msgid "Prawo jazdy kat. B"
+msgstr "Права категории B"
 
-#: apps/core/views.py:153
-msgid "Ośrodek szkolenia kierowców w Wieluniu od 1996 roku. Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku."
-msgstr "Центр подготовки водителей в Велюне с 1996 года. Категории AM–D, профессиональные квалификации, ADR и психологические тесты. Занятия на польском, русском и украинском."
+#: apps/core/views.py:168
+msgid "Kurs prawa jazdy kategorii B w Wieluniu: standardowy, przyspieszony w dwa tygodnie i na skrzyni automatycznej. Ceny, zdawalność i zapisy. Dowóz na egzamin gratis."
+msgstr "Курс на права категории B в Велюне: обычный, ускоренный за две недели и на автомате. Цены, сдаваемость и запись. Доставка на экзамен бесплатно."
 
-#: apps/core/views.py:255 apps/core/views.py:307 apps/courses/views.py:21
-#: apps/courses/views.py:66 apps/courses/views.py:131 apps/courses/views.py:209
-#: apps/courses/views.py:280 apps/gallery/views.py:85 apps/gallery/views.py:116
+#: apps/core/views.py:173 apps/core/views.py:369
+#: templates/core/page_detail.html:121 templates/core/pass_rates.html:23
+#: templates/layout/footer.html:68 templates/pages/home.html:140
+msgid "Zdawalność"
+msgstr "Сдача экзамена"
+
+#: apps/core/views.py:175
+msgid "Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. Wyniki rok po roku, liczby bez zaokrągleń."
+msgstr "Сколько наших курсантов сдаёт государственный экзамен с первого раза. Результаты год за годом, цифры без округлений."
+
+#: apps/core/views.py:179 apps/core/views.py:415
+#: templates/core/downloads.html:19 templates/layout/footer.html:77
+msgid "Do pobrania"
+msgstr "Скачать"
+
+#: apps/core/views.py:181
+msgid "Regulamin, umowa i oświadczenia do pobrania. Dokumenty, które warto przeczytać i podpisać przed pierwszymi zajęciami."
+msgstr "Регламент, договор и заявления для скачивания. Документы, которые стоит прочитать и подписать до первых занятий."
+
+#: apps/core/views.py:266
+msgid "zdaje za pierwszym razem"
+msgstr "сдают с первого раза"
+
+#: apps/core/views.py:267
+msgid "kursantów w tym roczniku"
+msgstr "курсантов в этом наборе"
+
+#: apps/core/views.py:268
+msgid "zdało od razu, bez poprawki"
+msgstr "сдали сразу, без пересдачи"
+
+#: apps/core/views.py:274
+msgid "średnia liczba podejść do egzaminu"
+msgstr "среднее число попыток на экзамене"
+
+#: apps/core/views.py:368 apps/core/views.py:414 apps/core/views.py:466
+#: apps/core/views.py:621 apps/courses/views.py:21 apps/courses/views.py:106
+#: apps/courses/views.py:171 apps/courses/views.py:333
+#: apps/courses/views.py:412 apps/gallery/views.py:85 apps/gallery/views.py:116
 #: apps/leads/views.py:68 apps/leads/views.py:86 apps/links/views.py:47
 #: apps/links/views.py:103
 msgid "Start"
 msgstr "Главная"
 
-#: apps/core/views.py:334
-msgid "kategorie AM, A1, A2, A, B, B+E, C, C+E, D"
-msgstr "категории AM, A1, A2, A, B, B+E, C, C+E, D"
+#: apps/core/views.py:466 apps/core/views.py:474 templates/404.html:25
+#: templates/500.html:40 templates/core/contact.html:22
+#: templates/core/contact.html:23 templates/core/page_detail.html:249
+#: templates/layout/footer.html:87
+msgid "Kontakt"
+msgstr "Контакты"
 
-#: apps/core/views.py:338 apps/courses/views.py:107 apps/courses/views.py:113
-#: templates/courses/course_list.html:43 templates/layout/footer.html:41
-#: templates/pages/home.html:89
-msgid "Kierowca zawodowy"
-msgstr "Профессиональный водитель"
+#: apps/core/views.py:512
+msgid "Orzeczenie lekarskie"
+msgstr "Медицинское заключение (orzeczenie lekarskie)"
 
-#: apps/core/views.py:339
-msgid "kwalifikacja wstępna i szkolenia okresowe"
-msgstr "начальная квалификация и периодическое обучение"
+#: apps/core/views.py:512
+msgid "O badaniu piszemy niżej — możesz je zrobić u nas w Wieluniu."
+msgstr "Об обследовании пишем ниже — его можно пройти у нас в Велюне."
 
-#: apps/core/views.py:343 templates/courses/course_list.html:67
-#: templates/layout/footer.html:42
-msgid "Badania psychologiczne"
-msgstr "Психологические тесты"
+#: apps/core/views.py:513
+msgid "Fotografia 3,5 x 4,5 cm"
+msgstr "Фотография 3,5 x 4,5 см"
 
-#: apps/core/views.py:344
-msgid "kierowcy i operatorzy maszyn"
-msgstr "водители и операторы машин"
+#: apps/core/views.py:513
+msgid "Taka sama jak do dowodu osobistego."
+msgstr "Такая же, как на удостоверение личности."
 
-#: apps/core/views.py:348 templates/courses/course_list.html:74
-#: templates/layout/footer.html:43
-msgid "Wózki widłowe"
-msgstr "Погрузчики"
+#: apps/core/views.py:514
+msgid "Dowód osobisty lub paszport"
+msgstr "Удостоверение личности или паспорт"
 
-#: apps/core/views.py:349
-msgid "uprawnienia operatora"
-msgstr "допуск оператора"
+#: apps/core/views.py:514
+msgid "Do wglądu przy zapisie."
+msgstr "Для предъявления при записи."
 
-#: apps/courses/models.py:70
+#: apps/core/views.py:515
+msgid "Zaświadczenie o zameldowaniu"
+msgstr "Справка о регистрации (zaświadczenie o zameldowaniu)"
+
+#: apps/core/views.py:515
+msgid "Jedyny płatny dokument z tej listy: 17 zł."
+msgstr "Единственный платный документ из списка: 17 zł."
+
+#: apps/core/views.py:516
+msgid "Zgoda rodziców"
+msgstr "Согласие родителей"
+
+#: apps/core/views.py:516
+msgid "Tylko dla osób niepełnoletnich."
+msgstr "Только для несовершеннолетних."
+
+#: apps/core/views.py:547
+msgid "zdaje egzamin za pierwszym razem"
+msgstr "сдают экзамен с первого раза"
+
+#: apps/core/views.py:550
+msgid "kursantów w ostatnim roczniku"
+msgstr "курсантов в последнем наборе"
+
+#: apps/core/views.py:553
+msgid "rok założenia"
+msgstr "год основания"
+
+#: apps/core/views.py:560
+msgid "kurs kat. B, dowóz na egzamin w cenie"
+msgstr "курс кат. B, доставка на экзамен в цене"
+
+#: apps/core/views.py:565
+msgid "instruktorów prowadzi zajęcia"
+msgstr "инструкторов ведут занятия"
+
+#: apps/core/views.py:575 templates/cotton/cta_bar.html:22
+msgid "Zadzwoń"
+msgstr "Позвонить"
+
+#: apps/core/views.py:576
+#, python-format
+msgid "Zapisy prowadzimy po wcześniejszym ustaleniu telefonicznym: %(phone)s."
+msgstr "Записываем по предварительной договорённости по телефону: %(phone)s."
+
+#: apps/core/views.py:580
+msgid "Ustal termin"
+msgstr "Договоритесь о дате"
+
+#: apps/core/views.py:581
+msgid "Umawiamy datę startu i godziny, które Ci pasują."
+msgstr "Договариваемся о дате старта и удобных вам часах."
+
+#: apps/core/views.py:584
+msgid "Wyrób PKK"
+msgstr "Оформите PKK"
+
+#: apps/core/views.py:586
+msgid "Profil Kandydata na Kierowcę zakłada Starostwo Powiatowe w Wieluniu, na podstawie orzeczenia lekarskiego i zdjęcia."
+msgstr "Профиль кандидата в водители (PKK) заводит Поветовое староство в Велюне на основании медицинского заключения и фотографии."
+
+#: apps/core/views.py:591
+msgid "Przynieś dokumenty"
+msgstr "Принесите документы"
+
+#: apps/core/views.py:592
+msgid "Pięć pozycji z listy obok. Komplet zajmuje jedną wizytę."
+msgstr "Пять пунктов из списка рядом. Комплект собирается за один визит."
+
+#: apps/core/views.py:595 apps/leads/views.py:61
+msgid "Zacznij zajęcia"
+msgstr "Начните занятия"
+
+#: apps/core/views.py:596
+msgid "Teoria, potem jazdy. Egzamin wewnętrzny przed państwowym."
+msgstr "Теория, потом вождение. Внутренний экзамен перед государственным."
+
+#: apps/courses/models.py:73
 msgid "Stationary"
 msgstr "Очно"
 
-#: apps/courses/models.py:71
+#: apps/courses/models.py:74
 msgid "E-learning"
 msgstr "Онлайн"
 
-#: apps/courses/models.py:72
+#: apps/courses/models.py:75
 msgid "Mixed"
 msgstr "Смешанный"
 
-#: apps/courses/models.py:75
+#: apps/courses/models.py:78
 msgid "Planned"
 msgstr "Запланирован"
 
-#: apps/courses/models.py:76
+#: apps/courses/models.py:79
 msgid "Open"
 msgstr "Идёт набор"
 
-#: apps/courses/models.py:77
+#: apps/courses/models.py:80
 msgid "Full"
 msgstr "Мест нет"
 
-#: apps/courses/models.py:78
+#: apps/courses/models.py:81
 msgid "Closed"
 msgstr "Закрыт"
 
 #: apps/courses/views.py:21 apps/leads/admin.py:45 apps/leads/forms.py:93
-#: templates/courses/intakes.html:29
+#: templates/courses/course_detail.html:17 templates/courses/intakes.html:30
+#: templates/layout/footer.html:64
 msgid "Kurs"
 msgstr "Курс"
 
-#: apps/courses/views.py:21 templates/courses/intakes.html:37
+#: apps/courses/views.py:21 templates/courses/intakes.html:38
 msgid "Tryb"
 msgstr "Формат"
 
-#: apps/courses/views.py:21 templates/courses/intakes.html:33
+#: apps/courses/views.py:21 templates/courses/intakes.html:34
 msgid "Język"
 msgstr "Язык"
 
@@ -171,36 +306,125 @@ msgstr "Язык"
 msgid "Status"
 msgstr "Статус"
 
-#: apps/courses/views.py:91 apps/courses/views.py:97
+#: apps/courses/views.py:131 apps/courses/views.py:137
 msgid "Kursy prawa jazdy"
 msgstr "Курсы на водительские права"
 
-#: apps/courses/views.py:98
+#: apps/courses/views.py:138
 msgid "Wybierz kategorię. Kurs możesz rozpocząć trzy miesiące przed osiągnięciem wieku."
 msgstr "Выберите категорию. Начать курс можно за три месяца до нужного возраста."
 
-#: apps/courses/views.py:114 templates/courses/course_list.html:44
+#: apps/courses/views.py:147 apps/courses/views.py:153
+#: templates/courses/course_list.html:43
+msgid "Kierowca zawodowy"
+msgstr "Профессиональный водитель"
+
+#: apps/courses/views.py:154 templates/courses/course_list.html:44
 msgid "Kwalifikacja wstępna, szkolenia okresowe i przewóz towarów niebezpiecznych."
 msgstr "Начальная квалификация, периодическое обучение и перевозка опасных грузов."
 
-#: apps/courses/views.py:266
+#: apps/courses/views.py:242
+msgid "Klimatyzacja"
+msgstr "Кондиционер"
+
+#: apps/courses/views.py:242
+msgid "we wszystkich autach szkoleniowych"
+msgstr "во всех учебных автомобилях"
+
+#: apps/courses/views.py:243
+msgid "Wyposażenie"
+msgstr "Оснащение"
+
+#: apps/courses/views.py:243
+msgid "bogate, w standardzie egzaminacyjnym"
+msgstr "богатое, в экзаменационном стандарте"
+
+#: apps/courses/views.py:244
+msgid "Skrzynia"
+msgstr "Коробка передач"
+
+#: apps/courses/views.py:244
+msgid "manualna i automatyczna, do wyboru"
+msgstr "механика и автомат, на выбор"
+
+#: apps/courses/views.py:245
+msgid "Na egzamin"
+msgstr "На экзамен"
+
+#: apps/courses/views.py:245
+msgid "dowozimy tym samym autem, gratis"
+msgstr "довозим на той же машине, бесплатно"
+
+#: apps/courses/views.py:260
+msgid "Wiek"
+msgstr "Возраст"
+
+#: apps/courses/views.py:261
+#, python-format
+msgid "od %(age)s lat"
+msgstr "с %(age)s лет"
+
+#: apps/courses/views.py:270
+msgid "Zapisy od"
+msgstr "Запись с"
+
+#: apps/courses/views.py:271
+#, python-format
+msgid "%(years)s lat %(months)s mies."
+msgstr "%(years)s лет %(months)s мес."
+
+#: apps/courses/views.py:276
+msgid "Teoria"
+msgstr "Теория"
+
+#: apps/courses/views.py:279
+msgid "Praktyka"
+msgstr "Практика"
+
+#: apps/courses/views.py:284 templates/cotton/course_card.html:46
+msgid "Cena"
+msgstr "Цена"
+
+#: apps/courses/views.py:289
+msgid "Dowóz na egzamin"
+msgstr "Доставка на экзамен"
+
+#: apps/courses/views.py:289
+msgid "gratis"
+msgstr "бесплатно"
+
+#: apps/courses/views.py:305
+msgid "Cennik kursu prawa jazdy kat. B w Wieluniu: kurs 3700 zł, przyspieszony i automat po 4300 zł, jazdy doszkalające od 140 zł/h. Ceny brutto, dowóz na egzamin gratis."
+msgstr "Цены на курс категории B в Велюне: курс 3700 zł, ускоренный и автомат по 4300 zł, дополнительное вождение от 140 zł/час. Цены брутто, доставка на экзамен бесплатно."
+
+#: apps/courses/views.py:333 templates/404.html:24 templates/500.html:39
+#: templates/core/page_detail.html:127 templates/courses/pricing.html:26
+#: templates/layout/footer.html:67
+msgid "Cennik"
+msgstr "Цены"
+
+#: apps/courses/views.py:342
+msgid "Cennik kursu prawa jazdy"
+msgstr "Цены на курс вождения"
+
+#: apps/courses/views.py:398
 msgid "Wszystkie kursy"
 msgstr "Все курсы"
 
-#: apps/courses/views.py:268
+#: apps/courses/views.py:400
 msgid "Wszystkie języki"
 msgstr "Все языки"
 
-#: apps/courses/views.py:270
+#: apps/courses/views.py:402
 msgid "Wszystkie tryby"
 msgstr "Все форматы"
 
-#: apps/courses/views.py:280 templates/404.html:23 templates/500.html:36
-#: templates/courses/intakes.html:16 templates/layout/footer.html:52
+#: apps/courses/views.py:412 templates/404.html:23 templates/500.html:38
+#: templates/courses/intakes.html:17
 msgid "Terminy"
 msgstr "Расписание"
 
-#: apps/courses/views.py:288
+#: apps/courses/views.py:420
 msgid "Terminy kursów"
 msgstr "Расписание курсов"
 
@@ -244,6 +468,11 @@ msgstr "Занятия"
 #: apps/gallery/views.py:62 apps/gallery/views.py:107
 msgid "Wszystkie"
 msgstr "Все"
+
+#: apps/gallery/views.py:85 apps/gallery/views.py:89
+#: templates/gallery/gallery.html:20 templates/layout/footer.html:86
+msgid "Galeria"
+msgstr "Галерея"
 
 #: apps/gallery/views.py:117 apps/gallery/views.py:122
 #: templates/gallery/certificates.html:16
@@ -340,8 +569,8 @@ msgid "Spam"
 msgstr "Спам"
 
 #: apps/leads/views.py:34
-msgid "Zapisz się na kurs prawa jazdy w OSK Nawrocki w Wieluniu. Zostaw numer, oddzwonimy i dobierzemy najbliższy termin."
-msgstr "Запишитесь на курс вождения в OSK Nawrocki в Велюне. Оставьте номер, перезвоним и подберём ближайшую дату."
+msgid "Zapisz się na kurs prawa jazdy w OSK Ostrycharz w Wieluniu. Zostaw numer, oddzwonimy i dobierzemy najbliższy termin."
+msgstr "Запишитесь на курс вождения в OSK Ostrycharz в Велюне. Оставьте номер, перезвоним и подберём ближайшую дату."
 
 #: apps/leads/views.py:37
 msgid "Zgłoszenie przyjęte. Oddzwonimy w godzinach pracy biura."
@@ -364,13 +593,18 @@ msgid "Profil Kandydata na Kierowcę wydaje Starostwo Powiatowe w Wieluniu."
 msgstr "Профиль кандидата в водители (PKK) выдаёт Поветовое староство в Велюне."
 
 #: apps/leads/views.py:57 apps/leads/views.py:69 apps/leads/views.py:87
-#: templates/core/contact.html:146 templates/core/page_detail.html:176
-#: templates/cotton/cta_bar.html:23 templates/cotton/intake_row.html:43
-#: templates/courses/course_detail.html:153
-#: templates/courses/course_detail.html:241 templates/courses/intakes.html:62
-#: templates/gallery/certificates.html:49 templates/gallery/gallery.html:85
-#: templates/links/faq.html:95 templates/links/useful_links.html:87
-#: templates/pages/home.html:35
+#: templates/core/contact.html:147 templates/core/downloads.html:65
+#: templates/core/page_detail.html:241 templates/core/pass_rates.html:31
+#: templates/core/pass_rates.html:98 templates/cotton/cta_band.html:28
+#: templates/cotton/cta_bar.html:24 templates/cotton/group_card.html:58
+#: templates/cotton/intake_row.html:43 templates/courses/course_detail.html:33
+#: templates/courses/course_detail.html:141
+#: templates/courses/course_detail.html:214
+#: templates/courses/course_list.html:89 templates/courses/intakes.html:63
+#: templates/courses/pricing.html:35 templates/courses/pricing.html:107
+#: templates/gallery/certificates.html:50 templates/gallery/gallery.html:89
+#: templates/layout/footer.html:33 templates/links/faq.html:95
+#: templates/links/useful_links.html:87 templates/pages/home.html:81
 msgid "Zapisz się"
 msgstr "Записаться"
 
@@ -378,16 +612,13 @@ msgstr "Записаться"
 msgid "Przez formularz obok albo telefonicznie — potwierdzimy termin grupy."
 msgstr "Через форму рядом или по телефону — подтвердим дату группы."
 
-#: apps/leads/views.py:61
-msgid "Zacznij zajęcia"
-msgstr "Начните занятия"
-
 #: apps/leads/views.py:62
 msgid "Teoria i jazdy ruszają w terminie, który wybrałeś."
 msgstr "Теория и вождение стартуют в выбранную вами дату."
 
-#: apps/leads/views.py:81 templates/leads/enroll.html:15
-#: templates/leads/enroll.html:55 templates/pages/home.html:238
+#: apps/leads/views.py:81 templates/core/downloads.html:69
+#: templates/core/pass_rates.html:102 templates/leads/enroll.html:15
+#: templates/leads/enroll.html:61 templates/pages/home.html:385
 msgid "Zapisz się na kurs"
 msgstr "Записаться на курс"
 
@@ -417,7 +648,7 @@ msgstr "У ссылки должно быть описание."
 
 #: apps/links/models.py:73 apps/links/models.py:74
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: apps/links/views.py:31
 msgid "Egzamin"
@@ -440,7 +671,7 @@ msgid "Rezerwacja egzaminu, punkty karne, testy i urzędy w Wieluniu. Linki, kt�
 msgstr "Запись на экзамен, штрафные баллы, тесты и учреждения в Велюне. Ссылки, которые нужны кандидату в водители чаще всего."
 
 #: apps/links/views.py:48 apps/links/views.py:62
-#: templates/layout/footer.html:54 templates/links/useful_links.html:22
+#: templates/layout/footer.html:78 templates/links/useful_links.html:22
 msgid "Przydatne linki"
 msgstr "Полезные ссылки"
 
@@ -472,6 +703,10 @@ msgstr "Такой страницы нет"
 msgid "Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca."
 msgstr "Адрес устарел или содержит опечатку. Ниже то, что ищут чаще всего."
 
+#: templates/404.html:22 templates/500.html:37
+msgid "Kursy"
+msgstr "Курсы"
+
 #: templates/404.html:22
 msgid "Kategorie prawa jazdy i ceny."
 msgstr "Категории водительских прав и цены."
@@ -488,7 +723,7 @@ msgstr "Полный список цен."
 msgid "Adres, godziny, dojazd."
 msgstr "Адрес, часы работы, проезд."
 
-#: templates/404.html:33 templates/500.html:34
+#: templates/404.html:33 templates/500.html:36
 msgid "Strona główna"
 msgstr "Главная страница"
 
@@ -496,23 +731,23 @@ msgstr "Главная страница"
 msgid "Błąd serwera"
 msgstr "Ошибка сервера"
 
-#: templates/500.html:27
+#: templates/500.html:29
 msgid "Błąd 500"
 msgstr "Ошибка 500"
 
-#: templates/500.html:28
+#: templates/500.html:30
 msgid "Coś poszło nie tak"
 msgstr "Что-то пошло не так"
 
-#: templates/500.html:30
+#: templates/500.html:32
 msgid "Strona chwilowo nie odpowiada. Spróbuj ponownie za chwilę albo zadzwoń — zapisy przyjmujemy też telefonicznie."
 msgstr "Страница временно не отвечает. Попробуйте через минуту или позвоните — записываем и по телефону."
 
-#: templates/500.html:49
+#: templates/500.html:51
 msgid "Dane kontaktowe"
 msgstr "Контактные данные"
 
-#: templates/base.html:25
+#: templates/base.html:36
 msgid "Przejdź do treści"
 msgstr "Перейти к содержимому"
 
@@ -524,7 +759,7 @@ msgstr "Позвоните, напишите или приезжайте в оф
 msgid "Adres"
 msgstr "Адрес"
 
-#: templates/core/contact.html:73 templates/layout/footer.html:20
+#: templates/core/contact.html:73 templates/layout/footer.html:46
 msgid "Dane firmy"
 msgstr "Данные фирмы"
 
@@ -532,11 +767,11 @@ msgstr "Данные фирмы"
 msgid "Konto"
 msgstr "Счёт"
 
-#: templates/core/contact.html:90 templates/pages/home.html:198
+#: templates/core/contact.html:90 templates/pages/home.html:341
 msgid "Biuro"
 msgstr "Офис"
 
-#: templates/core/contact.html:94 templates/pages/home.html:202
+#: templates/core/contact.html:94
 msgid "Pracownia psychologiczna"
 msgstr "Психологический кабинет"
 
@@ -548,145 +783,374 @@ msgstr "Запись на курс"
 msgid "Zostaw numer, oddzwonimy w godzinach pracy biura — także po rosyjsku i po ukraińsku."
 msgstr "Оставьте номер, перезвоним в рабочие часы офиса — в том числе по-русски и по-украински."
 
-#: templates/core/contact.html:113
+#: templates/core/contact.html:114
 msgid "Dojazd"
 msgstr "Как доехать"
 
-#: templates/core/contact.html:114
-msgid "Wieluń, ul. Zielona 45. Parking przed budynkiem."
-msgstr "Велюнь, ул. Зелёная 45. Парковка перед зданием."
+#: templates/core/contact.html:115
+msgid "Wieluń, ul. Asnyka 7. Zapisy po wcześniejszym ustaleniu telefonicznym."
+msgstr "Велюнь, ул. Асныка 7. Запись по предварительной договорённости по телефону."
 
-#: templates/core/contact.html:124 templates/pages/home.html:218
+#: templates/core/contact.html:125 templates/pages/home.html:350
 msgid "Wyznacz trasę"
 msgstr "Построить маршрут"
 
-#: templates/core/contact.html:128
+#: templates/core/contact.html:129
 msgid "Otwórz w nawigacji"
 msgstr "Открыть в навигаторе"
 
-#: templates/core/contact.html:132
+#: templates/core/contact.html:133
 msgid "Mapa nieskonfigurowana"
 msgstr "Карта не настроена"
 
-#: templates/core/contact.html:134
+#: templates/core/contact.html:135
 #, python-format
 msgid "Współrzędne biura nie są jeszcze ustawione. Adres: %(street)s, %(postal)s %(city)s."
 msgstr "Координаты офиса ещё не заданы. Адрес: %(street)s, %(postal)s %(city)s."
 
-#: templates/core/contact.html:142
+#: templates/core/contact.html:143 templates/leads/enroll.html:56
 msgid "Wolisz porozmawiać?"
 msgstr "Хотите поговорить?"
 
-#: templates/core/contact.html:143
+#: templates/core/contact.html:144
 msgid "Zadzwoń albo zostaw numer — oddzwonimy w godzinach pracy biura."
 msgstr "Позвоните или оставьте номер — перезвоним в рабочие часы офиса."
 
-#: templates/core/contact.html:157
+#: templates/core/contact.html:158
 msgid "Masz pytanie o kurs albo o badania?"
 msgstr "Есть вопрос о курсе или о тестах?"
 
-#: templates/core/page_detail.html:25
+#: templates/core/downloads.html:19
+msgid "Dokumenty"
+msgstr "Документы"
+
+#: templates/core/downloads.html:20
+msgid "Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować."
+msgstr "Бумаги, которые стоит прочитать и заполнить до первых занятий. Всё в PDF, ничего не нужно заводить и регистрировать."
+
+#: templates/core/downloads.html:23
+msgid "Pytania o papiery"
+msgstr "Вопросы о документах"
+
+#: templates/core/downloads.html:25
+msgid "Zadzwoń, powiemy od ręki, czego brakuje."
+msgstr "Позвоните — сразу скажем, чего не хватает."
+
+#: templates/core/downloads.html:28 templates/core/page_detail.html:43
+msgid "Jak się zapisać"
+msgstr "Как записаться"
+
+#: templates/core/downloads.html:39
+msgid "Pliki są w drodze"
+msgstr "Файлы в пути"
+
+#: templates/core/downloads.html:40
+msgid "Komplet dokumentów wydajemy w biurze przy zapisie. Jeśli chcesz je zobaczyć wcześniej — zadzwoń, wyślemy mailem."
+msgstr "Полный комплект документов выдаём в офисе при записи. Хотите увидеть раньше — позвоните, вышлем на почту."
+
+#: templates/core/downloads.html:45
+msgid "Co podpisać, a co tylko przeczytać"
+msgstr "Что подписать, а что только прочитать"
+
+#: templates/core/downloads.html:47
+msgid "Umowę z kursantem i oświadczenie o stanie zdrowia podpisujesz — przynieś je wypełnione albo podpisz na miejscu. Regulamin i wzór opłaty za egzamin są do przeczytania, nic z nimi nie robisz."
+msgstr "Договор с курсантом и заявление о состоянии здоровья вы подписываете — принесите заполненными или подпишите на месте. Регламент и образец оплаты экзамена только для чтения, с ними ничего делать не нужно."
+
+#: templates/core/downloads.html:50
+msgid "Zgodę rodziców przynoszą tylko osoby niepełnoletnie, podpisaną przez oboje rodziców lub opiekunów."
+msgstr "Согласие родителей приносят только несовершеннолетние, подписанное обоими родителями или опекунами."
+
+#: templates/core/downloads.html:53
+msgid "Czego tu nie ma"
+msgstr "Чего здесь нет"
+
+#: templates/core/downloads.html:55
+msgid "Orzeczenia lekarskiego i zaświadczenia o zameldowaniu nie da się pobrać — te wydaje lekarz i urząd. Co dokładnie przynieść i skąd to wziąć, opisujemy w zakładce Zapisy."
+msgstr "Медицинское заключение и справку о регистрации скачать нельзя — их выдают врач и учреждение. Что именно принести и где это взять, описываем в разделе «Запись»."
+
+#: templates/core/downloads.html:62
+msgid "Masz komplet? Zaczynamy."
+msgstr "Всё собрали? Начинаем."
+
+#: templates/core/downloads.html:63
+msgid "Zapisy po wcześniejszym ustaleniu telefonicznym. Zostaw numer — oddzwonimy i umówimy termin."
+msgstr "Запись по предварительной договорённости по телефону. Оставьте номер — перезвоним и договоримся о дате."
+
+#: templates/core/page_detail.html:24 templates/layout/footer.html:74
+msgid "Formalności"
+msgstr "Формальности"
+
+#: templates/core/page_detail.html:24
 msgid "O szkole"
 msgstr "О школе"
 
-#: templates/core/page_detail.html:33
-msgid "Jesteśmy firmą rodzinną i szkolimy kierowców w Wieluniu od 1996 roku."
-msgstr "Мы семейная фирма и учим водителей в Велюне с 1996 года."
+#: templates/core/page_detail.html:29
+msgid "Zapisy telefoniczne"
+msgstr "Запись по телефону"
 
-#: templates/core/page_detail.html:41
+#: templates/core/page_detail.html:31
+msgid "Zapisujemy po wcześniejszym ustaleniu terminu."
+msgstr "Записываем по предварительной договорённости о дате."
+
+#: templates/core/page_detail.html:33
+msgid "Zostaw numer"
+msgstr "Оставьте номер"
+
+#: templates/core/page_detail.html:44
+msgid "Pięć kroków. Pierwszy to telefon, ostatni to pierwsze zajęcia."
+msgstr "Пять шагов. Первый — звонок, последний — первое занятие."
+
+#: templates/core/page_detail.html:49
+msgid "Co przynieść"
+msgstr "Что принести"
+
+#: templates/core/page_detail.html:55
+msgid "Jedyny płatny papier: 17 zł"
+msgstr "Единственная платная бумага: 17 zł"
+
+#: templates/core/page_detail.html:57
+msgid "Zaświadczenie o zameldowaniu wydaje urząd gminy i kosztuje 17 zł. Wszystkie pozostałe dokumenty z tej listy albo już masz, albo dostajesz przy badaniu."
+msgstr "Справку о регистрации выдаёт гмина, стоит 17 zł. Все остальные документы из списка у вас либо уже есть, либо вы получаете их при обследовании."
+
+#: templates/core/page_detail.html:60
+msgid "Badanie lekarskie"
+msgstr "Медицинское обследование"
+
+#: templates/core/page_detail.html:62
+msgid "Orzeczenie o braku przeciwwskazań zdrowotnych do kierowania pojazdami. Kosztuje 200 zł i jest opłatą poza szkołą."
+msgstr "Заключение об отсутствии медицинских противопоказаний к управлению транспортом. Стоит 200 zł и оплачивается не школе."
+
+#: templates/core/page_detail.html:71
+msgid "Dokumenty do pobrania"
+msgstr "Документы для скачивания"
+
+#: templates/core/page_detail.html:76
+msgid "Wszystkie pliki"
+msgstr "Все файлы"
+
+#: templates/core/page_detail.html:80
+msgid "Komplet dostajesz w biurze"
+msgstr "Комплект получаете в офисе"
+
+#: templates/core/page_detail.html:81
+msgid "Regulamin i umowę wydajemy przy zapisie. Chcesz je zobaczyć wcześniej — zadzwoń, wyślemy mailem."
+msgstr "Регламент и договор выдаём при записи. Хотите увидеть раньше — позвоните, вышлем на почту."
+
+#: templates/core/page_detail.html:93
+msgid "Możemy pochwalić się jedną z najwyższych zdawalności w województwie łódzkim."
+msgstr "Можем похвастаться одной из самых высоких сдаваемостей в Лодзинском воеводстве."
+
+#: templates/core/page_detail.html:99
 msgid "Spis treści"
 msgstr "Содержание"
 
-#: templates/core/page_detail.html:43
+#: templates/core/page_detail.html:101
 msgid "Na tej stronie"
 msgstr "На этой странице"
 
-#: templates/core/page_detail.html:53
+#: templates/core/page_detail.html:111
 msgid "Co oferujemy"
 msgstr "Что мы предлагаем"
 
-#: templates/core/page_detail.html:68
+#: templates/core/page_detail.html:115 templates/courses/pricing.html:32
+msgid "Kurs kat. B"
+msgstr "Курс кат. B"
+
+#: templates/core/page_detail.html:116
+msgid "standardowy, przyspieszony i na automacie"
+msgstr "обычный, ускоренный и на автомате"
+
+#: templates/core/page_detail.html:122
+msgid "wyniki rok po roku, bez zaokrągleń"
+msgstr "результаты год за годом, без округлений"
+
+#: templates/core/page_detail.html:128
+msgid "ceny brutto, dowóz na egzamin gratis"
+msgstr "цены брутто, доставка на экзамен бесплатно"
+
+#: templates/core/page_detail.html:139
 msgid "W liczbach"
 msgstr "В цифрах"
 
-#: templates/core/page_detail.html:72
-msgid "rok założenia, działamy nieprzerwanie"
-msgstr "год основания, работаем без перерыва"
-
-#: templates/core/page_detail.html:78
-msgid "instruktorów prowadzi zajęcia i jazdy"
-msgstr "инструкторов ведут занятия и вождение"
-
-#: templates/core/page_detail.html:84
-msgid "kategorii prawa jazdy w ofercie"
-msgstr "категорий водительских прав в предложении"
-
-#: templates/core/page_detail.html:90
-msgid "pojazdów szkoleniowych, własny plac manewrowy"
-msgstr "учебных автомобилей, своя площадка"
-
-#: templates/core/page_detail.html:99
+#: templates/core/page_detail.html:153 templates/pages/home.html:253
+#: templates/pages/home.html:254
 msgid "Instruktorzy"
 msgstr "Инструкторы"
 
-#: templates/core/page_detail.html:100
+#: templates/core/page_detail.html:154
 msgid "Ludzie, z którymi jeździsz i którzy prowadzą wykłady."
 msgstr "Люди, с которыми вы ездите и которые ведут лекции."
 
-#: templates/core/page_detail.html:114
+#: templates/core/page_detail.html:171
 #, python-format
 msgid "Szkoli od %(year)s roku"
 msgstr "Обучает с %(year)s года"
 
-#: templates/core/page_detail.html:134
+#: templates/core/page_detail.html:182
+msgid "Zdjęcia instruktorów w przygotowaniu"
+msgstr "Фотографии инструкторов готовятся"
+
+#: templates/core/page_detail.html:184
+msgid "Nie pokazujemy cudzych twarzy jako naszych. Zadzwoń albo wpadnij do biura — poznasz instruktora, zanim się zapiszesz."
+msgstr "Мы не выдаём чужие лица за свои. Позвоните или зайдите в офис — познакомитесь с инструктором до записи."
+
+#: templates/core/page_detail.html:192
 msgid "Nasze pojazdy"
 msgstr "Наши автомобили"
 
-#: templates/core/page_detail.html:135
+#: templates/core/page_detail.html:193
 msgid "Uczysz się na aucie, na którym potem zdajesz."
 msgstr "Учитесь на той машине, на которой потом сдаёте."
 
-#: templates/core/page_detail.html:154 templates/courses/course_detail.html:197
+#: templates/core/page_detail.html:212 templates/courses/course_detail.html:172
 msgid "Zgodny z egzaminem"
 msgstr "Соответствует экзамену"
 
-#: templates/core/page_detail.html:172 templates/core/page_detail.html:188
+#: templates/core/page_detail.html:229
+msgid "Zostaw numer, oddzwonimy"
+msgstr "Оставьте номер, перезвоним"
+
+#: templates/core/page_detail.html:230
+msgid "Wolisz nie dzwonić? Zostaw kontakt, odezwiemy się w ciągu jednego dnia roboczego."
+msgstr "Не хотите звонить? Оставьте контакт, ответим в течение одного рабочего дня."
+
+#: templates/core/page_detail.html:238 templates/courses/pricing.html:104
+msgid "Zaczynamy?"
+msgstr "Начинаем?"
+
+#: templates/core/page_detail.html:239
+msgid "Zadzwoń albo zostaw numer — ustalimy termin startu i powiemy, czego brakuje w papierach."
+msgstr "Позвоните или оставьте номер — договоримся о дате старта и скажем, каких бумаг не хватает."
+
+#: templates/core/page_detail.html:246
+msgid "Masz pytanie do tego dokumentu?"
+msgstr "Есть вопрос по этому документу?"
+
+#: templates/core/page_detail.html:247
+msgid "Zadzwoń albo napisz — odpowiemy, jakie dane przetwarzamy i po co."
+msgstr "Позвоните или напишите — расскажем, какие данные обрабатываем и зачем."
+
+#: templates/core/page_detail.html:254
 msgid "Chcesz zacząć kurs?"
 msgstr "Хотите начать курс?"
 
-#: templates/core/page_detail.html:173
-msgid "Zostaw numer albo zadzwoń — dobierzemy najbliższy termin."
-msgstr "Оставьте номер или позвоните — подберём ближайшую дату."
+#: templates/core/pass_rates.html:23
+msgid "Wyniki"
+msgstr "Результаты"
+
+#: templates/core/pass_rates.html:24
+msgid "Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. Liczby, nie deklaracje."
+msgstr "Сколько наших курсантов сдаёт государственный экзамен с первого раза. Цифры, а не обещания."
+
+#: templates/core/pass_rates.html:29
+#, python-format
+msgid "na %(students)s kursantów w %(year)s roku"
+msgstr "из %(students)s курсантов в %(year)s году"
+
+#: templates/core/pass_rates.html:44
+msgid "Rok po roku"
+msgstr "Год за годом"
+
+#: templates/core/pass_rates.html:48
+msgid "Wyniki za ten rok jeszcze się liczą"
+msgstr "Результаты за этот год ещё считаются"
+
+#: templates/core/pass_rates.html:50
+msgid "Podamy je przez telefon, zanim trafią na stronę."
+msgstr "Сообщим их по телефону, до того как они попадут на сайт."
+
+#: templates/core/pass_rates.html:56
+msgid "Jak liczymy te liczby"
+msgstr "Как мы считаем эти цифры"
+
+#: templates/core/pass_rates.html:58
+msgid "Co dokładnie znaczy „za pierwszym razem”"
+msgstr "Что именно значит «с первого раза»"
+
+#: templates/core/pass_rates.html:60
+msgid "Liczymy kursantów, którzy ukończyli u nas kurs kategorii B i podeszli do egzaminu państwowego w WORD. „Za pierwszym razem” to zdany egzamin praktyczny w pierwszym podejściu."
+msgstr "Считаем курсантов, которые прошли у нас курс категории B и сдавали государственный экзамен в WORD. «С первого раза» — это сданный практический экзамен с первой попытки."
+
+#: templates/core/pass_rates.html:63
+msgid "Dlaczego procenty nie sumują się do 100"
+msgstr "Почему проценты не складываются в 100"
+
+#: templates/core/pass_rates.html:65
+msgid "Z dwóch powodów. Po pierwsze, każdy procent zaokrąglamy osobno — cztery takie zaokrąglenia potrafią dać w sumie 99 albo 101."
+msgstr "По двум причинам. Во-первых, каждый процент округляем отдельно — четыре таких округления дают в сумме 99 или 101."
+
+#: templates/core/pass_rates.html:69
+#, python-format
+msgid "Po drugie, dzielimy przez wszystkich %(students)s kursantów, którzy w %(year)s roku podeszli do egzaminu — a %(count)s z nich prawa jazdy jeszcze nie ma. Gdybyśmy liczyli tylko tych, którzy ostatecznie zdali, każda z liczb w tabeli byłaby wyższa. Wolimy podać niższą i policzalną."
+msgstr "Во-вторых, мы делим на всех %(students)s курсантов, которые в %(year)s году сдавали экзамен, — а у %(count)s из них прав ещё нет. Если бы мы считали только тех, кто в итоге сдал, каждая цифра в таблице была бы выше. Мы предпочитаем цифру пониже, но проверяемую."
+
+#: templates/core/pass_rates.html:73
+msgid "Dlatego w tabeli obok procentu zawsze stoi liczba osób — to ona jest faktem, procent jest tylko wygodniejszy w czytaniu."
+msgstr "Поэтому в таблице рядом с процентом всегда стоит число людей — оно и есть факт, а процент просто удобнее читать."
+
+#: templates/core/pass_rates.html:76
+msgid "Skąd bierzemy dane"
+msgstr "Откуда берём данные"
+
+#: templates/core/pass_rates.html:78
+msgid "Z własnej ewidencji kursantów i z wyników przekazywanych przez ośrodek egzaminowania. Nie doliczamy osób, które przerwały kurs, i nie odejmujemy tych, którym nie poszło."
+msgstr "Из собственного учёта курсантов и результатов, которые передаёт экзаменационный центр. Не досчитываем тех, кто бросил курс, и не вычитаем тех, у кого не получилось."
+
+#: templates/core/pass_rates.html:87 templates/pages/home.html:283
+msgid "Opinie kursantów"
+msgstr "Отзывы курсантов"
+
+#: templates/core/pass_rates.html:88
+msgid "Każda z linkiem do źródła. Innych nie publikujemy."
+msgstr "Каждый со ссылкой на источник. Других не публикуем."
+
+#: templates/core/pass_rates.html:95
+msgid "Chcesz zdać za pierwszym razem?"
+msgstr "Хотите сдать с первого раза?"
+
+#: templates/core/pass_rates.html:96
+msgid "Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — ustalimy termin startu."
+msgstr "Записываем по телефону. Оставьте номер или позвоните — договоримся о дате старта."
 
 #: templates/cotton/breadcrumbs.html:10
 msgid "Okruszki"
 msgstr "Хлебные крошки"
 
-#: templates/cotton/cookie_banner.html:17
+#: templates/cotton/carousel.html:30 templates/cotton/lightbox.html:47
+#: templates/gallery/_lightbox.html:72
+msgid "Poprzednie"
+msgstr "Предыдущее"
+
+#: templates/cotton/carousel.html:35 templates/cotton/lightbox.html:50
+#: templates/gallery/_lightbox.html:75
+msgid "Następne"
+msgstr "Следующее"
+
+#: templates/cotton/cookie_banner.html:18
 msgid "Zgoda na pliki cookie"
 msgstr "Согласие на файлы cookie"
 
-#: templates/cotton/cookie_banner.html:20
+#: templates/cotton/cookie_banner.html:21
 msgid "Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie."
 msgstr "Мы используем cookie, чтобы сайт работал правильно. Статистику включаем только после вашего согласия."
 
-#: templates/cotton/cookie_banner.html:21 templates/layout/footer.html:61
+#: templates/cotton/cookie_banner.html:22 templates/layout/footer.html:115
 msgid "Polityka prywatności"
 msgstr "Политика конфиденциальности"
 
-#: templates/cotton/cookie_banner.html:25
+#: templates/cotton/cookie_banner.html:26
 msgid "Odrzuć"
 msgstr "Отклонить"
 
-#: templates/cotton/cookie_banner.html:26
+#: templates/cotton/cookie_banner.html:27
 msgid "Akceptuję"
 msgstr "Принимаю"
 
-#: templates/cotton/course_card.html:40 templates/courses/course_detail.html:33
+#: templates/cotton/course_card.html:43
 msgid "Wiek od"
 msgstr "Возраст от"
 
-#: templates/cotton/course_card.html:40 templates/courses/course_detail.html:34
+#: templates/cotton/course_card.html:43
 #, python-format
 msgid "%(years)s rok"
 msgid_plural "%(years)s lat"
@@ -695,18 +1159,21 @@ msgstr[1] "%(years)s года"
 msgstr[2] "%(years)s лет"
 msgstr[3] "%(years)s года"
 
-#: templates/cotton/course_card.html:43 templates/courses/course_detail.html:60
-#: templates/courses/course_detail.html:123
-msgid "Cena"
-msgstr "Цена"
-
-#: templates/cotton/course_card.html:45
+#: templates/cotton/course_card.html:48
 msgid "na zapytanie"
 msgstr "по запросу"
 
-#: templates/cotton/cta_bar.html:21 templates/pages/home.html:38
-msgid "Zadzwoń"
-msgstr "Позвонить"
+#: templates/cotton/download_list.html:41
+msgid "Pobierz"
+msgstr "Скачать"
+
+#: templates/cotton/group_card.html:32 templates/cotton/intake_row.html:32
+msgid "Brak miejsc"
+msgstr "Мест нет"
+
+#: templates/cotton/group_card.html:34
+msgid "Nabór otwarty"
+msgstr "Набор открыт"
 
 #: templates/cotton/hours_table.html:17
 msgid "Otwarte teraz"
@@ -723,10 +1190,6 @@ msgstr "Выходной"
 #: templates/cotton/intake_row.html:31
 msgid "Zapisy otwarte"
 msgstr "Идёт набор"
-
-#: templates/cotton/intake_row.html:32
-msgid "Brak miejsc"
-msgstr "Мест нет"
 
 #: templates/cotton/intake_row.html:33
 msgid "Zamknięty"
@@ -754,39 +1217,62 @@ msgstr "Увеличить: %(alt)s"
 msgid "Zamknij"
 msgstr "Закрыть"
 
-#: templates/cotton/lightbox.html:44 templates/gallery/_lightbox.html:72
-msgid "Poprzednie"
-msgstr "Предыдущее"
-
-#: templates/cotton/lightbox.html:47 templates/gallery/_lightbox.html:75
-msgid "Następne"
-msgstr "Следующее"
-
-#: templates/cotton/nav.html:35 templates/layout/mobile_menu.html:36
+#: templates/cotton/nav.html:39 templates/layout/mobile_menu.html:42
 msgid "Główna nawigacja"
 msgstr "Основная навигация"
+
+#: templates/cotton/passrate_table.html:27
+msgid "Zdawalność egzaminu państwowego rok po roku"
+msgstr "Сдача государственного экзамена год за годом"
+
+#: templates/cotton/passrate_table.html:30
+msgid "Rok"
+msgstr "Год"
+
+#: templates/cotton/passrate_table.html:31
+msgid "Kursantów"
+msgstr "Курсантов"
+
+#: templates/cotton/passrate_table.html:32
+msgid "Za 1 razem"
+msgstr "С 1 раза"
+
+#: templates/cotton/passrate_table.html:33
+msgid "Za 2 razem"
+msgstr "Со 2 раза"
+
+#: templates/cotton/passrate_table.html:34
+msgid "Za 3 razem"
+msgstr "С 3 раза"
+
+#: templates/cotton/passrate_table.html:35
+msgid "Za 4 razem"
+msgstr "С 4 раза"
 
 #: templates/cotton/price_row.html:37
 msgid "wycena indywidualna"
 msgstr "цена по запросу"
 
-#: templates/cotton/price_tile.html:11
+#: templates/cotton/price_tile.html:15
 msgid "Cena ustalana indywidualnie"
 msgstr "Цена определяется индивидуально"
 
-#: templates/cotton/price_tile.html:14
+#: templates/cotton/price_tile.html:18
 msgid "Szczegóły"
 msgstr "Подробнее"
 
-#: templates/cotton/testimonials.html:24
+#: templates/cotton/testimonials.html:24 templates/pages/home.html:293
 msgid "źródło"
 msgstr "источник"
+
+#: templates/cotton/video_card.html:53
+msgid "Obejrzyj na YouTube"
+msgstr "Смотреть на YouTube"
 
 #: templates/courses/_ask_for_price.html:6
 #: templates/courses/_ask_for_price.html:9
 #: templates/courses/_ask_for_price.html:13
-#: templates/courses/course_detail.html:155 templates/courses/pricing.html:38
-#: templates/courses/pricing.html:85
+#: templates/courses/course_detail.html:141
 msgid "Zapytaj o cenę"
 msgstr "Узнать цену"
 
@@ -806,99 +1292,105 @@ msgstr "По выбранным условиям дата ещё не объяв
 msgid "program indywidualny"
 msgstr "индивидуальная программа"
 
-#: templates/courses/course_detail.html:36
-#, python-format
-msgid "kurs od %(years)s lat %(months)s mies."
-msgstr "курс с %(years)s лет %(months)s мес."
+#: templates/courses/course_detail.html:31
+msgid "W skrócie"
+msgstr "Коротко"
 
-#: templates/courses/course_detail.html:42
-msgid "Teoria"
-msgstr "Теория"
+#: templates/courses/course_detail.html:46
+msgid "Wybierz wariant"
+msgstr "Выберите вариант"
 
-#: templates/courses/course_detail.html:48
-msgid "Praktyka"
-msgstr "Практика"
+#: templates/courses/course_detail.html:47
+msgid "Ta sama kategoria i ten sam egzamin państwowy. Różni się tempo i skrzynia biegów."
+msgstr "Та же категория и тот же государственный экзамен. Различаются темп и коробка передач."
 
-#: templates/courses/course_detail.html:54
-msgid "Razem"
-msgstr "Всего"
+#: templates/courses/course_detail.html:54 templates/courses/pricing.html:67
+msgid "Najczęściej wybierany"
+msgstr "Выбирают чаще всего"
 
 #: templates/courses/course_detail.html:64
-msgid "ustalana indywidualnie"
-msgstr "определяется индивидуально"
+msgid "Co warto wiedzieć o automacie"
+msgstr "Что стоит знать об автомате"
 
-#: templates/courses/course_detail.html:84
-#, python-format
-msgid "Miejsce na zdjęcie: %(title)s"
-msgstr "Место для фотографии: %(title)s"
+#: templates/courses/course_detail.html:66
+msgid "Prawo jazdy zdobyte na skrzyni automatycznej uprawnia do jazdy wyłącznie autem z automatem. Żeby jeździć manualem, trzeba później zdać egzamin praktyczny na aucie z ręczną skrzynią."
+msgstr "Права, полученные на автоматической коробке, дают право водить только машину с автоматом. Чтобы ездить на механике, нужно позже сдать практический экзамен на машине с ручной коробкой."
 
-#: templates/courses/course_detail.html:92
+#: templates/courses/course_detail.html:85
 msgid "Uprawnia do kierowania"
 msgstr "Даёт право управлять"
 
-#: templates/courses/course_detail.html:101
+#: templates/courses/course_detail.html:94
 msgid "Wymagania"
 msgstr "Требования"
 
-#: templates/courses/course_detail.html:110
+#: templates/courses/course_detail.html:103
 msgid "O kursie"
 msgstr "О курсе"
 
-#: templates/courses/course_detail.html:128
-msgid "Cenę tego kursu ustalamy indywidualnie — podamy ją od ręki."
-msgstr "Цену этого курса определяем индивидуально — назовём её сразу."
+#: templates/courses/course_detail.html:112
+msgid "Zacznij kurs"
+msgstr "Начните курс"
 
-#: templates/courses/course_detail.html:134
+#: templates/courses/course_detail.html:116
 msgid "Najbliższy start"
 msgstr "Ближайший старт"
 
-#: templates/courses/course_detail.html:146
+#: templates/courses/course_detail.html:128
 msgid "Zadzwoń, ustalimy termin."
 msgstr "Позвоните, согласуем дату."
 
-#: templates/courses/course_detail.html:172 templates/pages/home.html:74
-msgid "Najbliższe terminy"
-msgstr "Ближайшие даты"
+#: templates/courses/course_detail.html:133 templates/courses/intakes.html:16
+msgid "Zapisy"
+msgstr "Запись"
 
-#: templates/courses/course_detail.html:178 templates/pages/home.html:80
-msgid "Wszystkie terminy"
-msgstr "Все даты"
+#: templates/courses/course_detail.html:134
+msgid "Po wcześniejszym ustaleniu telefonicznym."
+msgstr "По предварительной договорённости по телефону."
 
-#: templates/courses/course_detail.html:188
-msgid "Pojazdy szkoleniowe"
-msgstr "Учебные автомобили"
+#: templates/courses/course_detail.html:160
+msgid "Nasze samochody"
+msgstr "Наши автомобили"
 
-#: templates/courses/course_detail.html:211
-#: templates/courses/course_detail.html:252
+#: templates/courses/course_detail.html:161
+msgid "Uczysz się na aucie, którym potem zdajesz — i którym Cię na ten egzamin dowozimy."
+msgstr "Учитесь на той машине, на которой потом сдаёте, — и на которой мы вас на экзамен привезём."
+
+#: templates/courses/course_detail.html:181
+msgid "Czym jeździmy"
+msgstr "На чём ездим"
+
+#: templates/courses/course_detail.html:182
+msgid "Zdjęcia aut w przygotowaniu"
+msgstr "Фотографии машин готовятся"
+
+#: templates/courses/course_detail.html:183
+msgid "Chcesz zobaczyć auto, zanim się zapiszesz? Zadzwoń i wpadnij na plac — pokażemy je na miejscu."
+msgstr "Хотите увидеть машину до записи? Позвоните и заезжайте на площадку — покажем на месте."
+
+#: templates/courses/course_detail.html:192
+#: templates/courses/course_detail.html:218
 #, python-format
 msgid "Zapisz się na %(title)s"
 msgstr "Записаться на %(title)s"
 
-#: templates/courses/course_detail.html:213
+#: templates/courses/course_detail.html:194
 msgid "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Wolisz zadzwonić?"
 msgstr "Оставьте номер, перезвоним и подберём ближайшую дату. Хотите позвонить сами?"
 
-#: templates/courses/course_detail.html:224
+#: templates/courses/course_detail.html:205
 msgid "Inne kategorie"
 msgstr "Другие категории"
 
-#: templates/courses/course_detail.html:233
-msgid "Nie wiesz, czy ta kategoria jest dla Ciebie?"
-msgstr "Не уверены, что это ваша категория?"
+#: templates/courses/course_detail.html:211
+msgid "Nie wiesz, który wariant wybrać?"
+msgstr "Не знаете, какой вариант выбрать?"
 
-#: templates/courses/course_detail.html:234
-msgid "Zadzwoń — powiemy, co daje i ile trwa w praktyce."
-msgstr "Позвоните — расскажем, что она даёт и сколько занимает на практике."
+#: templates/courses/course_detail.html:212
+msgid "Zadzwoń — powiemy, ile realnie trwa kurs przyspieszony i kiedy automat ma sens."
+msgstr "Позвоните — скажем, сколько реально длится ускоренный курс и когда автомат имеет смысл."
 
-#: templates/courses/course_detail.html:236
-msgid "Potrzebujesz tych uprawnień do pracy?"
-msgstr "Нужен этот допуск для работы?"
-
-#: templates/courses/course_detail.html:237
-msgid "Powiemy, od czego zacząć i co trzeba mieć na starcie."
-msgstr "Расскажем, с чего начать и что нужно иметь на старте."
-
-#: templates/courses/course_list.html:32 templates/pages/home.html:64
+#: templates/courses/course_list.html:32
 msgid "Oferta w przygotowaniu"
 msgstr "Предложение готовится"
 
@@ -922,83 +1414,111 @@ msgstr "Перевозка опасных грузов: базовый курс 
 msgid "Pozostałe uprawnienia"
 msgstr "Остальные допуски"
 
+#: templates/courses/course_list.html:67
+msgid "Badania psychologiczne"
+msgstr "Психологические тесты"
+
 #: templates/courses/course_list.html:68
 msgid "Dla kierowców, instruktorów i operatorów maszyn."
 msgstr "Для водителей, инструкторов и операторов машин."
+
+#: templates/courses/course_list.html:74
+msgid "Wózki widłowe"
+msgstr "Погрузчики"
 
 #: templates/courses/course_list.html:75
 msgid "Uprawnienia operatora wózków jezdniowych z napędem silnikowym."
 msgstr "Допуск оператора самоходных погрузчиков."
 
-#: templates/courses/course_list.html:85 templates/courses/pricing.html:81
+#: templates/courses/course_list.html:86 templates/courses/course_list.html:93
 msgid "Nie wiesz, którą kategorię wybrać?"
 msgstr "Не знаете, какую категорию выбрать?"
 
-#: templates/courses/intakes.html:15
-msgid "Zapisy"
-msgstr "Запись"
+#: templates/courses/course_list.html:87
+msgid "Zadzwoń — w dwie minuty powiemy, co Ci jest potrzebne i ile to trwa."
+msgstr "Позвоните — за две минуты скажем, что нужно и сколько это займёт."
 
-#: templates/courses/intakes.html:18
+#: templates/courses/intakes.html:19
 msgid "Najbliższe starty grup. Terminy zamknięte i minione nie są pokazywane."
 msgstr "Ближайшие старты групп. Закрытые и прошедшие даты не показываем."
 
-#: templates/courses/intakes.html:42
+#: templates/courses/intakes.html:43
 msgid "Pokaż terminy"
 msgstr "Показать даты"
 
-#: templates/courses/intakes.html:58
+#: templates/courses/intakes.html:59
 msgid "Nie ma pasującego terminu?"
 msgstr "Нет подходящей даты?"
 
-#: templates/courses/intakes.html:59
+#: templates/courses/intakes.html:60
 msgid "Zostaw numer — odezwiemy się, gdy ruszy najbliższa grupa."
 msgstr "Оставьте номер — сообщим, когда стартует ближайшая группа."
 
-#: templates/courses/intakes.html:73
+#: templates/courses/intakes.html:74
 msgid "Nie widzisz pasującego terminu?"
 msgstr "Не видите подходящей даты?"
 
-#: templates/courses/pricing.html:25
-msgid "Oferta"
-msgstr "Предложение"
-
-#: templates/courses/pricing.html:28
-msgid "Ceny brutto. Kursy bez kwoty wyceniamy pod zgłoszenie."
-msgstr "Цены с НДС. Курсы без суммы оцениваем по заявке."
+#: templates/courses/pricing.html:27
+msgid "Ceny brutto, bez ukrytych kosztów. Dowóz na egzamin państwowy jest w cenie kursu."
+msgstr "Цены брутто, без скрытых доплат. Доставка на государственный экзамен входит в цену курса."
 
 #: templates/courses/pricing.html:33
-msgid "Zadzwoń po wycenę"
-msgstr "Позвоните за расчётом"
+msgid "Pełny kurs standardowy. Przyspieszony i automat po 4300 zł."
+msgstr "Полный стандартный курс. Ускоренный и автомат по 4300 zł."
 
-#: templates/courses/pricing.html:36
-msgid "Podamy kwotę od ręki, w godzinach pracy biura."
-msgstr "Назовём сумму сразу, в рабочие часы офиса."
+#: templates/courses/pricing.html:43
+msgid "Sekcje cennika"
+msgstr "Разделы прайса"
 
-#: templates/courses/pricing.html:49
+#: templates/courses/pricing.html:50
 msgid "Pozostałe usługi"
 msgstr "Прочие услуги"
 
-#: templates/courses/pricing.html:56
-msgid "Najczęściej wybierany"
-msgstr "Выбирают чаще всего"
+#: templates/courses/pricing.html:55
+msgid "To nie są opłaty dla szkoły"
+msgstr "Это оплаты не школе"
 
-#: templates/courses/pricing.html:63
+#: templates/courses/pricing.html:57
+msgid "Badanie lekarskie płacisz lekarzowi, egzamin — ośrodkowi egzaminowania, zaświadczenie o zameldowaniu — urzędowi gminy. Podajemy je, żebyś od razu wiedział, ile kosztuje całość, a nie tylko nasza część."
+msgstr "Медицинское обследование вы оплачиваете врачу, экзамен — экзаменационному центру, справку о регистрации — гмине. Приводим их, чтобы вы сразу знали, сколько стоит всё, а не только наша часть."
+
+#: templates/courses/pricing.html:73
+msgid "Co jest w cenie kursu"
+msgstr "Что входит в цену курса"
+
+#: templates/courses/pricing.html:75
+msgid "Zajęcia teoretyczne i praktyczne w pełnym wymiarze."
+msgstr "Теоретические и практические занятия в полном объёме."
+
+#: templates/courses/pricing.html:76
+msgid "Egzamin wewnętrzny przed państwowym."
+msgstr "Внутренний экзамен перед государственным."
+
+#: templates/courses/pricing.html:77
+msgid "Dowóz na egzamin państwowy — GRATIS."
+msgstr "Доставка на государственный экзамен — БЕСПЛАТНО."
+
+#: templates/courses/pricing.html:78
+msgid "Klimatyzowane auta z bogatym wyposażeniem."
+msgstr "Автомобили с кондиционером и богатым оснащением."
+
+#: templates/courses/pricing.html:87
 msgid "Cennik w przygotowaniu"
 msgstr "Прайс готовится"
 
-#: templates/courses/pricing.html:65
+#: templates/courses/pricing.html:89
 msgid "Ceny podamy telefonicznie od ręki."
 msgstr "Цены назовём по телефону сразу."
 
-#: templates/courses/pricing.html:72
+#: templates/courses/pricing.html:97
 msgid "Płatności i raty"
 msgstr "Оплата и рассрочка"
 
-#: templates/courses/pricing.html:82
-msgid "Powiemy, co się opłaca w Twojej sytuacji, i podamy cenę."
-msgstr "Скажем, что выгоднее в вашей ситуации, и назовём цену."
+#: templates/courses/pricing.html:105
+msgid "Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — powiemy, kiedy startuje najbliższa grupa."
+msgstr "Записываем по телефону. Оставьте номер или позвоните — скажем, когда стартует ближайшая группа."
 
-#: templates/courses/pricing.html:96
+#: templates/courses/pricing.html:111
 msgid "Masz pytanie o cenę?"
 msgstr "Есть вопрос по цене?"
 
@@ -1035,16 +1555,16 @@ msgstr "Сертификаты готовятся"
 msgid "Skany pojawią się wkrótce."
 msgstr "Сканы появятся скоро."
 
-#: templates/gallery/certificates.html:45
-#: templates/gallery/certificates.html:60
+#: templates/gallery/certificates.html:46
+#: templates/gallery/certificates.html:61
 msgid "Masz pytanie o uprawnienia ośrodka?"
 msgstr "Есть вопрос о допусках центра?"
 
-#: templates/gallery/certificates.html:46
+#: templates/gallery/certificates.html:47
 msgid "Odpowiemy przez telefon albo pokażemy dokumenty w biurze."
 msgstr "Ответим по телефону или покажем документы в офисе."
 
-#: templates/gallery/gallery.html:19
+#: templates/gallery/gallery.html:19 templates/layout/footer.html:83
 msgid "Ośrodek"
 msgstr "Автошкола"
 
@@ -1077,67 +1597,83 @@ msgstr "Галерея готовится"
 msgid "Zdjęcia pojawią się wkrótce."
 msgstr "Фотографии появятся скоро."
 
-#: templates/gallery/gallery.html:66
+#: templates/gallery/gallery.html:68
 msgid "Rok założenia"
 msgstr "Год основания"
 
-#: templates/gallery/gallery.html:81 templates/gallery/gallery.html:96
+#: templates/gallery/gallery.html:85 templates/gallery/gallery.html:100
 msgid "Chcesz zobaczyć ośrodek na żywo?"
 msgstr "Хотите увидеть автошколу вживую?"
 
-#: templates/gallery/gallery.html:82
+#: templates/gallery/gallery.html:86
 msgid "Umów się — pokażemy plac, sale i pojazdy."
 msgstr "Договоритесь о визите — покажем площадку, классы и машины."
 
-#: templates/layout/footer.html:48
-msgid "Informacje"
-msgstr "Информация"
+#: templates/layout/footer.html:29
+msgid "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie."
+msgstr "Автошкола в Велюне. Категория B, свои автомобили, доставка на экзамен в цене."
 
-#: templates/layout/footer.html:59
-msgid "Formalności"
-msgstr "Формальности"
+#: templates/layout/footer.html:76
+msgid "Zapisy i dokumenty"
+msgstr "Запись и документы"
 
-#: templates/layout/footer.html:71
+#: templates/layout/footer.html:85
+msgid "O nas"
+msgstr "О нас"
+
+#: templates/layout/footer.html:111
 msgid "na rynku od"
 msgstr "на рынке с"
 
-#: templates/layout/header.html:49 templates/layout/mobile_menu.html:22
+#: templates/layout/footer.html:111
+msgid "Wieluń"
+msgstr "Велюнь"
+
+#: templates/layout/header.html:43
+msgid "strona główna"
+msgstr "главная страница"
+
+#: templates/layout/header.html:65
+msgid "Oddzwonimy do Ciebie"
+msgstr "Перезвоним вам"
+
+#: templates/layout/header.html:71 templates/layout/mobile_menu.html:22
 msgid "Menu"
 msgstr "Меню"
 
-#: templates/layout/mobile_menu.html:30
+#: templates/layout/mobile_menu.html:36
 msgid "Zamknij menu"
 msgstr "Закрыть меню"
 
-#: templates/leads/_form.html:43
+#: templates/leads/_form.html:54
 msgid "Nie udało się wysłać zgłoszenia"
 msgstr "Не удалось отправить заявку"
 
-#: templates/leads/_form.html:45
+#: templates/leads/_form.html:56
 msgid "Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń."
 msgstr "Что-то на нашей стороне не ответило. Ваши данные остались в форме — попробуйте ещё раз или позвоните."
 
-#: templates/leads/_form.html:76
-msgid "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —"
-msgstr "Я согласен на обработку моих персональных данных школой OSK Nawrocki для связи по поводу курса. Данные предоставляю добровольно, имею право в любой момент их просмотреть, исправить и удалить —"
+#: templates/leads/_form.html:94
+msgid "Zgadzam się na przetwarzanie moich danych osobowych przez OSK Ostrycharz w celu kontaktu w sprawie kursu. Dane podaję dobrowolnie, mam prawo wglądu, poprawienia i usunięcia ich w każdej chwili —"
+msgstr "Я согласен на обработку моих персональных данных школой OSK Ostrycharz для связи по поводу курса. Данные предоставляю добровольно, имею право в любой момент их просмотреть, исправить и удалить — "
 
-#: templates/leads/_form.html:77
+#: templates/leads/_form.html:95
 msgid "pełna informacja RODO"
 msgstr "полная информация RODO"
 
-#: templates/leads/_form.html:81
+#: templates/leads/_form.html:100
 msgid "Chcę dostawać informacje o nowych terminach i promocjach. Nieobowiązkowe."
 msgstr "Хочу получать информацию о новых датах и акциях. Необязательно."
 
-#: templates/leads/_form.html:86
+#: templates/leads/_form.html:106
 msgid "Nie udało się wysłać"
 msgstr "Не удалось отправить"
 
-#: templates/leads/_form.html:94
+#: templates/leads/_form.html:114
 msgid "Wyślij zgłoszenie"
 msgstr "Отправить заявку"
 
-#: templates/leads/_form.html:95
+#: templates/leads/_form.html:115
 msgid "Wysyłanie…"
 msgstr "Отправляем…"
 
@@ -1176,6 +1712,10 @@ msgstr "Часы работы офиса"
 #: templates/leads/enroll.html:50
 msgid "Jak zapisać się na kurs"
 msgstr "Как записаться на курс"
+
+#: templates/leads/enroll.html:57
+msgid "Zadzwoń w godzinach pracy biura — zapiszemy Cię przez telefon i odpowiemy na pytania od razu."
+msgstr "Позвоните в рабочие часы офиса — запишем по телефону и сразу ответим на вопросы."
 
 #: templates/leads/thanks.html:13
 msgid "Dziękujemy"
@@ -1261,100 +1801,151 @@ msgstr "Не знаете, с чего начать?"
 msgid "Powiemy, który dokument załatwić najpierw."
 msgstr "Скажем, какой документ оформить первым."
 
-#: templates/pages/home.html:22
-msgid "Prawo jazdy w"
-msgstr "Водительские права в"
+#: templates/pages/home.html:65
+msgid "Prawo jazdy"
+msgstr "Водительские права"
 
-#: templates/pages/home.html:26
-msgid "Wieluniu"
-msgstr "Велюне"
+#: templates/pages/home.html:70
+msgid "kat. B"
+msgstr "кат. B"
 
-#: templates/pages/home.html:31
-msgid "Kategorie AM–D, kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, rosyjsku i ukraińsku."
-msgstr "Категории AM–D, профессиональные квалификации, ADR и психологические тесты. Занятия на польском, русском и украинском."
+#: templates/pages/home.html:73
+msgid "w Wieluniu"
+msgstr "в Велюне"
 
-#: templates/pages/home.html:45
-#, python-format
-msgid "od %(year)s roku"
-msgstr "с %(year)s года"
+#: templates/pages/home.html:77
+msgid "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie."
+msgstr "Обычный курс, ускоренный за две недели или на автоматической коробке. Машины с кондиционером, доставка на экзамен в цене."
 
-#: templates/pages/home.html:49
-msgid "kursów"
-msgstr "курсов"
+#: templates/pages/home.html:84
+msgid "Cennik od"
+msgstr "Цены от"
 
-#: templates/pages/home.html:52
-msgid "zajęcia po pl / ru / ua"
-msgstr "занятия на pl / ru / ua"
+#: templates/pages/home.html:119
+msgid "Dlaczego my"
+msgstr "Почему мы"
 
-#: templates/pages/home.html:59
-msgid "Kategorie prawa jazdy"
-msgstr "Категории водительских прав"
+#: templates/pages/home.html:120
+msgid "Cztery rzeczy, które ta szkoła ma, a które trzeba było wcześniej wyczytać z jednej długiej strony."
+msgstr "Четыре вещи, которые есть у этой школы и которые раньше приходилось вычитывать на одной длинной странице."
 
-#: templates/pages/home.html:66
-msgid "Lista kategorii pojawi się wkrótce. Zadzwoń, powiemy od ręki, co jest dostępne."
-msgstr "Список категорий появится скоро. Позвоните — сразу скажем, что доступно."
+#: templates/pages/home.html:123
+msgid "Rozłożenie płatności"
+msgstr "Рассрочка платежа"
 
-#: templates/pages/home.html:109
-msgid "Zajęcia po rosyjsku i ukraińsku"
-msgstr "Занятия на русском и украинском"
+#: templates/pages/home.html:124
+msgid "Kurs opłacasz w ratach, bez pośrednika, bez umowy z bankiem i bez dopłaty za samo rozłożenie."
+msgstr "Курс оплачиваете частями: без посредника, без договора с банком и без доплаты за саму рассрочку."
 
-#: templates/pages/home.html:111
-msgid "Wykłady i materiały egzaminacyjne w zrozumiałym języku. Kurs zdajesz po polsku, ale uczysz się tak, żeby wszystko rozumieć."
-msgstr "Лекции и экзаменационные материалы на понятном языке. Экзамен вы сдаёте по-польски, но учитесь так, чтобы всё понимать."
-
-#: templates/pages/home.html:122
-msgid "Dlaczego OSK Nawrocki"
-msgstr "Почему OSK Nawrocki"
+#: templates/pages/home.html:125
+msgid "Doświadczeni instruktorzy"
+msgstr "Опытные инструкторы"
 
 #: templates/pages/home.html:126
-#, python-format
-msgid "lat na rynku, nieprzerwanie od %(year)s roku"
-msgstr "лет на рынке, непрерывно с %(year)s года"
+msgid "Uczą spokojnie i konkretnie, a na egzamin jedziesz tym samym autem, którym jeździłeś na kursie."
+msgstr "Учат спокойно и по делу, а на экзамен вы едете на той же машине, на которой учились."
+
+#: templates/pages/home.html:127
+msgid "Własne auta, automat i manual"
+msgstr "Свои машины: автомат и механика"
+
+#: templates/pages/home.html:128
+msgid "Klimatyzowane, z bogatym wyposażeniem. Jeśli manual Cię blokuje, robisz kurs na automacie."
+msgstr "С кондиционером и богатой комплектацией. Если механика вас тормозит — учитесь на автомате."
 
 #: templates/pages/home.html:129
-msgid "własny"
-msgstr "свой"
+msgid "Dowóz na egzamin gratis"
+msgstr "Доставка на экзамен бесплатно"
 
 #: templates/pages/home.html:130
-msgid "plac manewrowy, ćwiczysz tam, gdzie zdajesz"
-msgstr "манёвренный плац: тренируетесь там, где сдаёте"
+msgid "W cenie kursu, a nie jako dopłata na końcu."
+msgstr "В цене курса, а не доплатой в конце."
 
-#: templates/pages/home.html:133
-msgid "własne"
-msgstr "свои"
-
-#: templates/pages/home.html:134
-msgid "sale wykładowe w centrum Wielunia"
-msgstr "лекционные классы в центре Велюня"
-
-#: templates/pages/home.html:137
-msgid "zgodne"
-msgstr "соответствующие"
-
-#: templates/pages/home.html:138
-msgid "pojazdy spełniające wymogi egzaminacyjne"
-msgstr "автомобили по экзаменационным требованиям"
+#: templates/pages/home.html:142
+#, python-format
+msgid "Rocznik %(year)s, liczony od wszystkich kandydatów, którzy przystąpili do egzaminu."
+msgstr "Выпуск %(year)s года, считается от всех кандидатов, которые пришли на экзамен."
 
 #: templates/pages/home.html:146
+msgid "Jak to liczymy"
+msgstr "Как мы считаем"
+
+#: templates/pages/home.html:169
+msgid "Kilka słów o szkole"
+msgstr "Несколько слов о школе"
+
+#: templates/pages/home.html:173
+msgid "Ośrodek szkolenia kierowców w Wieluniu. Szkolimy na kategorię B — od pierwszej godziny teorii do egzaminu państwowego, na własnych autach i z instruktorami, którzy jeżdżą tu od lat."
+msgstr "Автошкола в Велюне. Готовим на категорию B — от первого часа теории до государственного экзамена, на своих машинах и с инструкторами, которые работают здесь годами."
+
+#: templates/pages/home.html:177
+msgid "Więcej o nas"
+msgstr "Подробнее о нас"
+
+#: templates/pages/home.html:190
+msgid "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google."
+msgstr "Видео открывается в новой вкладке на YouTube. До нажатия эта страница ничего не отправляет в Google."
+
+#: templates/pages/home.html:199
+msgid "Trzy sposoby na kategorię B"
+msgstr "Три способа получить категорию B"
+
+#: templates/pages/home.html:200
+msgid "Ta sama kategoria, ten sam egzamin. Różni się tempo i skrzynia biegów."
+msgstr "Та же категория, тот же экзамен. Различаются темп и коробка передач."
+
+#: templates/pages/home.html:213
+msgid "Pełny cennik"
+msgstr "Полный прайс"
+
+#: templates/pages/home.html:216
+msgid "O kursie kat. B"
+msgstr "О курсе кат. B"
+
+#: templates/pages/home.html:228
+msgid "Zostaw"
+msgstr "Оставьте"
+
+#: templates/pages/home.html:228
+msgid "numer"
+msgstr "номер"
+
+#: templates/pages/home.html:231
+msgid "Oddzwonimy tego samego dnia i umówimy pierwsze zajęcia. Bez zobowiązania."
+msgstr "Перезвоним в тот же день и договоримся о первом занятии. Ни к чему не обязывает."
+
+#: templates/pages/home.html:265
+msgid "instruktor od %(years)s lat"
+msgstr "инструктор уже %(years)s лет"
+
+#: templates/pages/home.html:270
+msgid "Zdjęcie w przygotowaniu."
+msgstr "Фотография готовится."
+
+#: templates/pages/home.html:282
 msgid "Co mówią kursanci"
 msgstr "Что говорят курсанты"
 
-#: templates/pages/home.html:155
-msgid "Częste pytania"
-msgstr "Частые вопросы"
+#: templates/pages/home.html:305
+msgid "Kontakt i dojazd"
+msgstr "Контакты и как доехать"
 
-#: templates/pages/home.html:164
-msgid "Wszystkie pytania"
-msgstr "Все вопросы"
-
-#: templates/pages/home.html:173
-msgid "Kontakt i zapisy"
-msgstr "Контакты и запись"
-
-#: templates/pages/home.html:215
+#: templates/pages/home.html:347
 msgid "Nawiguj"
 msgstr "Навигация"
 
-#: templates/pages/home.html:228
-msgid "Zostaw numer, oddzwonimy"
-msgstr "Оставьте номер, перезвоним"
+#: templates/pages/home.html:363
+msgid "Częste pytania"
+msgstr "Частые вопросы"
+
+#: templates/pages/home.html:374
+msgid "Wszystkie pytania"
+msgstr "Все вопросы"
+
+#: templates/cotton/map.html:28
+msgid "Pokaż mapę Google"
+msgstr "Показать карту Google"
+
+#: templates/cotton/map.html:29
+msgid "Mapa Google wczyta się dopiero po kliknięciu."
+msgstr "Карта Google загрузится только после нажатия."

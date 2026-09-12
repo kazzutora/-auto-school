@@ -1,9 +1,14 @@
-# tech.md — ядро проекта OSK Nawrocki
+# tech.md — ядро проекта OSK Ostrycharz
 
-**Версия ядра: v23**
+**Версия ядра: v28**
 
 | Версия | Изменение |
 |---|---|
+| v28 | Жёлтая метка фирменного знака — молния вместо буквы L: `mark.svg`, `mark-yellow.svg`, `favicon.svg`, логотип в шапке, табличка и `mark-512.png`. Школу знают по Маквину — на старом сайте он стоит логотипом, `OSTRYCHARZ.md` A.7, — и молния отсылает к нему, не беря чужой графики. В тёмном логотипе метка стала жёлтым квадратом с почти-чёрной молнией: жёлтое на белом квадрате давало 1.43:1 и почти не читалось. Изображения самого Маквина на сайт не ставятся — ни кадры, ни фото, ни кубок Поршня: это собственность Disney/Pixar, `OSTRYCHARZ.md` C.5. Эксперимент с ним в герое главной проверили и откатили |
+| v27 | Тёмная тема получила свой `accent-100`: `#2C2814` вместо светлого `#FFF6CC`. Сам жёлтый не меняется, меняется только его бледный тон — так же, как `primary-100`. Светлый крем под 50%-заливкой `<c-callout tone="accent">` на почти чёрном фоне давал грязный хаки, а приглушённый текст на нём читался при 1.2:1. Активный пункт мобильного меню берёт цвет текста от фона (`u-on-ground`), а не фиксированный `u-fixed-ink`: его подложка теперь меняется вместе с темой. В гейт контраста `scripts/check_contrast.py` добавлены пары для `accent-100` в обеих темах |
+| v26 | Карта переведена с Leaflet + OpenStreetMap на встроенную карту Google, загружаемую по клику: `<c-map>` рендерит адрес и кнопку «Pokaż mapę Google», а iframe `https://www.google.com/maps?…&output=embed` строит `static/js/app.js` только после нажатия. Правило §2 уточнено, а не снято: до клика страница не обращается ни к одному стороннему хосту, поэтому cookie-гейт по-прежнему не нужен. CSP: из `img-src` убран `tile.openstreetmap.org`, добавлен `frame-src https://www.google.com`. Пропсы `<c-map>` те же. На главной карточка контактов стоит рядом с картой, а не поверх неё — `REDESIGN.md` B.7 п.9 сужен: поверх карты она закрывала элементы управления Google и выходила за нижний край карты |
+| v25 | Визуальный язык заменён: `REDESIGN.md` отменяет `FRONTEND.md` часть A. Тёмная карточка на светлом поле вместо чёрно-белого минимализма: тёплый серый фон, белые и почти-чёрные блоки с радиусом 20/28px, две акцентные краски с разделёнными ролями — синий это действие, жёлтый это состояние, — две ступени теней вместо границ, появление блоков при скролле на CSS scroll-driven animations без единой библиотеки анимации. Manrope заменил Public Sans в роли текстового шрифта и попутно закрыл CONTRACT GAP из `static/src/css/app.css`: у Public Sans нет кириллицы, у Manrope есть, поэтому `/ru/` и `/uk/` перестали падать в системный шрифт. Сняты запреты на тени, скругления и фотографии людей — последний с ограничением части D: стоковый человек не подписывается сотрудником школы. Добавлены `<c-group-card>`, `<c-carousel>`, `<c-video-card>`, `<c-bento>`. Контракты §1–§20 не затронуты: схема БД, задачи Celery, URL-карта, контракт `Seo`, доктрина тестов и инфраструктура те же, менялся только слой представления |
+| v24 | Движок переведён на второго клиента, OSK Ostrycharz. §1 переписан целиком: одна категория B в трёх вариантах, реальные цены, статистика сдачи. Добавлены модели `PassRate` (год, кандидаты, четыре попытки; проценты не хранятся, считаются в `apps/core/services.py`) и `DownloadFile` (`size_bytes` заполняется в `save()` из самого файла); в `SiteSettings` — `youtube_url`, `youtube_video_url`, `youtube_poster`, `youtube_poster_alt`, а `founded_year` стал nullable, потому что школа его нигде не публикует, и шаблон с фоллбэком печатал бы выдуманный факт. Роуты `/zdawalnosc/` и `/do-pobrania/`, навигация из семи пунктов без подменю. Новые компоненты: `<c-page-header>`, `<c-callout>`, `<c-spec-list>`, `<c-anchor-nav>`, `<c-empty>`, `<c-stat-band>`, `<c-cta-band>`, `<c-passrate-table>`, `<c-download-list>`, `<c-video-embed>`. Логотип в шапке — комплект из `static/brand/`, а не леттеринг в шаблоне; `og:image` по умолчанию берётся оттуда же, чем закрыт CONTRACT GAP в `apps/core/seo.py`. Пустой листинг курсов отвечает 404, а не 200 с заголовком над пустотой, и убран из sitemap. Из json-ld убраны пустой `vatID` и `foundingDate: "None"`. `COMPOSE_PROJECT_NAME` разводит тома двух школ на одной машине, а `deploy/docker-compose.edge.yml` + `deploy/Caddyfile.second-site` отдают порты 80/443 одному Caddy на двоих. Роут без содержимого (галерея, сертификаты, наборы) выпадает из `sitemap.xml`, пока в нём пусто, и возвращается сам, когда владелец что-то загрузит: карта заглушек — это способ научить Google, что сайт тонкий |
 | v23 | `CSRF_TRUSTED_ORIGINS` перестал быть пустым: `config/settings/prod.py` собирает его из `ALLOWED_HOSTS`, схема `https`, а при `HTTPS_ENABLED=0` — `http`. Запись вида `.example.com` даёт `https://*.example.com`, одиночная `*` пропускается. Домен по-прежнему пишется в `.env` ровно один раз, второй копии, которая разъедется, нет. Отдельно описан третий режим переезда: бесплатное dynamic-dns имя вместо голого ip. Оно получает настоящий сертификат, поэтому `CADDYFILE` и `HTTPS_ENABLED` не нужны — хватает `SITE_DOMAIN` и `DJANGO_ALLOWED_HOSTS` плюс открытых 80 и 443, а www-редирект боевого `Caddyfile` работает, потому что такой провайдер резолвит все под-имена в тот же адрес Выход из режима предпросмотра вскрыл две поломки, обе закрыты. `SECURE_REDIRECT_EXEMPT = [r"^healthz$"]`: healthcheck контейнера и smoke-шаг деплоя ходят на `/healthz` по обычному http через loopback, где никакой прокси не ставит `X-Forwarded-Proto`, и `SECURE_SSL_REDIRECT` отвечал им 301 на порт 443, которого у контейнера нет. Наружу это ничего не открывает: запрос снаружи сперва встречает Caddy, а тот редиректит весь хост на https. И smoke-шаг в `deploy.yml` перестал дёргать `http://localhost/healthz`: боевой `Caddyfile` отвечает только на каноническое имя, на `localhost` он отдаёт 404. Теперь шаг читает режим из `.env`: в предпросмотре бьёт по-старому в `http://localhost/healthz`, а на боевом — в `SITE_DOMAIN`, прибитый к loopback через `--resolve`, тот же путь, что у публики, вместе с сертификатом. Правка `deploy.yml` в день переезда домена больше не нужна, и порядок «сперва `.env`, потом push» перестал быть обязательным |
 | v22 | Добавлен режим предпросмотра на голом ip, пока домен не переехал. Две переменные: `CADDYFILE=Caddyfile.preview` подменяет конфиг Caddy на `deploy/Caddyfile.preview` — HTTP на порту 80, любое имя хоста, без ACME, без HSTS и без www-редиректа; `HTTPS_ENABLED=0` снимает в `config/settings/prod.py` ровно три настройки — `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE` и `CSRF_COOKIE_SECURE` — плюс обнуляет HSTS. По умолчанию обе выключены, боевой путь не меняется. Работают только парой: без второй django редиректит на несуществующий сертификат, без первой Caddy не отвечает на запрос с ip в заголовке `Host` |
 | v21 | `DATABASE_URL` убран из `.env`: оба compose-файла собирают DSN из `POSTGRES_USER`, `POSTGRES_PASSWORD` и `POSTGRES_DB`, и значение из окружения больше не читается. Пароль базы был записан дважды — в `POSTGRES_PASSWORD` и внутри строки подключения, — и смена его в одном месте оставляла django с прежним паролем. Внешняя база теперь задаётся правкой compose-файла, а не переменной. Побочно: у `WEB_IMAGE` появился дефолт `osk:local`, а продовый стек получил `build`, чтобы машина с чекаутом, но без логина в реестр, собирала образ на месте |
@@ -30,7 +35,7 @@
 
 Файл читают все сессии. Правится только в режиме LEAD, только append-only, каждое изменение контракта бампает версию и добавляет строку в changelog.
 
-**Комплект проекта — восемь файлов.** `tech.md` — ядро и все контракты (этот файл). `DEV.md` — порядок сборки скелета, чек-листы и стадийный список задач бэкенда. `PROMPTS.md` — промпты бэкенда, по одному на шаг. `FRONTEND.md` — дизайн-контракт и промпты фронтенда. `FRONTEND_POLISH.md` — блоки и ритм внутренних страниц. `FRONTEND_FIXES.md` — аудит работающего сайта и промпты на починку. `BLOCKS.md` — каталог блоков с набором по каждой странице. `CLAUDE.md` — указатель для сессии.
+**Комплект проекта — десять файлов.** `tech.md` — ядро и все контракты (этот файл). `DEV.md` — порядок сборки скелета, чек-листы и стадийный список задач бэкенда. `PROMPTS.md` — промпты бэкенда, по одному на шаг. `FRONTEND.md` — промпты фронтенда; часть A устарела с ядра v25. `REDESIGN.md` — действующий дизайн-контракт: палитра, типографика, анимация, фотографии и промпты R0–R10. `FRONTEND_POLISH.md` — блоки и ритм внутренних страниц. `FRONTEND_FIXES.md` — аудит работающего сайта и промпты на починку. `BLOCKS.md` — каталог блоков с набором по каждой странице. `OSTRYCHARZ.md` — данные этого клиента и промпты переноса. `CLAUDE.md` — указатель для сессии.
 
 **Команда — один человек в двух режимах.** Режим **LEAD**: скелет, контракты, миграции, общие файлы, CI/CD, ревью. Режим **DEV**: фичи, один вертикальный слайс за сессию. Режимы не смешиваются в одной сессии — это единственное, что физически мешает фиче-сессии походя переписать общий контракт, чтобы стало удобнее.
 
@@ -38,30 +43,39 @@
 
 ## 1. Проект
 
-**Что:** новый сайт ośrodek szkolenia kierowców «OSK Nawrocki» (Ośrodek Kształcenia i Doskonalenia Zawodowego Adam Nawrocki, Mariola Nawrocka S.C.), Wieluń.
+**Что:** новый сайт ośrodek szkolenia kierowców «OSK Ostrycharz», Wieluń.
 
-**Взамен чего:** `naukajazdywielun.pl` на конструкторе WebWave. Старый сайт: нерабочий HTTPS (сертификат на чужое имя), невидимая форма контакта, «Kontakt» спрятан в подменю, ноль цен и дат, ноль `h1`, пустые `meta description`, URL с пробелами (`/KAT.%20B`).
+**Взамен чего:** `oskostrycharz.pl` — рабочий одностраничник с якорной навигацией. Сайт живой, сертификат в порядке, цены опубликованы, и давить на «всё сломано» нельзя. Конкретные дефекты: одна страница на весь сайт, поэтому ни у прайса, ни у документов, ни у статистики нет собственного URL и в Google это один результат; запись через встроенную Google-форму, без RODO-согласия и без уведомлений владельцу; статистика сдачи и отзывы лежат текстом без разметки `Review`/`AggregateRating`; копирайт «2018–2020» в подвале; фон `main_bg.jpg` во весь экран без WebP и адаптивных размеров; нет админки; нет русской и украинской версий.
 
 **Для кого:**
-- кандидат на права кат. B, 17–25 лет, приходит с телефона по запросу «prawo jazdy Wieluń», ищет цену и ближайший старт;
-- профессиональный водитель, ищет kwalifikację wstępną / szkolenie okresowe / ADR, часто русско- или украиноязычный;
-- работодатель, отправляет сотрудников на психотесты и wózki widłowe.
+- кандидат на права кат. B, 17–25 лет, приходит с телефона по запросу «prawo jazdy Wieluń», ищет цену и то, как записаться;
+- его родитель — смотрит цену, документы и статистику сдачи;
+- русско- и украиноязычный житель Велюня — тот же недообслуженный сегмент, что у конкурентов.
 
 **Цель:** заявка или звонок. Всё остальное на сайте существует ради этих двух действий.
 
-**Ключевое преимущество школы, которое сайт обязан показывать:** занятия ведутся в том числе на русском языке. На старом сайте эта фраза спрятана в абзаце на главной.
+**Ключевое преимущество школы, которое сайт обязан показывать:** **сдача с первого раза** — 68 из 92 кандидатов. Это самый сильный аргумент, какой бывает у автошколы, и на старом сайте он лежит текстом в середине одностраничника. Число обязано быть на первом экране главной и иметь собственную страницу `/zdawalnosc/`.
+
+**Про 76 % против 74 %.** Старый сайт печатает «za 1 razem 68 (76%)», но 68/92 = 74 %. Их 76 % — это 68 из 90, то есть доля среди тех, кто в итоге сдал: 68+16+3+3 = 90, а кандидатов было 92, значит двое прав так и не получили. Сайт считает от **всех 92** и печатает 74 %, потому что подпись под числом говорит «кандидатов», а не «сдавших». Публиковать 76 %, когда собственные данные дают 74 %, — это завышенный рейтинг в разметке, ровно то, за что Google снимает rich results. Расхождение вынесено на `/zdawalnosc/` открытым текстом и стоит в отчёте `owner_data_gaps()` как вопрос владельцу. `apps/core/services.py::not_passed` — та самая разница.
+
+Второй по силе: **школа публикует цены**, включая «Dowóz na egzamin — GRATIS».
 
 **Реквизиты (константы, попадают в `SiteSettings` через сид):**
 
 ```
-Ośrodek Kształcenia i Doskonalenia Zawodowego Adam Nawrocki, Mariola Nawrocka S.C.
-ul. Zielona 45, 98-300 Wieluń
-NIP: 8321916014
-tel. 43 843 29 11 / 605 065 795 / 667 615 184
-osk.adam.nawrocki@wp.pl
-Работает с 1996 года
+OSK Ostrycharz — Ośrodek Szkolenia Kierowców
+ul. Asnyka 7, 98-300 Wieluń
+NIP: TODO_OWNER — на сайте не указан, запросить у владельца
+tel. +48 691 570 489
+oskostrycharz@poczta.onet.pl
+Facebook: https://pl-pl.facebook.com/osrodekostrycharz/
+YouTube:  https://www.youtube.com/channel/UCbXki-U-CJjcQ36tZ5GZ4lw
 Геокоордината офиса: см. SiteSettings.map_lat / map_lng (заполнить при сиде)
 ```
+
+**Что школа продаёт:** только категорию B. Три варианта курса — стандартный 3700 zł, ускоренный за две недели 4300 zł, автомат 4300 zł. Профессиональные курсы, ADR, психотесты и погрузчики не продаются: модели `Course(kind=professional|psychotest|operator)`, `Certificate` и `Instructor` остаются пустыми, и правило «нет данных — секция не рендерится» само убирает их со страниц.
+
+Логотип старого сайта (`mcqueen.png`) и фотографии школы — чужая собственность и в репозиторий не попадают. Фирменный знак проекта — леттеринг `OSK OSTRYCHARZ` в Archivo Expanded плюс жёлтая метка — с v28 это молния, отсылка к Маквину без его графики; комплект лежит в `static/brand/`.
 
 Номер банковского счёта на публичных страницах не выводим. Хранится в `SiteSettings.bank_account` с флагом `bank_account_public=False`, показывается только в админке и на странице оплаты после явного включения.
 
@@ -85,7 +99,7 @@ osk.adam.nawrocki@wp.pl
 | Статика | WhiteNoise (сжатие + манифест) | раздаёт Caddy, WhiteNoise как фоллбэк |
 | Формы | django-crispy-forms + crispy-tailwind | |
 | Антиспам | honeypot-поле + `django-ratelimit` | без внешней капчи, чтобы не тащить чужие куки |
-| Карта | **Leaflet + OpenStreetMap** | без Google-скриптов, значит без cookie-гейта на карту |
+| Карта | **Google Maps embed, по клику** (v26) | до нажатия ни одного запроса к Google, значит без cookie-гейта на карту |
 | Веб-сервер | Gunicorn (gthread) за **Caddy 2** | Caddy = автоматический Let's Encrypt, это лечит главную боль старого сайта |
 | Контейнеры | Docker + docker compose | dev и prod |
 | CI/CD | GitHub Actions | гейт на PR + деплой на мёрдж в `main` |
@@ -156,7 +170,7 @@ osk/
 ```python
 class SiteSettings(SingletonModel):
     legal_name          = CharField(max_length=200)
-    short_name          = CharField(max_length=80, default="OSK Nawrocki")
+    short_name          = CharField(max_length=80, default="OSK Ostrycharz")
     street              = CharField(max_length=120)
     postal_code         = CharField(max_length=10)
     city                = CharField(max_length=80)
@@ -168,13 +182,49 @@ class SiteSettings(SingletonModel):
     whatsapp            = CharField(max_length=32, blank=True)
     bank_account        = CharField(max_length=40, blank=True)
     bank_account_public = BooleanField(default=False)
-    founded_year        = PositiveSmallIntegerField(default=1996)
+    # v24: nullable. Школа год основания не публикует, а шаблон с фоллбэком
+    # печатал бы выдуманный факт. Каждое место, где он выводится, проверяет.
+    founded_year        = PositiveSmallIntegerField(null=True, blank=True)
     map_lat             = DecimalField(max_digits=9,  decimal_places=6, null=True)
     map_lng             = DecimalField(max_digits=9,  decimal_places=6, null=True)
     facebook_url        = URLField(blank=True)
     google_business_url = URLField(blank=True)
+    # v24. Ролик и канал. Плюс кадр-постер: превью с i.ytimg.com — это запрос
+    # в Google до того, как читатель что-либо нажал, §2 такое запрещает.
+    youtube_url         = URLField(blank=True)
+    youtube_video_url   = URLField(blank=True)
+    youtube_poster      = ImageField(upload_to="site/", blank=True)
+    youtube_poster_alt  = CharField(max_length=160, blank=True)
     lead_notify_emails  = CharField(max_length=300, help_text="через запятую")
     analytics_enabled   = BooleanField(default=False)
+
+# v24. Главный актив школы: сколько кандидатов сдаёт с первого раза.
+class PassRate(models.Model):
+    year         = PositiveSmallIntegerField(unique=True, db_index=True)
+    students     = PositiveSmallIntegerField()          # всего сдавало
+    passed_1st   = PositiveSmallIntegerField()
+    passed_2nd   = PositiveSmallIntegerField(default=0)
+    passed_3rd   = PositiveSmallIntegerField(default=0)
+    passed_4th   = PositiveSmallIntegerField(default=0)
+    note         = CharField(max_length=200, blank=True)   [tr]
+    is_published = BooleanField(default=True)
+    class Meta: ordering = ("-year",)
+    # Проценты в БД не хранятся: хранимый процент и хранимый счёт — два факта,
+    # которые могут разойтись, и разойдётся тот, что на экране. Считаются в
+    # apps/core/services.py: pass_rate_percent, attempt_percents,
+    # average_attempts, not_passed.
+
+# v24. Документы: regulamin, umowa, oświadczenia.
+class DownloadFile(models.Model):
+    title        = CharField(max_length=200)               [tr]
+    description  = CharField(max_length=300, blank=True)   [tr]
+    file         = FileField(upload_to="documents/", blank=True)
+    size_bytes   = PositiveIntegerField(null=True, blank=True)  # save() из файла
+    order        = PositiveSmallIntegerField(default=100)
+    is_published = BooleanField(default=True)
+    class Meta: ordering = ("order", "id")
+    # Строка без файла на страницу не попадает: apps/core/selectors.py её
+    # отсекает. Кнопка «Pobierz» в никуда хуже, чем список короче.
 
 class OpeningHours(models.Model):
     DEPT = TextChoices("OFFICE", "PSYCHOLOGY")
@@ -418,16 +468,19 @@ class Testimonial(models.Model):
 
 | URL | View | Модель |
 |---|---|---|
-| `/` | `core.views.home` | Course, CourseIntake, Testimonial |
+| `/` | `core.views.home` | Course, PriceItem, PassRate, Testimonial |
 | `/kursy/` | `courses.views.course_list` | Course(kind=license) |
-| `/kursy/<slug>/` | `courses.views.course_detail` | Course |
-| `/kierowca-zawodowy/` | `courses.views.pro_hub` | Course(kind=professional) |
-| `/kierowca-zawodowy/<slug>/` | `courses.views.course_detail` | Course |
-| `/badania-psychologiczne/` | `courses.views.course_detail` | Course(slug=badania-psychologiczne) |
-| `/wozki-widlowe/` | `courses.views.course_detail` | Course(slug=wozki-widlowe) |
-| `/cennik/` | `courses.views.pricing` | Course, PriceItem |
+| `/kursy/<slug>/` | `courses.views.course_detail` | Course, PriceItem |
+| `/kierowca-zawodowy/` | `courses.views.pro_hub` | Course(kind=professional) — **404 у этого клиента** |
+| `/kierowca-zawodowy/<slug>/` | `courses.views.course_detail` | Course — 404 |
+| `/badania-psychologiczne/` | `courses.views.course_detail` | Course — 404 |
+| `/wozki-widlowe/` | `courses.views.course_detail` | Course — 404 |
+| `/cennik/` | `courses.views.pricing` | PriceItem |
 | `/terminy/` | `courses.views.intakes` | CourseIntake |
-| `/o-nas/` | `core.views.page_detail` | Page + Instructor + Vehicle |
+| `/zdawalnosc/` | `core.views.pass_rates` | PassRate, Testimonial — **v24** |
+| `/do-pobrania/` | `core.views.downloads` | DownloadFile — **v24** |
+| `/zapisy/` | `core.views.page_detail` | Page + DownloadFile + LeadForm — **v24** |
+| `/o-nas/` | `core.views.page_detail` | Page + PassRate + Instructor + Vehicle |
 | `/galeria/` | `gallery.views.gallery` | GalleryImage |
 | `/certyfikaty/` | `gallery.views.certificates` | Certificate |
 | `/przydatne-linki/` | `links.views.useful_links` | UsefulLink |
@@ -437,6 +490,8 @@ class Testimonial(models.Model):
 | `/zapisz-sie/dziekujemy/` | `leads.views.thanks` | — |
 | `/polityka-prywatnosci/`, `/rodo/` | `core.views.page_detail` | Page |
 | `/sitemap.xml`, `/robots.txt` | contrib.sitemaps / static view | — |
+
+Четыре роута из этой таблицы у OSK Ostrycharz отвечают 404: школа учит только категории B, `Course(kind=professional|psychotest|operator)` пуст, а листинг без единого курса — не страница, а тонкий заголовок над пустотой, конкурирующий в выдаче с настоящими. Они убраны из `sitemap.xml` и ни с одной страницы на них не ведёт ссылка. Роуты остаются в карте: контракт не сужаем, следующему клиенту они пригодятся.
 
 HTMX-эндпоинты (частичные ответы, всегда `_partial` в имени шаблона):
 
@@ -490,14 +545,30 @@ class SmsClient(Protocol):
 
 | Компонент | Тег | Пропсы |
 |---|---|---|
-| Кнопка | `<c-button>` | `variant=primary|secondary|ghost`, `size=sm|md|lg|icon`, `href`, `type`, `full` |
-| Карточка | `<c-card>` | `href`, `padded`, `level=2|3|4`, слот `title`, слот по умолчанию |
-| Бейдж | `<c-badge>` | `tone=neutral|success|warning|danger|accent`, слот |
+| Кнопка | `<c-button>` | `variant=primary\|secondary\|outline-accent\|ghost`, `size=sm\|md\|lg\|icon`, `href`, `type`, `full`; `outline-accent` — ровно одна на экран, REDESIGN.md B.5 — **v25** |
+| Карточка | `<c-card>` | `href`, `padded`, `level=2\|3\|4`, `tone=light\|dark`, слот `title`, слот по умолчанию; `tone=dark` — та же карточка на грунте ink — **v25** |
+| Бейдж | `<c-badge>` | `tone=neutral\|success\|warning\|danger\|accent\|muted`, слот; синим бейдж не бывает — синий это действие, REDESIGN.md B.1 — **v25** |
 | Цитата | `<c-quote>` | `text`, `author`, `role` |
 | Шаги | `<c-steps>` | `steps` (строки с `.title` и `.text`) |
 | Карточка факта | `<c-fact-card>` | `label`, `value`, `note`, `href`, слот `action`, слот по умолчанию |
 | Строка цены | `<c-price-row>` | `title`, `price`, `note`, `badge`, `href` |
-| Секция | `<c-section>` | `id`, `tone=default|muted|brand|deep|accent`, `size=compact|normal|tall`, слот `heading`, слот `sub` |
+| Шапка страницы | `<c-page-header>` | `eyebrow`, `title`, `lead`, `level=1\|2`, слот `crumbs`, слот `aside`, слот `below`, слот по умолчанию — **v24**; `level` и `crumbs` — **v25** |
+| Выноска | `<c-callout>` | `tone=default\|accent\|dark`, `title`, `icon`, слот; `ink` — псевдоним `dark` — **v24**, переименован в **v25** |
+| Список характеристик | `<c-spec-list>` | `title`, `items` (строки с `.title`, `.text`, `.numeric`), слот — **v24** |
+| Якорная навигация | `<c-anchor-nav>` | `label`, `items` (строки с `.id` и `.title`) — **v24** |
+| Пустое состояние | `<c-empty>` | `title`, `phone`, `href`, `action`, слот — **v24** |
+| Полоса цифр | `<c-stat-band>` | `ground=ink\|accent\|deep\|paper`, `items` (`.value`, `.label`, `.note`), слот `heading`, слот; `deep` теперь рисуется тёмной карточкой — **v24** |
+| Финальный CTA | `<c-cta-band>` | `title`, `text`, `href`, `action`, `phone`, `ground` — **v24** |
+| Таблица сдачи | `<c-passrate-table>` | `rows` (дикты из `apps/core/views.py`: `.year`, `.students`, `.attempts`, `.note`) — **v24** |
+| Список документов | `<c-download-list>` | `items` (`.title`, `.description`, `.url`, `.size` — размер уже отформатирован) — **v24** |
+| Видео | `<c-video-embed>` | `id`, `url`, `poster`, `alt`, `title`; обёртка над `<c-video-card>`, добавляющая watch-url из голого id — **v24** |
+| Фотография из конвейера | `<c-photo>` | `stem`, `crop=hero\|hero-tall\|band\|card\|poster`, `crop_mobile`, `alt`, `sizes`, `priority`, `decorative`; собирает `<picture>` по именам из `scripts/optimize_photos.py` — **v25** |
+| Медиа-блок с плеем | `<c-video-card>` | `poster`, `url`, `ratio=video\|wide\|square`, `alt`, `title`; ни одного запроса к youtube до клика — **v25** |
+| Карточка группы набора | `<c-group-card>` | `intake` (`.title`, `.note`, `.price_gross`), `featured`, `disabled`, `href`, слот — **v25** |
+| Карусель | `<c-carousel>` | `id`, `per_view=2\|3\|4`, `label`, слот; CSS scroll-snap, стрелки и клавиатура, без библиотеки — **v25** |
+| Бенто-сетка | `<c-bento>` / `<c-bento.item>` | у сетки `items`, у элемента `title`, `text`, `image`, `alt`, `large`, `width`, `height`, слот — **v25** |
+| Табы | `<c-tabs>` | `id`, `label`, `items` (`.id`, `.title`, `.active`); это ссылки на секции, а не ARIA-tablist — **v25** |
+| Секция | `<c-section>` | `id`, `tone=default\|muted\|surface\|dark\|accent`, `size=compact\|normal\|tall`, `reveal`, слот `heading`, слот `sub`; `brand` — псевдоним `dark`, `deep` снят вместе с фиолетовым; тёмная секция на странице ровно одна — **v25** |
 | Заголовок секции | `<c-heading>` | `level=1..4`, `eyebrow`, слот |
 | Таблица | `<c-table>` | `headers` (list), слот строк |
 | Аккордеон | `<c-accordion>` / `<c-accordion.item>` | `title`, `open` |
@@ -517,7 +588,7 @@ class SmsClient(Protocol):
 | Карточка курса | `<c-course-card>` | `course`, `level=2|3` |
 | Строка набора | `<c-intake-row>` | `intake`, слот по умолчанию (то, что строка не выводит из самого набора: свободные места) |
 | Часы работы | `<c-hours-table>` | `department` |
-| Карта | `<c-map>` | `lat`, `lng`, `zoom`, `label`, `height=sm|md|lg`; Leaflet, без внешних скриптов |
+| Карта | `<c-map>` | `lat`, `lng`, `zoom`, `label`, `height=sm|md|lg`; заглушка с кнопкой, iframe Google строится только после клика (v26) |
 | Иконка | `<c-icon>` | `name`, `size=sm|md|lg`, `label`; локальный спрайт `static/icons/sprite.svg` |
 | Переключатель языка | `<c-lang-switcher>` | — |
 | Cookie-баннер | `<c-cookie-banner>` | — |
@@ -581,7 +652,7 @@ state:  { ok:"#1E7A56", warn:"#B27C00", err:"#B3382B" }
 ```python
 @dataclass
 class Seo:
-    title: str          # ≤ 70 символов, формат "<Тема> — OSK Nawrocki Wieluń"
+    title: str          # ≤ 70 символов, формат "<Тема> — OSK Ostrycharz Wieluń"
     description: str    # ≤ 170 символов
     canonical: str      # абсолютный URL
     og_image: str | None = None
@@ -851,10 +922,10 @@ tech.md                     @lead
 `deploy/Caddyfile`. Один канонический хост, всё остальное 301. Сертификат Let's Encrypt берётся автоматически — это закрывает главную поломку старого сайта.
 
 ```
-naukajazdywielun.pl, www.naukajazdywielun.pl {
-    redir https://naukajazdywielun.pl{uri} permanent
+oskostrycharz.pl, www.oskostrycharz.pl {
+    redir https://oskostrycharz.pl{uri} permanent
 }
-naukajazdywielun.pl {
+oskostrycharz.pl {
     encode zstd gzip
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
@@ -883,7 +954,7 @@ naukajazdywielun.pl {
 
 | Что | Зачем | Кто даёт |
 |---|---|---|
-| Доступ к DNS `naukajazdywielun.pl` | переключить A-запись, выпустить сертификат | владелец / текущий хостер |
+| Доступ к DNS `oskostrycharz.pl` | переключить A-запись, выпустить сертификат | владелец / текущий хостер |
 | Почтовый ящик или SMTP-доступ | уведомления о заявках | владелец |
 | Аккаунт SMSAPI.pl (опционально) | SMS о заявке | владелец |
 | Доступ к Google Business Profile | отзывы, карта, локальный поиск | владелец |

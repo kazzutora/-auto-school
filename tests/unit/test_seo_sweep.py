@@ -18,22 +18,24 @@ from apps.core.models import Page, SiteSettings
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.courses.models import Course, CourseIntake, PriceItem
 from apps.links.models import Faq, UsefulLink
-from scripts.import_legacy import import_courses
+from scripts import seed
 from tests.factories import CertificateFactory, GalleryImageFactory, image_bytes
-from tests.unit.test_import_legacy import LEGACY
 
 pytestmark = pytest.mark.django_db
 
-# tech.md section 5, every public url a visitor can reach today.
+# tech.md section 5, every public url a visitor can reach today. The routes for
+# the kinds this school does not sell — /kierowca-zawodowy/, the psychotests and
+# the forklifts — still exist in the url map but have no course behind them, so
+# they answer 404 and are not public pages here.
 PUBLIC_URLS = [
+    "/",
     "/kursy/",
     "/kursy/kat-b/",
-    "/kierowca-zawodowy/",
-    "/kierowca-zawodowy/adr/",
-    "/badania-psychologiczne/",
-    "/wozki-widlowe/",
     "/cennik/",
     "/terminy/",
+    "/zdawalnosc/",
+    "/do-pobrania/",
+    "/zapisy/",
     "/o-nas/",
     "/galeria/",
     "/certyfikaty/",
@@ -49,18 +51,22 @@ PUBLIC_URLS = [
 def whole_site() -> None:
     """Enough content that no page falls back to its empty state."""
     site = SiteSettings.get_solo()
-    site.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    site.short_name = "OSK Nawrocki"
-    site.street = "ul. Zielona 45"
+    site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    site.short_name = "OSK Ostrycharz"
+    site.street = "ul. Asnyka 7"
     site.postal_code = "98-300"
     site.city = "Wieluń"
-    site.email = "osk.adam.nawrocki@wp.pl"
-    site.phone_primary = "43 843 29 11"
+    site.email = "oskostrycharz@poczta.onet.pl"
+    site.phone_primary = "691 570 489"
     site.save()
 
-    import_courses(LEGACY)
+    seed.seed_courses()
+    seed.seed_price_items()
+    seed.seed_pass_rates()
+    seed.seed_downloads()
     for slug, title in (
         ("o-nas", "O nas"),
+        ("zapisy", "Zapisy i dokumenty"),
         ("rodo", "RODO"),
         ("polityka-prywatnosci", "Polityka prywatności"),
     ):
@@ -165,19 +171,37 @@ def test_every_language_link_answers(client: Client, whole_site: None, url: str)
 
 @pytest.mark.seo
 @pytest.mark.parametrize("url", PUBLIC_URLS)
-def test_page_carries_the_school_and_its_trail(client: Client, whole_site: None, url: str) -> None:
-    types = [block["@type"] for block in jsonld(body_of(client, url))]
+def test_page_carries_the_school(client: Client, whole_site: None, url: str) -> None:
+    assert "DrivingSchool" in [block["@type"] for block in jsonld(body_of(client, url))]
 
-    assert "DrivingSchool" in types
-    assert "BreadcrumbList" in types
+
+@pytest.mark.seo
+@pytest.mark.parametrize("url", [url for url in PUBLIC_URLS if url != "/"])
+def test_an_inner_page_carries_its_trail(client: Client, whole_site: None, url: str) -> None:
+    """The home page is the root and has no trail. Everything else does."""
+    assert "BreadcrumbList" in [block["@type"] for block in jsonld(body_of(client, url))]
 
 
 @pytest.mark.a11y
 @pytest.mark.parametrize("url", PUBLIC_URLS)
 def test_no_image_ships_an_empty_alt(client: Client, whole_site: None, url: str) -> None:
+    """Every rendered img has alt text, or says it is decorative.
+
+    The same pair tests/unit/test_template_images.py accepts, and for the same
+    reason: an empty alt on its own is a forgotten attribute, while an empty alt
+    beside aria-hidden is the documented way to say a picture carries no
+    information — the school's mark sitting next to the school's name in text.
+    tech.md section 8 and cotton/picture.html both fix the convention.
+    """
     images = re.findall(r"<img[^>]*>", body_of(client, url))
 
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    offenders = [
+        image
+        for image in images
+        if not re.search(r'alt="[^"]+"', image)
+        and not (re.search(r'alt=""', image) and re.search(r'aria-hidden="true"', image))
+    ]
+    assert not offenders
 
 
 # --------------------------------------------------------------------------
@@ -229,9 +253,24 @@ def test_a_course_shares_its_own_picture(client: Client, whole_site: None) -> No
     assert course.hero_image.url in found.group(1)
 
 
-def test_a_course_without_a_picture_claims_none(client: Client, whole_site: None) -> None:
-    """An og:image tag pointing at nothing is worse than no tag."""
-    assert 'property="og:image"' not in body_of(client, "/kursy/kat-a/")
+def test_a_course_without_a_picture_falls_back_to_the_brand_card(
+    client: Client, whole_site: None
+) -> None:
+    """Every page has a share image now, and it is one that exists.
+
+    DEV.md S8 wanted the default to come from SiteSettings, which has no image
+    field. It comes from static/brand/og-image.png instead — a 1200x630 card
+    carrying the school's own wordmark — so a page with no photograph of its own
+    still shares as something rather than as a bare link. What is still
+    forbidden is a tag pointing at a file that is not there.
+    """
+    body = body_of(client, "/kursy/kat-b/")
+
+    image = re.search(r'property="og:image" content="([^"]+)"', body)
+
+    assert image, "every page ships an og:image"
+    assert image.group(1).startswith("http"), "og:image must be absolute"
+    assert "og-image" in image.group(1)
 
 
 @pytest.mark.parametrize("url", PUBLIC_URLS)

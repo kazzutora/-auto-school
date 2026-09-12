@@ -24,21 +24,21 @@ LOCALE = Path(__file__).resolve().parents[2] / "locale"
 # the footer. Checking a whole page instead would only prove what the fixtures
 # happen to contain.
 CHROME = {
-    "pl": ("Kursy", "Cennik", "Kontakt"),
-    "ru": ("Курсы", "Цены", "Контакты"),
-    "uk": ("Курси", "Ціни", "Контакти"),
+    "pl": ("Cennik", "Zdawalność", "Kontakt"),
+    "ru": ("Цены", "Сдача экзамена", "Контакты"),
+    "uk": ("Ціни", "Складання іспиту", "Контакти"),
 }
 
 
 @pytest.fixture
 def site() -> SiteSettings:
     return SiteSettings.objects.create(
-        legal_name="OSK Nawrocki",
-        short_name="OSK Nawrocki",
-        street="Zielona 45",
+        legal_name="OSK Ostrycharz",
+        short_name="OSK Ostrycharz",
+        street="Asnyka 7",
         postal_code="98-300",
         city="Wieluń",
-        phone_primary="605 065 795",
+        phone_primary="691 570 489",
         email="biuro@example.com",
     )
 

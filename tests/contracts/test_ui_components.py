@@ -8,14 +8,20 @@ from django.conf import settings
 
 COTTON = Path(settings.BASE_DIR) / "templates" / "cotton"
 
-# tech.md section 7 at core v14: component file -> the props its row declares.
+# tech.md section 7 at core v25: component file -> the props its row declares.
 # Slot only components carry an empty set. Cotton maps <c-gallery-grid> to
 # gallery_grid and <c-accordion.item> to accordion/item.
 TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "button": {"variant", "size", "href", "type", "full"},
-    "card": {"href", "padded", "level"},
+    # tone=light|dark since v25: the same card on the ink ground, REDESIGN.md
+    # B.1. It is a prop rather than a second component because everything else
+    # about it — the radius, the shadow, the hover lift — is identical.
+    "card": {"href", "padded", "level", "tone"},
     "badge": {"tone"},
-    "section": {"id", "tone", "size"},
+    # reveal since v25. A section animates its own arrival by default, C.3
+    # row 1; the prop is for the handful that must not, such as the one above
+    # the fold on a page whose hero is already staggering in.
+    "section": {"id", "tone", "size", "reveal"},
     "quote": {"text", "author", "role"},
     "steps": {"steps"},
     "fact_card": {"label", "value", "note", "action", "href"},
@@ -46,6 +52,17 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "cookie_banner": set(),
     "testimonials": {"items"},
     "nav": set(),
+    # The four REDESIGN.md B.5 added at core v25, plus the tab strip B.5 lists
+    # among the redrawn ones and the site had no component for.
+    "group_card": {"intake", "featured", "disabled", "href"},
+    "carousel": {"id", "per_view", "label"},
+    "video_card": {"poster", "photo", "url", "ratio", "alt", "title"},
+    "bento": {"items"},
+    "bento/item": {
+        "title", "text", "image", "photo", "alt", "large", "cover", "width", "height",
+    },
+    "photo": {"stem", "crop", "crop_mobile", "alt", "sizes", "priority", "decorative"},
+    "tabs": {"id", "label", "items"},
 }
 
 
@@ -128,11 +145,17 @@ def test_mobile_menu_opens_on_click_not_hover() -> None:
 
 def test_map_carries_no_inline_script() -> None:
     """Production CSP is script-src 'self', so init data rides on data-*."""
-    # The component documents the tags a page must add, inside a comment, and
-    # one of them is the leaflet <script>. Both comment forms come out.
+    # The component explains itself in a comment, which talks about the frame it
+    # does not contain. Both comment forms come out.
     body = re.sub(r"\{#.*?#\}|\{% comment %\}.*?\{% endcomment %\}", "", source("map"), flags=re.S)
     assert "<script" not in body
     assert "data-lat" in body and "data-lng" in body
+
+    # The google map is built by static/js/app.js on the click, core v26. The
+    # markup itself frames nothing and names no google url.
+    assert "<iframe" not in body
+    assert "google.com" not in body
+    assert "data-map-load" in body
 
 
 def test_csp_permits_exactly_what_the_primitives_need() -> None:
@@ -143,10 +166,12 @@ def test_csp_permits_exactly_what_the_primitives_need() -> None:
     # lightbox rows in section 7 specify Alpine.
     assert policy["script-src"] == ["'self'", "'unsafe-eval'"]
 
-    # Leaflet pulls OpenStreetMap tiles. No other host is allowed anywhere.
-    assert policy["img-src"] == ["'self'", "data:", "https://tile.openstreetmap.org"]
+    # The google map, framed only after the visitor presses its button, core
+    # v26. Images are ours alone now that no tile server draws the map.
+    assert policy["frame-src"] == ["https://www.google.com"]
+    assert policy["img-src"] == ["'self'", "data:"]
 
-    allowed_hosts = {"https://tile.openstreetmap.org"}
+    allowed_hosts = {"https://www.google.com"}
     for directive, values in policy.items():
         for value in values:
             if value.startswith(("http://", "https://", "//")):
@@ -163,5 +188,11 @@ def test_csp_middleware_writes_the_header() -> None:
     response = middleware(None)  # type: ignore[arg-type]
 
     header = response["Content-Security-Policy"]
-    assert "script-src 'self' 'unsafe-eval'" in header
-    assert "img-src 'self' data: https://tile.openstreetmap.org" in header
+    directives = {
+        name: value
+        for name, _, value in (part.strip().partition(" ") for part in header.split(";"))
+        if name
+    }
+    assert directives["script-src"] == "'self' 'unsafe-eval'"
+    assert directives["img-src"] == "'self' data:"
+    assert directives["frame-src"] == "https://www.google.com"

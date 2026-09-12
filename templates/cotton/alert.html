@@ -13,12 +13,12 @@ business doing.
 <c-vars tone="info" title="" class="" />
 <div role="{% if tone == 'danger' %}alert{% else %}status{% endif %}"
   class="rounded border border-l-2 p-4
-{% if tone == 'success' %} border-line-soft border-l-state-ok
-{% elif tone == 'warning' %} border-line-soft border-l-state-warn
-{% elif tone == 'danger' %} border-line-soft border-l-state-err
-{% else %} border-line-soft border-l-ink
+{% if tone == 'success' %} border-line border-l-state-ok
+{% elif tone == 'warning' %} border-line border-l-state-warn
+{% elif tone == 'danger' %} border-line border-l-state-err
+{% else %} border-line border-l-ink
 {% endif %} {{ class }}" {{ attrs }}>
-  {% if title %}<p class="font-semibold
-{% if tone == 'success' %}text-state-ok{% elif tone == 'warning' %}text-state-warn{% elif tone == 'danger' %}text-state-err{% else %}text-ink{% endif %}">{{ title }}</p>{% endif %}
-  <div class="{% if title %}mt-1 {% endif %}text-ink-700">{{ slot }}</div>
+  {% if title %}<p class="font-bold
+{% if tone == 'success' %}text-state-ok{% elif tone == 'warning' %}text-state-warn{% elif tone == 'danger' %}text-state-err{% else %}u-on-ground{% endif %}">{{ title }}</p>{% endif %}
+  <div class="{% if title %}mt-1 {% endif %}u-body-on-ground">{{ slot }}</div>
 </div>

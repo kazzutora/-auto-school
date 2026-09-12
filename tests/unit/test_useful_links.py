@@ -13,6 +13,8 @@ from django.urls import reverse
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.links.models import UsefulLink
 
+from tests.conftest import images_without_alt
+
 pytestmark = pytest.mark.django_db
 
 PAGE = "/przydatne-linki/"
@@ -115,8 +117,7 @@ def test_page_meets_the_seo_contract(client: Client, links: None) -> None:
 
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt(client: Client, links: None) -> None:
-    images = re.findall(r"<img[^>]*>", page(client))
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    assert not images_without_alt(page(client))
 
 
 # --------------------------------------------------------------------------
@@ -327,4 +328,6 @@ def test_the_page_ends_on_an_invitation(client: Client, links: None) -> None:
     body = page(client)
     inside = body[body.index("<main") : body.index("</main>")]
     last = inside.rindex("<section")
-    assert "u-ground-ink" in inside[last : last + 400]
+    # u-dark-card since REDESIGN.md B.1 moved the darkness into the cards;
+    # u-ground-ink is kept as its alias for the pages not yet moved over.
+    assert "u-dark-card" in inside[last : last + 400]

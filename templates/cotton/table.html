@@ -22,9 +22,9 @@ Wide tables scroll inside their own box: the page never moves sideways, A.4.
 <div class="u-scroll-x">
   <table class="w-full border-collapse text-left {{ class }}" {{ attrs }}>
     {% if headers %}<thead>
-      <tr class="border-b-2 border-ink">
+      <tr class="border-b border-line">
         {% for header in headers %}
-          <th scope="col" class="label pb-3 pr-6 text-ink-500 last:pr-0{% if header.numeric %} text-right{% endif %}">{% if header.title %}{{ header.title }}{% else %}{{ header }}{% endif %}</th>
+          <th scope="col" class="label pb-3 pr-6 u-muted-on-ground last:pr-0{% if header.numeric %} text-right{% endif %}">{% if header.title %}{{ header.title }}{% else %}{{ header }}{% endif %}</th>
         {% endfor %}
       </tr>
     </thead>{% endif %}

@@ -38,12 +38,19 @@ def offer() -> None:
     Course.objects.create(
         kind=Course.Kind.PROFESSIONAL, slug="adr", code="ADR", title="Kurs ADR", price_gross=None
     )
+    # A deliberately long name, to prove a row keeps its figure beside it.
     PriceItem.objects.create(
         title="Jazda doszkalająca kategorii B poza godzinami kursu",
         group="Jazdy doszkalające",
         unit="za godzinę",
         note="minimum dwie godziny",
         price_gross=Decimal("120"),
+    )
+    # What the school charges, which is what the page leads with.
+    PriceItem.objects.create(title="Kurs kategorii B", group="Kurs", price_gross=Decimal("3200"))
+    # And the one line priced at nothing, which must print as GRATIS.
+    PriceItem.objects.create(
+        title="Dowóz na egzamin", group="W cenie kursu", price_gross=Decimal("0")
     )
 
 
@@ -100,17 +107,26 @@ def test_a_price_row_keeps_its_figure_beside_its_name(
     assert not apart, f"the price left its name behind on: {apart}"
 
 
-def test_the_price_and_the_ask_block_are_both_visible(
+def test_a_free_line_reads_as_gratis_and_never_as_zero(
     live_server, narrow_page: Page, offer: None
 ) -> None:
+    """The school's best small advantage, and the one figure that must never be
+    printed as a number.
+
+    "Dowóz na egzamin — 0,00 zł" reads like a price somebody forgot to fill in.
+    This client publishes every figure it charges, so the page no longer has an
+    "ask us for a quote" branch to check — what replaced it is this.
+    """
     narrow_page.goto(f"{live_server.url}/cennik/")
     text = narrow_page.locator("body").inner_text()
 
     assert "3 200,00" in text.replace(" ", " ")
-    assert "Zapytaj o cenę" in text
+    assert "Dowóz na egzamin" in text
+    assert "GRATIS" in text
 
-    # No priced row may read as zero. Checked cell by cell: "0,00" also
-    # occurs inside a legitimate "3 200,00".
-    cells = narrow_page.locator("td")
-    amounts = [cells.nth(i).inner_text().strip() for i in range(cells.count())]
+    # And no line anywhere reads as zero złoty. Checked value by value: "0,00"
+    # also occurs inside a legitimate "3 200,00".
+    figures = narrow_page.locator("li span.data")
+    amounts = [figures.nth(index).inner_text().strip() for index in range(figures.count())]
+    assert amounts, "the page printed no figures at all"
     assert not [value for value in amounts if value.replace(" ", " ") == "0,00 zł"]

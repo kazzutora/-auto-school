@@ -1,18 +1,25 @@
 {% comment %}
-Badge, tech.md section 7, states from FRONTEND.md A.5.
+Badge, tech.md section 7, states from REDESIGN.md B.5.
 
-24px tall, label typography, 1px border, no fill — except the one variant A.5
-carves out: accent, a yellow fill with near black text, for "Nowy termin". That
-fifth tone is not in the section 7 enum; it comes from A.5, which extends the
-table rather than replacing it. The near black is the fixed token, not --ink:
-the yellow does not swap with the theme, so its text must not either, or the
-dark theme lands on white-on-yellow at 1.4:1, banned outright in A.2.
+26px tall, pill radius, label typography. B.5 names two by their content:
+NABÓR OTWARTY is a yellow fill with near-black text, BRAK MIEJSC is a line fill
+with muted text.
+
+**A badge is never blue.** B.1 splits the two accents by role — blue is the
+action, yellow is the state — and a badge is a statement of fact. A blue one
+would say "press me" about something that cannot be pressed. That is the whole
+reason `tone` has no `primary` value and is not to be given one.
+
+The near black on the yellow is the fixed token, not --ink: the yellow does not
+swap with the theme, so its text must not either, or the dark theme lands on
+white-on-yellow at 1.43:1, banned outright in B.2.
 {% endcomment %}
 <c-vars tone="neutral" class="" />
-<span class="label inline-flex h-6 items-center rounded border px-2
-{% if tone == 'success' %} border-state-ok text-state-ok
-{% elif tone == 'warning' %} border-state-warn text-state-warn
-{% elif tone == 'danger' %} border-state-err text-state-err
-{% elif tone == 'accent' %} border-accent bg-accent u-fixed-ink
-{% else %} border-line-soft text-ink-700
+<span class="label inline-flex h-[26px] items-center rounded-full px-3
+{% if tone == 'success' %} u-chip-state text-state-ok
+{% elif tone == 'warning' %} u-chip-state text-state-warn
+{% elif tone == 'danger' %} u-chip-state text-state-err
+{% elif tone == 'accent' %} bg-accent u-fixed-ink
+{% elif tone == 'muted' %} u-chip-muted
+{% else %} border border-line u-muted-on-ground
 {% endif %} {{ class }}" {{ attrs }}>{{ slot }}</span>

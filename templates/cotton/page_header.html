@@ -1,0 +1,50 @@
+<c-vars eyebrow="" title="" lead="" level="1" class="" />
+{% comment %}
+Page header, BLOCKS.md B1, redrawn on REDESIGN.md B.8 point 1.
+
+The opening band of every inner page: crumbs above, an eyebrow in the label
+face, the h1, one sentence of lead, and — when the page has one worth putting
+there — a card in the right hand column.
+
+Two columns from lg, and the aside is 5 of 12 rather than half: a heading that
+gets only half the width breaks onto three lines at "Zapisy i dokumenty", which
+is the longest one this site has.
+
+The aside slot is what makes the block worth having. Without it the right half
+of every inner page was empty, which is the defect BLOCKS.md A1 was written
+against. With nothing in the slot the heading simply spans the full width and no
+empty column is drawn.
+
+No border underneath any more: B.4 replaced the hairline language with grounds,
+so the header ends where the next section's background begins.
+
+Takes: eyebrow, title, lead, level; slots: crumbs, aside, below.
+{% endcomment %}
+<header class="u-section-compact {{ class }}" {{ attrs }}>
+  <div class="u-container">
+    {% if crumbs %}<div class="mb-8">{{ crumbs }}</div>{% endif %}
+    <div class="grid items-start gap-10 {% if aside %}lg:grid-cols-12{% endif %}">
+      <div class="{% if aside %}lg:col-span-7{% endif %} min-w-0">
+        {% if eyebrow %}<p class="label u-muted-on-ground">{{ eyebrow }}</p>{% endif %}
+        {# level exists for one caller: the kitchen sink, which shows this
+           block as a specimen on a page that already has an h1 of its own. Two
+           h1 on one page is tech.md section 8 broken, and a specimen is not
+           worth breaking it for. Every real page leaves the default alone —
+           a page header IS the page's h1. #}
+        {% if level == '2' or level == 2 %}
+          <h2 class="text-h1 {% if eyebrow %}mt-4{% endif %}">{{ title }}</h2>
+        {% else %}
+          <h1 class="{% if eyebrow %}mt-4{% endif %}">{{ title }}</h1>
+        {% endif %}
+        {% if lead %}<p class="u-narrow mt-6 text-body-lg u-muted-on-ground">{{ lead }}</p>{% endif %}
+        {% if slot %}<div class="mt-8">{{ slot }}</div>{% endif %}
+      </div>
+
+      {% if aside %}
+        <div class="min-w-0 lg:col-span-5">{{ aside }}</div>
+      {% endif %}
+    </div>
+
+    {% if below %}<div class="mt-10">{{ below }}</div>{% endif %}
+  </div>
+</header>

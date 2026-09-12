@@ -1,0 +1,41 @@
+<c-vars items="" ground="ink" class="" />
+{% comment %}
+Statistics band, BLOCKS.md A4.
+
+A row of large figures on an inverted ground. The one block on this site that
+exists purely to be believed: three quarters of this school's candidates pass
+at the first attempt, and that number is the reason anybody reads further.
+
+The figure is the data face at the display size, so it lines up column to
+column — tabular-nums is on the .data class and does the work. Hairlines
+between the columns from lg, stacked with air between them below it.
+
+Nothing here names a colour: the band publishes its ground and every child
+reads --on-ground, so ink and accent both come out right way up.
+
+Takes: ground (ink | accent | deep | paper), items — rows carrying .value,
+.label and optionally .note.
+{% endcomment %}
+<section class="u-section-compact
+{% if ground == 'accent' %} u-ground-accent
+{% elif ground == 'deep' %} u-dark-card
+{% elif ground == 'paper' %} bg-paper-50
+{% else %} u-ground-ink
+{% endif %} {{ class }}" {{ attrs }}>
+  <div class="u-container">
+    {% if heading %}<h2 class="mb-10{% if ground != 'paper' %} u-on-ground{% endif %}">{{ heading }}</h2>{% endif %}
+    <dl class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+      {% for item in items %}
+        <div class="lg:border-l lg:px-8 lg:first:border-l-0 lg:first:pl-0
+{% if ground == 'paper' %} lg:border-line{% else %} u-rule-on-ground{% endif %}">
+          <dt class="u-bignum data">{{ item.value }}</dt>
+          <dd class="mt-3 {% if ground == 'paper' %}u-body-on-ground{% else %}u-muted-on-ground{% endif %}">
+            {{ item.label }}
+            {% if item.note %}<span class="mt-1 block text-small">{{ item.note }}</span>{% endif %}
+          </dd>
+        </div>
+      {% endfor %}
+    </dl>
+    {% if slot %}<div class="mt-10">{{ slot }}</div>{% endif %}
+  </div>
+</section>

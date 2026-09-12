@@ -1,0 +1,335 @@
+/* Motion layer, REDESIGN.md part C. Build with `make css`.
+ *
+ * Plain css. No @tailwind directive and no theme() call, so this file needs no
+ * build step at all — `make css` copies it. The durations come from the
+ * variables app.css publishes, which is also where tailwind.config.js reads
+ * them, so C.3's table exists exactly once.
+ *
+ * There is no animation library in this file's dependency tree and there is not
+ * going to be one. C.2 does the arithmetic: htmx is ~14 KB gzip and Alpine
+ * ~15 KB, which is most of the 45 KB budget in C.6 already. GSAP would add 27.8
+ * and Motion 45.6 — a doubling of the script weight to buy what the platform
+ * now does on its own.
+ *
+ * Three mechanisms, in order of preference:
+ *   1. CSS scroll-driven animations for anything tied to the scroll position;
+ *   2. CSS transitions for anything tied to the pointer;
+ *   3. the Alpine that is already loaded, for tabs, menu and accordion state.
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1. Section reveal, C.3 row 1.
+ *
+ * The single most important rule in this file is what is NOT here: nothing is
+ * hidden by default. `.reveal { opacity: 0 }` outside the @supports block would
+ * mean that a browser without animation-timeline — or with the stylesheet
+ * loaded and the animation somehow not running — shows a blank page. The
+ * element is fully visible until the moment the browser proves it can animate
+ * it, and the keyframe is what takes it back to zero and returns it.
+ *
+ * animation-range entry 10% cover 30%: the block starts arriving once a tenth
+ * of it has crossed the bottom edge and is fully there by the time it is 30%
+ * up the viewport. Long enough to be felt, short enough that nothing is still
+ * fading while it is being read.
+ * ------------------------------------------------------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes u-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      animation: u-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+
+    /* C.4 forbids replaying the arrival every time the page is scrolled back
+     * up. A view() timeline is bidirectional by nature, so the exit half is
+     * pinned open: once a block has arrived it stays arrived, and only the
+     * entry edge animates. */
+    .reveal-once {
+      animation: u-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 100%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. The hero heading, C.3 row 2.
+ *
+ * Three lines, 60ms apart, once at load. Not scroll driven: the hero is above
+ * the fold and has already arrived by the time anybody could scroll.
+ *
+ * --i is the line's index, set in the template. The guard is the same as
+ * above — without support or with reduced motion the lines simply sit there.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes u-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .reveal-stagger > * {
+    animation: u-rise 500ms var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. The header, C.3 row 6.
+ *
+ * 76px down to 64px with a hairline appearing, 200ms. The class is toggled by
+ * static/js/motion.js from an IntersectionObserver on a sentinel, never from a
+ * scroll event: a scroll handler runs on every frame of every scroll for the
+ * life of the page to answer a question that changes twice.
+ *
+ * The height transitions rather than the padding so the row's contents stay
+ * centred on the way down.
+ * ------------------------------------------------------------------------- */
+.u-header-bar {
+  height: var(--header-h);
+  transition: height var(--dur-header) var(--ease);
+}
+
+.u-header.is-stuck .u-header-bar {
+  height: var(--header-h-scrolled);
+}
+
+.u-header {
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-header) var(--ease),
+    background-color var(--dur-header) var(--ease);
+}
+
+.u-header.is-stuck {
+  border-bottom-color: rgb(var(--line));
+}
+
+/* B.7 point 0 asks for a saturating blur behind the header. It is a
+ * progressive enhancement and the fallback is not optional: where
+ * backdrop-filter is missing the bar keeps the opaque background below, and
+ * the menu never turns into text floating over the page.
+ *
+ * The opaque default comes first and the translucent version only inside the
+ * @supports, which is the right way round — the other order leaves an
+ * unsupporting browser with the transparent value. */
+.u-header {
+  background-color: rgb(var(--paper));
+}
+
+@supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+  .u-header {
+    background-color: rgb(var(--paper) / 0.82);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    backdrop-filter: saturate(140%) blur(8px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Tabs, C.3 row 7. The indicator travels on a transform rather than by
+ * recomputing width and left, so the browser can hand it to the compositor.
+ * ------------------------------------------------------------------------- */
+.u-tab-indicator {
+  transition: transform var(--dur-tab) var(--ease),
+    width var(--dur-tab) var(--ease);
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. The accordion, C.3 row 8.
+ *
+ * ::details-content, not grid-template-rows on a wrapper. The grid trick is the
+ * usual way to animate to a height nobody knows in advance, and it does not
+ * work here: a closed <details> does not render its content at all, so there is
+ * no 0fr state to travel from — the panel is laid out at its full height in the
+ * same frame it appears, and the transition has nothing to do. Measured, not
+ * assumed: the first version of this animated in the stylesheet and opened
+ * instantly in the browser, and tests/e2e/test_keyboard.py caught it.
+ *
+ * ::details-content is the pseudo element the browser wraps that content in,
+ * and it exists whether the element is open or shut — which is exactly the
+ * thing the grid wrapper could not be. allow-discrete carries content-visibility
+ * across the transition so the panel stays rendered on the way out.
+ *
+ * Chrome and Edge 131, Safari 18.4. Where it is missing the panel appears at
+ * once, which is what a native <details> has always done and what somebody
+ * without it has always seen.
+ * ------------------------------------------------------------------------- */
+details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size var(--dur-panel) var(--ease),
+    content-visibility var(--dur-panel) var(--ease);
+  transition-behavior: allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+}
+
+/* `auto` is not a length, so nothing interpolates towards it without this.
+ * It is scoped to the accordion rather than set on :root: allow-keywords
+ * changes how every `auto` and `fit-content` in the subtree animates, and a
+ * document-wide opt-in to that is a large blast radius for one control. */
+details {
+  interpolate-size: allow-keywords;
+}
+
+/* The panel keeps min-width: 0 so a wide child — a table of hours, a long url —
+ * scrolls inside it rather than pushing the card open. */
+.u-accordion-panel > * {
+  min-width: 0;
+}
+
+/* The plus turns into a minus by rotating 45 degrees, B.5. One glyph, not two
+ * swapped at the wrong moment. */
+.u-accordion-mark {
+  transition: transform var(--dur-panel) var(--ease);
+}
+
+details[open] .u-accordion-mark {
+  transform: rotate(45deg);
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. The carousel, C.3 row 10. Native scrolling with snap points — no
+ * library, and a swipe on a phone is the browser's own gesture.
+ * ------------------------------------------------------------------------- */
+.u-carousel {
+  display: grid;
+  grid-auto-flow: column;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* The scrollbar is the arrows' job here; the track under a row of cards is
+   * noise. Keyboard and wheel scrolling are untouched. */
+  scrollbar-width: none;
+}
+
+.u-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.u-carousel > * {
+  scroll-snap-align: start;
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. The mobile menu, C.3 row 12. A hand's width of travel from the edge it
+ * was opened from, 240ms.
+ * ------------------------------------------------------------------------- */
+@keyframes u-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes u-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+dialog[open] {
+  animation: u-panel-in var(--dur-menu) var(--ease);
+}
+
+dialog[open]::backdrop {
+  animation: u-fade-in var(--dur-menu) var(--ease);
+}
+
+/* ---------------------------------------------------------------------------
+ * 8. Page transitions, C.3 row 11. Progressive enhancement in the purest
+ * sense: where it is supported navigation cross-fades, where it is not the
+ * page loads the way it always did. No javascript, no router, no cost.
+ * ------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * 9. C.5. The global reduce block lives in app.css and covers durations; what
+ * it cannot do from there is stop an animation that has not started yet, which
+ * is why every keyframe above is already inside a no-preference query. This is
+ * the belt to that pair of braces: anything added later that forgets the query
+ * still stops here.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-once,
+  .reveal-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .u-carousel {
+    scroll-behavior: auto;
+  }
+
+  details::details-content {
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 10. Print.
+ *
+ * A scroll-driven animation has no scroll to be driven by on paper. The whole
+ * document is laid out at once, every `.reveal` sits at the start of its
+ * range, and the section prints at opacity 0 — a price list that comes out of
+ * the printer blank below the first screen.
+ *
+ * This is not theoretical for this site: the price list and the documents page
+ * are exactly the two things somebody prints and takes to a parent, and the
+ * defect is invisible on screen, which is how it would have shipped.
+ * ------------------------------------------------------------------------- */
+@media print {
+  .reveal,
+  .reveal-once,
+  .reveal-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* The two fixed bars are screen furniture. On paper they would be stamped
+     over the content at whatever point the page happened to break. */
+  .u-header,
+  [data-cookie-banner],
+  [data-carousel-prev],
+  [data-carousel-next] {
+    display: none !important;
+  }
+
+  /* A rail cannot scroll on paper, so it lays its cards out instead of
+     printing the first one and hiding the rest past the edge of the sheet. */
+  .u-carousel {
+    display: block;
+    overflow: visible;
+  }
+
+  /* Every answer on paper. A printed FAQ with the answers collapsed is a sheet
+     of questions. */
+  details::details-content {
+    block-size: auto !important;
+    content-visibility: visible !important;
+  }
+}

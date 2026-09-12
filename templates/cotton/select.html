@@ -1,14 +1,14 @@
 {% comment %}
-Select, tech.md section 7. Same box as c-input, states from FRONTEND.md A.5.
+Select, tech.md section 7. Same box as c-input, states from REDESIGN.md B.5.
 
-The chevron is the browser's own: A.7 has no chevron in the minimum set, and
-replacing a native select's arrow means replacing the whole control, which
-costs more accessibility than it buys.
+The chevron is the browser's own: B.6 has no chevron in the minimum set, and
+replacing a native select's arrow means replacing the whole control, which costs
+more accessibility than it buys.
 {% endcomment %}
 <c-vars name="" options="" value="" error="" class="" />
 <select name="{{ name }}" id="id_{{ name }}"
   {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-  class="h-12 w-full rounded border bg-paper px-4 text-ink transition focus:border-ink disabled:cursor-not-allowed disabled:bg-paper-200 disabled:text-ink-300{% if error %} border-state-err{% else %} border-line-soft{% endif %} {{ class }}"
+  class="u-field h-13 w-full rounded border-1.5 px-4 transition disabled:cursor-not-allowed disabled:text-ink-300{% if error %} border-state-err{% else %} border-line{% endif %} {{ class }}"
   {{ attrs }}>
   {% for option in options %}<option value="{{ option.0 }}" {% if option.0|stringformat:'s' == value|stringformat:'s' %}selected{% endif %}>{{ option.1 }}</option>{% endfor %}
 </select>

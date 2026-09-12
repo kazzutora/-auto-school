@@ -114,4 +114,22 @@
   <symbol id="i-bus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3.5" y="4.5" width="17" height="11.5" rx="2" /><path d="M3.5 9.5h17" /><path d="M8.5 4.5v5M15.5 4.5v5" /><circle cx="7.5" cy="18" r="1.7" /><circle cx="16.5" cy="18" r="1.7" />
   </symbol>
+
+  <!-- B.6 names "стрелки" in the plural, and the carousel needs the other
+       one: R3 point 3 gives it a previous button. Mirror of i-arrow-right, not
+       a transform on it — a scaleX in css would also flip the stroke's round
+       caps, which is invisible here but not on a thicker weight. -->
+  <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 12H5" />
+    <path d="m11 6-6 6 6 6" />
+  </symbol>
+
+  <!-- B.6 lists play in the minimum set. Filled rather than stroked: a play
+       mark is a solid triangle everywhere anybody has ever seen one, and an
+       outlined one reads as a cursor. It is the single exception to the stroke
+       rule above, which is why it carries fill="currentColor" and no stroke. -->
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <path d="M8 5.14v13.72a.5.5 0 0 0 .77.42l10.4-6.86a.5.5 0 0 0 0-.84L8.77 4.72a.5.5 0 0 0-.77.42Z" />
+  </symbol>
+
 </svg>

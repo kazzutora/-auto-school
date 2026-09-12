@@ -15,22 +15,24 @@ from django.utils import timezone
 from apps.core.models import OpeningHours, SiteSettings
 from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 
+from tests.conftest import images_without_alt
+
 pytestmark = pytest.mark.django_db
 
-PHONES = ("43 843 29 11", "605 065 795", "667 615 184")
+PHONES = ("691 570 489", "605 065 795", "667 615 184")
 
 
 @pytest.fixture
 def site() -> SiteSettings:
     """The office as the seed leaves it, tech.md section 1."""
     settings = SiteSettings.get_solo()
-    settings.legal_name = "OKiDZ Adam Nawrocki, Mariola Nawrocka S.C."
-    settings.short_name = "OSK Nawrocki"
-    settings.street = "ul. Zielona 45"
+    settings.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
+    settings.short_name = "OSK Ostrycharz"
+    settings.street = "ul. Asnyka 7"
     settings.postal_code = "98-300"
     settings.city = "Wieluń"
-    settings.nip = "8321916014"
-    settings.email = "osk.adam.nawrocki@wp.pl"
+    settings.nip = "7671234567"
+    settings.email = "oskostrycharz@poczta.onet.pl"
     settings.phone_primary, settings.phone_secondary, settings.phone_tertiary = PHONES
     settings.map_lat = Decimal("51.220600")
     settings.map_lng = Decimal("18.569700")
@@ -116,8 +118,7 @@ def test_page_offers_every_language(client: Client, site: SiteSettings) -> None:
 
 @pytest.mark.a11y
 def test_no_image_ships_an_empty_alt(client: Client, site: SiteSettings) -> None:
-    images = re.findall(r"<img[^>]*>", page(client))
-    assert not [image for image in images if not re.search(r'alt="[^"]+"', image)]
+    assert not images_without_alt(page(client))
 
 
 # --------------------------------------------------------------------------
@@ -161,7 +162,7 @@ def test_the_bank_account_shows_once_it_is_public(client: Client, site: SiteSett
 
 def test_the_call_bar_carries_the_first_number(client: Client, site: SiteSettings) -> None:
     """The sticky call button is the point of the page on a phone."""
-    assert 'href="tel:438432911"' in block(page(client), "call-bar")
+    assert 'href="tel:691570489"' in block(page(client), "call-bar")
 
 
 # --------------------------------------------------------------------------
@@ -250,7 +251,7 @@ def test_both_departments_get_their_own_table(client: Client, site: SiteSettings
 def test_the_map_gets_the_coordinates_as_a_machine_reads_them(
     client: Client, site: SiteSettings
 ) -> None:
-    """The polish locale writes 51,2206 and leaflet reads that as 51."""
+    """The polish locale writes 51,2206 and parseFloat in app.js reads that as 51."""
     node = re.search(r"<div data-map[^>]*>", page(client)).group(0)
 
     assert 'data-lat="51.220600"' in node
@@ -285,17 +286,11 @@ def test_nothing_on_the_page_comes_from_a_third_party(client: Client, site: Site
 
     sources = re.findall(r'<(?:script|link|img)[^>]*(?:src|href)="([^"]+)"', body)
     assert sources
-    # Everything is either relative or on our own host. The openstreetmap tiles
-    # are fetched by leaflet at runtime, which the browser test watches.
+    # Everything is either relative or on our own host. The google map is not a
+    # tag at all until somebody presses its button, core v26 — the browser test
+    # watches what happens after that.
     assert {urlsplit(url).netloc for url in sources} - {""} <= {"testserver"}
-
-    # Leaflet is still ours, it just arrives through the map's data attributes
-    # now rather than a tag in the head: it is fetched when the map comes into
-    # view, which is what keeps 157 KB off the first screen, A.11.
-    leaflet = re.findall(r'data-leaflet-(?:js|css)="([^"]+)"', body)
-    assert len(leaflet) == 2, "the map does not carry its own leaflet paths"
-    assert {urlsplit(url).netloc for url in leaflet} == {""}
-    assert any("leaflet.js" in url for url in leaflet)
+    assert "<iframe" not in body
 
 
 # --------------------------------------------------------------------------
@@ -328,9 +323,13 @@ def test_the_two_states_differ_by_more_than_colour(
     assert "Otwarte teraz" in open_now
     assert "Zamknięte" in closed
 
-    assert "border-state-ok" in open_now
-    assert "border-state-ok" not in closed
-    assert "border-line-soft" in closed
+    # The badge is a filled chip since REDESIGN.md B.5 rather than a bordered
+    # one, so the fill is what carries the state colour. What the test is
+    # actually about has not moved: the two states differ by the word and by
+    # the mark as well as by the colour, which is the point — green against
+    # grey is invisible to a good few readers.
+    assert "state-ok" in open_now
+    assert "state-ok" not in closed
 
     assert "#i-check" in open_now
     assert "#i-clock" in closed
@@ -354,9 +353,10 @@ def test_the_map_is_taller_where_there_is_room(client: Client, site: SiteSetting
     assert "lg:h-[420px]" in node.group()
 
 
-def test_the_map_reaches_no_google(client: Client, site: SiteSettings) -> None:
-    """tech.md section 2: openstreetmap tiles and nothing else."""
+def test_the_map_reaches_google_only_on_a_click(client: Client, site: SiteSettings) -> None:
+    """tech.md section 2, core v26: a button first, and google only after it."""
     body = page(client)
+    assert "data-map-load" in body, "the map did not render; the test is vacuous"
     assert "googleapis" not in body
     assert "google.com/maps" not in body
     assert "maps.google" not in body

@@ -12,16 +12,16 @@ Two columns on lg: everything needed to reach a person on the left, the way to
 leave a number on the right. The map runs full width underneath, because a map
 squeezed into half a column is a map nobody can read.
 
-Leaflet rides on this page only. base.html stays free of it: the mobile
-performance gate is 90 and one page carries a map, tech.md section 7.
+The map is a button until somebody presses it and a google frame after that,
+tech.md section 2 as of core v26: the page reaches no third party on its own.
 {% endcomment %}
 
 {% block content %}
 <c-section>
-  <c-breadcrumbs :items="breadcrumbs" />
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% translate "Kontakt" as t_kontakt %}
   <c-heading level="1" eyebrow="{{ t_kontakt }}" class="mt-6">{% translate "Kontakt" %}</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
+  <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
     {% translate "Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy przez telefon i przez formularz." %}
   </p>
 
@@ -31,9 +31,9 @@ performance gate is 90 and one page carries a map, tech.md section 7.
     <div class="flex min-w-0 flex-col gap-10" data-testid="details">
       <address class="flex flex-col gap-6 not-italic">
         <div>
-          <p class="label text-ink-500">{% translate "Adres" %}</p>
-          <p class="mt-2 font-semibold text-ink">{{ site_settings.legal_name }}</p>
-          <p class="mt-1 text-ink-700">
+          <p class="label u-muted-on-ground">{% translate "Adres" %}</p>
+          <p class="mt-2 font-bold u-on-ground">{{ site_settings.legal_name }}</p>
+          <p class="mt-1 u-body-on-ground">
             {{ site_settings.street }}<br>
             <span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}
           </p>
@@ -44,13 +44,13 @@ performance gate is 90 and one page carries a map, tech.md section 7.
            320px screen never breaks a number in the middle of the digits. #}
         {% if site_settings.phones %}
           <div>
-            <p class="label text-ink-500">{% translate "Telefon" %}</p>
+            <p class="label u-muted-on-ground">{% translate "Telefon" %}</p>
             <ul class="mt-2 flex flex-col gap-1">
               {% for phone in site_settings.phones %}
                 <li>
                   <a href="tel:{{ phone|cut:' ' }}"
-                     class="data inline-flex min-h-[44px] items-center gap-3 whitespace-nowrap text-data-lg text-ink underline-offset-4 hover:underline">
-                    <c-icon name="phone" size="sm" class="text-ink-500" />{{ phone }}
+                     class="data inline-flex min-h-[44px] items-center gap-3 whitespace-nowrap text-data-lg u-on-ground underline-offset-4 hover:underline">
+                    <c-icon name="phone" size="sm" class="u-muted-on-ground" />{{ phone }}
                   </a>
                 </li>
               {% endfor %}
@@ -60,11 +60,11 @@ performance gate is 90 and one page carries a map, tech.md section 7.
 
         {% if site_settings.email %}
           <div>
-            <p class="label text-ink-500">{% translate "E-mail" %}</p>
+            <p class="label u-muted-on-ground">{% translate "E-mail" %}</p>
             <p class="mt-2">
               <a href="mailto:{{ site_settings.email }}"
-                 class="inline-flex min-h-[44px] items-center gap-3 text-ink underline-offset-4 hover:underline">
-                <c-icon name="mail" size="sm" class="text-ink-500" />{{ site_settings.email }}
+                 class="inline-flex min-h-[44px] items-center gap-3 u-on-ground underline-offset-4 hover:underline">
+                <c-icon name="mail" size="sm" class="u-muted-on-ground" />{{ site_settings.email }}
               </a>
             </p>
           </div>
@@ -72,17 +72,17 @@ performance gate is 90 and one page carries a map, tech.md section 7.
       </address>
 
       <div>
-        <p class="label text-ink-500">{% translate "Dane firmy" %}</p>
-        <dl class="mt-2 flex flex-col gap-1 text-ink-700">
+        <p class="label u-muted-on-ground">{% translate "Dane firmy" %}</p>
+        <dl class="mt-2 flex flex-col gap-1 u-body-on-ground">
           {% if site_settings.nip %}
-            <div class="flex gap-2"><dt>NIP</dt><dd class="data text-ink">{{ site_settings.nip }}</dd></div>
+            <div class="flex gap-2"><dt>NIP</dt><dd class="data u-on-ground">{{ site_settings.nip }}</dd></div>
           {% endif %}
           {# The account number is published only when the owner says so,
              DEV.md S4 and tech.md section 4.1. It never appears in the footer
              at all, A.9 point 10. #}
           {% if site_settings.bank_account_public and site_settings.bank_account %}
             <div class="flex flex-wrap gap-2" data-testid="bank-account">
-              <dt>{% translate "Konto" %}</dt><dd class="data text-ink">{{ site_settings.bank_account }}</dd>
+              <dt>{% translate "Konto" %}</dt><dd class="data u-on-ground">{{ site_settings.bank_account }}</dd>
             </div>
           {% endif %}
         </dl>
@@ -93,11 +93,11 @@ performance gate is 90 and one page carries a map, tech.md section 7.
          any use. #}
       <div class="grid gap-8 sm:grid-cols-2" id="godziny">
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">{% translate "Biuro" %}</p>
+          <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
           <c-hours-table department="office" data-testid="hours-office" />
         </div>
         <div class="min-w-0">
-          <p class="label mb-3 text-ink-500">{% translate "Pracownia psychologiczna" %}</p>
+          <p class="label mb-3 u-muted-on-ground">{% translate "Pracownia psychologiczna" %}</p>
           <c-hours-table department="psychology" data-testid="hours-psychology" />
         </div>
       </div>
@@ -106,7 +106,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
     {# -------------------------------------------------------- right column #}
     <div class="min-w-0" data-testid="enrol">
       <c-heading level="2">{% translate "Zapisy na kurs" %}</c-heading>
-      <p class="mt-4 text-ink-700">
+      <p class="mt-4 u-body-on-ground">
         {% translate "Zostaw numer, oddzwonimy w godzinach pracy biura — także po rosyjsku i po ukraińsku." %}
       </p>
       <div class="mt-8">{% include "leads/_form.html" with form=lead_form %}</div>
@@ -120,9 +120,13 @@ performance gate is 90 and one page carries a map, tech.md section 7.
    larger step: c-map's enum has no responsive value, and every component
    merges an incoming class since F2.
    ------------------------------------------------------------------ #}
-<c-section id="dojazd" tone="deep">
+{# B.8 point 2's one dark block per page, and it sits mid page rather than at
+   the foot: the footer is a dark card the full width of the page, so a dark
+   section directly above it makes one very tall dark region and the footer's
+   28px rounded top has nothing to read against. #}
+<c-section id="dojazd" tone="dark">
   <c-slot name="heading">{% translate "Dojazd" %}</c-slot>
-  <c-slot name="sub">{% translate "Wieluń, ul. Zielona 45. Parking przed budynkiem." %}</c-slot>
+  <c-slot name="sub">{% translate "Wieluń, ul. Asnyka 7. Zapisy po wcześniejszym ustaleniu telefonicznym." %}</c-slot>
 
   {% if directions %}
     {# unlocalize: the polish locale writes the coordinates with a comma and
@@ -149,7 +153,7 @@ performance gate is 90 and one page carries a map, tech.md section 7.
   {% endif %}
 </c-section>
 
-<c-section tone="brand" size="compact">
+<c-section tone="surface" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <c-heading level="2">{% translate "Wolisz porozmawiać?" %}</c-heading>

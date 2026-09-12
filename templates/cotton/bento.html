@@ -1,0 +1,32 @@
+{% comment %}
+Bento grid, REDESIGN.md B.5 and B.7 point 2. Prop: items, or a slot of
+<c-bento.item>.
+
+One large card on the left spanning two rows, two across the top right, one
+below them — four cards, one shape, at lg. Below that it stacks, because a bento
+at 400px is a column with extra steps.
+
+**Two ways in, and the slot is the main one.** B.7 point 2 fixes the copy that
+goes in these four cards — rozłożenie płatności, doświadczeni instruktorzy,
+własne auta z automatem i manualem, dowóz na egzamin gratis. That is translated
+prose, not rows out of the database, so it belongs in a template where gettext
+can reach it rather than in a list a view would have to build.
+
+`items` stays for the data driven caller: a dict per card with title, text,
+image and alt. Whichever is given, the grid is the same.
+
+The row heights are only fixed at lg, where the shape has to hold. Below that
+every card is as tall as what it contains.
+{% endcomment %}
+<c-vars items="" class="" />
+<ul class="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 {{ class }}" {{ attrs }}>
+  {% if items %}
+    {% for item in items %}
+      <c-bento.item title="{{ item.title }}" text="{{ item.text }}"
+                    image="{{ item.image }}" alt="{{ item.alt }}"
+                    large="{% if forloop.first %}1{% endif %}" />
+    {% endfor %}
+  {% else %}
+    {{ slot }}
+  {% endif %}
+</ul>

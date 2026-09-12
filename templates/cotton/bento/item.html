@@ -1,0 +1,76 @@
+{% comment %}
+One card of the bento, REDESIGN.md B.5.
+
+`large` is the first card: the full left column across both rows at lg, and a
+full width one at md. The other three fall into place after it in source order,
+so nothing has to name a grid cell.
+
+`cover` is PHOTOS.md section 2's third case: the photograph fills the card and
+the text lies on it over a wash that climbs from the bottom. Without it the
+picture sits under the text in the ordinary way, which is what B.7 point 2
+describes and what the three small cards use.
+
+An item with no image is not a hole. The card simply ends after its text and the
+row closes up — which is what happens to three of the four here: photos.txt
+carries one bento photograph, and PHOTOS.md section 6 forbids using the same
+frame twice to fill the gap.
+
+`photo` is a stem from the photograph pipeline and goes through <c-photo>,
+which builds the whole <picture>; `image` is a bare url for a caller that has
+one of its own and gets a plain <img>. Neither is <c-picture>: that one builds
+its srcset from an uploaded ImageField, and what goes here is a static file.
+
+The picture sits at the bottom with a 16px radius and 8px of inset from the card
+edge — B.5's rule for a picture inside a card, and the p-2 on the card plus the
+u-photo on the frame is what makes those two numbers.
+{% endcomment %}
+<c-vars title="" text="" image="" photo="" alt="" large="" cover="" width="800" height="533" class="" />
+<li class="{% if large %}md:col-span-2 lg:col-span-1 lg:row-span-2{% endif %} flex {{ class }}" {{ attrs }}>
+  {% if cover and image or cover and photo %}
+    {# PHOTOS.md section 2, third case: the photograph is the card and the text
+       lies on it, with the wash climbing from the bottom so the words have
+       something to sit on and the top of the frame stays a photograph.
+
+       u-photo-ground pins the fixed pair — a photograph does not swap with the
+       theme, so neither may the text on it. #}
+    <article class="u-card u-photo-ground u-photo-scrim relative flex w-full flex-col justify-end overflow-hidden">
+      {# c-photo when the picture comes from the pipeline, a bare img when a
+         caller hands over a url of its own. The first is what the site uses and
+         is the one that gets AVIF: a bare src is the JPEG fallback and nothing
+         modern receives it, which is 100 KB of C.6's first-screen budget on one
+         card. #}
+      {% if photo %}
+        <c-photo stem="{{ photo }}" crop="card" alt="{{ alt }}"
+                 sizes="(min-width: 1024px) 34vw, 100vw"
+                 class="absolute inset-0 h-full w-full object-cover" />
+      {% else %}
+        <img src="{{ image }}" alt="{{ alt }}" loading="lazy" decoding="async"
+             width="{{ width }}" height="{{ height }}"
+             class="absolute inset-0 h-full w-full object-cover">
+      {% endif %}
+      <div class="relative z-10 p-6">
+        {% if title %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
+        {% if text %}<p class="mt-2">{{ text }}</p>{% endif %}
+        {% if slot %}<div class="mt-2">{{ slot }}</div>{% endif %}
+      </div>
+    </article>
+  {% else %}
+    <article class="u-card flex w-full flex-col overflow-hidden p-2">
+      <div class="p-4">
+        {% if title %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
+        {% if text %}<p class="mt-2 u-muted-on-ground">{{ text }}</p>{% endif %}
+        {% if slot %}<div class="mt-2 u-muted-on-ground">{{ slot }}</div>{% endif %}
+      </div>
+
+      {% if image %}
+        {# mt-auto so a short card's picture still sits on its floor and the row
+           of cards lines up along the bottom. #}
+        <div class="u-photo mt-auto">
+          <img src="{{ image }}" alt="{{ alt }}" loading="lazy" decoding="async"
+               width="{{ width }}" height="{{ height }}"
+               class="w-full object-cover{% if large %} aspect-[4/3] lg:aspect-[3/4]{% else %} aspect-[3/2]{% endif %}">
+        </div>
+      {% endif %}
+    </article>
+  {% endif %}
+</li>

@@ -2,24 +2,37 @@
 {% load static %}
 
 {% comment %}
-Review surface for the design system, DEV.md S0.7 and FRONTEND.md F1 point 8.
+Review surface for the design system, DEV.md S0.7 and REDESIGN.md R3 point 6.
 Debug only — the view raises 404 outside DEBUG. Every component from tech.md
-section 7 in every prop variant and every state A.5 names, including the ones a
-screenshot cannot reach on its own: disabled, error, hover, focus.
-{% endcomment %}
+section 7 plus the four B.5 added, in every prop variant and every state,
+including the ones a screenshot cannot reach on its own: disabled, error, hover,
+focus.
 
-{% block head %}
-  <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-  <script src="{% static 'js/leaflet/leaflet.js' %}" defer></script>
-{% endblock %}
+R3 point 6 asks for both themes with a switch on the page. The switch writes
+data-theme on the root element, which is one of the two doors the tokens open
+on — the other being the system preference — so what it shows is the same
+cascade a reader gets, not a preview mode of its own.
+{% endcomment %}
 
 {% block content %}
 <div class="u-container u-section">
   <c-heading level="1" eyebrow="Design system">Kitchen sink</c-heading>
-  <p class="u-narrow mt-4 text-body-lg text-ink-700">
-    Każdy komponent z tech.md sekcja 7 we wszystkich wariantach propsów i stanach z FRONTEND.md A.5.
+  <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
+    Każdy komponent z tech.md sekcja 7 i cztery nowe z REDESIGN.md B.5, we wszystkich wariantach propsów i stanach.
   </p>
 
+  {# The three states a reader can be in, R9 point 1: the explicit light, the
+     explicit dark, and the system preference with no attribute set at all.
+     The last one is not a fourth theme — removing the attribute is what puts
+     the page back under prefers-color-scheme. #}
+  <div class="mt-8 flex flex-wrap items-center gap-3" role="group" aria-label="Motyw">
+    <c-button variant="secondary" size="sm"
+              onclick="document.documentElement.setAttribute('data-theme','light')">light</c-button>
+    <c-button variant="secondary" size="sm"
+              onclick="document.documentElement.setAttribute('data-theme','dark')">dark</c-button>
+    <c-button variant="secondary" size="sm"
+              onclick="document.documentElement.removeAttribute('data-theme')">system</c-button>
+  </div>
 </div>
 
 <div class="u-container flex flex-col gap-16 pb-32">
@@ -39,6 +52,11 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
         <c-button variant="secondary" size="lg">secondary lg</c-button>
         <c-button variant="secondary" disabled>secondary disabled</c-button>
       </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <c-button variant="outline-accent" size="sm">outline-accent sm</c-button>
+        <c-button variant="outline-accent" size="md">Oddzwonimy do Ciebie</c-button>
+        <c-button variant="outline-accent" size="lg">outline-accent lg</c-button>
+      </div>
       <div class="flex flex-wrap items-center gap-6">
         <c-button variant="ghost" size="sm">ghost sm</c-button>
         <c-button variant="ghost" size="md">ghost md</c-button>
@@ -51,8 +69,9 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
         <c-button><c-icon name="phone" size="sm" /> z ikoną</c-button>
       </div>
       <div class="max-w-sm"><c-button full="1">full</c-button></div>
-      <p class="text-small text-ink-500">
-        Fokus: tabuj przez rząd. Primary dostaje obwódkę ink, bo sam jest żółty; secondary i ghost żółtą. A.2.
+      <p class="text-small u-muted-on-ground">
+        Fokus: tabuj przez rząd — żółta obwódka z halo w kolorze gruntu, B.5. Niebieski to akcja, żółty to stan:
+        żółtego przycisku ani niebieskiej plakietki nie ma nigdzie, B.1.
       </p>
     </div>
   </section>
@@ -64,7 +83,8 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
       <c-badge tone="success">success</c-badge>
       <c-badge tone="warning">warning</c-badge>
       <c-badge tone="danger">danger</c-badge>
-      <c-badge tone="accent">Nowy termin</c-badge>
+      <c-badge tone="accent">Nabór otwarty</c-badge>
+      <c-badge tone="muted">Brak miejsc</c-badge>
     </div>
   </section>
 
@@ -72,8 +92,8 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <c-heading level="2">c-card</c-heading>
     <div class="mt-6 grid gap-6 sm:grid-cols-3">
       <c-card><c-slot name="title">Z tytułem</c-slot>Treść karty na papierze.</c-card>
-      <c-card href="/kursy/"><c-slot name="title">Klikalna</c-slot>Najedź: ramka ink i twardy cień 2px.</c-card>
-      <c-card padded="">Bez paddingu.</c-card>
+      <c-card href="/kursy/"><c-slot name="title">Klikalna</c-slot>Najedź: cień card-hover i 2px w górę, B.5.</c-card>
+      <c-card tone="dark"><c-slot name="title">Ciemna</c-slot>Ten sam komponent na gruncie ink. W ciemnym motywie role się zamieniają.</c-card>
     </div>
   </section>
 
@@ -83,7 +103,7 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
       <c-heading level="2">level 2</c-heading>
       <c-heading level="3">level 3</c-heading>
       <c-heading level="4" eyebrow="z eyebrow">level 4</c-heading>
-      <p class="text-small text-ink-500">level 1 stoi wyżej na tej stronie — jeden h1 na stronę, A.3.</p>
+      <p class="text-small u-muted-on-ground">level 1 stoi wyżej na tej stronie — jeden h1 na stronę, A.3.</p>
     </div>
   </section>
 
@@ -107,20 +127,20 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <c-heading level="2">c-table</c-heading>
     <div class="mt-6">
       <c-table :headers="price_headers">
-        <tr class="border-b border-line-soft">
-          <td class="py-3 pr-6">Kategoria B</td><td class="py-3 pr-6 text-ink-500">kurs podstawowy</td>
-          <td class="data py-3 text-right text-ink">3 200 zł</td>
+        <tr class="border-b border-line">
+          <td class="py-3 pr-6">Kategoria B</td><td class="py-3 pr-6 u-muted-on-ground">kurs podstawowy</td>
+          <td class="data py-3 text-right u-on-ground">3 200 zł</td>
         </tr>
-        <tr class="border-b border-line-soft">
-          <td class="py-3 pr-6">Jazdy doszkalające</td><td class="py-3 pr-6 text-ink-500">za godzinę</td>
-          <td class="data py-3 text-right text-ink">120 zł</td>
+        <tr class="border-b border-line">
+          <td class="py-3 pr-6">Jazdy doszkalające</td><td class="py-3 pr-6 u-muted-on-ground">za godzinę</td>
+          <td class="data py-3 text-right u-on-ground">120 zł</td>
         </tr>
         <tr>
-          <td class="py-3 pr-6">ADR podstawowy</td><td class="py-3 pr-6 text-ink-500">&mdash;</td>
-          <td class="data py-3 text-right text-ink">1 100 zł</td>
+          <td class="py-3 pr-6">ADR podstawowy</td><td class="py-3 pr-6 u-muted-on-ground">&mdash;</td>
+          <td class="data py-3 text-right u-on-ground">1 100 zł</td>
         </tr>
       </c-table>
-      <p class="mt-3 text-small text-ink-500">Kolumna liczbowa w prawo, cyfry tabularne, bez zebry. A.5.</p>
+      <p class="mt-3 text-small u-muted-on-ground">Kolumna liczbowa w prawo, cyfry tabularne, bez zebry. A.5.</p>
     </div>
   </section>
 
@@ -144,7 +164,7 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <c-heading level="2">c-modal</c-heading>
     <div class="mt-6 flex flex-wrap items-center gap-4">
       <c-button data-modal-open="demo">Otwórz modal</c-button>
-      <p class="text-small text-ink-500">Esc zamyka, fokus zamknięty w środku, po zamknięciu wraca na przycisk.</p>
+      <p class="text-small u-muted-on-ground">Esc zamyka, fokus zamknięty w środku, po zamknięciu wraca na przycisk.</p>
       <c-modal id="demo" title="Modal demo">
         <p>Zawartość modala.</p>
         <div class="mt-4 flex gap-3">
@@ -159,11 +179,11 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <c-heading level="2">c-field</c-heading>
     <div class="mt-6 grid gap-8 sm:grid-cols-2">
       <div class="flex flex-col gap-6">
-        <p class="label text-ink-500">Pusty formularz</p>
+        <p class="label u-muted-on-ground">Pusty formularz</p>
         {% for field in form %}<c-field :field="field" />{% endfor %}
       </div>
       <div class="flex flex-col gap-6">
-        <p class="label text-ink-500">Z błędami walidacji</p>
+        <p class="label u-muted-on-ground">Z błędami walidacji</p>
         {% for field in bound_form %}<c-field :field="field" />{% endfor %}
       </div>
     </div>
@@ -183,42 +203,42 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
       <c-checkbox name="zgoda" checked="1">Zgadzam się na kontakt telefoniczny</c-checkbox>
       <c-checkbox name="zgoda_err" error="Zgoda jest wymagana">Zgoda RODO</c-checkbox>
     </div>
-    <p class="mt-4 text-small text-ink-500">Fokus dokłada drugi piksel ramki od środka, więc layout nie skacze. A.5.</p>
+    <p class="mt-4 text-small u-muted-on-ground">Fokus dokłada drugi piksel ramki od środka, więc layout nie skacze. A.5.</p>
   </section>
 
   <section>
     <c-heading level="2">Formularz zgłoszenia — sześć stanów</c-heading>
-    <p class="mt-4 text-small text-ink-500">
+    <p class="mt-4 text-small u-muted-on-ground">
       FRONTEND.md F7. Stany 4 i 6 są tu wymuszone atrybutem, żeby dało się je
       zobaczyć bez czekania na sieć — to ta sama rozgrywka, którą htmx włącza sam.
     </p>
 
     <div class="mt-8 flex flex-col gap-12">
       <div>
-        <p class="label text-ink-500">1 i 2 — spoczynek, a po tabulacji fokus</p>
+        <p class="label u-muted-on-ground">1 i 2 — spoczynek, a po tabulacji fokus</p>
         <div class="mt-4">{% include "leads/_form.html" with form=lead_form form_id="ks-form-rest" %}</div>
       </div>
 
       <div>
-        <p class="label text-ink-500">3 — błąd pola i błąd zgody</p>
+        <p class="label u-muted-on-ground">3 — błąd pola i błąd zgody</p>
         {# The two controls that carry an error, not a second whole form: the
            same form twice would repeat every field id on one page, and a label
            whose for= points at the other copy focuses the wrong box. #}
         <div class="mt-4 flex flex-col gap-6">
           <div class="flex flex-col gap-2">
-            <label for="id_demo_phone" class="font-semibold text-ink">Telefon <span class="text-state-err" aria-hidden="true">*</span></label>
+            <label for="id_demo_phone" class="font-bold u-on-ground">Telefon <span class="text-state-err" aria-hidden="true">*</span></label>
             <c-input name="demo_phone" type="tel" value="12" inputmode="tel"
                      error="Podaj polski numer telefonu, np. 605 065 795." />
           </div>
           <c-checkbox name="demo_consent" error="Bez tej zgody nie możemy się z Tobą skontaktować.">
-            Zgadzam się na przetwarzanie moich danych osobowych przez OSK Nawrocki
+            Zgadzam się na przetwarzanie moich danych osobowych przez OSK Ostrycharz
             w celu kontaktu w sprawie kursu.
           </c-checkbox>
         </div>
       </div>
 
       <div>
-        <p class="label text-ink-500">4 — wysyłanie</p>
+        <p class="label u-muted-on-ground">4 — wysyłanie</p>
         {# The class htmx adds for the duration of a request, set by hand so the
            state is visible standing still. #}
         <div class="htmx-request mt-4">
@@ -230,12 +250,12 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
       </div>
 
       <div>
-        <p class="label text-ink-500">5 — wysłane</p>
+        <p class="label u-muted-on-ground">5 — wysłane</p>
         <div class="mt-4">{% include "leads/_form_result.html" with sent=1 form_id="ks-form-sent" %}</div>
       </div>
 
       <div>
-        <p class="label text-ink-500">6 — serwer nie odpowiedział, dane zostają w formularzu</p>
+        <p class="label u-muted-on-ground">6 — serwer nie odpowiedział, dane zostają w formularzu</p>
         <div class="mt-4">
           <c-alert tone="danger" title="Nie udało się wysłać zgłoszenia">
             <p>Coś po naszej stronie nie odpowiedziało. Twoje dane są nadal w formularzu — spróbuj jeszcze raz albo zadzwoń.</p>
@@ -249,7 +269,7 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
       </div>
 
       <div>
-        <p class="label text-ink-500">Poza szóstką — limit zgłoszeń z jednego adresu</p>
+        <p class="label u-muted-on-ground">Poza szóstką — limit zgłoszeń z jednego adresu</p>
         <div class="mt-4">{% include "leads/_form_result.html" with rate_limited=1 form_id="ks-form-limited" %}</div>
       </div>
     </div>
@@ -258,10 +278,10 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
   <section>
     <c-heading level="2">c-picture</c-heading>
     <div class="mt-6 grid gap-6 sm:grid-cols-4">
-      <div><p class="label mb-2 text-ink-500">square</p><c-picture :image="images.0.image" alt="Plac manewrowy, kwadrat" ratio="square" loading="eager" /></div>
-      <div><p class="label mb-2 text-ink-500">card 3:2</p><c-picture :image="images.0.image" alt="Plac manewrowy, karta kursu" ratio="card" /></div>
-      <div><p class="label mb-2 text-ink-500">tile 4:3</p><c-picture :image="images.0.image" alt="Plac manewrowy, kafel galerii" ratio="tile" /></div>
-      <div><p class="label mb-2 text-ink-500">a4 1:1.41</p><c-picture :image="images.0.image" alt="Certyfikat w proporcji A4" ratio="a4" /></div>
+      <div><p class="label mb-2 u-muted-on-ground">square</p><c-picture :image="images.0.image" alt="Plac manewrowy, kwadrat" ratio="square" loading="eager" /></div>
+      <div><p class="label mb-2 u-muted-on-ground">card 3:2</p><c-picture :image="images.0.image" alt="Plac manewrowy, karta kursu" ratio="card" /></div>
+      <div><p class="label mb-2 u-muted-on-ground">tile 4:3</p><c-picture :image="images.0.image" alt="Plac manewrowy, kafel galerii" ratio="tile" /></div>
+      <div><p class="label mb-2 u-muted-on-ground">a4 1:1.41</p><c-picture :image="images.0.image" alt="Certyfikat w proporcji A4" ratio="a4" /></div>
     </div>
   </section>
 
@@ -289,20 +309,20 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
       {% for course in courses %}<c-course-card :course="course" />{% endfor %}
     </div>
-    <p class="mt-4 text-small text-ink-500">Ostatni kafel bez ceny: cena na zapytanie, nie pusta linia. A.9 punkt 2.</p>
+    <p class="mt-4 text-small u-muted-on-ground">Ostatni kafel bez ceny: cena na zapytanie, nie pusta linia. A.9 punkt 2.</p>
   </section>
 
   <section>
     <c-heading level="2">c-hours-table</c-heading>
     <div class="mt-6 grid gap-8 sm:grid-cols-2">
-      <div class="min-w-0"><p class="label mb-3 text-ink-500">office</p><c-hours-table department="office" /></div>
-      <div class="min-w-0"><p class="label mb-3 text-ink-500">psychology</p><c-hours-table department="psychology" /></div>
+      <div class="min-w-0"><p class="label mb-3 u-muted-on-ground">office</p><c-hours-table department="office" /></div>
+      <div class="min-w-0"><p class="label mb-3 u-muted-on-ground">psychology</p><c-hours-table department="psychology" /></div>
     </div>
   </section>
 
   <section>
     <c-heading level="2">c-map</c-heading>
-    <div class="mt-6"><c-map lat="51.2206" lng="18.5697" zoom="16" label="ul. Zielona 45, Wieluń" height="md" /></div>
+    <div class="mt-6"><c-map lat="51.2206" lng="18.5697" zoom="16" label="ul. Asnyka 7, Wieluń" height="md" /></div>
   </section>
 
   <section>
@@ -310,14 +330,194 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
     <div class="mt-6"><c-testimonials :items="testimonials" /></div>
   </section>
 
+  {# ----------------------------------------------------------------- *
+     The four REDESIGN.md B.5 added. Everything above this line existed
+     before the redesign and was redrawn; these are new shapes.
+     ----------------------------------------------------------------- #}
+
+  <section>
+    <c-heading level="2">c-group-card</c-heading>
+    <p class="mt-4 u-muted-on-ground">
+      Trzy warianty z B.7 punkt 5: zwykła, wyróżniona niebieskim i niedostępna z plakietką
+      <em>Brak miejsc</em>. Na niebieskiej karcie plakietka zostaje żółta — kolory nie zamieniają się rolami, B.1.
+    </p>
+    <div class="mt-6 grid gap-5 md:grid-cols-3">
+      {% for course in courses|slice:":3" %}
+        <c-group-card :intake="course"
+                      featured="{% if forloop.counter == 2 %}1{% endif %}"
+                      disabled="{% if forloop.counter == 3 %}1{% endif %}"
+                      href="/kursy/kat-b/">
+          <ul class="flex flex-col gap-2 text-small">
+            <li>30 godzin teorii</li>
+            <li>Dowóz na egzamin gratis</li>
+          </ul>
+        </c-group-card>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-carousel</c-heading>
+    <p class="mt-4 u-muted-on-ground">
+      Natywny scroll-snap, bez biblioteki. Strzałki od md, swipe na telefonie, strzałki klawiatury
+      po wejściu tabem w tor. Na końcach przycisk się wyłącza.
+    </p>
+    <div class="mt-6">
+      <c-carousel id="ks-rail" per_view="3" label="Przykładowy tor">
+        {% for course in courses %}
+          <c-card><c-slot name="title">{{ course.title }}</c-slot>
+            <p class="data mt-2 text-data-lg u-on-ground">{{ course.price_gross|floatformat:0 }} zł</p>
+          </c-card>
+        {% endfor %}
+        {% for course in courses %}
+          <c-card><c-slot name="title">{{ course.title }} (2)</c-slot>Druga tura, żeby tor miał co przewijać.</c-card>
+        {% endfor %}
+      </c-carousel>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-video-card</c-heading>
+    <p class="mt-4 u-muted-on-ground">
+      Bez postera od właściciela pokazuje panel z tokenów, a nie szarą dziurę. Nic nie leci do Google
+      przed kliknięciem — tech.md sekcja 2.
+    </p>
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <c-video-card url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+      <c-video-card url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" ratio="square" title="ratio square" />
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-bento</c-heading>
+    <p class="mt-4 u-muted-on-ground">
+      Jedna duża po lewej na dwa rzędy, dwie u góry po prawej, jedna pod nimi — od lg. Niżej stos.
+      Karta bez zdjęcia po prostu kończy się na tekście, bo zdjęć od właściciela jeszcze nie ma, część D.
+    </p>
+    <div class="mt-6">
+      <c-bento>
+        <c-bento.item large="1" title="Rozłożenie płatności"
+                      text="Kurs opłacasz w ratach, bez pośrednika i bez umowy z bankiem." />
+        <c-bento.item title="Doświadczeni instruktorzy"
+                      text="Uczą spokojnie i konkretnie, a na egzamin jedziesz tym samym autem." />
+        <c-bento.item title="Własne auta"
+                      text="Manual i automat, klimatyzacja, bogate wyposażenie." />
+        <c-bento.item title="Dowóz na egzamin gratis"
+                      text="W cenie kursu, nie jako dopłata na końcu." />
+      </c-bento>
+    </div>
+  </section>
+
+  {# ----------------------------------------------------------------- *
+     The block components from BLOCKS.md. They arrived at core v24 and had
+     never reached this page, so the only place to see one was a page that
+     happened to use it — which is exactly how a component drifts.
+     ----------------------------------------------------------------- #}
+
+  <section>
+    <c-heading level="2">c-page-header</c-heading>
+    <div class="mt-6 bg-paper-50">
+      <c-page-header level="2" eyebrow="Kurs" title="Kategoria B"
+                     lead="Jedno zdanie leadu, które mówi, o czym jest ta strona.">
+        <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+        <c-slot name="aside">
+          <c-fact-card label="Zapisy telefoniczne" value="605 065 795" href="tel:605065795"
+                       note="Zapisujemy po wcześniejszym ustaleniu terminu.">
+            <c-slot name="action"><c-button variant="primary" full="1">Zostaw numer</c-button></c-slot>
+          </c-fact-card>
+        </c-slot>
+      </c-page-header>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-quote</c-heading>
+    <div class="mt-6 max-w-[900px]">
+      <c-quote text="Możemy pochwalić się jedną z najwyższych zdawalności w województwie."
+               author="OSK Ostrycharz" role="Wieluń" />
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-callout</c-heading>
+    <div class="mt-6 flex max-w-[900px] flex-col gap-4">
+      <c-callout title="default">Ton domyślny: szare wypełnienie i linia po lewej.</c-callout>
+      <c-callout tone="accent" title="accent" icon="check">Żółty wash — stan, nie akcja.</c-callout>
+      <c-callout tone="dark" title="dark">Na ciemnej karcie. Tekst czyta grunt, nie nazwany kolor.</c-callout>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">Czego tu nie ma i dlaczego</c-heading>
+    <div class="mt-6 max-w-[900px]">
+      <c-callout title="CONTRACT GAP — cztery komponenty bez danych">
+        <p>
+          <code>c-tabs</code>, <code>c-steps</code>, <code>c-spec-list</code> i
+          <code>c-stat-band</code> przyjmują listę wierszy, a widok tej strony
+          (<code>apps/core/views.kitchen_sink</code>) jej nie podaje — więc
+          renderowałyby się puste, co jest gorsze niż brak.
+        </p>
+        <p class="mt-3">
+          Szablon nie może tego naprawić: to cztery klucze w kontekście widoku,
+          czyli python, a to sesja szablonowa. Do zobaczenia na żywo:
+          <code>c-steps</code> i <code>c-spec-list</code> na <code>/zapisy/</code>,
+          <code>c-stat-band</code> na <code>/zdawalnosc/</code>,
+          <code>c-tabs</code> nigdzie — ta szkoła ma jedną gałąź oferty, patrz
+          CONTRACT GAP w <code>templates/pages/home.html</code>.
+        </p>
+      </c-callout>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-price-row, c-anchor-nav</c-heading>
+    <div class="mt-6 max-w-[900px]">
+      <ul>
+        <c-price-row title="Kurs kategorii B" price="3700 zł" badge="Najczęściej wybierany" />
+        <c-price-row title="Kurs przyspieszony" price="4300 zł" note="dwa tygodnie" />
+        <c-price-row title="Jazdy dodatkowe" price="" note="cena na zapytanie" />
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-empty</c-heading>
+    <div class="mt-6 max-w-[900px]">
+      <c-empty title="Zdjęcia aut w przygotowaniu" phone="605 065 795">
+        Ramka przerywana, żeby czytała się jako zapowiedź, a nie jako karta, która się nie wczytała.
+      </c-empty>
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-download-list, c-passrate-table</c-heading>
+    <div class="mt-6 flex flex-col gap-10">
+      <c-download-list :items="documents" />
+      <c-passrate-table :rows="pass_rate_rows" />
+    </div>
+  </section>
+
+  <section>
+    <c-heading level="2">c-cta-band</c-heading>
+    <p class="mt-4 u-muted-on-ground">Pełnej szerokości — poniżej wychodzi poza kontener strony.</p>
+  </section>
+</div>
+
+<c-cta-band ground="paper"
+            title="Zaczynamy?"
+            text="Zostaw numer albo zadzwoń — powiemy, kiedy startuje najbliższa grupa."
+            href="/zapisz-sie/" action="Zapisz się" phone="605 065 795" />
+
+<div class="u-container flex flex-col gap-16 pb-32">
+
   <section>
     <c-heading level="2">c-nav, c-lang-switcher, c-icon</c-heading>
     <div class="mt-6 flex flex-col gap-8">
       <div class="u-scroll-x"><c-nav /></div>
       <c-lang-switcher />
       <div>
-        <p class="label mb-3 text-ink-500">Sprite A.7</p>
-        <div class="flex flex-wrap gap-4 text-ink">
+        <p class="label mb-3 u-muted-on-ground">Sprite A.7</p>
+        <div class="flex flex-wrap gap-4 u-on-ground">
           <c-icon name="phone" /><c-icon name="mail" /><c-icon name="pin" /><c-icon name="clock" />
           <c-icon name="calendar" /><c-icon name="arrow-right" /><c-icon name="close" /><c-icon name="plus" />
           <c-icon name="minus" /><c-icon name="check" /><c-icon name="menu" /><c-icon name="globe" />
@@ -351,7 +551,7 @@ screenshot cannot reach on its own: disabled, error, hover, focus.
 
 <div class="u-container py-16">
   <c-heading level="2">c-cta-bar i c-cookie-banner</c-heading>
-  <p class="mt-4 text-small text-ink-500">
+  <p class="mt-4 text-small u-muted-on-ground">
     Oba są przypięte do dołu okna. CTA tylko poniżej md — zwęź okno do 375px, żeby je zobaczyć.
     Baner ma wyższy z-index i nigdy nie zakrywa przycisków zgody, A.5.
   </p>

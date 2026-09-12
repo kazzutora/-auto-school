@@ -25,21 +25,24 @@ FOCUSABLE = re.compile(
 @pytest.fixture
 def settings_row() -> SiteSettings:
     row = SiteSettings.get_solo()
-    row.legal_name = "OSK Nawrocki Adam Nawrocki"
-    row.short_name = "OSK Nawrocki"
-    row.street = "ul. Zielona 45"
+    row.legal_name = "OSK Ostrycharz Ośrodek Szkolenia Kierowców"
+    row.short_name = "OSK Ostrycharz"
+    row.street = "ul. Asnyka 7"
     row.postal_code = "98-300"
     row.city = "Wieluń"
-    row.nip = "8321916014"
+    row.nip = "7671234567"
     row.email = "biuro@example.com"
-    row.phone_primary = "43 843 29 11"
+    row.phone_primary = "691 570 489"
     row.bank_account = "12 3456 7890 1234 5678 9012 3456"
     row.bank_account_public = True
     row.save()
     return row
 
 
-def body(client: Client, url: str = "/kursy/") -> str:
+def body(client: Client, url: str = "/") -> str:
+    """The chrome is the same on every page, so the test takes the one page that
+    always renders. /kursy/ used to be it; a listing with no courses is a 404
+    now, and these tests are about the header and the footer, not the offer."""
     response = client.get(url)
     assert response.status_code == 200
     return response.content.decode()
@@ -66,6 +69,18 @@ def test_the_skip_link_is_hidden_until_it_takes_focus(
     assert "focus:not-sr-only" in link.group()
 
 
+def first_level_titles(markup: str) -> list[str]:
+    """The text of every first level menu item, however it is marked up.
+
+    The anchors carry more than a word now — B.7 gives each row in the mobile
+    panel a travelling arrow — so a pattern that only matched bare text stopped
+    seeing any of them and the assertion silently had nothing to look at. This
+    strips the tags instead of assuming there are none.
+    """
+    rows = re.findall(r"<li[^>]*>\s*(<a[^>]*>.*?</a>)", markup, re.S)
+    return [re.sub(r"<[^>]+>", " ", row).strip() for row in rows]
+
+
 def test_kontakt_is_first_level_on_the_desktop_menu(
     client: Client, settings_row: SiteSettings
 ) -> None:
@@ -73,8 +88,7 @@ def test_kontakt_is_first_level_on_the_desktop_menu(
     html = body(client)
     nav = re.search(r'<nav aria-label="Główna nawigacja"(?![^>]*hidden).*?</nav>', html, re.S)
     assert nav, "the desktop nav did not render"
-    top_level = re.findall(r"<li[^>]*>\s*<a[^>]*>([^<]+)</a>", nav.group())
-    assert "Kontakt" in [title.strip() for title in top_level]
+    assert "Kontakt" in first_level_titles(nav.group())
 
 
 def test_kontakt_is_first_level_on_the_mobile_panel(
@@ -83,8 +97,7 @@ def test_kontakt_is_first_level_on_the_mobile_panel(
     html = body(client)
     panel = re.search(r'<dialog id="main-menu".*?</dialog>', html, re.S)
     assert panel, "the mobile panel did not render"
-    top_level = re.findall(r"<li[^>]*>\s*<a[^>]*>\s*([^<]+?)\s*</a>", panel.group())
-    assert "Kontakt" in [title.strip() for title in top_level]
+    assert "Kontakt" in first_level_titles(panel.group())
 
 
 def test_the_burger_announces_the_panel_it_controls(
@@ -118,17 +131,33 @@ def test_the_footer_carries_the_four_columns(client: Client, settings_row: SiteS
     footer = re.search(r"<footer.*?</footer>", html, re.S)
     assert footer
     labels = re.findall(r'<p class="label u-muted-on-ground">([^<]+)</p>', footer.group())
-    assert labels == ["Dane firmy", "Kursy", "Informacje", "Formalności"]
+    assert labels == ["Dane firmy", "Kurs", "Formalności", "Ośrodek"]
     for url in (
-        reverse("courses:list"),
+        reverse("courses:detail", kwargs={"slug": "kat-b"}),
         reverse("courses:pricing"),
-        reverse("courses:intakes"),
+        reverse("core:pass_rates"),
+        reverse("core:downloads"),
+        reverse("core:page", kwargs={"slug": "zapisy"}),
         reverse("gallery:index"),
         reverse("links:useful"),
         reverse("core:page", kwargs={"slug": "polityka-prywatnosci"}),
         reverse("core:page", kwargs={"slug": "rodo"}),
     ):
         assert f'href="{url}"' in footer.group(), f"{url} missing from the footer"
+
+
+def test_the_footer_names_no_route_this_school_does_not_sell(
+    client: Client, settings_row: SiteSettings
+) -> None:
+    """The professional courses and the psychotests are the previous client's.
+
+    Their routes still exist in the url map with no course behind them, so a
+    footer link to one is a 404 on every page of the site.
+    """
+    footer = re.search(r"<footer.*?</footer>", body(client), re.S).group()
+
+    for absent in ("/kierowca-zawodowy/", "/badania-psychologiczne/", "/wozki-widlowe/"):
+        assert absent not in footer
 
 
 def test_the_footer_never_shows_the_bank_account(
@@ -142,24 +171,38 @@ def test_the_footer_never_shows_the_bank_account(
     assert settings_row.bank_account.replace(" ", "") not in footer.group()
 
 
-def test_the_footer_sits_on_the_deep_ground(client: Client, settings_row: SiteSettings) -> None:
-    """A.1 allows deep in two places and this is one of them."""
+def test_the_footer_is_a_dark_card(client: Client, settings_row: SiteSettings) -> None:
+    """B.7 point 11: dark, and rounded 28px along the top only.
+
+    The purple ground it used to sit on went with core v25 — B.1 cut the
+    palette to two accents and the purple was a third. The radius is the hero's
+    own, so the page opens and closes on the same shape.
+    """
     footer = re.search(r"<footer[^>]*>", body(client))
     assert footer
-    assert "u-ground-deep" in footer.group()
+    assert "u-dark-card" in footer.group()
+    assert "rounded-t-hero" in footer.group()
 
 
-def test_the_header_is_a_sticky_dark_band(client: Client, settings_row: SiteSettings) -> None:
-    """A.9 point 0, as the owner settled it.
+def test_the_header_shrinks_from_a_sentinel_rather_than_a_scroll_handler(
+    client: Client, settings_row: SiteSettings
+) -> None:
+    """B.7 point 0 and R4 point 1.
 
-    The header used to take the page ground with a hairline underneath that
-    thickened once the page moved — which needed a sentinel above it to know
-    when that was. It is an ink band over a light page now, so the edge is the
-    colour change and there is nothing to observe.
+    76px down to 64px with a hairline appearing, and the class that does it is
+    toggled from an IntersectionObserver on a one pixel sentinel above the
+    header. R4 asks for it that way because the alternative — a scroll
+    listener — runs on every frame of every scroll for the life of the page to
+    answer a question whose value changes twice.
+
+    The sentinel has to be outside the header: the header is sticky and never
+    leaves the viewport, so it can never observe itself.
     """
     html = body(client)
-    assert re.search(r'<header class="[^"]*u-header', html)
-    assert "data-header-sentinel" not in html
+    assert re.search(r'<header[^>]*class="[^"]*u-header', html)
+
+    sentinel = html.index("data-header-sentinel")
+    assert sentinel < html.index("<header"), "the sentinel must sit above the header"
 
 
 @override_settings(DEBUG=False)

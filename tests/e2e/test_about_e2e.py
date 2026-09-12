@@ -32,7 +32,7 @@ def narrow_page(browser: Browser) -> Iterator[Page]:
 def school() -> None:
     site = SiteSettings.get_solo()
     site.founded_year = 1996
-    site.phone_primary = "43 843 29 11"
+    site.phone_primary = "691 570 489"
     site.save()
 
     FlatPage.objects.create(
@@ -95,6 +95,9 @@ def test_the_team_and_the_fleet_are_both_on_screen(
     narrow_page.goto(f"{live_server.url}/o-nas/")
     text = narrow_page.locator("body").inner_text()
 
-    assert "Instruktorzy" in text
-    assert "Nasze pojazdy" in text
+    # casefold: REDESIGN.md B.3 sets every h2 in upper case, and inner_text()
+    # returns what is painted. The words have not changed, only the rendering.
+    folded = text.casefold()
+    assert "instruktorzy" in folded
+    assert "nasze pojazdy" in folded
     assert "Skoda Fabia 0" in text

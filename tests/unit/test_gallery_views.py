@@ -13,6 +13,8 @@ from apps.core.seo import DESCRIPTION_LIMIT, TITLE_LIMIT
 from apps.gallery.models import GalleryImage
 from tests.factories import CertificateFactory, GalleryImageFactory
 
+from tests.conftest import images_without_alt
+
 pytestmark = pytest.mark.django_db
 
 PAGES = ("gallery:index", "gallery:certificates")
@@ -81,9 +83,9 @@ def test_page_offers_every_language(client: Client, content: None, route: str) -
 @pytest.mark.a11y
 @pytest.mark.parametrize("route", PAGES)
 def test_no_image_ships_an_empty_alt(client: Client, content: None, route: str) -> None:
-    images = re.findall(r"<img[^>]*>", get(client, route))
-    assert images
-    assert not [img for img in images if not re.search(r'alt="[^"]+"', img)]
+    body = get(client, route)
+    assert re.findall(r"<img[^>]*>", body), "no images rendered; the check would be vacuous"
+    assert not images_without_alt(body)
 
 
 @pytest.mark.parametrize("route", PAGES)
@@ -166,11 +168,21 @@ def test_without_a_filter_every_section_is_shown(client: Client, content: None) 
     assert headings(get_with(client)) == ["Ośrodek", "Pojazdy", "Plac manewrowy", "Zajęcia"]
 
 
+def main_of(body: str) -> str:
+    """The page's own content, without the header and the footer.
+
+    A count of anything across the whole document is a count that a change to
+    the layout can move: the wordmark in the header was briefly a <picture> and
+    two gallery assertions went red without the gallery changing at all.
+    """
+    return body[body.index("<main") : body.index("</main>")]
+
+
 def test_a_chosen_section_is_the_only_one_shown(client: Client, content: None) -> None:
     body = get_with(client, section="vehicles")
 
     assert headings(body) == ["Pojazdy"]
-    assert body.count("<picture") == 2
+    assert main_of(body).count("<picture") == 2
 
 
 def test_an_unknown_section_falls_back_to_everything(client: Client, content: None) -> None:
@@ -223,7 +235,7 @@ def test_an_empty_section_offers_a_way_out(client: Client) -> None:
 
     assert "Nic w tej sekcji" in body
     assert "Zobacz całą galerię" in body
-    assert "<picture" not in body
+    assert "<picture" not in main_of(body)
 
 
 def test_the_section_headings_are_polish(client: Client, content: None) -> None:

@@ -16,9 +16,9 @@ one file is the only way to hold it.
 
 {% block content %}
 <c-section>
-  <c-heading level="1" eyebrow="OSK Nawrocki Wieluń">{{ page_heading }}</c-heading>
-  {% if intro %}<p class="u-narrow mt-4 text-body-lg text-ink-700">{{ intro }}</p>{% endif %}
-  <div class="mt-6"><c-breadcrumbs :items="breadcrumbs" /></div>
+  <c-heading level="1" eyebrow="OSK Ostrycharz Wieluń">{{ page_heading }}</c-heading>
+  {% if intro %}<p class="u-narrow mt-4 text-body-lg u-body-on-ground">{{ intro }}</p>{% endif %}
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 
   <div class="mt-12">
     {% if courses %}
@@ -51,14 +51,14 @@ one file is the only way to hold it.
         <c-card href="{% url 'courses:pro_hub' %}" class="flex w-full flex-col">
           <c-slot name="title">{% translate "Kwalifikacja i szkolenia okresowe" %}</c-slot>
           <p>{% translate "Dla kierowców zawodowych kategorii C i D, wstępna i przyspieszona." %}</p>
-          <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
+          <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="u-muted-on-ground" /></p>
         </c-card>
       </li>
       <li class="flex">
         <c-card href="{% url 'courses:pro_hub' %}" class="flex w-full flex-col">
           <c-slot name="title">ADR</c-slot>
           <p>{% translate "Przewóz towarów niebezpiecznych, kurs podstawowy i specjalistyczne." %}</p>
-          <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
+          <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="u-muted-on-ground" /></p>
         </c-card>
       </li>
     </ul>
@@ -70,20 +70,31 @@ one file is the only way to hold it.
           <c-card href="{% url 'courses:psychotests' %}" class="flex w-full flex-col">
             <c-slot name="title">{% translate "Badania psychologiczne" %}</c-slot>
             <p>{% translate "Dla kierowców, instruktorów i operatorów maszyn." %}</p>
-            <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
+            <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="u-muted-on-ground" /></p>
           </c-card>
         </li>
         <li class="flex">
           <c-card href="{% url 'courses:forklifts' %}" class="flex w-full flex-col">
             <c-slot name="title">{% translate "Wózki widłowe" %}</c-slot>
             <p>{% translate "Uprawnienia operatora wózków jezdniowych z napędem silnikowym." %}</p>
-            <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="text-ink-500" /></p>
+            <p class="mt-6 flex justify-end"><c-icon name="arrow-right" size="sm" class="u-muted-on-ground" /></p>
           </c-card>
         </li>
       </ul>
     </div>
   </c-section>
 {% endif %}
+
+{# B.8 point 4: the page ends on an action. It used to end on a grid of
+   cards, and the only way on from here was the sticky bar — which is below md
+   only, so on a desktop the page simply stopped. This is also the page's one
+   dark block, B.8 point 2. #}
+<c-cta-band ground="paper"
+            title="{% translate 'Nie wiesz, którą kategorię wybrać?' %}"
+            text="{% translate 'Zadzwoń — w dwie minuty powiemy, co Ci jest potrzebne i ile to trwa.' %}"
+            href="{{ enrol_url }}"
+            action="{% translate 'Zapisz się' %}"
+            phone="{{ site_settings.phone_primary }}" />
 
 <div class="h-16 md:hidden" aria-hidden="true"></div>
 {% translate "Nie wiesz, którą kategorię wybrać?" as t_nie_wiesz_ktora %}

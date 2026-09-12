@@ -1,0 +1,12 @@
+# Photographs the owner has actually sent, REDESIGN.md D.2.
+#
+# One file name per line, matching a file in static/img/source/. Anything in
+# that directory NOT listed here is treated as stock and is watermarked
+# ZDJĘCIE POGLĄDOWE when the renditions are built with `make watermark-demo`.
+#
+# The default is deliberately the strict one. A file added to source/ and
+# forgotten here comes out stamped, which is embarrassing; the other way round
+# a stock photograph goes out unmarked as the school's own, which is the thing
+# D.2 exists to prevent.
+#
+# Nothing here yet: the owner has sent no photographs. See scripts/photos.txt.

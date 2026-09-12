@@ -9,12 +9,19 @@ from django import forms
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.markdown import render_markdown
-from apps.core.models import Page, SiteSettings
+from apps.core.models import Page, PassRate, SiteSettings
 from apps.core.seo import Label, Seo, build_title, page_seo
+from apps.core.services import (
+    attempt_percents,
+    average_attempts,
+    first_attempt_percent,
+    human_size,
+    not_passed,
+    youtube_id,
+)
 
 _PLACEHOLDER_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">'
@@ -59,15 +66,10 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
             price_gross=price,
         )
 
-    # Five tiles, because A.9 point 2 lays them out five across on lg, and the
-    # last one carries no price so the "cena na zapytanie" fallback is on screen
-    # rather than described.
     courses = [
-        _course("AM", "Motorower", 14, "1200.00"),
-        _course("A1", "Motocykl do 125", 16, "2400.00"),
-        _course("B", "Samochód osobowy", 18, "3200.00"),
-        _course("B+E", "Osobowy z przyczepą", 18, "1800.00"),
-        _course("C+E", "Ciężarowy z naczepą", 21, None),
+        _course("B", "Kurs standardowy", 18, "3700.00"),
+        _course("B", "Kurs przyspieszony", 18, "4300.00"),
+        _course("B", "Skrzynia automatyczna", 18, "4300.00"),
     ]
     intakes = [
         SimpleNamespace(
@@ -92,6 +94,9 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
         )
         for rating in (5, 4, 3)
     ]
+    sample_year = SimpleNamespace(
+        year=2025, students=92, passed_1st=68, passed_2nd=16, passed_3rd=3, passed_4th=3, note=""
+    )
 
     context: dict[str, Any] = {
         "seo": Seo(
@@ -112,6 +117,15 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
         "intakes": intakes,
         "images": images,
         "testimonials": testimonials,
+        "pass_rate_rows": [_pass_rate_row(sample_year)],
+        "documents": [
+            {
+                "title": "Regulamin",
+                "description": "Zasady szkolenia w naszym ośrodku.",
+                "url": "#",
+                "size": "182,4 KB",
+            }
+        ],
         "breadcrumbs": [
             {"title": "Start", "url": "/"},
             {"title": "Kursy", "url": "/kursy/"},
@@ -133,26 +147,39 @@ def kitchen_sink(request: HttpRequest) -> HttpResponse:
 # same string rather than reverse(), so the link survives until leads.urls lands.
 ENROL_URL = "/zapisz-sie/"
 
+# The one category this school sells, tech.md section 1.
+MAIN_COURSE_SLUG = "kat-b"
+
 CONTACT_DESCRIPTION = _(
-    "Adres, telefony i godziny otwarcia OSK Nawrocki w Wieluniu. "
-    "Biuro, pracownia psychologiczna i dojazd na ul. Zieloną 45."
+    "Adres, telefon i dojazd do OSK Ostrycharz w Wieluniu. "
+    "Zapisy po wcześniejszym ustaleniu telefonicznym."
 )
 
-# FRONTEND.md A.9: three rows of terms, five questions, and the reviews strip.
-UPCOMING_ON_HOME = 3
+# FRONTEND.md A.9: five questions and the reviews strip.
 FAQS_ON_HOME = 5
 TESTIMONIALS_ON_HOME = 3
 # A.9 point 7: fewer than two and the section does not render at all.
 TESTIMONIALS_MINIMUM = 2
 
-# tech.md section 8 fixes the suffix as "— OSK Nawrocki Wieluń", so the subject
-# does not repeat the town: "Prawo jazdy — OSK Nawrocki Wieluń" carries the same
-# two keywords FRONTEND.md F3 asks for without saying Wieluń twice.
-HOME_SUBJECT = _("Prawo jazdy")
+# tech.md section 8 fixes the suffix as "— OSK Ostrycharz Wieluń", so the subject
+# does not repeat the town.
+HOME_SUBJECT = _("Prawo jazdy kat. B")
 HOME_DESCRIPTION = _(
-    "Ośrodek szkolenia kierowców w Wieluniu od 1996 roku. Kategorie AM–D, "
-    "kwalifikacje zawodowe, ADR i badania psychologiczne. Zajęcia po polsku, "
-    "rosyjsku i ukraińsku."
+    "Kurs prawa jazdy kategorii B w Wieluniu: standardowy, przyspieszony "
+    "w dwa tygodnie i na skrzyni automatycznej. Ceny, zdawalność i zapisy. "
+    "Dowóz na egzamin gratis."
+)
+
+PASS_RATES_SUBJECT = _("Zdawalność")
+PASS_RATES_DESCRIPTION = _(
+    "Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. "
+    "Wyniki rok po roku, liczby bez zaokrągleń."
+)
+
+DOWNLOADS_SUBJECT = _("Do pobrania")
+DOWNLOADS_DESCRIPTION = _(
+    "Regulamin, umowa i oświadczenia do pobrania. Dokumenty, które warto "
+    "przeczytać i podpisać przed pierwszymi zajęciami."
 )
 
 
@@ -177,32 +204,110 @@ def faq_jsonld(faqs: list[Any]) -> dict[str, Any]:
     }
 
 
+def aggregate_rating_jsonld(testimonials: list[Any]) -> dict[str, Any] | None:
+    """schema.org AggregateRating, built only from reviews that can be checked.
+
+    Nothing is invented here under any circumstances. The school's own site
+    prints "110 opinii, 96% bardzo dobrych" as prose with no source behind it,
+    and turning that into markup would be a rating Google cannot verify and we
+    cannot either — which is a manual action, not a rich result.
+
+    So the aggregate counts the rows in apps/reviews that carry a source_url,
+    and returns None when there are none.
+    """
+    if not testimonials:
+        return None
+
+    ratings = [item.rating for item in testimonials if item.rating]
+    if not ratings:
+        return None
+
+    return {
+        "@type": "AggregateRating",
+        "ratingValue": round(sum(ratings) / len(ratings), 1),
+        "reviewCount": len(ratings),
+        "bestRating": 5,
+        "worstRating": 1,
+    }
+
+
+def _pass_rate_row(entry: PassRate | Any) -> dict[str, Any]:
+    """One year, with the percentages the template must not compute itself."""
+    percents = attempt_percents(entry)
+    return {
+        "year": entry.year,
+        "students": entry.students,
+        "note": entry.note,
+        "attempts": list(
+            zip(
+                (entry.passed_1st, entry.passed_2nd, entry.passed_3rd, entry.passed_4th),
+                percents,
+                strict=True,
+            )
+        ),
+        "first_percent": percents[0],
+        "average": average_attempts(entry),
+        # The people the four columns leave out. Printed on the page, not
+        # quietly dropped: see the docstring on services.not_passed.
+        "not_passed": not_passed(entry),
+    }
+
+
+def _stat_items(row: dict[str, Any]) -> list[dict[str, Label]]:
+    """The four figures the home page band prints, tech.md section 1.
+
+    Built here rather than in the template because three of the four are derived
+    and one of them may not exist: a year in which nobody has passed yet has no
+    mean number of attempts, and printing 0,0 would claim the opposite of what
+    happened.
+    """
+    first_count, _first_percent = row["attempts"][0]
+    items: list[dict[str, Label]] = [
+        {"value": f"{row['first_percent']}%", "label": _("zdaje za pierwszym razem")},
+        {"value": str(row["students"]), "label": _("kursantów w tym roczniku")},
+        {"value": str(first_count), "label": _("zdało od razu, bez poprawki")},
+    ]
+    if row["average"] is not None:
+        items.append(
+            {
+                "value": str(row["average"]).replace(".", ","),
+                "label": _("średnia liczba podejść do egzaminu"),
+            }
+        )
+    return items
+
+
 def home(request: HttpRequest) -> HttpResponse:
     """The home page, tech.md section 5 and FRONTEND.md A.9.
 
-    Eleven sections in a fixed order, and three of them decide for themselves
-    whether they exist at all: no joinable group, fewer than two verifiable
-    reviews or no published questions, and the section is simply absent. An
-    empty block that says nothing is worse than one section fewer.
+    Rebuilt around what this school actually has: one category, three ways to
+    take it, published prices and the best pass rate in the district. Sections
+    that have no data do not render — a database seeded an hour ago still gives
+    a page that reads.
 
     The slice selectors are imported inside the function on purpose, the same
     way page_detail does it: apps/core is shared and must not depend on a
     feature slice at import time.
     """
-    from apps.courses import selectors as courses
-    from apps.courses.models import Course
+    from apps.core.selectors import latest_pass_rate
+    from apps.courses.models import Course, PriceItem
     from apps.links.selectors import published_faqs
     from apps.reviews.selectors import published_testimonials
 
     site = SiteSettings.get_solo()
     faqs = list(published_faqs()[:FAQS_ON_HOME])
     testimonials = list(published_testimonials()[:TESTIMONIALS_ON_HOME])
+    latest = latest_pass_rate()
 
-    # Two numbers the page prints as facts. Counted rather than written down:
-    # A.9 point 1 says fifteen courses and A.9 point 6 says years on the market,
-    # and both are wrong the moment the owner adds a course or the year turns.
-    course_count = courses.active_courses().count()
-    years_on_market = timezone.localdate().year - site.founded_year
+    course = Course.objects.filter(slug=MAIN_COURSE_SLUG, is_active=True).first()
+    # The three ways to take the same category. Data, not markup: the owner
+    # renames or reprices one in the admin and the cards follow.
+    variants = list(
+        PriceItem.objects.filter(is_active=True, group=COURSE_PRICE_GROUP)
+        .exclude(price_gross=0)
+        .order_by("order", "id")
+    )
+    row = _pass_rate_row(latest) if latest else None
 
     return render(
         request,
@@ -214,19 +319,125 @@ def home(request: HttpRequest) -> HttpResponse:
                 description=HOME_DESCRIPTION,
                 extra_jsonld=[faq_jsonld(faqs)] if faqs else None,
             ),
-            "course_count": course_count,
-            "years_on_market": years_on_market,
-            "categories": list(courses.active_courses(Course.Kind.LICENSE)),
-            "intakes": list(courses.joinable_intakes()[:UPCOMING_ON_HOME]),
-            "professional": list(courses.active_courses(Course.Kind.PROFESSIONAL)),
-            "psychotests": list(courses.active_courses(Course.Kind.PSYCHOTEST)),
-            "operator_courses": list(courses.active_courses(Course.Kind.OPERATOR)),
+            "course": course,
+            "variants": variants,
+            "pass_rate": row,
+            "stat_items": _stat_items(row) if row else [],
+            "first_attempt": first_attempt_percent(latest) if latest else None,
+            "video_id": youtube_id(site.youtube_video_url),
+            "video_url": site.youtube_video_url,
             # A.9 point 7: two is the floor, and one review is not a strip.
             "testimonials": testimonials if len(testimonials) >= TESTIMONIALS_MINIMUM else [],
             "faqs": faqs,
             "directions": directions(site),
             "enrol_url": ENROL_URL,
             "lead_form": _lead_form(),
+            "fragment_map": _fragment_map(),
+        },
+    )
+
+
+def _fragment_map() -> dict[str, str]:
+    """The anchors of the old one-page site, for static/js/app.js.
+
+    A browser never sends a fragment, so django.contrib.redirects cannot answer
+    /#pliki — the jump has to happen in the page. The table is read from the
+    same csv the server side redirects come from, apps/core/redirects.py.
+    """
+    from apps.core.redirects import fragment_map
+
+    try:
+        return fragment_map()
+    except (OSError, KeyError):
+        # A missing or malformed csv costs the old anchors, not the home page.
+        return {}
+
+
+def pass_rates(request: HttpRequest) -> HttpResponse:
+    """/zdawalnosc/ — the strongest argument this school has, tech.md section 1.
+
+    On the old site it was a paragraph between the gallery and the file list.
+    Here it is a page, with a url somebody can send to their parents.
+    """
+    from apps.core.selectors import published_pass_rates
+    from apps.reviews.selectors import published_testimonials
+
+    rows = [_pass_rate_row(entry) for entry in published_pass_rates()]
+    testimonials = list(published_testimonials())
+    trail: list[tuple[Label, str]] = [
+        (_("Start"), "/"),
+        (_("Zdawalność"), reverse("core:pass_rates")),
+    ]
+
+    # Only from verifiable reviews, and absent otherwise. See the docstring on
+    # aggregate_rating_jsonld: an unverifiable rating in markup is a penalty.
+    rating = aggregate_rating_jsonld(testimonials)
+    school_rating = (
+        [
+            {
+                "@context": "https://schema.org",
+                "@type": "DrivingSchool",
+                "name": SiteSettings.get_solo().legal_name,
+                "aggregateRating": rating,
+            }
+        ]
+        if rating
+        else None
+    )
+
+    return render(
+        request,
+        "core/pass_rates.html",
+        {
+            "seo": page_seo(
+                request,
+                subject=PASS_RATES_SUBJECT,
+                description=PASS_RATES_DESCRIPTION,
+                breadcrumbs=trail,
+                extra_jsonld=school_rating,
+            ),
+            "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
+            "rows": rows,
+            "latest": rows[0] if rows else None,
+            "band_items": _stat_items(rows[0]) if rows else [],
+            "testimonials": testimonials if len(testimonials) >= TESTIMONIALS_MINIMUM else [],
+            "enrol_url": ENROL_URL,
+        },
+    )
+
+
+def downloads(request: HttpRequest) -> HttpResponse:
+    """/do-pobrania/ — regulamin, umowa, oświadczenia, tech.md section 5."""
+    from apps.core.selectors import published_downloads
+
+    trail: list[tuple[Label, str]] = [
+        (_("Start"), "/"),
+        (_("Do pobrania"), reverse("core:downloads")),
+    ]
+
+    documents = [
+        {
+            "title": row.title,
+            "description": row.description,
+            "url": row.file.url,
+            "size": human_size(row.size_bytes),
+        }
+        for row in published_downloads()
+    ]
+
+    return render(
+        request,
+        "core/downloads.html",
+        {
+            "seo": page_seo(
+                request,
+                subject=DOWNLOADS_SUBJECT,
+                description=DOWNLOADS_DESCRIPTION,
+                breadcrumbs=trail,
+            ),
+            "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
+            "documents": documents,
+            "enrol_url": ENROL_URL,
         },
     )
 
@@ -283,32 +494,150 @@ def _lead_form() -> Any:
     return LeadForm()
 
 
-# tech.md section 4.1 names the flat pages: o-nas, polityka-prywatnosci, rodo.
-FLAT_PAGE_SLUGS = ("o-nas", "polityka-prywatnosci", "rodo")
+# tech.md section 4.1 names the flat pages. "zapisy" joined them for this
+# school: signing up is a phone call and a list of papers, not a funnel, and
+# that is a page of text with two blocks around it.
+FLAT_PAGE_SLUGS = ("o-nas", "zapisy", "polityka-prywatnosci", "rodo")
 ABOUT_SLUG = "o-nas"
+ENROL_PAGE_SLUG = "zapisy"
+
+# The price group the home page and the pricing page read as "the course
+# itself", as opposed to extra lessons and third party fees.
+COURSE_PRICE_GROUP = "Kurs"
+
+# tech.md section 1, transcribed from the school's own page. Kept as data in one
+# place rather than typed into a template, so the list on /zapisy/ and the list
+# in the FAQ cannot drift apart.
+REQUIRED_DOCUMENTS: tuple[tuple[Label, Label], ...] = (
+    (_("Orzeczenie lekarskie"), _("O badaniu piszemy niżej — możesz je zrobić u nas w Wieluniu.")),
+    (_("Fotografia 3,5 x 4,5 cm"), _("Taka sama jak do dowodu osobistego.")),
+    (_("Dowód osobisty lub paszport"), _("Do wglądu przy zapisie.")),
+    (_("Zaświadczenie o zameldowaniu"), _("Jedyny płatny dokument z tej listy: 17 zł.")),
+    (_("Zgoda rodziców"), _("Tylko dla osób niepełnoletnich.")),
+)
+
+
+def _about_facts(site: SiteSettings, instructors: list[Any]) -> list[dict[str, Any]]:
+    """The about page in figures, tech.md section 1.
+
+    The previous client counted instructors, categories and cars, and this
+    school has published none of those. What it has published is a pass rate and
+    a price, so those are the facts — read from the same rows the rest of the
+    site reads, never written down here.
+
+    Two queries, and no more: the pass rate and the course. The instructors are
+    handed in already loaded, because the page prints them further down and this
+    row has no business asking for them a second time. The count of licence
+    categories is deliberately not a tile — "1 kategoria" is not a fact anybody
+    is impressed by, and it would cost a third query to say so.
+
+    A tile whose number does not exist is absent rather than zero: a row of
+    figures reading "0 instruktorów" is worse than a row of three.
+    """
+    from apps.core.selectors import latest_pass_rate
+    from apps.courses.models import Course
+
+    facts: list[dict[str, Any]] = []
+
+    latest = latest_pass_rate()
+    if latest:
+        facts.append(
+            {
+                "value": f"{first_attempt_percent(latest)}%",
+                "label": _("zdaje egzamin za pierwszym razem"),
+            }
+        )
+        facts.append({"value": str(latest.students), "label": _("kursantów w ostatnim roczniku")})
+
+    if site.founded_year:
+        facts.append({"value": str(site.founded_year), "label": _("rok założenia")})
+
+    course = Course.objects.filter(slug=MAIN_COURSE_SLUG, is_active=True).first()
+    if course and course.price_gross:
+        facts.append(
+            {
+                "value": f"{course.price_gross:.0f} zł",
+                "label": _("kurs kat. B, dowóz na egzamin w cenie"),
+            }
+        )
+
+    if instructors:
+        facts.append({"value": str(len(instructors)), "label": _("instruktorów prowadzi zajęcia")})
+
+    return facts
+
+
+def _enrolment_steps(site: SiteSettings) -> list[dict[str, Label]]:
+    """How to sign up, tech.md section 1. Five steps, the first is a phone call."""
+    phone = site.phone_primary or ""
+    return [
+        {
+            "title": _("Zadzwoń"),
+            "text": _("Zapisy prowadzimy po wcześniejszym ustaleniu telefonicznym: %(phone)s.")
+            % {"phone": phone},
+        },
+        {
+            "title": _("Ustal termin"),
+            "text": _("Umawiamy datę startu i godziny, które Ci pasują."),
+        },
+        {
+            "title": _("Wyrób PKK"),
+            "text": _(
+                "Profil Kandydata na Kierowcę zakłada Starostwo Powiatowe w Wieluniu, "
+                "na podstawie orzeczenia lekarskiego i zdjęcia."
+            ),
+        },
+        {
+            "title": _("Przynieś dokumenty"),
+            "text": _("Pięć pozycji z listy obok. Komplet zajmuje jedną wizytę."),
+        },
+        {
+            "title": _("Zacznij zajęcia"),
+            "text": _("Teoria, potem jazdy. Egzamin wewnętrzny przed państwowym."),
+        },
+    ]
 
 
 def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
     """A flat page, tech.md section 5.
 
-    The about page carries more than its own text: the url map gives it
-    Instructor and Vehicle as well, so the team and the fleet are assembled
-    here. The slice selectors are imported inside the function on purpose,
-    since apps/core is shared and must not depend on a feature slice at import
-    time.
+    Two of them carry more than their own text. The about page gets the fleet
+    and the team, when there are any. The enrolment page gets the five steps,
+    the list of papers and whatever documents are uploaded — all of it built
+    here rather than parsed out of the body, so the page cannot promise a
+    document the media folder does not hold.
+
+    The slice selectors are imported inside the function on purpose, since
+    apps/core is shared and must not depend on a feature slice at import time.
     """
-    from apps.courses.models import Course
-    from apps.courses.selectors import active_courses
+    from apps.core.selectors import published_downloads
     from apps.people import selectors as people
 
     page = get_object_or_404(Page, slug=slug, is_published=True)
+    site = SiteSettings.get_solo()
     about = slug == ABOUT_SLUG
+    enrolment = slug == ENROL_PAGE_SLUG
     trail: list[tuple[Label, str]] = [
         (_("Start"), "/"),
         (page.title, reverse("core:page", kwargs={"slug": slug})),
     ]
 
     fleet = people.vehicles_by_course() if about else []
+    # Loaded once. The facts row counts them and the team section prints them.
+    instructors = list(people.active_instructors()) if about else []
+    documents = (
+        [
+            {
+                "title": row.title,
+                "description": row.description,
+                "url": row.file.url,
+                "size": human_size(row.size_bytes),
+            }
+            for row in published_downloads()
+        ]
+        if enrolment
+        else []
+    )
 
     return render(
         request,
@@ -324,42 +653,22 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "body": render_markdown(page.body),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "about": about,
-            # BLOCKS.md B5: what the school sells, as four places to go. Built
-            # here rather than parsed out of the page body, so the cards cannot
-            # promise something the offer no longer has.
-            "offer": (
-                [
-                    {
-                        "title": _("Prawo jazdy"),
-                        "note": _("kategorie AM, A1, A2, A, B, B+E, C, C+E, D"),
-                        "url": "/kursy/",
-                    },
-                    {
-                        "title": _("Kierowca zawodowy"),
-                        "note": _("kwalifikacja wstępna i szkolenia okresowe"),
-                        "url": "/kierowca-zawodowy/",
-                    },
-                    {
-                        "title": _("Badania psychologiczne"),
-                        "note": _("kierowcy i operatorzy maszyn"),
-                        "url": "/cennik/",
-                    },
-                    {
-                        "title": _("Wózki widłowe"),
-                        "note": _("uprawnienia operatora"),
-                        "url": "/kursy/wozki-widlowe/",
-                    },
-                ]
-                if about
+            "facts": _about_facts(site, instructors) if about else [],
+            "enrolment": enrolment,
+            "steps": _enrolment_steps(site) if enrolment else [],
+            "required_documents": (
+                [{"title": title, "text": text} for title, text in REQUIRED_DOCUMENTS]
+                if enrolment
                 else []
             ),
-            "instructors": people.active_instructors() if about else [],
+            "documents": documents,
+            "instructors": instructors,
             "vehicle_groups": fleet,
             # Counted from what is already loaded rather than asked for again:
             # the about page has a query budget and this is not worth one.
             "fleet_size": sum(len(group["vehicles"]) for group in fleet),
-            "category_count": active_courses(Course.Kind.LICENSE).count() if about else 0,
             "enrol_url": ENROL_URL,
+            "lead_form": _lead_form() if enrolment else None,
         },
     )
 

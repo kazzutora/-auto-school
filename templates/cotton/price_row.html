@@ -16,7 +16,7 @@ category B at all.
 
 Takes: title, price, note, badge, href.
 {% endcomment %}
-<li class="border-b border-line-soft last:border-b-0">
+<li class="border-b border-line last:border-b-0">
   {% if href %}<a href="{{ href }}"{% else %}<div{% endif %}
     class="group block py-4 transition hover:bg-paper-50 {{ class }}">
 
@@ -25,7 +25,7 @@ Takes: title, price, note, badge, href.
        at 320px a long service still keeps its price beside it rather than
        sending it to the next line. #}
     <span class="flex items-baseline gap-3">
-      <span class="min-w-0 font-semibold text-ink">
+      <span class="min-w-0 font-bold u-on-ground">
         {{ title }}
         {% if badge %}<c-badge tone="accent" class="ml-2 align-middle">{{ badge }}</c-badge>{% endif %}
       </span>
@@ -34,17 +34,17 @@ Takes: title, price, note, badge, href.
          with nothing between them. It needs room to be worth drawing, so it
          waits for sm. #}
       <span aria-hidden="true"
-            class="hidden grow self-center border-b border-dotted border-line-soft sm:block"></span>
+            class="hidden grow self-center border-b border-dotted border-line sm:block"></span>
 
       {% if price %}
-        <span class="data ml-auto shrink-0 whitespace-nowrap text-[1.0625rem] text-ink sm:ml-0">{{ price }}</span>
+        <span class="data ml-auto shrink-0 whitespace-nowrap text-[1.0625rem] u-on-ground sm:ml-0">{{ price }}</span>
       {% else %}
-        <span class="ml-auto shrink-0 whitespace-nowrap text-small text-ink-500 sm:ml-0">{% translate "wycena indywidualna" %}</span>
+        <span class="ml-auto shrink-0 whitespace-nowrap text-small u-muted-on-ground sm:ml-0">{% translate "wycena indywidualna" %}</span>
       {% endif %}
     </span>
 
     {% with shown=note|owner_ready %}
-      {% if shown %}<span class="mt-1 block text-small text-ink-500">{{ shown }}</span>{% endif %}
+      {% if shown %}<span class="mt-1 block text-small u-muted-on-ground">{{ shown }}</span>{% endif %}
     {% endwith %}
   {% if href %}</a>{% else %}</div>{% endif %}
 </li>

@@ -88,7 +88,7 @@ def gallery(request: HttpRequest) -> HttpResponse:
         request,
         subject=_("Galeria"),
         description=(
-            "Zdjęcia ośrodka szkolenia kierowców OSK Nawrocki w Wieluniu: biuro, "
+            "Zdjęcia ośrodka szkolenia kierowców OSK Ostrycharz w Wieluniu: biuro, "
             "plac manewrowy i pojazdy szkoleniowe."
         ),
         breadcrumbs=trail,
@@ -121,7 +121,7 @@ def certificates(request: HttpRequest) -> HttpResponse:
         request,
         subject=_("Certyfikaty"),
         description=(
-            "Certyfikaty i uprawnienia ośrodka szkolenia kierowców OSK Nawrocki w Wieluniu."
+            "Certyfikaty i uprawnienia ośrodka szkolenia kierowców OSK Ostrycharz w Wieluniu."
         ),
         breadcrumbs=trail,
     )

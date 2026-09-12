@@ -1,32 +1,35 @@
 {% comment %}
-Card, tech.md section 7, states from FRONTEND.md A.5.
+Card, tech.md section 7, states from REDESIGN.md B.4 and B.5.
 
-Paper ground, 1px line.soft border, 2px radius, 24px of padding. A clickable
-card takes an ink border on hover plus the one shadow the whole design allows:
-2px, hard, no blur, in the spirit of A.1's borders-instead-of-shadows.
+Radius 20px, the `card` shadow, 24px of padding. A clickable card takes the
+`card-hover` shadow and rises 2px over 180ms — B.5's numbers exactly, and the
+two shadows are the only two in the design.
 
-A.5 wants the whole card clickable with focus caught by the heading link. That
-needs the heading to be the anchor and the card to stretch it, which the title
-slot cannot express on its own, so the href form is a plain anchor wrapper and
-the heading inside it stays a heading. The focus ring lands on the card, which
-is the same rectangle either way.
+tone="dark" is the other half of B.1's language: the same card on the ink
+ground. In the light theme that is a near-black block on the warm grey page; in
+the dark theme the roles swap and it becomes the light block on a near-black
+page. Nothing here names a colour for it — .u-dark-card publishes the pair.
+
+B.5 wants the whole card clickable with focus caught by the card. That needs the
+anchor to wrap it, which the title slot cannot express on its own, so the href
+form is a plain anchor and the heading inside it stays a heading.
 
 min-w-0 because a card holds whatever it is given, and as a grid or flex item it
 would otherwise refuse to shrink below that content and take the page sideways
-with it — which is what a card wrapping the opening hours did at 320px.
+with it.
 {% endcomment %}
-<c-vars href="" padded="1" level="3" class="" />
+<c-vars href="" padded="1" level="3" tone="light" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
-  class="u-card block min-w-0 rounded border border-line-soft bg-paper transition{% if padded %} p-6{% endif %}{% if href %} hover:-translate-y-1 hover:border-ink hover:shadow-card{% endif %} {{ class }}"
+  class="u-card{% if tone == 'dark' %} u-dark-card{% endif %}{% if padded %} p-6{% endif %}{% if href %} u-card-link{% endif %} {{ class }}"
   {{ attrs }}>
   {# The level is the page's to choose: a card sitting straight under the h1
      is a level 2 item, and one inside a section that already has an h2 is a
      level 3. Guessing wrong skips a level, which is what a screen reader
      reads out as a missing section. #}
   {% if title %}
-    {% if level == '2' or level == 2 %}<h2 class="text-h3">{{ title }}</h2>
+    {% if level == '2' or level == 2 %}<h2 class="text-h3 normal-case">{{ title }}</h2>
     {% elif level == '4' or level == 4 %}<h4 class="text-h3">{{ title }}</h4>
     {% else %}<h3 class="text-h3">{{ title }}</h3>{% endif %}
   {% endif %}
-  <div class="{% if title %}mt-3 {% endif %}text-ink-700">{{ slot }}</div>
+  <div class="{% if title %}mt-3 {% endif %}u-muted-on-ground">{{ slot }}</div>
 {% if href %}</a>{% else %}</article>{% endif %}

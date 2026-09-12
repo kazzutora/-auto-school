@@ -18,7 +18,7 @@ the photo it opens so the list is usable without seeing it.
   <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
     {% for image in images %}<li>
       <button type="button" x-on:click="show({{ forloop.counter0 }})"
-        class="block w-full overflow-hidden rounded border border-line-soft transition hover:border-ink hover:shadow-card">
+        class="block w-full overflow-hidden rounded border border-line transition hover:border-ink hover:shadow-card">
         <c-picture :image="image.image" alt="{{ image.alt }}" ratio="tile" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" />
         <span class="sr-only">{% blocktranslate with alt=image.alt %}Powiększ: {{ alt }}{% endblocktranslate %}</span>
       </button>
@@ -26,24 +26,29 @@ the photo it opens so the list is usable without seeing it.
   </ul>
 
   <dialog x-ref="dlg" x-on:keydown.arrow-right.prevent="next()" x-on:keydown.arrow-left.prevent="prev()"
-    class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 text-ink backdrop:bg-ink/90">
+    class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 u-on-ground backdrop:bg-ink/90">
     <div class="flex items-center justify-between gap-4">
-      <p class="label text-ink-500"><span x-text="i + 1"></span> / {{ images|length }}</p>
-      <button type="button" x-on:click="$refs.dlg.close()" aria-label="{% translate 'Zamknij' %}" class="-m-2 p-2 text-ink-500 transition hover:text-ink">
+      <p class="label u-muted-on-ground"><span x-text="i + 1"></span> / {{ images|length }}</p>
+      <button type="button" x-on:click="$refs.dlg.close()" aria-label="{% translate 'Zamknij' %}" class="-m-2 p-2 u-muted-on-ground transition hover:u-on-ground">
         <c-icon name="close" />
       </button>
     </div>
 
     {% for image in images %}<figure x-cloak x-show="i === {{ forloop.counter0 }}" class="mt-3">
-      <img src="{{ image.image.url }}" alt="{{ image.alt }}" class="mx-auto max-h-[70vh] w-auto">
-      {% if image.caption %}<figcaption class="mt-3 text-center text-small text-ink-500">{{ image.caption }}</figcaption>{% endif %}
+      {# width and height so the panel does not resize around the picture as it
+         arrives. Conditional because the kitchen sink hands this component a
+         stand-in object with no stored dimensions. #}
+      <img src="{{ image.image.url }}" alt="{{ image.alt }}" decoding="async"
+           {% if image.image.width %}width="{{ image.image.width }}" height="{{ image.image.height }}"{% endif %}
+           class="mx-auto max-h-[70vh] w-auto">
+      {% if image.caption %}<figcaption class="mt-3 text-center text-small u-muted-on-ground">{{ image.caption }}</figcaption>{% endif %}
     </figure>{% endfor %}
 
     <div class="mt-3 flex justify-between gap-4">
-      <button type="button" x-on:click="prev()" class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+      <button type="button" x-on:click="prev()" class="inline-flex h-12 items-center gap-2 px-2 font-bold transition hover:u-muted-on-ground">
         <span class="rotate-180"><c-icon name="arrow-right" /></span> {% translate "Poprzednie" %}
       </button>
-      <button type="button" x-on:click="next()" class="inline-flex h-12 items-center gap-2 px-2 font-semibold transition hover:text-ink-500">
+      <button type="button" x-on:click="next()" class="inline-flex h-12 items-center gap-2 px-2 font-bold transition hover:u-muted-on-ground">
         {% translate "Następne" %} <c-icon name="arrow-right" />
       </button>
     </div>

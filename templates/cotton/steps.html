@@ -18,14 +18,19 @@ Takes: steps — rows carrying .title and .text.
          suggests a fifth one that is not there. #}
       {% if not forloop.last %}
         <span aria-hidden="true"
-              class="absolute bottom-0 left-[0.6rem] top-8 w-px bg-line-soft"></span>
+              class="absolute bottom-0 left-[0.6rem] top-8 w-px bg-line"></span>
       {% endif %}
-      <span class="data shrink-0 text-[1.375rem] leading-none text-accent-600">
+      {# A chip, not yellow lettering. #E5BE00 as text measures 1.8:1 on a
+         white card and 1.46 on the page — B.2 forbids that pair by name in its
+         other direction, and a number nobody can read is not a number. The
+         yellow keeps its role as a marker and the near black does the reading,
+         which is 11.98:1. #}
+      <span class="data flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-small leading-none u-fixed-ink">
         {{ forloop.counter|stringformat:"02d" }}
       </span>
       <div class="min-w-0 pt-0.5">
         <h3 class="text-h3">{{ step.title }}</h3>
-        {% if step.text %}<p class="mt-2 text-ink-700">{{ step.text }}</p>{% endif %}
+        {% if step.text %}<p class="mt-2 u-muted-on-ground">{{ step.text }}</p>{% endif %}
       </div>
     </li>
   {% endfor %}

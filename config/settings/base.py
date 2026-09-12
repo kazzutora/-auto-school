@@ -137,6 +137,15 @@ STATICFILES_DIRS = [
     ("js", BASE_DIR / "static" / "js"),
     ("fonts", BASE_DIR / "static" / "fonts"),
     ("icons", BASE_DIR / "static" / "icons"),
+    # The logo kit: lettering, mark, favicon and the og card. Self hosted like
+    # everything else, tech.md section 2.
+    ("brand", BASE_DIR / "static" / "brand"),
+    # The photographs, PHOTOS.md. scripts/optimize_photos.py writes the crops
+    # into static/img/<ratio>/ and they are served from here; the 2400px
+    # originals live in static/img/source/ beside their CREDITS.txt and are
+    # never served — nothing links to them, and they are three times the weight
+    # of anything the page asks for.
+    ("img", BASE_DIR / "static" / "img"),
 ]
 
 MEDIA_URL = "media/"
@@ -176,7 +185,7 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@naukajazdywielun.pl"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or "noreply@oskostrycharz.pl"
 
 SMSAPI_TOKEN = env("SMSAPI_TOKEN", default="")
 
@@ -200,15 +209,17 @@ SENTRY_DSN = env("SENTRY_DSN", default="")
 #                             specified as Alpine components. Dropping this
 #                             means switching to the Alpine CSP build, which
 #                             forbids inline expressions entirely.
-#   img-src tile hosts        Leaflet pulls OpenStreetMap tiles. Chosen over
-#                             google maps precisely because it sets no cookies.
+#   frame-src google          The map, core v26: a google maps embed that
+#                             static/js/app.js builds only when the visitor
+#                             presses the button. Nothing is framed before it.
 CONTENT_SECURITY_POLICY = {
     "default-src": ["'self'"],
     "script-src": ["'self'", "'unsafe-eval'"],
     "style-src": ["'self'", "'unsafe-inline'"],
-    "img-src": ["'self'", "data:", "https://tile.openstreetmap.org"],
+    "img-src": ["'self'", "data:"],
     "font-src": ["'self'"],
     "connect-src": ["'self'"],
+    "frame-src": ["https://www.google.com"],
     "frame-ancestors": ["'none'"],
     "base-uri": ["'self'"],
     "form-action": ["'self'"],

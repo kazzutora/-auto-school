@@ -1,0 +1,37 @@
+{% comment %}
+Tabs, REDESIGN.md B.5. Props: items, id, label.
+
+A strip of chips; the active one is filled with the primary and its label is
+white. B.5 asks for the indicator to travel on a transform rather than by
+recomputing width and left — .u-tab-indicator in motion.css carries that.
+
+**These are links, not a javascript tab widget.** Each chip points at a section
+id on the same page, so the strip works with no script at all, every chip can be
+opened in a new tab, and the back button behaves. A real ARIA tablist would mean
+hiding panels, managing aria-selected, roving tabindex and arrow keys — a great
+deal of machinery to reimplement what an anchor already does, and every piece of
+it a way to lock a keyboard user out of content that was on the page all along.
+
+So no role="tablist" either: this is a navigation strip and says so. Calling it
+a tablist while its panels are all visible would be a lie to a screen reader.
+
+Horizontally scrollable below sm rather than wrapping to three lines.
+
+Takes: id, label (the aria-label), items — rows carrying .id and .title, and
+optionally .active.
+{% endcomment %}
+<c-vars id="tabs" label="" class="" items="" />
+<nav {% if label %}aria-label="{{ label }}"{% endif %} class="{{ class }}" {{ attrs }}>
+  <ul class="u-scroll-x flex items-center gap-2 pb-1">
+    {% for item in items %}
+      <li>
+        <a href="#{{ item.id }}" id="{{ id }}-{{ forloop.counter }}"
+           {% if item.active %}aria-current="true"{% endif %}
+           class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-full px-5 text-small font-bold transition
+{% if item.active %} bg-primary u-fixed-paper{% else %} bg-surface u-body-on-ground shadow-card hover:u-on-ground{% endif %}">
+          {{ item.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

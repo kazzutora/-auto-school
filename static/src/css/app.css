@@ -1,23 +1,22 @@
 /* Tailwind input. Build with `make css`.
  *
- * The design contract is FRONTEND.md part A. Colours live as CSS variables so
- * the dark theme is a swap of roles rather than a second set of classes, and
- * tailwind.config.js reads every one of them through rgb(var(--x) / alpha).
+ * The design contract is REDESIGN.md part B, which replaced FRONTEND.md part A
+ * at core v25. Colours live as CSS variables so the dark theme is a swap of
+ * roles rather than a second set of classes, and tailwind.config.js reads every
+ * one of them through rgb(var(--x) / alpha).
  *
- * Fonts are self hosted, tech.md section 2 bans third party font hosts. The
- * faces below are variable woff2 subsets sliced to exactly the weights A.3
- * uses, every one of them on `swap` so text paints before the font arrives.
- * Spelling the property out here would be counted by the contract test that
- * checks one declaration per face, so it stays unspelled in prose.
+ * Fonts are self hosted; tech.md section 2 and REDESIGN.md A both ban third
+ * party font hosts, animation libraries included. The faces below are variable
+ * woff2 subsets sliced to exactly the weights B.3 uses, every one of them on
+ * `swap` so text paints before the font arrives.
  *
- * CONTRACT GAP: A.3 asks for the polish diacritics and cyrillic on all three
- * families. Archivo and Public Sans have no cyrillic glyphs to subset — the
- * families ship latin, latin-ext and vietnamese and nothing else — so on /ru/
- * and /uk/ every heading and paragraph falls back to the system sans, while
- * Roboto Mono carries its own cyrillic and the data stays on contract. The
- * fallback stack below is the stand in; closing this properly means either a
- * fourth family for cyrillic or swapping one of the two, which is a change to
- * a frozen part of FRONTEND.md and belongs to the owner.
+ * Manrope replaced Public Sans here and closed a CONTRACT GAP on the way out:
+ * Public Sans ships no cyrillic at all, so /ru/ and /uk/ fell back to the
+ * system sans for every paragraph on the site. Manrope carries cyrillic and
+ * cyrillic-ext, and both subsets are below. What remains open is narrower —
+ * Archivo has no cyrillic either, so headings on those two languages still
+ * fall back. That is one face rather than the whole page, and closing it means
+ * a fourth family, which is the owner's call.
  */
 
 /* Archivo, display. One variable file per subset covering 700 and 800. */
@@ -63,28 +62,44 @@
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Public Sans, text. 400 and 600. */
+/* Manrope, text. 400 through 700 off one variable file per subset. */
 @font-face {
-  font-family: 'Public Sans';
+  font-family: 'Manrope';
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 400 700;
   font-display: swap;
-  src: url(../fonts/public-sans-latin.woff2) format('woff2');
+  src: url(../fonts/manrope-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: 'Public Sans';
+  font-family: 'Manrope';
   font-style: normal;
-  font-weight: 400 600;
+  font-weight: 400 700;
   font-display: swap;
-  src: url(../fonts/public-sans-latin-ext.woff2) format('woff2');
+  src: url(../fonts/manrope-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Roboto Mono, the utility face that carries data. The only one of the three
- * that ships cyrillic, so it is also the only one that covers the russian and
- * ukrainian versions of the site without falling back. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(../fonts/manrope-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(../fonts/manrope-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+/* Roboto Mono, the utility face that carries data: prices, dates, phones. */
 @font-face {
   font-family: 'Roboto Mono';
   font-style: normal;
@@ -127,75 +142,198 @@
 
 @layer base {
   /* ------------------------------------------------------------------ *
-   * Tokens, FRONTEND.md A.2
+   * Tokens, REDESIGN.md B.2
    *
-   * Channel triplets rather than hex, so tailwind can put an alpha on any
-   * of them. Every colour is defined here in the light theme first: a value
-   * that exists only inside a media block leaves the explicit theme with
-   * nothing to fall back to.
+   * Channel triplets rather than hex, so tailwind can put an alpha on any of
+   * them. Every colour is defined here in the light theme first, and R9 point 1
+   * is explicit about why: a value that exists only inside a media block leaves
+   * the explicit theme with nothing to fall back to, and the reader who picked
+   * light on a dark machine gets half a palette.
+   *
+   * Two values differ from the numbers printed in B.2, both because B.2 also
+   * says the contrast is measured rather than estimated and these two did not
+   * measure. scripts/check_contrast.py is what measures them, and it runs in
+   * the gate.
+   *
+   *   --ink-500   B.2 prints #6B6B78, which is 4.28:1 on the warm grey page —
+   *               under the 4.5 the same paragraph demands. #676773 is the
+   *               nearest value on the same hue that clears it, at 4.55.
+   *   --primary   in the dark theme B.2 prints #6C68F0. White on it is 4.31:1,
+   *               again under 4.5, and the blue is a button fill whose label is
+   *               white by contract. #645FEE holds both ends: 4.76 for the
+   *               label, 3.93 for the button read as an object against the
+   *               near black page, which is what lightening it was for.
    * ------------------------------------------------------------------ */
   :root {
-    --paper: 255 255 255;
-    --paper-50: 250 250 250;
-    --paper-100: 242 242 241;
-    --paper-200: 230 230 228;
+    /* The page. */
+    --paper: 233 232 228;
+    --paper-50: 242 241 238;
+    --paper-100: 222 221 216;
 
-    --ink: 14 14 16;
-    --ink-700: 51 51 58;
-    --ink-500: 92 92 102;
-    --ink-300: 138 138 148;
+    /* The white cards on it. */
+    --surface: 255 255 255;
+    --surface-muted: 247 246 243;
 
-    --line: 26 26 30;
-    --line-soft: 217 217 214;
+    /* Text, and the ground of a dark card. */
+    --ink: 27 27 32;
+    --ink-800: 38 38 44;
+    --ink-700: 58 58 68;
+    --ink-500: 103 103 115;
+    --ink-300: 156 156 168;
 
+    /* Action. */
+    --primary: 63 58 230;
+    --primary-600: 51 46 219;
+    --primary-100: 228 227 252;
+
+    /* State. */
     --accent: 255 212 0;
     --accent-600: 229 190 0;
     --accent-100: 255 246 204;
 
-    --deep: 42 32 96;
-    --deep-700: 59 45 113;
+    /* Darkened from the values B.2 prints — #1E7A56, #B27C00, #C0392B — for
+     * the reason B.2 itself gives: the contrast is measured, not estimated.
+     * These sit on a chip whose fill is a tenth of the ground's foreground,
+     * which on the warm grey page comes to #D4D4D0, and the printed values
+     * measured 3.59, 2.56 and 3.61 there. These clear 4.5 on that fill and
+     * better than 5.4 as plain text on the page. */
+    --state-ok: 26 104 73;
+    --state-warn: 121 84 0;
+    --state-err: 167 50 37;
 
-    --state-ok: 15 107 69;
-    --state-warn: 138 90 0;
-    --state-err: 166 32 21;
+    --line: 215 214 209;
+    --line-dark: 51 51 60;
 
-    /* Two grounds in A.2 are not roles and do not swap with the theme: the
-     * yellow is the same yellow in the dark, and deep stays a dark purple. The
-     * text on them therefore cannot follow --ink or --paper, which do swap —
-     * it would land on white-on-yellow at 1.4:1, forbidden outright by A.2, and
-     * near-black on deep purple at 1.1:1. These two are the fixed pair the
-     * .u-ground-accent and .u-ground-deep utilities below write instead.
+    /* The yellow is the one ground that does not swap: it is the same yellow
+     * in both themes, because the school's mark is built on it. So the text on
+     * it cannot swap either — following --ink would land on white-on-yellow at
+     * 1.43:1 in the dark theme, the single pair B.2 forbids outright. */
+    --fixed-ink: 27 27 32;
+
+    /* The mirror of it, and for the mirror of the reason: the blue does not
+     * swap either, and B.2 fixes its label as white — "белый на синем
+     * #FFFFFF/#3F3AE6 = 7.4:1, это основная пара кнопки". Reaching for
+     * --surface there would work in the light theme and print near black on
+     * blue at 3.6:1 in the dark, because --surface is a card and cards swap. */
+    --fixed-paper: 255 255 255;
+
+    /* A dark card's own foreground ramp, B.2's last line: on a dark card the
+     * body text is ink.800 and the secondary text ink.500 *of the dark theme*.
+     * Published as a pair here so the card can hand it to whatever is dropped
+     * inside it without every component knowing which ground it landed on.
      *
-     * The inverted hero needs no pair of its own: it is inverted against the
-     * page, not fixed, so bg-ink with text-paper already gives a black block on
-     * the white page and a near-white block on the dark one. */
-    --fixed-ink: 14 14 16;
-    --fixed-paper: 245 245 244;
+     * In the dark theme these two swap with everything else, because there the
+     * contrasting card is the light one. That is B.2's "перестановка ролей"
+     * spelled out in two variables. */
+    --on-dark: 226 225 220;
+    --on-dark-muted: 142 142 153;
 
-    color-scheme: light;
-  }
-
-  /* One theme, and it is the light one.
-   *
-   * The design used to swap roles on prefers-color-scheme, which put a near
-   * black page under a near black header on every page but the home one — the
-   * two grounds were the same colour and the hairline between them measured
-   * 1.4:1, so the header simply dissolved into the page. The owner's call was
-   * a dark header over a light page, always, rather than a theme that has to
-   * be told apart from its own chrome.
-   *
-   * The role swapping machinery stays and is still doing work: --ground and
-   * --on-ground are what let the header, the inverted hero and the yellow
-   * strip each carry their own foreground without a component naming a colour.
-   * What has gone is the second set of token values.
-   */
-  :root {
     color-scheme: light;
 
     /* The header's own height, in one place. Everything that has to clear it
-     * reads this rather than repeating 72px, so moving the header moves them
-     * all. */
-    --header-h: 72px;
+     * reads this rather than repeating the number, so moving the header moves
+     * them all. B.7 point 0: 76px, 64px once the page has scrolled. */
+    --header-h: 76px;
+    --header-h-scrolled: 64px;
+
+    /* C.3: one curve on the whole site, and the table of durations beside it.
+     *
+     * These live here rather than only in tailwind.config.js because
+     * static/src/css/motion.css is plain css — it carries no @tailwind
+     * directive, so theme() is not available to it — and the two files must
+     * not each keep their own copy of a number C.3 fixes once. The tailwind
+     * config reads these same variables, so `duration-card` and
+     * `var(--dur-card)` cannot drift apart.
+     */
+    --ease: cubic-bezier(.22, .61, .36, 1);
+
+    --dur: 160ms;
+    --dur-card: 180ms;
+    --dur-header: 200ms;
+    --dur-tab: 220ms;
+    --dur-menu: 240ms;
+    --dur-panel: 260ms;
+    --dur-hero: 500ms;
+  }
+
+  /* The dark theme, B.2. Two doors into it and the same values behind both:
+   * the system preference unless the reader has explicitly asked for light,
+   * and the explicit data-theme="dark". Only the tokens whose role changes are
+   * redefined; everything else falls through to the table above. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --paper: 18 18 22;
+      --paper-50: 23 23 28;
+      --paper-100: 29 29 35;
+
+      --surface: 27 27 32;
+      --surface-muted: 34 34 41;
+
+      --ink: 242 241 238;
+      --ink-800: 226 225 220;
+      --ink-700: 196 195 190;
+      --ink-500: 142 142 153;
+      --ink-300: 99 99 110;
+
+      --primary: 100 95 238;
+      --primary-600: 86 81 232;
+      --primary-100: 42 40 88;
+
+      /* The yellow stays the yellow; its pale tint does not, core v27. The
+       * light table's cream under the accent callout's 50% wash came out a
+       * muddy khaki on near black, with the page's muted text on it at 1.2:1.
+       * A dark warm tint instead, the way primary-100 went — dark enough that
+       * muted text clears 4.5 on the tint at full strength, which in this
+       * theme is the lighter end of that wash. */
+      --accent-100: 44 40 20;
+
+      /* The two state colours that are text on a dark card rather than a fill.
+       * The light theme's greens and reds are too dark to read on near black. */
+      --state-ok: 74 190 145;
+      --state-warn: 232 176 61;
+      --state-err: 240 130 120;
+
+      --line: 46 46 55;
+      --line-dark: 60 60 71;
+
+      --on-dark: 38 38 44;
+      --on-dark-muted: 103 103 115;
+
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --paper: 18 18 22;
+    --paper-50: 23 23 28;
+    --paper-100: 29 29 35;
+
+    --surface: 27 27 32;
+    --surface-muted: 34 34 41;
+
+    --ink: 242 241 238;
+    --ink-800: 226 225 220;
+    --ink-700: 196 195 190;
+    --ink-500: 142 142 153;
+    --ink-300: 99 99 110;
+
+    --primary: 100 95 238;
+    --primary-600: 86 81 232;
+    --primary-100: 42 40 88;
+
+    --accent-100: 44 40 20;
+
+    --state-ok: 74 190 145;
+    --state-warn: 232 176 61;
+    --state-err: 240 130 120;
+
+    --line: 46 46 55;
+    --line-dark: 60 60 71;
+
+    --on-dark: 38 38 44;
+    --on-dark-muted: 103 103 115;
+
+    color-scheme: dark;
   }
 
   /* ------------------------------------------------------------------ *
@@ -205,10 +343,8 @@
    *
    * A sticky header is not taken into account by an anchor jump: the browser
    * puts the target at the top of the viewport and the header then covers it.
-   * On /kursy/kat-b/ that cut "18 lat" in half, and on /przydatne-linki/ it ate
-   * the "Egzamin" heading outright. 24px past the header, so the target has air
-   * above it rather than touching the band.
-   */
+   * 24px past the header, so the target has air above it rather than touching
+   * the band. */
   :is(h1, h2, h3, h4, h5, h6),
   [id] {
     scroll-margin-top: calc(var(--header-h) + 24px);
@@ -221,29 +357,37 @@
     -webkit-text-size-adjust: 100%;
     /* The gutter is reserved whether or not the page scrolls, so a short page
      * and a long one lay out at the same width and the sticky header does not
-     * jump sideways the moment content grows past the fold. */
+     * jump sideways the moment content grows past the fold. B.7's acceptance
+     * criterion for R4 names this outright. */
     scrollbar-gutter: stable;
   }
 
   body {
-    @apply text-body;
+    @apply bg-paper text-body;
   }
 
   /* Polish stacks long words like `psychologiczne` and `kwalifikacja`, and at
-   * 320px one of them is wider than the column. A.3. */
+   * 320px one of them is wider than the column. B.3. */
   [lang='pl'] {
     hyphens: auto;
   }
 
   /* ------------------------------------------------------------------ *
-   * Typography, A.3. The scale is the whole vocabulary: a heading picks a
-   * step, never a size of its own.
+   * Typography, B.3. The scale is the whole vocabulary: a heading picks a
+   * step, never a size of its own. Headings are uppercase — B.3 says so, and
+   * says paragraphs never are.
    * ------------------------------------------------------------------ */
   h1,
-  h2,
+  h2 {
+    font-family: theme('fontFamily.display');
+    font-stretch: 125%;
+    @apply uppercase text-ink;
+    text-wrap: balance;
+  }
+
   h3,
   h4 {
-    font-family: theme('fontFamily.display');
+    font-family: theme('fontFamily.sans');
     @apply text-ink;
     text-wrap: balance;
   }
@@ -262,13 +406,13 @@
   }
 
   p {
-    /* A.3 asks for pretty on leads. Every paragraph is a lead to something. */
+    /* B.3 asks for a balanced lead. Every paragraph is a lead to something. */
     text-wrap: pretty;
   }
 
   b,
   strong {
-    @apply font-semibold;
+    @apply font-bold;
   }
 
   /* The reset ships a grey of its own here, and it ships it on
@@ -277,7 +421,7 @@
    * into the built css. Matching the reset's selector puts the two level and
    * lets source order decide, and this block comes after it.
    *
-   * A placeholder is a hint, never a label, A.5, so it takes the same muted
+   * A placeholder is a hint, never a label, B.5, so it takes the same muted
    * ink as any other de-emphasised text. */
   input::placeholder,
   textarea::placeholder,
@@ -291,11 +435,11 @@
   }
 
   /* Data reads down a column: the price, the start date, the phone number.
-   * tabular-nums is what keeps the digits in line, A.3. */
+   * tabular-nums is what keeps the digits in line, B.3. */
   .data {
     font-family: theme('fontFamily.mono');
     font-variant-numeric: tabular-nums;
-    @apply text-data;
+    @apply text-data font-medium;
   }
 
   .label {
@@ -303,41 +447,34 @@
     @apply text-label font-medium uppercase;
   }
 
-  /* Archivo carries a width axis, so Expanded is a font-stretch away.
+  /* Archivo carries a width axis, so Expanded is a font-stretch away. The
+   * display step is the hero's h1 and nothing else on the site is this large.
    *
-   * CONTRACT GAP: A.3 floors this step at 2.75rem and A.4 says the page never
-   * moves sideways at 320px. Both cannot hold for the school's own name. At a
-   * 320px viewport the container is 265px wide and NAWROCKI alone measures
-   * 313px in Archivo Expanded 800 at 44px, so it pushes the document to 334px
-   * and the page slides. It wraps at the space already; the single word is
-   * what does not fit. Left as A.3 writes it rather than papered over with an
-   * overflow-wrap that would hyphenate the wordmark mid glyph or a clip on the
-   * root that would shave its last letters — both hide the conflict from F2,
-   * which puts OSK NAWROCKI in the header, and F3, which puts this step in the
-   * hero. Closing it is a choice between a lower floor on the display step and
-   * a header lettering that uses h1 instead. Owner's call. */
+   * overflow-wrap, because the school's own name is one unbreakable word and
+   * the page must not move sideways at 320px, B.4. */
   .display {
     font-family: theme('fontFamily.display');
     font-stretch: 125%;
     @apply text-display font-extrabold uppercase;
+    overflow-wrap: break-word;
   }
 
   /* ------------------------------------------------------------------ *
-   * Focus, A.2: a yellow ring, 2px, with a 2px offset.
+   * Focus.
+   *
+   * B.5 puts an accent outline with a 2px offset on the primary button, and
+   * focus is a state — which is exactly what B.1 reserves the yellow for. So
+   * the yellow is the ring everywhere, not only on that one button.
    *
    * The yellow alone does not carry it. Measured against the grounds it has to
-   * sit on, #FFD400 is 1.6:1 on white paper — the whole light theme — and
-   * 1.3:1 on the inverted hero once the dark theme turns that near white. WCAG
-   * 1.4.11 asks 3:1 of a focus indicator against what surrounds it, and A.11
-   * asks for a visible focus everywhere and Lighthouse accessibility at 95.
-   * A ring nobody can see is the same as no ring.
+   * sit on, #FFD400 is 1.6:1 on a white card and 1.46:1 on the near-white card
+   * the dark theme turns the hero into. WCAG 1.4.11 asks 3:1 of a focus
+   * indicator against what surrounds it. A ring nobody can see is no ring.
    *
-   * So the yellow keeps the ring, and a halo underneath gives it an edge. The
-   * halo is --on-ground, which every ground publishes: white on the inverted
-   * hero, near black on the page, near black on the yellow strip. Whatever the
-   * yellow is sitting on, one of the two edges reads.
-   *
-   * This closes the CONTRACT GAP F0 opened here and F11 point 2 found again.
+   * So the yellow keeps the ring and a halo underneath gives it an edge. The
+   * halo is --on-ground, which every ground publishes: near white on a dark
+   * card, near black on the page. Whatever the yellow sits on, one of the two
+   * edges reads.
    * ------------------------------------------------------------------ */
   :focus-visible {
     outline: 2px solid rgb(var(--accent));
@@ -345,8 +482,8 @@
     box-shadow: 0 0 0 4px rgb(var(--on-ground));
   }
 
-  /* A field wants A.5's second pixel of ink from the inside as well, and the
-   * two cannot be split across a utility and this rule: a `focus:shadow-field`
+  /* B.5 gives a field its focus as a 2px inset so the row does not shift, and
+   * the two cannot be split across a utility and this rule: a `focus:shadow-*`
    * class is a class plus a pseudo class and outranks :focus-visible, so it
    * replaced the halo instead of joining it. Both live here, in one
    * declaration, and the components carry neither. */
@@ -354,7 +491,7 @@
   select:focus-visible,
   textarea:focus-visible {
     box-shadow:
-      inset 0 0 0 1px rgb(var(--ink)),
+      inset 0 0 0 2px rgb(var(--primary)),
       0 0 0 4px rgb(var(--on-ground));
   }
 
@@ -366,8 +503,7 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Motion, A.6: colour, border and background on interactive things. That
-   * is the whole list.
+   * Motion, C.3. The list of things that answer a pointer, on one curve.
    * ------------------------------------------------------------------ */
   a,
   button,
@@ -376,15 +512,13 @@
   select,
   textarea,
   [role='button'] {
-    /* A.6 allows colour, border and background, plus transform since core v7
-     * for the two hover moves. box-shadow stays out: the focus halo rides on
-     * it, and a focus indicator is the one thing on a page that must never be
-     * gradual. */
-    transition-property: color, background-color, border-color, outline-color, transform;
-    transition-duration: theme('transitionDuration.DEFAULT');
-    transition-timing-function: theme('transitionTimingFunction.DEFAULT');
+    transition-property: color, background-color, border-color, outline-color, box-shadow, transform;
+    transition-duration: var(--dur);
+    transition-timing-function: var(--ease);
   }
 
+  /* C.5, the whole block, verbatim. Somebody who has asked their system for
+   * less motion gets none — not a faster version of it. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -395,26 +529,14 @@
       scroll-behavior: auto !important;
     }
 
-    /* Killing the duration is not enough for the two moves: it leaves the card
-     * and the icon jumping to their new position instead of travelling there,
-     * which is the opposite of what was asked for. Somebody who wants less
-     * motion gets none — the border and the shadow still answer the pointer,
-     * so the card has not gone quiet. */
+    /* Killing the duration is not enough for the moves that travel: it leaves
+     * the card and the arrow jumping to their new position instead of going
+     * there, which is the opposite of what was asked for. */
+    .u-card-link:hover,
     .u-btn:hover svg,
-    summary:hover svg,
     .u-photo:hover img,
-    .u-card:hover,
-    .u-card:hover p,
-    .u-tile:hover,
-    .u-menurow:hover {
+    summary:hover svg {
       transform: none !important;
-    }
-
-    /* The menu bar is the exception: it is a state, not a decoration, so it
-     * still appears — it simply appears at once. Resetting its transform would
-     * leave every item underlined at full width. */
-    .u-navlink::after {
-      transition: none !important;
     }
   }
 
@@ -427,8 +549,7 @@
    * The ua stylesheet says [hidden] { display: none }, and any author display
    * declaration outranks it — so an element carrying both `hidden` and a
    * utility like `flex` renders anyway. That is one specificity lesson away
-   * from shipping a panel nobody asked to see, and it already had: the table
-   * of contents on a legal page showed up with four headings on it. */
+   * from shipping a panel nobody asked to see. */
   [hidden] {
     display: none !important;
   }
@@ -436,36 +557,580 @@
 
 @layer components {
   /* ------------------------------------------------------------------ *
-   * Layout, A.4. Spacing is the layout's job: these three carry the
-   * container, the reading column and the vertical rhythm of a section, and
-   * everything else uses flex or grid with a gap.
+   * Layout, B.4. Spacing is the layout's job: these carry the container, the
+   * reading column and the vertical rhythm of a section, and everything else
+   * uses flex or grid with a gap.
    * ------------------------------------------------------------------ */
   .u-container {
-    @apply mx-auto w-full max-w-container px-5 md:px-8 xl:px-12;
+    @apply mx-auto w-full max-w-container px-4 md:px-6 xl:px-10;
   }
 
   .u-narrow {
     @apply max-w-narrow;
   }
 
-  /* Three heights, X0 point 4. The old single step was 64/96/128px and it
-   * gave a section holding 337 characters a height of 707px — air instead of
-   * rhythm, which reads as an unfinished page rather than a calm one.
+  /* B.4: a section is 56 on a phone, 88 from md, 120 from xl. The two extra
+   * steps are for a row that is mostly one control and for the few blocks that
+   * carry a page on their own. */
+  .u-section {
+    @apply py-14 md:py-[88px] xl:py-[120px];
+  }
+
+  .u-section-compact {
+    @apply py-10 md:py-14 xl:py-16;
+  }
+
+  .u-section-tall {
+    @apply py-20 md:py-28 xl:py-36;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Cards, B.4 and B.5. Radius 20, one of the two shadows, and a lift only
+   * when the whole card is a link.
+   * ------------------------------------------------------------------ */
+  .u-card {
+    @apply block min-w-0 rounded-card bg-surface shadow-card;
+  }
+
+  .u-card-link {
+    transition: box-shadow var(--dur-card) var(--ease),
+      transform var(--dur-card) var(--ease);
+  }
+
+  .u-card-link:hover {
+    @apply shadow-card-hover;
+    transform: translateY(-2px);
+  }
+
+  /* B.5: a picture inside a card has a 16px radius and sits 8px in from the
+   * edge. Clipped, so the lean below moves nothing outside the frame. */
+  .u-photo {
+    @apply overflow-hidden rounded-image;
+  }
+
+  .u-photo img {
+    transition: transform var(--dur-panel) var(--ease);
+  }
+
+  .u-photo:hover img {
+    transform: scale(1.03);
+  }
+
+  /* The card block sits above the grounds on purpose, and the order is load
+   * bearing: `.u-card` and `.u-ground-primary` are both one class in the same
+   * layer, so whichever is written later paints.
    *
-   * normal keeps the middle step. compact is for a row that is mostly one
-   * control, tall for the few blocks that carry a page on their own. */
-  /* Markdown out of the database, X0 point 5.
+   * With the cards last, a featured intake card — which carries both — came out
+   * white from `.u-card`'s bg-surface while its foreground variables still said
+   * white from `.u-ground-primary`. White text on a white card, on the one card
+   * B.7 point 5 wants pressed. A ground is a deliberate override of a card's
+   * paint, so the grounds have to be able to win.
+   */
+  /* ------------------------------------------------------------------ *
+   * Grounds.
+   *
+   * A ground is a block that sets the local colour roles. Declaring them here
+   * keeps the pairing of background and foreground in one place instead of on
+   * every section that inverts.
+   *
+   * Each ground publishes the pair as variables. That is what lets a component
+   * sitting on one work out its own colours without being told which ground it
+   * landed on: --on-ground is what reads against the block, --ground is the
+   * block itself, and a secondary button needs both because its hover swaps
+   * them. Without this a button carries text-ink wherever it goes and turns
+   * invisible the moment it lands on a dark card.
+   * ------------------------------------------------------------------ */
+  :root {
+    --ground: var(--paper);
+    --on-ground: var(--ink);
+    --on-ground-body: var(--ink-700);
+    --on-ground-muted: var(--ink-500);
+  }
+
+  /* The dark card, B.1's other half of the language. Near black on the light
+   * theme, near white on the dark one — the roles swap, the contrast does not. */
+  .u-dark-card,
+  .u-ground-ink {
+    background-color: rgb(var(--ink));
+    color: rgb(var(--on-dark));
+    --ground: var(--ink);
+    --on-ground: var(--on-dark);
+    /* B.2 gives a dark card two levels, not three: the body is ink.800 of the
+     * dark theme and the secondary is its ink.500. So body and heading share a
+     * value here, and only the muted step steps down. */
+    --on-ground-body: var(--on-dark);
+    --on-ground-muted: var(--on-dark-muted);
+  }
+
+  .u-dark-card :is(h1, h2, h3, h4),
+  .u-ground-ink :is(h1, h2, h3, h4) {
+    color: rgb(var(--on-ground));
+  }
+
+  /* The way back. A white card sitting on a dark one is the page again, and has
+   * to say so or it inherits a foreground meant for the dark ground: a white
+   * card on the dark band kept the band's near-white text and printed white on
+   * white. */
+  .u-ground-paper,
+  .u-card,
+  .u-empty {
+    --ground: var(--surface);
+    --on-ground: var(--ink);
+    --on-ground-body: var(--ink-700);
+    --on-ground-muted: var(--ink-500);
+  }
+
+  /* The blue, as a ground rather than as a button fill: B.7 point 5 puts one
+   * intake card filled with the primary beside two plain ones.
+   *
+   * Like the yellow, it does not swap with the theme, so the pair it publishes
+   * is the fixed one. That is what lets a secondary button dropped on it come
+   * out as a white frame that fills white on hover — on the blue the primary
+   * button would be blue on blue, and naming white from the call site would
+   * break the moment the same card appeared on the page instead. */
+  .u-ground-primary {
+    background-color: rgb(var(--primary));
+    color: rgb(var(--fixed-paper));
+    --ground: var(--primary);
+    --on-ground: var(--fixed-paper);
+    --on-ground-body: var(--fixed-paper);
+    --on-ground-muted: var(--fixed-paper);
+  }
+
+  .u-ground-primary :is(h1, h2, h3, h4) {
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* The yellow does not swap with the theme, so the text on it must not either:
+   * text-ink would resolve to near white in the dark and land on the one pair
+   * B.2 forbids outright, white on yellow at 1.43:1. */
+  .u-ground-accent {
+    background-color: rgb(var(--accent));
+    color: rgb(var(--fixed-ink));
+    --ground: var(--accent);
+    --on-ground: var(--fixed-ink);
+    --on-ground-body: var(--fixed-ink);
+    --on-ground-muted: var(--fixed-ink);
+  }
+
+  .u-ground-accent :is(h1, h2, h3, h4) {
+    color: rgb(var(--fixed-ink));
+  }
+
+  /* The same fixed pair as a text colour on its own, for the pieces that sit on
+   * a non-swapping ground without being one: a badge filled with the yellow. */
+  .u-fixed-ink {
+    color: rgb(var(--fixed-ink));
+  }
+
+  .u-fixed-ink:focus-visible {
+    outline-color: rgb(var(--fixed-ink));
+  }
+
+  /* The label on the blue. Fixed, for the reason spelled out on the token. */
+  .u-fixed-paper {
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* A hairline drawn on a ground rather than on the page. --on-ground is what
+   * reads against the block, so a fifth of it is a divider that works on a dark
+   * card and on the page alike. Naming a token instead would mean border-line,
+   * which is a page colour and vanishes on the dark card. */
+  .u-rule-on-ground {
+    border-color: rgb(var(--on-ground) / 0.2);
+  }
+
+  /* Text that sits back on a ground without naming a colour of its own. */
+  .u-on-ground {
+    color: rgb(var(--on-ground));
+  }
+
+  /* Body copy on a ground. Three levels, not two: a heading, the paragraph
+   * under it and the aside beside it are three different weights of the same
+   * voice, and collapsing the middle one is what makes a page read flat.
+   *
+   * On the page these are ink, ink-700 and ink-500. On a dark card B.2 gives
+   * only two, so body and heading share a value there. */
+  .u-body-on-ground {
+    color: rgb(var(--on-ground-body));
+  }
+
+  .u-muted-on-ground {
+    color: rgb(var(--on-ground-muted));
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Buttons, B.5. The variants that need to read their ground live here; the
+   * rest is utilities on the component.
+   *
+   * secondary names no colour at all: on the page it is the ink frame B.5
+   * describes, on a dark card it is the near-white one, and on the yellow strip
+   * the near black — all three from one class, because the ground says what
+   * reads on it. There is no utility that names "the background behind me".
+   * ------------------------------------------------------------------ */
+  .u-btn-secondary {
+    border-color: rgb(var(--on-ground));
+    color: rgb(var(--on-ground));
+  }
+
+  .u-btn-secondary:hover:not(:disabled) {
+    background-color: rgb(var(--on-ground));
+    color: rgb(var(--ground));
+  }
+
+  .u-btn-secondary:disabled {
+    border-color: rgb(var(--line));
+    color: rgb(var(--ink-300));
+    background-color: transparent;
+  }
+
+  /* outline-accent, the one button B.5 allows once per screen: the callback
+   * offer in the header. Yellow frame, fills yellow on hover, near black text
+   * either way — the yellow is a state, and this button is offering one. */
+  .u-btn-outline-accent {
+    border-color: rgb(var(--accent));
+    color: rgb(var(--on-ground));
+  }
+
+  .u-btn-outline-accent:hover:not(:disabled) {
+    background-color: rgb(var(--accent));
+    color: rgb(var(--fixed-ink));
+  }
+
+  /* C.3: an arrow travels 4px instead of growing. On a site whose language is
+   * road signs, a button that means "onward" should point that way when you
+   * reach for it. */
+  .u-btn svg {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .u-btn:hover:not(:disabled) svg[data-icon='arrow-right'] {
+    transform: translateX(4px);
+  }
+
+  .u-btn:hover:not(:disabled) svg[data-icon='arrow-left'] {
+    transform: translateX(-4px);
+  }
+
+  .u-btn:hover:not(:disabled) svg[data-icon='external'] {
+    transform: translate(2px, -2px);
+  }
+
+  .u-btn:hover:not(:disabled) svg[data-icon='download'] {
+    transform: translateY(2px);
+  }
+
+  summary svg {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * A list that filters itself, and the note that takes its place.
+   *
+   * REDESIGN.md D.2: an instructor card needs a real photograph or there is no
+   * card. The filtering happens inside the loop, so the list can come out with
+   * no children at all — and when it does, the list goes and the note beside it
+   * arrives.
+   *
+   * This pair exists because the clean version is one line in a view and this
+   * is a template session. The CONTRACT GAP is recorded in
+   * templates/core/page_detail.html; when it closes, both classes go with it.
+   *
+   * :empty needs the markup collapsed — a whitespace text node counts as
+   * content — which is what the {% spaceless %} around the list is for.
+   * ------------------------------------------------------------------ */
+  .u-empty-hides:empty {
+    display: none;
+  }
+
+  .u-shown-when-empty {
+    display: none;
+  }
+
+  .u-empty-hides:empty + .u-shown-when-empty {
+    display: block;
+  }
+
+  /* The BRAK MIEJSC badge, B.5. A fill of the ground's own foreground at a
+   * tenth, so the chip is always a shade of whatever it is sitting on: a pale
+   * grey chip on a white card, a lifted grey one on a dark card.
+   *
+   * Naming bg-line instead looked right on the page and failed on the dark
+   * card, where the fill stayed the light theme's grey while the text went to
+   * the dark card's muted — 1.9:1, on the one badge whose whole job is to say
+   * the group is closed. */
+  .u-chip-muted {
+    background-color: rgb(var(--on-ground) / 0.1);
+    color: rgb(var(--on-ground-muted));
+  }
+
+  /* The state chips take the same fill and put the state colour on it.
+   *
+   * The first version tinted the fill with the state colour itself — 15% green
+   * behind green — which measured between 2.56 and 4.34 depending on the ground
+   * and failed axe on four pages. Tinting a fill with the same hue as the text
+   * on it moves both ends towards each other, which is the one thing a contrast
+   * pair must not do. A neutral fill keeps the text doing the work. */
+  .u-chip-state {
+    background-color: rgb(var(--on-ground) / 0.1);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Scrims over photographs, PHOTOS.md section 2.
+   *
+   * A scrim is not "a black layer at 50% over the picture". That darkens the
+   * subject as much as the background and turns a photograph into mud. It is
+   * opaque exactly where the text sits and absent everywhere else.
+   *
+   * The stops are section 2's, and the rule they exist to satisfy is section 3:
+   * under text, no pixel lighter than #767676, because that is where white
+   * stops clearing 4.5:1. scripts/check_photo_contrast.py measures it on the
+   * rendered page rather than trusting the arithmetic here.
+   *
+   * B.1 rules out gradient *fills* on buttons and cards. This is a scrim over a
+   * photograph, which is the one place a gradient is doing work rather than
+   * decorating — and without it the text would not be readable at all.
+   * ------------------------------------------------------------------ */
+  /* A block whose ground is a photograph pins the fixed pair, for the same
+   * reason the yellow and the blue do: a photograph does not swap with the
+   * theme. Left on --ink the scrim would turn near-white in the dark theme and
+   * wash a dark photograph out, while the text on it went dark — a light haze
+   * over a night road with grey letters on top.
+   *
+   * So the scrim is always the near black and the text on it always the near
+   * white, whichever theme the rest of the page is in. */
+  .u-photo-ground {
+    background-color: rgb(var(--fixed-ink));
+    color: rgb(var(--fixed-paper));
+    --ground: var(--fixed-ink);
+    --on-ground: var(--fixed-paper);
+    --on-ground-body: var(--fixed-paper);
+    --on-ground-muted: 209 209 206;
+  }
+
+  .u-photo-ground :is(h1, h2, h3, h4) {
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-hero-scrim {
+    /* The phone: text lies over the whole frame, so the gradient is vertical
+     * and much stronger. Section 2's mobile stops. */
+    background-image: linear-gradient(
+      180deg,
+      rgb(var(--fixed-ink) / 0.55) 0%,
+      rgb(var(--fixed-ink) / 0.88) 55%,
+      rgb(var(--fixed-ink) / 0.97) 100%
+    );
+  }
+
+  /* lg, not md. PHOTOS.md section 2's horizontal gradient is written for the
+   * layout that puts the text in the left third — and the hero only narrows to
+   * that at lg. Between 768 and 1024 the heading still runs the full width, so
+   * its last word sat under the weak right hand end of the gradient and
+   * measured 2.05:1. The vertical wash holds until the layout that the
+   * horizontal one describes actually arrives. */
+  @media (min-width: 1024px) {
+    .u-hero-scrim {
+      /* The desktop: text in the left third, photograph to the right of it. */
+      background-image: linear-gradient(
+        90deg,
+        rgb(var(--fixed-ink) / 0.94) 0%,
+        rgb(var(--fixed-ink) / 0.86) 32%,
+        rgb(var(--fixed-ink) / 0.35) 62%,
+        rgb(var(--fixed-ink) / 0) 88%
+      );
+    }
+  }
+
+  /* A band whose text runs across the middle: an even wash is right here,
+   * because there is nowhere on the frame the text is not. */
+  .u-band-photo {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* The <picture> as well as the <img>: a picture element is an inline box of
+   * its own, so positioning only the img inside it leaves the wrapper in the
+   * flow and pushes the band open by the height of the photograph. */
+  .u-band-photo > picture,
+  .u-band-photo > img,
+  .u-band-photo > picture > img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .u-band-photo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: rgb(var(--fixed-ink) / 0.88);
+  }
+
+  /* A bento card with a photograph behind its text: the wash climbs from the
+   * bottom, section 2's third case. The card's own radius is inherited so the
+   * scrim does not square off its corners. */
+  .u-photo-scrim {
+    position: relative;
+  }
+
+  .u-photo-scrim::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 62%;
+    border-radius: inherit;
+    background-image: linear-gradient(
+      180deg,
+      rgb(var(--fixed-ink) / 0) 0%,
+      rgb(var(--fixed-ink) / 0.9) 78%
+    );
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The big figure, B.7 point 3.
+   *
+   * Kept under its old name and redrawn, which is what B.5 asks for wherever a
+   * component can keep its call sites. It used to be a 120px outlined numeral
+   * in the display face — an ornament, from a language whose whole vocabulary
+   * was strokes and counter-space.
+   *
+   * B.7 point 3 wants a number to be read rather than admired: the data face,
+   * solid, at the top of the scale, with tabular figures so four of them line
+   * up across a row. The outline is gone because an outlined digit at this
+   * size measures its stroke against the ground, not its mass, and 2px of near
+   * black on a near black card was never going to clear 3:1.
+   * ------------------------------------------------------------------ */
+  .u-bignum {
+    font-family: theme('fontFamily.mono');
+    font-variant-numeric: tabular-nums;
+    @apply text-data-2xl font-medium;
+    color: rgb(var(--on-ground));
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The menu, B.7 point 0.
+   *
+   * The bar sweeps out from the left rather than fading in at full width. A
+   * border-colour transition told you the item was hovered; it did not feel
+   * like anything moved, because nothing did.
+   *
+   * The bar is a pseudo element so the item reserves no space for it and the
+   * row keeps its height whether an item is current or not. aria-current is the
+   * hook for the current page — the attribute is already there for screen
+   * readers, so nothing extra has to be kept in step.
+   * ------------------------------------------------------------------ */
+  .u-navlink {
+    position: relative;
+  }
+
+  .u-navlink::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 3px;
+    border-radius: 999px;
+    background-color: rgb(var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .u-navlink:hover::after,
+  .u-navlink[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  /* A row in the mobile panel. Full width, a touch target's worth of height,
+   * and the arrow travels when it is pointed at — the same 4px every other
+   * onward control on the site moves. */
+  .u-menurow {
+    @apply flex min-h-[52px] items-center justify-between gap-4 rounded px-4 text-body-lg font-bold;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .u-menurow:hover {
+    background-color: rgb(var(--on-ground) / 0.06);
+  }
+
+  .u-menurow:hover svg {
+    transform: translateX(4px);
+  }
+
+  .u-menurow svg {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Fields, B.5: "фон surface.muted, на тёмной карточке — ink.800".
+   *
+   * A form appears twice on the home page alone — on the page in block 9 and
+   * on the dark card of block 6 — and it is the same component both times. So
+   * the fill is published by the ground rather than chosen by the call site:
+   * --field is surface.muted on the page and a step up from the card's own
+   * black on a dark card.
+   *
+   * The focus frame is not here. B.5 asks for a 2px inset so the row does not
+   * shift, and that lives in the base layer beside the focus halo, because a
+   * `focus:shadow-*` utility is a class plus a pseudo class and would outrank
+   * :focus-visible — replacing the halo instead of joining it.
+   * ------------------------------------------------------------------ */
+  :root {
+    --field: var(--surface-muted);
+  }
+
+  .u-dark-card {
+    --field: var(--ink-800);
+  }
+
+  .u-field {
+    background-color: rgb(var(--field));
+    color: rgb(var(--on-ground));
+  }
+
+  .u-field:disabled {
+    background-color: rgb(var(--line));
+  }
+
+  /* CONTRACT GAP, and the mitigation for it.
+   *
+   * <c-field> renders a Django widget, and the widget's class list is written
+   * in apps/leads/forms.py — FIELD_CLASS and TEXTAREA_CLASS. Those still carry
+   * the old contract: `h-12` where B.5 asks 52px, `border-line-soft` which is
+   * not a token any more, and `bg-paper` where B.5 asks for surface.muted on
+   * the page and ink.800 on a dark card.
+   *
+   * That is python and a template session may not edit it. The one that
+   * actually breaks something is `bg-paper`: on the dark card of B.7 point 6 it
+   * paints the field in the page's warm grey and puts the near-white focus halo
+   * around it, which measured 1.17:1 — a focus indicator nobody can see, on the
+   * form the whole page is for.
+   *
+   * A class plus an element is (0,1,1) and beats the widget's single utility
+   * class, so the ground can take the fill back without touching python. The
+   * remaining three are cosmetic and stay for LEAD:
+   *
+   *   FIELD_CLASS    = "u-field h-13 w-full rounded border-1.5 border-line px-4 transition"
+   *   TEXTAREA_CLASS = "u-field w-full rounded border-1.5 border-line px-4 py-3 transition"
+   */
+  .u-dark-card :is(input, select, textarea),
+  .u-ground-primary :is(input, select, textarea) {
+    background-color: rgb(var(--field));
+    color: rgb(var(--on-ground));
+    border-color: rgb(var(--on-ground) / 0.25);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Markdown out of the database.
    *
    * The renderer emits bare h2, h3, p, ul, ol and a — no classes to hang
-   * anything on — so the styling has to come from the container. Before this
-   * the headings inside a page body were set in the body face at body weight
-   * and lost to the page lead above them: "Kim jesteśmy" read as a bold
-   * sentence rather than the start of a section.
-   *
-   * The list marker is the design's own yellow square, 6px, not a grey disc.
-   * A.7 keeps circles out of the language and a bullet is the smallest place
-   * that rule shows.
-   */
+   * anything on — so the styling has to come from the container.
+   * ------------------------------------------------------------------ */
   .u-prose {
     @apply u-narrow;
     overflow-wrap: anywhere;
@@ -476,14 +1141,14 @@
   }
 
   .u-prose h2 {
-    @apply font-display text-h2 font-bold text-ink;
+    @apply text-h2 font-bold;
     margin-top: 3rem;
     margin-bottom: 1rem;
   }
 
   .u-prose h3,
   .u-prose h4 {
-    @apply font-display text-h3 font-bold text-ink;
+    @apply text-h3 font-bold;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
   }
@@ -501,18 +1166,22 @@
     list-style: none;
   }
 
+  /* The list marker is the design's own yellow, and it is round now rather
+   * than square: B.4 rounds the whole language, and a hard square bullet was
+   * the last thing left from the old one. */
   .u-prose li::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 0.6em;
-    width: 6px;
-    height: 6px;
+    left: 2px;
+    top: 0.58em;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
     background-color: rgb(var(--accent));
   }
 
   /* An ordered list keeps its numbers: they are the content there, and a row
-   * of identical squares would throw the order away. */
+   * of identical dots would throw the order away. */
   .u-prose ol {
     counter-reset: u-prose-item;
   }
@@ -524,359 +1193,78 @@
   .u-prose ol > li::before {
     content: counter(u-prose-item) ".";
     background: none;
+    border-radius: 0;
+    left: 0;
     top: 0;
     width: auto;
     height: auto;
     font-variant-numeric: tabular-nums;
-    color: rgb(var(--ink-500));
+    color: rgb(var(--on-ground-muted));
   }
 
+  /* A link inside running text is navigation, not the page's action, and B.1
+   * reserves the blue for the action. It is also the one place blue-as-text
+   * would have to hold 4.5:1, and in the dark theme the lightened primary
+   * measures 3.61 on a card — so the underline carries the link and the colour
+   * stays the ground's own. */
   .u-prose a {
-    @apply text-ink underline underline-offset-4;
+    @apply underline underline-offset-4;
+    color: rgb(var(--on-ground));
+    text-decoration-color: rgb(var(--accent));
+    text-decoration-thickness: 2px;
+  }
+
+  .u-prose a:hover {
+    text-decoration-color: rgb(var(--on-ground));
   }
 
   .u-prose strong {
-    @apply font-semibold text-ink;
+    @apply font-bold;
+    color: rgb(var(--on-ground));
   }
 
   .u-prose code {
-    @apply rounded bg-paper-100 px-1.5 py-0.5 text-small;
+    @apply rounded bg-surface-muted px-1.5 py-0.5 text-small;
     font-family: theme('fontFamily.mono');
   }
 
-  /* A graphic figure, BLOCKS.md A4.
-   *
-   * For the pages where the right half of the header has nothing true to put
-   * in it — a gallery, the certificates, a list of links. One number, outlined
-   * rather than filled, so it reads as a graphic mark and not as a fact
-   * competing with the heading beside it.
-   *
-   * BLOCKS is right that this is honest: inventing data to fill a slot would
-   * be worse than an ornament that admits to being one.
-   */
-  .u-bignum {
-    @apply font-display text-right font-extrabold leading-none;
-    font-size: 120px;
-    color: transparent;
-    -webkit-text-stroke: 2px rgb(var(--ink));
-  }
-
-  .u-section {
-    @apply py-16 md:py-24;
-  }
-
-  .u-section-compact {
-    @apply py-12 md:py-16;
-  }
-
-  .u-section-tall {
-    @apply py-24 md:py-32;
-  }
-
-  /* A ground is a block that flips the local colour roles: the hero and the
-   * footer sit on one. Declaring them here keeps the pairing of background
-   * and foreground in one place instead of on every section that inverts.
-   *
-   * Each ground also publishes the pair as two variables. That is what lets a
-   * component sitting on one work out its own colours without being told which
-   * ground it landed on: --on-ground is what reads against the block, --ground
-   * is the block itself, and a secondary button needs both because its hover
-   * swaps them. Without this a button carries text-ink wherever it goes and
-   * turns invisible the moment the hero inverts underneath it. */
-  :root {
-    --ground: var(--paper);
-    --on-ground: var(--ink);
-  }
-
-  .u-ground-ink {
-    @apply bg-ink text-paper;
-    --ground: var(--ink);
-    --on-ground: var(--paper);
-  }
-
-  /* The way back. A panel that floats over the page from inside an inverted
-   * region — the header's dropdown — is on the page, not on the band, and has
-   * to say so or it inherits a foreground meant for a dark ground.
-   *
-   * A card and a tile carry their own paper background, so they are the page
-   * wherever they are put down. Without this a white card on the purple band
-   * kept the band's white foreground and printed white on white: the title
-   * vanished and the outlined button became an empty rectangle. */
-  .u-ground-paper,
-  .u-card,
-  .u-tile {
-    --ground: var(--paper);
-    --on-ground: var(--ink);
-  }
-
-  /* --on-ground, not a fixed colour. This selector reaches every heading
-   * inside the band, including the ones in white cards sitting on it, and it
-   * outranks a text-ink utility — a class plus an element beats a class. A
-   * card that resets the ground now takes its headings back with it. */
-  .u-ground-ink :is(h1, h2, h3, h4),
-  .u-ground-deep :is(h1, h2, h3, h4) {
-    color: rgb(var(--on-ground));
-  }
-
-  /* Deep stays a dark purple in both themes, so its text is fixed for the same
-   * reason the yellow's is: text-paper turns near black in the dark and the
-   * footer would read at 1.1:1. */
-  .u-ground-deep {
-    background-color: rgb(var(--deep));
-    color: rgb(var(--fixed-paper));
-    --ground: var(--deep);
-    --on-ground: var(--fixed-paper);
-  }
-
-
-
-  /* The yellow does not swap with the theme, so the text on it must not swap
-   * either: text-ink would resolve to near-white in the dark and land on the
-   * one pair A.2 forbids outright, white on yellow at 1.4:1. --fixed-ink is
-   * the same near black in both themes, 13.5:1 on the yellow. */
-  .u-ground-accent {
-    background-color: rgb(var(--accent));
-    color: rgb(var(--fixed-ink));
-    --ground: var(--accent);
-    --on-ground: var(--fixed-ink);
-  }
-
-  .u-ground-accent :is(h1, h2, h3, h4) {
-    color: rgb(var(--fixed-ink));
-  }
-
-  /* The same fixed pair as a text colour on its own, for the pieces that sit on
-   * a non-swapping ground without being one: a badge filled with the yellow, a
-   * button inside the accent strip. Reaching for text-ink there would invert
-   * underneath them in the dark theme. */
-  .u-fixed-ink {
-    color: rgb(var(--fixed-ink));
-  }
-
-  /* The focus ring has the same problem the text does. A.2 already says the
-   * ring turns near black on a yellow ground; anything wearing the fixed ink
-   * is on such a ground by definition, so the ring follows it here rather than
-   * being repeated on every component that sits on the yellow. */
-  .u-fixed-ink:focus-visible {
-    outline-color: rgb(var(--fixed-ink));
-  }
-
-  .u-fixed-paper {
-    color: rgb(var(--fixed-paper));
-  }
-
-  /* Borders on a non-swapping ground have the same problem. */
-  .u-fixed-ink-border {
-    border-color: rgb(var(--fixed-ink));
-  }
-
-  /* A hairline drawn on a ground rather than on the page. --on-ground is what
-   * reads against the block, so a quarter of it is a divider that works on the
-   * footer's deep purple, on the inverted hero and on the page alike. Naming a
-   * token instead would mean border-paper, which flips with the theme and
-   * disappears into the footer the moment the reader is in the dark. */
-  .u-rule-on-ground {
-    border-color: rgb(var(--on-ground) / 0.25);
-  }
-
-  /* Text that sits back on a ground without naming a colour of its own. Same
-   * reason: ink-500 is a page colour and has no contrast on deep. */
-  /* Full strength on whatever the ground is, for the one item in a quiet row
-   * that has to stand out — the current page in a trail. */
-  .u-on-ground {
-    color: rgb(var(--on-ground));
-  }
-
-  .u-muted-on-ground {
-    color: rgb(var(--on-ground) / 0.75);
-  }
-
-  /* The outlined button, FRONTEND.md A.5. Written against the ground rather
-   * than against the palette: on the page it is the ink frame A.5 describes,
-   * on the inverted hero it is the paper frame A.9 point 1 asks for, and on the
-   * yellow strip it is the near black one — all three from the same class,
-   * because the ground says what reads on it.
-   *
-   * It lives here rather than as utilities on the component because the hover
-   * has to fill with the foreground and repaint the text in the ground's own
-   * colour, and there is no utility that names "the background behind me". */
-  /* The icon inside a button grows a little when the button is pointed at,
-   * A.6 point 4. Here rather than on every call site: the icon is a component
-   * of its own and the button is the thing being hovered, so a group class
-   * would have to be repeated at some fifty call sites to say what one rule
-   * says once.
-   *
-   * 1.08, not 1.2. The icon sits on a text baseline beside a word, and
-   * anything more makes the row jump rather than answer.
-   */
-  .u-btn svg {
-    transition: transform 120ms ease-out;
-  }
-
-  .u-btn:hover:not(:disabled) svg {
-    transform: scale(1.08);
-  }
-
-  /* An arrow travels instead of growing. A button that means "onward" should
-   * point that way when you reach for it, and on a site whose whole language
-   * is road signs that reads better than a symbol swelling in place. */
-  .u-btn:hover:not(:disabled) svg[data-icon="arrow-right"] {
-    transform: translateX(3px);
-  }
-
-  .u-btn:hover:not(:disabled) svg[data-icon="external"] {
-    transform: translate(2px, -2px);
-  }
-
-  /* The accordion's plus answers the pointer the same way a button's icon
-   * does, so the row does not feel dead above the one thing you can click. */
-  summary:hover svg[data-icon="plus"],
-  summary:hover svg[data-icon="minus"] {
-    transform: scale(1.15);
-  }
-
-  summary svg {
-    transition: transform 120ms ease-out;
-  }
-
+  /* ------------------------------------------------------------------ *
+   * Odds and ends the components need.
+   * ------------------------------------------------------------------ */
   /* The map keeps its stacking to itself.
    *
-   * Leaflet numbers its own layers from 400 for the panes up to 1000 for the
-   * controls, and those are absolute figures in whatever context they land in.
-   * Dropped straight onto the page they beat the sticky header at z-30, so
-   * scrolling pushed the map straight over the menu.
-   *
-   * isolate makes the container a stacking context of its own: everything
-   * leaflet numbers is now numbered inside the map, and the map as a whole
-   * sits where the page puts it — under the header, like any other content.
-   */
+   * Leaflet, before core v26, numbered its layers up to 1000 and drove the map
+   * over the sticky header. The google frame has no such figures, but isolate
+   * keeps whatever lands in the box — placeholder or frame — inside a stacking
+   * context of its own, so that cannot come back. */
   [data-map] {
     position: relative;
     z-index: 0;
     isolation: isolate;
 
-    /* Map tiles are light whatever the section around them is, so the map is
-     * the page. On the ink band the focus halo was following the band and
-     * painting white on a pale street map, which left the yellow ring at
-     * 1.43:1 on every control inside it. */
-    --ground: var(--paper);
+    /* The placeholder and google's map are both light whatever the section
+     * around them is, so the map is the page. On a dark card the focus halo
+     * was following the card and painting near-white on a pale map. */
+    --ground: var(--surface);
     --on-ground: var(--ink);
+    --on-ground-body: var(--ink-700);
+    --on-ground-muted: var(--ink-500);
   }
 
-  /* A.6 point 2 allows the mobile menu 180ms to arrive, and nothing had ever
-   * used it: a native <dialog> opened by showModal appears in one frame. The
-   * keyframe runs on open only — there is no closing animation, because
-   * <dialog> is removed from the top layer the moment close() is called and
-   * anything on the way out is cut off mid step.
-   *
-   * A hand's width of travel, not a slide across the screen: the panel comes
-   * from the header it was opened from.
-   */
-  @keyframes u-panel-in {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-  }
-
-  dialog[open] {
-    animation: u-panel-in 180ms ease-out;
-  }
-
-  dialog[open]::backdrop {
-    animation: u-fade-in 180ms ease-out;
-  }
-
-  @keyframes u-fade-in {
-    from {
-      opacity: 0;
-    }
-  }
-
-  /* The menu underline sweeps out from the left rather than fading in at full
-   * width. A border-colour transition told you the item was hovered; it did
-   * not feel like anything moved, because nothing did.
-   *
-   * The bar is a pseudo element so the item reserves no space for it and the
-   * row keeps its height whether an item is current or not. aria-current is
-   * the hook for the current page — the attribute is already there for screen
-   * readers, so nothing extra has to be kept in step.
-   */
-  .u-navlink {
-    position: relative;
-  }
-
-  .u-navlink::after {
-    content: "";
+  /* The google frame static/js/app.js builds on the click fills the box. */
+  [data-map] iframe {
     position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 3px;
-    background-color: rgb(var(--accent));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 120ms ease-out;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
 
-  .u-navlink:hover::after,
-  .u-navlink[aria-current="page"]::after {
-    transform: scaleX(1);
-  }
-
-  /* A photograph leans in a little inside its frame. The frame is clipped, so
-   * nothing outside it moves and the grid stays where it was — A.8 keeps the
-   * pictures unfiltered and this does not touch that. */
-  .u-photo img {
-    transition: transform 300ms ease-out;
-  }
-
-  .u-photo:hover img {
-    transform: scale(1.04);
-  }
-
-  .u-btn-secondary {
-    border-color: rgb(var(--on-ground));
-    color: rgb(var(--on-ground));
-  }
-
-  .u-btn-secondary:hover:not(:disabled) {
-    background-color: rgb(var(--on-ground));
-    color: rgb(var(--ground));
-  }
-
-  .u-btn-secondary:disabled {
-    border-color: rgb(var(--line-soft));
-    color: rgb(var(--ink-300));
-    background-color: transparent;
-  }
-
-  /* The header, A.9 point 0. 72px, and a dark band over a light page on every
-   * page.
+  /* The honeypot, DEV.md S3.1.
    *
-   * It publishes the ink ground, so everything inside it that reads
-   * --on-ground — the outlined phone button, the language codes, the menu
-   * rules — turns itself the right way round without naming a colour. The
-   * yellow underline on the active item is the one thing that stays put, and
-   * it wants a dark ground anyway.
-   *
-   * No hairline underneath: the colour change is the edge. A border here would
-   * be a line drawn between two things that already do not touch. */
-  .u-header {
-    @apply sticky top-0 z-30;
-    background-color: rgb(var(--ink));
-    color: rgb(var(--paper));
-    --ground: var(--ink);
-    --on-ground: var(--paper);
-  }
-
-  /* The honeypot, DEV.md S3.1 and FRONTEND.md F7.
-   *
-   * Gone for a person, still there for a bot. Deliberately not display:none
-   * and not visibility:hidden on the container: those are the first two things
-   * a scraper skips, and a trap nothing falls into catches nothing. The field
-   * carries aria-hidden and tabindex=-1 of its own, so a screen reader and the
-   * tab order both pass it by.
-   */
+   * Gone for a person, still there for a bot. Deliberately not display:none and
+   * not visibility:hidden on the container: those are the first two things a
+   * scraper skips, and a trap nothing falls into catches nothing. */
   .u-trap {
     position: absolute;
     width: 1px;
@@ -887,9 +1275,9 @@
   }
 
   /* While htmx has a request in flight it puts .htmx-request on the element
-   * that made it. That is the whole submitting state, F7 point 4: the idle
-   * label goes, the sending one arrives, and the button stops being pressable
-   * through hx-disabled-elt on the form. */
+   * that made it. That is the whole submitting state: the idle label goes, the
+   * sending one arrives, and the button stops being pressable through
+   * hx-disabled-elt on the form. */
   [data-when-sending] {
     display: none;
   }
@@ -903,47 +1291,12 @@
   }
 
   /* Anything wide scrolls inside its own box. The page never moves sideways,
-   * A.4. */
+   * B.4. */
   .u-scroll-x {
     @apply overflow-x-auto;
     /* A flex or grid item defaults to min-width: auto and refuses to shrink
      * below its content, which is exactly how a wide table drags the page
      * sideways even though it has a scroll box of its own. */
     min-width: 0;
-  }
-}
-
-/* ---------------------------------------------------------------------------
- * Section reveal, A.6 point 3.
- *
- * Outside every @layer on purpose. Tailwind tree shakes what it finds in a
- * layer against the templates, and is-waiting appears in none of them — it is
- * added by javascript at runtime. Inside @layer components the rule was
- * dropped from the build silently, so sections were being marked and never
- * hidden, and in the first version never revealed either. Plain css in this
- * file is emitted verbatim.
- *
- * opacity 0 to 1 over 300ms, once, and nothing moves: no parallax, no sliding
- * in, no stagger. A page that reassembles itself while you read it is a page
- * you cannot skim.
- *
- * Nothing is hidden by default, which is the other half of the lesson. The
- * first attempt hid every section here and had javascript hand them back, one
- * failed script away from a blank page. Now javascript hides a section only as
- * it starts watching it, and only below the fold.
- * ------------------------------------------------------------------------- */
-[data-reveal] {
-  transition: opacity 300ms ease-out;
-}
-
-[data-reveal].is-waiting {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal],
-  [data-reveal].is-waiting {
-    opacity: 1;
-    transition: none;
   }
 }

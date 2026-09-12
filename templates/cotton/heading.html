@@ -2,21 +2,22 @@
 Section heading, tech.md section 7.
 
 The scale lives in the base layer, so a heading here picks its level and adds
-nothing: A.3 says a heading takes a step of the scale, never a size of its own.
+nothing: B.3 says a heading takes a step of the scale, never a size of its own.
 The eyebrow is label typography, which is the mono face, uppercase, tracked.
 
-A.3 also says exactly one h1 per page and no skipped levels. That is the page's
+B.3 also says exactly one h1 per page and no skipped levels. That is the page's
 job, not the component's; this one renders the level it is handed.
+
+The 32px rule that used to sit above every h2 is gone. It came from the old
+contract, where the page was one white sheet with no grounds on it and a
+hairline was the only thing that could say "a new section starts here" without
+a colour or a box. B.2 and B.4 replaced that with real grounds and real cards —
+the seam between a warm grey band and a white one says it now, and the little
+line above every heading read as a leftover from a language the page no longer
+speaks.
 {% endcomment %}
 <c-vars level="2" eyebrow="" />
 {% if eyebrow %}<p class="label mb-3 u-muted-on-ground">{{ eyebrow }}</p>{% endif %}
-{# A 32px mark above every section heading. It is the smallest thing that can
-   say "a new section starts here" without a colour, a box or a shadow, and on
-   a long white page it is what gives the eye somewhere to land. Level 1 has
-   the eyebrow above it already and needs no second mark. #}
-{% if level != '1' and level != 1 %}
-  <span aria-hidden="true" class="mb-4 block h-0.5 w-8 bg-current opacity-40"></span>
-{% endif %}
 {% if level == '1' or level == 1 %}<h1 {{ attrs }}>{{ slot }}</h1>
 {% elif level == '3' or level == 3 %}<h3 {{ attrs }}>{{ slot }}</h3>
 {% elif level == '4' or level == 4 %}<h4 {{ attrs }}>{{ slot }}</h4>

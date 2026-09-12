@@ -1,0 +1,33 @@
+<c-vars title="" phone="" href="" action="" class="" />
+{% comment %}
+Empty state, BLOCKS.md B8, redrawn on REDESIGN.md B.4.
+
+What a section shows when the owner has not supplied its content yet and the
+section still has to exist — the fleet photographs, for one. The rule elsewhere
+is that a section with no data does not render at all; this is for the handful
+where the reader came looking for exactly that thing and deserves a phone
+number rather than a gap.
+
+A dashed frame and no shadow, because it reads as a placeholder rather than as a
+card that failed to load. R8 leans on it: an instructor with no real photograph
+renders this instead, and part D is unambiguous that a stock portrait with a
+caption naming a person is a forgery rather than a design choice.
+
+Takes: title, phone, href, action (the label on the button).
+{% endcomment %}
+{# u-empty: the panel carries its own light background, so it is the page
+   wherever it is put down. Without that, one dropped on a dark section kept
+   the section's near-white foreground and printed white on near-white — which
+   is what happened to "Zdjęcia aut w przygotowaniu" the moment the cars block
+   took the page's one dark ground. #}
+<div class="u-empty flex flex-col items-start gap-4 rounded-card border-1.5 border-dashed border-line bg-surface-muted p-8 {{ class }}" {{ attrs }}>
+  {% if title %}<p class="font-bold u-on-ground">{{ title }}</p>{% endif %}
+  {% if slot %}<div class="u-narrow u-muted-on-ground">{{ slot }}</div>{% endif %}
+  {% if phone %}
+    <c-button variant="secondary" href="tel:{{ phone|cut:' ' }}">
+      <c-icon name="phone" size="sm" /> <span class="data">{{ phone }}</span>
+    </c-button>
+  {% elif href %}
+    <c-button variant="secondary" href="{{ href }}">{{ action }}</c-button>
+  {% endif %}
+</div>

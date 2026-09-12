@@ -129,15 +129,24 @@ jobs:
         run: python manage.py makemigrations --check --dry-run
 
       - name: Build the stylesheet
-        # The size budget in tests/contracts/test_asset_budgets.py measures the
-        # built file, FRONTEND.md A.11. Without this step it has nothing to
-        # measure and skips, which is a gate that does not gate. Same standalone
-        # binary the tailwind stage of the Dockerfile uses: no node in CI either.
+        # The size budget measures the built file, REDESIGN.md C.6. Without this
+        # step it has nothing to measure and skips, which is a gate that does
+        # not gate. Same standalone binary the tailwind stage of the Dockerfile
+        # uses: no node in CI either.
         run: |
           RELEASE="https://github.com/tailwindlabs/tailwindcss/releases/download"
           curl -fsSL -o ./tailwindcss "$RELEASE/v$TAILWIND_VERSION/tailwindcss-linux-x64"
           chmod +x ./tailwindcss
           ./tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
+          ./tailwindcss -i static/src/css/motion.css -o static/css/motion.css --minify
+
+      - name: Asset budget and contrast
+        # REDESIGN.md R2 point 3 and R9 point 2. Both are gates: the first fails
+        # the build when the css or js grows past C.6, the second when a pair of
+        # tokens the design actually puts on screen drops under 4.5:1.
+        run: |
+          python scripts/check_budget.py
+          python scripts/check_contrast.py
 
       - name: Tests
         # e2e runs against the built image in its own job.
@@ -195,6 +204,7 @@ jobs:
             "https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64"
           chmod +x /usr/local/bin/tailwindcss
           tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
+          tailwindcss -i static/src/css/motion.css -o static/css/motion.css --minify
 
       - name: End to end
         # Host networking so the container reaches the service containers, which

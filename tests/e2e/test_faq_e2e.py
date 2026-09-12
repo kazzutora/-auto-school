@@ -7,7 +7,7 @@ the one thing no server side assertion can show.
 from collections.abc import Iterator
 
 import pytest
-from playwright.sync_api import Browser, Page
+from playwright.sync_api import Browser, Page, expect
 
 from apps.links.models import Faq
 
@@ -46,7 +46,11 @@ def test_the_accordion_opens_without_javascript(
 
     no_js_page.get_by_text("Od jakiego wieku mogę zapisać się na kurs?").click()
 
-    assert answer.is_visible()
+    # expect(), not a bare is_visible(). The panel opens over 260ms now —
+    # REDESIGN.md C.3 row 8, animated on ::details-content — so at the instant
+    # after the click its box is still zero high and playwright reads that as
+    # hidden. expect() polls; the bare assertion measured one frame.
+    expect(answer).to_be_visible()
 
 
 def test_the_accordion_opens_with_javascript_too(live_server, page: Page, questions: None) -> None:
@@ -58,7 +62,11 @@ def test_the_accordion_opens_with_javascript_too(live_server, page: Page, questi
 
     page.get_by_text("Co to jest PKK i gdzie go otrzymam?").click()
 
-    assert answer.is_visible()
+    # expect(), not a bare is_visible(). The panel opens over 260ms now —
+    # REDESIGN.md C.3 row 8, animated on ::details-content — so at the instant
+    # after the click its box is still zero high and playwright reads that as
+    # hidden. expect() polls; the bare assertion measured one frame.
+    expect(answer).to_be_visible()
 
 
 def test_the_rows_open_one_by_one(live_server, page: Page, questions: None) -> None:

@@ -1,33 +1,41 @@
 """The seed is the single source of fixtures, DEV.md S0.8."""
 
-import pytest
-from django.core.files.storage import default_storage
+from decimal import Decimal
 
-from apps.core.models import OpeningHours, Page, SiteSettings
-from apps.courses.models import Course, CourseIntake, PriceItem
+import pytest
+
+from apps.core.models import DownloadFile, OpeningHours, Page, PassRate, SiteSettings
+from apps.courses.models import Course, PriceItem
 from apps.gallery.models import Certificate, GalleryImage
 from apps.links.models import Faq, UsefulLink
 from apps.people.models import Instructor, Vehicle
 from apps.reviews.models import Testimonial
-from scripts.seed import TODO, owner_data_gaps, run
+from scripts.seed import (
+    CONFIRMED_PASS_RATE_YEAR,
+    PRICE_ITEMS,
+    TODO,
+    owner_data_gaps,
+    run,
+)
 
 pytestmark = pytest.mark.django_db
 
-# DEV.md S0.8 spells out how much of everything the seed produces.
+# What the seed produces for this client. tech.md section 1: one category, ten
+# priced lines, one confirmed year of results, five documents.
 EXPECTED_ROWS = {
-    Course: 15,  # 9 licence + 4 professional + psychotests + forklifts
-    CourseIntake: 6,
-    PriceItem: 6,
-    Instructor: 4,
-    Vehicle: 5,
-    GalleryImage: 12,
-    Certificate: 11,
-    UsefulLink: 12,
+    Course: 1,
+    PriceItem: len(PRICE_ITEMS),
+    PassRate: 1,
+    DownloadFile: 5,
+    UsefulLink: 6,
     Faq: 8,
-    Testimonial: 3,
-    Page: 3,
-    OpeningHours: 14,  # two departments, seven days each
+    Page: 4,
+    OpeningHours: 7,  # one department, seven days
 }
+
+# What the seed deliberately does not create. Every one of these would be either
+# somebody else's property or a fact nobody supplied.
+EXPECTED_EMPTY = (Instructor, Vehicle, GalleryImage, Certificate, Testimonial)
 
 
 def counts() -> dict[str, int]:
@@ -44,6 +52,16 @@ def test_seed_produces_the_documented_volume(seeded: None) -> None:
     assert SiteSettings.objects.count() == 1
 
 
+@pytest.mark.parametrize("model", EXPECTED_EMPTY, ids=[m.__name__ for m in EXPECTED_EMPTY])
+def test_the_seed_invents_no_people_pictures_or_reviews(seeded: None, model: type) -> None:
+    """The photographs on the old site are the school's, not ours.
+
+    A placeholder instructor is worse than an absent section: the section knows
+    how to not render, and a made up name does not know it is made up.
+    """
+    assert model.objects.count() == 0
+
+
 def test_seed_is_idempotent(seeded: None) -> None:
     """Running twice must not duplicate a single row."""
     before = counts()
@@ -51,60 +69,101 @@ def test_seed_is_idempotent(seeded: None) -> None:
     assert counts() == before
 
 
-def test_rerunning_does_not_pile_up_media_files(seeded: None) -> None:
-    """Re-saving an ImageField would store a new suffixed copy each time."""
+def test_the_first_run_is_already_complete(seeded: None) -> None:
+    """update_or_create's create_defaults replaces defaults, it does not add.
 
-    def media_files() -> set[str]:
-        found: set[str] = set()
-        for folder in ("gallery", "certificates", "people", "vehicles"):
-            if default_storage.exists(folder):
-                found |= {f"{folder}/{name}" for name in default_storage.listdir(folder)[1]}
-        return found
+    Splitting the two without merging left a freshly created course with no
+    kind, no title and no price until somebody happened to seed twice — which
+    every developer does and no fresh deploy does.
+    """
+    course = Course.objects.get(slug="kat-b")
 
-    before = media_files()
-    assert before
-    run()
-    assert media_files() == before
-
-
-def test_courses_cover_the_slugs_the_redirect_table_points_at(seeded: None) -> None:
-    """tech.md section 4.8 sends every legacy url at one of these."""
-    expected = {
-        "kat-am",
-        "kat-a1",
-        "kat-a2",
-        "kat-a",
-        "kat-b",
-        "kat-be",
-        "kat-c",
-        "kat-ce",
-        "kat-d",
-        "szkolenia-okresowe",
-        "kwalifikacja-wstepna",
-        "kwalifikacja-wstepna-przyspieszona",
-        "adr",
-        "badania-psychologiczne",
-        "wozki-widlowe",
-    }
-    assert set(Course.objects.values_list("slug", flat=True)) == expected
+    assert course.kind == Course.Kind.LICENSE
+    assert course.code == "B"
+    assert course.title
+    assert course.price_gross == Decimal("3700.00")
+    assert course.entitlements.strip()
+    assert course.requirements.strip()
 
 
-def test_psychology_hours_are_the_ones_we_actually_know(seeded: None) -> None:
-    """tech.md section 16: tuesday and friday 8:00-16:00, everything else closed."""
-    rows = {
-        row.weekday: row
-        for row in OpeningHours.objects.filter(department=OpeningHours.DEPT.PSYCHOLOGY)
-    }
-    for weekday in range(7):
-        open_day = weekday in (1, 4)
-        assert rows[weekday].is_closed is not open_day
+def test_the_offer_is_one_category(seeded: None) -> None:
+    """tech.md section 1: this school teaches B and nothing else."""
+    assert set(Course.objects.filter(is_active=True).values_list("slug", flat=True)) == {"kat-b"}
+
+
+def test_every_published_price_is_on_the_record(seeded: None) -> None:
+    """tech.md section 1, transcribed to the złoty. No figure is rounded here."""
+    prices = dict(PriceItem.objects.values_list("title_pl", "price_gross"))
+
+    assert prices["Kurs kategorii B"] == Decimal("3700.00")
+    assert prices["Kurs przyspieszony"] == Decimal("4300.00")
+    assert prices["Skrzynia automatyczna"] == Decimal("4300.00")
+    assert prices["Jazda doszkalająca — manual"] == Decimal("160.00")
+    assert prices["Jazda doszkalająca — manual, dla naszych kursantów"] == Decimal("140.00")
+    assert prices["Jazda doszkalająca — automat"] == Decimal("140.00")
+    assert prices["Badanie lekarskie"] == Decimal("200.00")
+    assert prices["Egzamin państwowy"] == Decimal("230.00")
+    assert prices["Zaświadczenie o zameldowaniu"] == Decimal("17.00")
+    assert prices["Dowóz na egzamin"] == Decimal("0.00")
+
+
+def test_the_confirmed_year_carries_the_schools_own_counts(seeded: None) -> None:
+    entry = PassRate.objects.get(year=CONFIRMED_PASS_RATE_YEAR)
+
+    assert (entry.students, entry.passed_1st) == (92, 68)
+    assert (entry.passed_2nd, entry.passed_3rd, entry.passed_4th) == (16, 3, 3)
+
+
+def test_office_hours_say_by_arrangement_rather_than_inventing_a_schedule(seeded: None) -> None:
+    """The school publishes no opening hours, only "ustal telefonicznie".
+
+    Inventing 9-17 is the one lie on the page a visitor can catch by turning up.
+    """
+    rows = OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE)
+
+    assert rows.count() == 7
+    for row in rows:
+        assert row.is_closed
+        assert row.note.strip()
+
+
+def test_there_is_no_psychology_lab(seeded: None) -> None:
+    """The previous client had one; this one does not, so the table is empty."""
+    assert not OpeningHours.objects.filter(department=OpeningHours.DEPT.PSYCHOLOGY).exists()
+
+
+def test_documents_are_created_without_files(seeded: None) -> None:
+    """The pdfs are the school's and are not in this repository.
+
+    The rows exist so the admin has somewhere to upload them; the selector keeps
+    them off the page until one arrives, which is what stops a "Pobierz" button
+    pointing at nothing.
+    """
+    from apps.core.selectors import published_downloads
+
+    assert DownloadFile.objects.count() == 5
+    assert not published_downloads().exists()
 
 
 def test_no_synthetic_review_can_reach_a_page(seeded: None) -> None:
-    """tech.md section 4.7 forbids invented reviews, so placeholders stay unpublished."""
-    assert Testimonial.objects.filter(is_published=True).count() == 0
-    for review in Testimonial.objects.all():
-        assert review.text.startswith(TODO)
+    """tech.md section 4.7 forbids invented reviews.
+
+    The school's own "110 opinii, 96% bardzo dobrych" is prose with no source
+    behind it, so no Testimonial is created at all.
+    """
+    assert Testimonial.objects.count() == 0
+
+
+def test_no_fabricated_identity_reaches_site_settings(seeded: None) -> None:
+    """The NIP and the founding year are not published anywhere. They stay empty.
+
+    A guessed tax number would land in the DrivingSchool json-ld, which is the
+    worst possible place to be wrong.
+    """
+    site = SiteSettings.get_solo()
+
+    assert site.nip == ""
+    assert site.founded_year is None
 
 
 def test_bank_account_is_not_public(seeded: None) -> None:
@@ -118,13 +177,27 @@ def test_every_useful_link_explains_itself(seeded: None) -> None:
         assert link.description.strip()
 
 
-def test_every_gallery_image_has_an_alt(seeded: None) -> None:
-    for image in GalleryImage.objects.all():
-        assert image.alt.strip()
+def test_the_legal_pages_still_carry_their_marker(seeded: None) -> None:
+    """The privacy policy is the owner's text to approve, not ours to write."""
+    assert Page.objects.filter(body__contains=TODO).count() == 2
 
 
 def test_gaps_are_reported_while_owner_data_is_missing(seeded: None) -> None:
     """The report is the mechanism, so it has to actually find something."""
     gaps = owner_data_gaps()
+
     assert gaps
-    assert any("price_gross" in gap for gap in gaps)
+    assert any("nip" in gap for gap in gaps)
+    assert any("photographs" in gap for gap in gaps)
+
+
+def test_the_denominator_disagreement_is_reported_rather_than_smoothed_over(
+    seeded: None,
+) -> None:
+    """The old site prints 76%; 68 of 92 is 74%.
+
+    Their figure divides by the 90 who eventually passed. Ours divides by the 92
+    who sat, because that is what the label beside it says. The difference is a
+    question for the owner, not something to quietly pick a side on.
+    """
+    assert any("76%" in gap and "74%" in gap for gap in owner_data_gaps())

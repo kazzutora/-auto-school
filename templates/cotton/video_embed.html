@@ -1,0 +1,16 @@
+{% load i18n %}
+<c-vars id="" url="" poster="" photo="" alt="" title="" class="" />
+{% comment %}
+Video, tech.md section 7. Kept as the name the existing pages call, and now a
+thin wrapper over <c-video-card>, which REDESIGN.md B.5 introduced.
+
+The only thing this adds is the watch url: callers pass a bare youtube id and
+this turns it into a link. Everything else — the poster, the scrim, the play
+target, the promise that nothing reaches Google before a click — lives in
+c-video-card and is described there.
+{% endcomment %}
+{% if id or url %}
+  <c-video-card url="{% if id %}https://www.youtube.com/watch?v={{ id }}{% else %}{{ url }}{% endif %}"
+                poster="{{ poster }}" photo="{{ photo }}" alt="{{ alt }}" title="{{ title }}"
+                class="{{ class }}" {{ attrs }} />
+{% endif %}

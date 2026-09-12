@@ -1,5 +1,5 @@
 {# HTMX partial, tech.md section 5: one image for the lightbox. #}
 <figure class="max-h-full max-w-4xl">
   <c-picture :image="image.image" alt="{{ image.alt }}" sizes="90vw" loading="eager" />
-  {% if image.caption %}<figcaption class="mt-2 text-center text-paper-0">{{ image.caption }}</figcaption>{% endif %}
+  {% if image.caption %}<figcaption class="mt-2 text-center u-fixed-paper">{{ image.caption }}</figcaption>{% endif %}
 </figure>

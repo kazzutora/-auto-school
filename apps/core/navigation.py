@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 
 from django.urls import reverse
 from django.utils.functional import Promise
-from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
 
@@ -30,17 +29,23 @@ class NavItem:
 
 # Kontakt is a first level item. Hiding it in a submenu is forbidden: that was
 # the main defect of the old site, tech.md section 7.
+#
+# Seven items, one level, no submenus. The school sells one category, so there
+# is no course tree to fold away — what a visitor wants is the price, how to
+# sign up, and the proof that people pass here.
 NAV: tuple[NavItem, ...] = (
-    NavItem(_("Kursy"), "courses:list"),
-    # pgettext, not gettext: the same polish words head a page and a section,
-    # where there is room for them, and sit in a menu bar that has none. In
-    # russian the full phrase is 118px wider than the polish and pushed the row
-    # into the language switcher. The heading keeps the full wording; only the
-    # menu gets the short one.
-    NavItem(pgettext_lazy("nav", "Kierowca zawodowy"), "courses:pro_hub"),
-    NavItem(_("Cennik"), "courses:pricing"),
-    NavItem(pgettext_lazy("nav", "Terminy"), "courses:intakes"),
-    NavItem(_("O nas"), "core:page", kwargs={"slug": "o-nas"}),
-    NavItem(_("Galeria"), "gallery:index"),
-    NavItem(_("Kontakt"), "core:contact"),
+    # pgettext on every one of them, and that is the point. The same polish
+    # words head a page, where there is room for them, and sit in a menu bar
+    # that has none — but the binding case is not polish. Measured at xl the row
+    # has 583px for the menu; the full polish labels came to 550px and the
+    # russian translations of them to 1136px of header against 1104px of
+    # container. A nav context on every item is what lets each language pick a
+    # label that fits without any of them dragging the others short.
+    NavItem(pgettext_lazy("nav", "Kurs B"), "courses:detail", kwargs={"slug": "kat-b"}),
+    NavItem(pgettext_lazy("nav", "Cennik"), "courses:pricing"),
+    NavItem(pgettext_lazy("nav", "Zapisy"), "core:page", kwargs={"slug": "zapisy"}),
+    NavItem(pgettext_lazy("nav", "Zdawalność"), "core:pass_rates"),
+    NavItem(pgettext_lazy("nav", "O nas"), "core:page", kwargs={"slug": "o-nas"}),
+    NavItem(pgettext_lazy("nav", "Pliki"), "core:downloads"),
+    NavItem(pgettext_lazy("nav", "Kontakt"), "core:contact"),
 )

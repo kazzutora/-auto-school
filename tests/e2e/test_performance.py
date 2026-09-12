@@ -23,10 +23,6 @@ PAGES = ("/", "/kursy/kat-b/", "/cennik/", "/kontakt/")
 CLS_BUDGET = 0.05
 FIRST_SCREEN_BUDGET = 400 * 1024
 
-# The tiles are the one third party the design allows, tech.md section 2: no
-# cookies, which is why openstreetmap beat google maps.
-ALLOWED_THIRD_PARTY = {"tile.openstreetmap.org"}
-
 
 def layout_shift(page: Page) -> float:
     """Cumulative layout shift, as the browser scores it."""
@@ -103,20 +99,21 @@ def test_the_first_screen_reaches_no_third_party(
     assert not strangers, f"{path} reaches {sorted(strangers)} before anyone scrolls"
 
 
-def test_the_map_page_touches_only_the_tile_server(
+def test_the_map_page_touches_nobody_until_the_map_is_asked_for(
     live_server, site: SiteSettings, page: Page
 ) -> None:
-    """And once the reader does scroll to it, one host and no other."""
+    """And once the reader scrolls to the map, still nobody: scrolling is not
+    asking for it, the button is, core v26."""
     hosts: list[str] = []
     page.on("request", lambda request: hosts.append(urlsplit(request.url).netloc))
 
     page.goto(f"{live_server.url}/kontakt/")
     page.locator("[data-map]").scroll_into_view_if_needed()
-    page.wait_for_selector(".leaflet-tile")
+    page.wait_for_load_state("networkidle")
 
     ours = urlsplit(live_server.url).netloc
     strangers = {host for host in hosts if host and host != ours}
-    assert strangers <= ALLOWED_THIRD_PARTY, f"unexpected hosts: {sorted(strangers)}"
+    assert not strangers, f"unexpected hosts: {sorted(strangers)}"
 
 
 @pytest.mark.parametrize("path", PAGES)

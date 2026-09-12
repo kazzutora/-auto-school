@@ -48,7 +48,7 @@ def internet(monkeypatch: pytest.MonkeyPatch) -> Any:
 @pytest.fixture
 def site() -> SiteSettings:
     settings = SiteSettings.get_solo()
-    settings.short_name = "OSK Nawrocki"
+    settings.short_name = "OSK Ostrycharz"
     settings.save()
     return settings
 
@@ -160,7 +160,7 @@ def test_the_sweep_asks_with_the_agreed_timeout_and_a_named_agent(
 
     _url, agent, timeout = fake.asked[0]
     assert timeout == 10.0
-    assert "OSK Nawrocki" in agent
+    assert "OSK Ostrycharz" in agent
     assert "link checker" in agent
 
 
@@ -288,7 +288,7 @@ def test_a_long_reason_is_cut_to_what_the_column_holds(opener: Any) -> None:
 def test_the_user_agent_names_the_school(site: SiteSettings) -> None:
     agent = checker.user_agent()
 
-    assert agent.startswith("OSK Nawrocki link checker")
+    assert agent.startswith("OSK Ostrycharz link checker")
     assert "https://" in agent
 
 
