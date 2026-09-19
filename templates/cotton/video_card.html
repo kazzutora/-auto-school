@@ -24,7 +24,7 @@ because a play button is a state offered, not the page's action, B.1.
 {% endcomment %}
 {% if url %}
   <a href="{{ url }}" target="_blank" rel="noopener noreferrer"
-     class="u-photo u-card-link group relative flex w-full items-center justify-center rounded-card bg-ink shadow-card
+     class="u-photo u-card-link group relative flex w-full items-center justify-center rounded-card bg-brand-900 shadow-card
 {% if ratio == 'wide' %} aspect-[21/9]{% elif ratio == 'square' %} aspect-square{% else %} aspect-video{% endif %} {{ class }}"
      {{ attrs }}>
     {% if photo %}
@@ -33,25 +33,25 @@ because a play button is a state offered, not the page's action, B.1.
          media url and has no crops beside it. #}
       <c-photo stem="{{ photo }}" crop="poster" alt="{{ alt }}"
                class="absolute inset-0 h-full w-full object-cover" />
-      <span aria-hidden="true" class="absolute inset-0 bg-ink/45"></span>
+      <span aria-hidden="true" class="absolute inset-0 bg-brand-900/45"></span>
     {% elif poster %}
       <img src="{{ poster }}" alt="{{ alt }}" loading="lazy" decoding="async"
            width="1280" height="720"
            class="absolute inset-0 h-full w-full object-cover">
       {# A flat scrim, not a gradient: B.1 rules gradients out on cards, and
          this one exists to hold the label's contrast, not to decorate. #}
-      <span aria-hidden="true" class="absolute inset-0 bg-ink/45"></span>
+      <span aria-hidden="true" class="absolute inset-0 bg-brand-900/45"></span>
     {% else %}
       {# The branded stand-in. It is a placeholder and looks like one, rather
          than a grey rectangle that reads as a picture which failed to load. #}
       <span aria-hidden="true"
-            class="absolute inset-0 flex items-end p-6 font-display text-h2 font-extrabold uppercase leading-none text-paper/10 [font-stretch:125%]">
+            class="absolute inset-0 flex items-end p-6 font-display italic text-h2 font-extrabold uppercase leading-none text-brand-100/10">
         OSK Ostrycharz
       </span>
     {% endif %}
 
     <span aria-hidden="true"
-          class="relative flex h-18 w-18 items-center justify-center rounded-full bg-accent shadow-card transition group-hover:scale-105">
+          class="relative flex h-18 w-18 items-center justify-center rounded-full bg-brand-200 shadow-card transition group-hover:scale-105">
       <svg viewBox="0 0 24 24" class="ml-1 h-8 w-8" fill="rgb(var(--fixed-ink))" focusable="false">
         <path d="M8 5v14l11-7z" />
       </svg>

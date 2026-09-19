@@ -45,7 +45,7 @@ which is drift on the section 7 row and belongs to a LEAD session.
           x-on:keydown.arrow-right.prevent="next()"
           x-on:keydown.arrow-left.prevent="prev()"
           aria-label="{{ label|default:'Podgląd zdjęcia' }}"
-          class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 u-on-ground backdrop:bg-ink/90">
+          class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-brand-100 p-4 u-on-ground backdrop:bg-brand-900/90">
     <div class="flex items-center justify-between gap-4">
       <p class="label u-muted-on-ground"><span x-text="i + 1"></span> / {{ items|length }}</p>
       {% translate "Zamknij" as t_zamknij %}

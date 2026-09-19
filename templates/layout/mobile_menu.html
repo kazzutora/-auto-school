@@ -23,7 +23,7 @@ switcher and the phone number.
         {# u-ground-paper: the panel lives inside the header element, so it
      takes the page ground back explicitly rather than inheriting whatever
      the band is publishing. #}
-        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-paper p-0 u-on-ground backdrop:bg-ink/60 xl:hidden">
+        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-brand-100 p-0 u-on-ground backdrop:bg-brand-900/60 xl:hidden">
   <div class="flex h-full flex-col">
     <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between">
       {# The mark plus the name as type, not the second lockup file.
@@ -37,7 +37,7 @@ switcher and the phone number.
            tech.md section 8 and c-picture both fix the convention — an empty
            alt is only allowed together with aria-hidden, which is what says the
            emptiness was meant. #}
-        <img src="{% static 'brand/mark.svg' %}" width="24" height="24" alt=""
+        <img src="{% static 'img/brand/mark-l.svg' %}" width="24" height="24" alt=""
              aria-hidden="true" class="h-6 w-6">
         <span class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight">
           {{ site_settings.short_name|default:"OSK Ostrycharz" }}
@@ -62,7 +62,7 @@ switcher and the phone number.
                the ground rather than a fixed ink, which would be dark on dark. #}
             <a href="{% if url %}{{ url }}{% else %}#{% endif %}"
                {% if request.path == url %}aria-current="page"{% endif %}
-               class="u-menurow{% if request.path == url %} bg-accent-100 u-on-ground{% endif %}">
+               class="u-menurow{% if request.path == url %} bg-brand-200 u-on-ground{% endif %}">
               {{ item.title }}
               <c-icon name="arrow-right" size="sm" class="u-muted-on-ground" />
             </a>

@@ -1,0 +1,50 @@
+<c-vars item="" class="" />{% load i18n %}
+{% comment %}
+One review, ROSE.md B.5 point 4 and C.1 block 5.
+
+Initials in a crimson disc, the name as the source spells it, the stars, the
+text, and where it came from.
+
+**There is no photo prop, and one is not to be added.** The mockup the owner
+sent puts a stock headshot beside every review; those people never took a
+lesson here, and a face is the one thing that makes a made-up review read as
+true. ROSE.md A.3 names this outright. Initials carry the same job — telling
+two reviews apart — and claim nothing.
+
+A review without source_url does not belong on the page at all: CLAUDE.md rule
+6b, and the selector is what enforces it. This renders the link when it is
+there so a reader can check, which is the whole argument for publishing a
+rating at all.
+
+The stars are an image with a label rather than five separate icons with alt
+text, because a screen reader reading "star star star star star" is worse than
+"4 out of 5".
+{% endcomment %}
+<li class="flex h-full flex-col rounded-card border border-line bg-brand-50 p-6 shadow-card {{ class }}" {{ attrs }}>
+  <div class="flex items-center gap-3">
+    <span aria-hidden="true"
+      class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-500 font-display text-body font-extrabold italic u-fixed-paper">
+      {{ item.author_name|slice:":1"|upper }}{{ item.author_name|cut:" "|slice:"-1:"|upper }}
+    </span>
+    <div class="min-w-0">
+      <p class="truncate font-bold u-on-ground">{{ item.author_name }}</p>
+      <p class="flex gap-0.5 text-brand-500" role="img"
+         aria-label="{% blocktranslate with rating=item.rating %}Ocena {{ rating }} na 5{% endblocktranslate %}">
+        {% for _ in "12345"|make_list %}
+          {% if forloop.counter <= item.rating %}<c-icon name="star" size="sm" fill="currentColor" />
+          {% else %}<c-icon name="star" size="sm" class="text-ink-300" />{% endif %}
+        {% endfor %}
+      </p>
+    </div>
+  </div>
+  <blockquote class="mt-4 grow u-body-on-ground">{{ item.text }}</blockquote>
+  <footer class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-small u-muted-on-ground">
+    {% if item.published_on %}<span class="data">{{ item.published_on|date:"m.Y" }}</span>{% endif %}
+    {% if item.source_url %}
+      <a href="{{ item.source_url }}" rel="nofollow noopener" target="_blank"
+         class="inline-flex items-center gap-1 text-brand-link underline underline-offset-4">
+        {% translate "źródło" %}<c-icon name="external" size="sm" />
+      </a>
+    {% endif %}
+  </footer>
+</li>

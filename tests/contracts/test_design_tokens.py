@@ -322,7 +322,7 @@ def test_the_grounds_that_do_not_swap_carry_a_fixed_pair(themes: dict) -> None:
         ("u-ground-wine", "--on-wine"),
     )
     for ground, variable in grounds:
-        assert f"rgb(var({variable}))" in block(f".{ground},"), (
+        assert f"rgb(var({variable}))" in block(f".{ground} {{"), (
             f".{ground} must take its text colour from {variable}, not a token that swaps"
         )
 
@@ -331,8 +331,8 @@ def test_white_on_the_pink_tile_is_never_emitted(themes: dict) -> None:
     """1.69:1, the one pair B.3 refuses outright."""
     for theme in ("light", "dark"):
         assert contrast((255, 255, 255), themes[theme]["brand-200"]) < 2.0
-    assert "text-brand-50" not in block(".u-ground-pink,")
-    assert "text-fixed-paper" not in block(".u-ground-pink,")
+    assert "text-brand-50" not in block(".u-ground-pink {")
+    assert "text-fixed-paper" not in block(".u-ground-pink {")
 
 
 def test_the_fill_crimson_and_the_text_crimson_are_separate(themes: dict) -> None:
@@ -471,9 +471,16 @@ def test_no_other_family_crept_in() -> None:
 
 
 def test_fonts_are_self_hosted() -> None:
-    """tech.md section 2 bans third party font hosts on public pages."""
+    """tech.md section 2 bans third party font hosts on public pages.
+
+    Only the @font-face urls are checked. The stylesheet also carries one data
+    uri — the scribbled underline, used as a mask on the ghost button and the
+    current menu item — and a data uri fetches nothing from anywhere, which is
+    the property this test is actually about.
+    """
     text = css()
-    urls = re.findall(r"url\(([^)]+)\)", text)
+    faces = re.findall(r"@font-face\s*\{[^}]*\}", text, re.S)
+    urls = [url for face in faces for url in re.findall(r"url\(([^)]+)\)", face)]
     assert urls, "no font urls at all"
     for url in urls:
         assert url.startswith("../fonts/"), f"{url} is not served from our own static files"

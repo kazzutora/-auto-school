@@ -546,7 +546,7 @@ class SmsClient(Protocol):
 
 | Компонент | Тег | Пропсы |
 |---|---|---|
-| Кнопка | `<c-button>` | `variant=primary\|secondary\|outline-accent\|ghost`, `size=sm\|md\|lg\|icon`, `href`, `type`, `full`; `outline-accent` — ровно одна на экран, REDESIGN.md B.5 — **v25** |
+| Кнопка | `<c-button>` | `variant=primary\|outline\|ghost`, `size=sm\|md\|lg\|icon`, `href`, `type`, `full`. Пилюля, `ROSE.md` B.5. Ярлык на `primary` не мельче 16px и не легче 600: белое на `brand.500` это 4.64, запаса нет. `secondary` остался синонимом `outline` для старых вызовов — **v29** |
 | Карточка | `<c-card>` | `href`, `padded`, `level=2\|3\|4`, `tone=light\|dark`, слот `title`, слот по умолчанию; `tone=dark` — та же карточка на грунте ink — **v25** |
 | Бейдж | `<c-badge>` | `tone=neutral\|success\|warning\|danger\|accent\|muted`, слот; синим бейдж не бывает — синий это действие, REDESIGN.md B.1 — **v25** |
 | Цитата | `<c-quote>` | `text`, `author`, `role` |
@@ -594,7 +594,12 @@ class SmsClient(Protocol):
 | Орнамент | `<c-ornament>` | `kind=brush|heart|scribble|arrow|sparks|circle|blob`, `variant`, `class`; всегда `aria-hidden` и `pointer-events: none`, текста внутри нет. Цвет — `currentColor`: мазки берут его из `.u-brush`/`.u-brush-strong`, остальные штрихи из текста рядом. Размер задаёт класс, у мазка — утилита размещения `.u-brush-edge-top`, `.u-brush-corner-tr` и прочие. Норма расхода `ROSE.md` B.7: не больше трёх сердечек в кадре, одна рукописная заметка на секцию, на служебных страницах орнамента нет — **v29** |
 | Переключатель языка | `<c-lang-switcher>` | — |
 | Cookie-баннер | `<c-cookie-banner>` | — |
-| Панель отзывов | `<c-testimonials>` | `items` |
+| Панель отзывов | `<c-testimonials>` | `items`; рисует по `<c-review-card>` на строку и ничего своего |
+| Отзыв | `<c-review-card>` | `item` (`.author_name`, `.rating`, `.text`, `.published_on`, `.source_url`). Инициалы в малиновом круге. **Пропса `photo` нет и не будет**: в присланном макете у каждого отзыва стоковое лицо, а чужое лицо — ровно то, что делает выдуманный отзыв правдоподобным, `ROSE.md` A.3 — **v29** |
+| Плитка курса | `<c-course-tile>` | `course`, `active`; крупный код курса Rubik 800 italic, цена, стрелка. `active` заливает малиновым — ровно одна в сетке, `ROSE.md` C.1 блок 3 — **v29** |
+| Преимущество | `<c-feature>` | `icon`, `title`, слот; иконка в рукописном круге `<c-ornament kind="circle">`, не в `border` — `ROSE.md` C.1 блок 2 — **v29** |
+| Цифра | `<c-stat>` | `value`, `label`, `note`; **нет значения — нет элемента**. Счётчик на появление читает `data-count`, `ROSE.md` C.1 блок 4 — **v29** |
+| Полароид | `<c-polaroid>` | `src`, `alt`, `caption`, `tilt` (−6…6), `width`, `height`, слот; белая рамка 10/36px, наклон, выпрямляется при наведении — **v29** |
 | Навигация | `<c-nav>` | берёт пункты из `apps/core/navigation.py` |
 
 **Навигация — данные, не разметка.** Единственный источник — `apps/core/navigation.py`:

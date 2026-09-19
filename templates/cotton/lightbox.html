@@ -26,7 +26,7 @@ the photo it opens so the list is usable without seeing it.
   </ul>
 
   <dialog x-ref="dlg" x-on:keydown.arrow-right.prevent="next()" x-on:keydown.arrow-left.prevent="prev()"
-    class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-paper p-4 u-on-ground backdrop:bg-ink/90">
+    class="max-h-[92vh] w-full max-w-4xl rounded border-2 border-ink bg-brand-100 p-4 u-on-ground backdrop:bg-brand-900/90">
     <div class="flex items-center justify-between gap-4">
       <p class="label u-muted-on-ground"><span x-text="i + 1"></span> / {{ images|length }}</p>
       <button type="button" x-on:click="$refs.dlg.close()" aria-label="{% translate 'Zamknij' %}" class="-m-2 p-2 u-muted-on-ground transition hover:u-on-ground">

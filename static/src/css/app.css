@@ -249,6 +249,13 @@
     --brush-a: 242 184 198;
     --brush-b: 233 138 163;
     --brush-opacity: 1;
+
+    /* The scribbled underline as a mask. A mask takes a url and paints it with
+     * currentColor, so the one stroke serves the ghost button, the active
+     * menu item and the swash under the slogan without a file per colour.
+     * Inline rather than a path, because a mask on a pseudo element cannot
+     * reference a document fragment in every engine. */
+    --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='5.5' stroke-linecap='round' d='M3,14 Q31.6,2.6 32,4 Q68.9,21.9 68,20 Q97.6,6.9 97,8'/%3E%3C/svg%3E");
   }
 
   /* The dark theme, B.2. A rearrangement rather than an inversion: the page
@@ -504,8 +511,7 @@
 
   /* On a pink tile the halo would be the near black the ring already is, so
    * the two swap: the ring stays dark and the halo becomes the tile. */
-  .u-ground-pink :focus-visible,
-  .u-ground-accent :focus-visible {
+  .u-ground-pink :focus-visible {
     outline-color: rgb(var(--ink));
     box-shadow: 0 0 0 4px rgb(var(--brand-200));
   }
@@ -625,13 +631,13 @@
   }
 
   /* The card block sits above the grounds on purpose, and the order is load
-   * bearing: `.u-card` and `.u-ground-primary` are both one class in the same
+   * bearing: `.u-card` and `.u-ground-brand` are both one class in the same
    * layer, so whichever is written later paints.
    *
    * With the cards last, a featured intake card — which carries both — came out
    * white from `.u-card`'s own face while its foreground variables still said
-   * white from `.u-ground-primary`. White text on a white card, on the one card
-   * B.7 point 5 wants pressed. A ground is a deliberate override of a card's
+   * white from `.u-ground-brand`. White text on a white card, on the one tile
+   * C.1 block 3 wants filled. A ground is a deliberate override of a card's
    * paint, so the grounds have to be able to win.
    */
   /* ------------------------------------------------------------------ *
@@ -660,12 +666,9 @@
    * theme — it is the brand rather than a role — so the pair it publishes is
    * fixed and white on it measures 9.06 either way.
    *
-   * .u-ground-ink and .u-dark-card are the old names for it and still answer,
-   * because the templates have not been rewritten yet; K5 and K6 move them to
-   * .u-ground-wine and the aliases go. */
-  .u-ground-wine,
-  .u-dark-card,
-  .u-ground-ink {
+   * One per page, B.8: the enquiry block on the home page, and nothing else.
+   * A second one turns the rhythm of the page into stripes. */
+  .u-ground-wine {
     background-color: rgb(var(--brand-900));
     color: rgb(var(--on-wine));
     --ground: var(--brand-900);
@@ -675,9 +678,7 @@
     --focus: var(--on-wine);
   }
 
-  .u-ground-wine :is(h1, h2, h3, h4),
-  .u-dark-card :is(h1, h2, h3, h4),
-  .u-ground-ink :is(h1, h2, h3, h4) {
+  .u-ground-wine :is(h1, h2, h3, h4) {
     color: rgb(var(--on-ground));
   }
 
@@ -703,8 +704,7 @@
    * frame — on the crimson the primary button would be crimson on crimson, and
    * naming white from the call site would break the moment the same tile
    * appeared on the page instead. */
-  .u-ground-brand,
-  .u-ground-primary {
+  .u-ground-brand {
     background-color: rgb(var(--brand-500));
     color: rgb(var(--fixed-paper));
     --ground: var(--brand-500);
@@ -714,8 +714,7 @@
     --focus: var(--fixed-paper);
   }
 
-  .u-ground-brand :is(h1, h2, h3, h4),
-  .u-ground-primary :is(h1, h2, h3, h4) {
+  .u-ground-brand :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-paper));
   }
 
@@ -724,8 +723,7 @@
    * light theme that would be near black on pink and in the dark near white on
    * pink, and white on brand.200 is 1.69, the one pair B.3 forbids outright.
    * So the pair is fixed and ink stays ink. */
-  .u-ground-pink,
-  .u-ground-accent {
+  .u-ground-pink {
     background-color: rgb(var(--brand-200));
     color: rgb(var(--fixed-ink));
     --ground: var(--brand-200);
@@ -735,8 +733,7 @@
     --focus: var(--fixed-ink);
   }
 
-  .u-ground-pink :is(h1, h2, h3, h4),
-  .u-ground-accent :is(h1, h2, h3, h4) {
+  .u-ground-pink :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-ink));
   }
 
@@ -812,19 +809,53 @@
    * crimson fill here would be the primary button, and the point of two
    * variants is that one of them is quieter.
    *
-   * .u-btn-outline-accent is the old name and still answers; the components
-   * move to .u-btn-outline at K4 and the alias goes. */
-  .u-btn-outline,
-  .u-btn-outline-accent {
+   */
+  .u-btn-outline {
     border-color: rgb(var(--brand-500));
     color: rgb(var(--brand-link));
     background-color: rgb(var(--brand-50));
   }
 
-  .u-btn-outline:hover:not(:disabled),
-  .u-btn-outline-accent:hover:not(:disabled) {
+  .u-btn-outline:hover:not(:disabled) {
     background-color: rgb(var(--brand-100));
     color: rgb(var(--brand-link));
+  }
+
+  /* The ghost button, B.5: a label, an arrow, and a scribble under the word
+   * rather than a rule. The underline is the ornament file, laid as a
+   * background rather than a <use>, because a pseudo element cannot hold one —
+   * and here it can be, since the colour is baked into the data uri instead of
+   * inherited. It is one stroke at one colour, so nothing is lost.
+   *
+   * The stroke is drawn on hover and on focus, not at rest: three ghost links
+   * in a column all scribbled at once reads as a mistake. */
+  .u-btn-ghost {
+    color: rgb(var(--brand-link));
+    position: relative;
+  }
+
+  .u-btn-ghost::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 1.75rem;
+    bottom: -0.35rem;
+    height: 0.5rem;
+    background: currentColor;
+    mask: var(--scribble) no-repeat center / 100% 100%;
+    -webkit-mask: var(--scribble) no-repeat center / 100% 100%;
+    opacity: 0;
+    transform: scaleX(0.6);
+    transform-origin: left;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur-card) var(--ease);
+  }
+
+  .u-btn-ghost:hover::after,
+  .u-btn-ghost:focus-visible::after {
+    opacity: 1;
+    transform: scaleX(1);
   }
 
   /* C.3: an arrow travels 4px instead of growing. On a site whose language is
@@ -1115,8 +1146,7 @@
     --field: var(--brand-50);
   }
 
-  .u-ground-wine,
-  .u-dark-card {
+  .u-ground-wine {
     --field: var(--brand-50);
   }
 
@@ -1129,32 +1159,25 @@
     background-color: rgb(var(--line));
   }
 
-  /* CONTRACT GAP, and the mitigation for it.
+  /* The CONTRACT GAP this carried is closed, ROSE.md K4.
    *
-   * <c-field> renders a Django widget, and the widget's class list is written
-   * in apps/leads/forms.py — FIELD_CLASS and TEXTAREA_CLASS. Those still carry
-   * the old contract: `h-12` where B.5 asks 52px, `border-line-soft` which is
-   * not a token any more, and `bg-paper` where B.5 asks for surface.muted on
-   * the page and ink.800 on a dark card.
+   * <c-field> renders a Django widget and the widget's class list is written
+   * in apps/leads/forms.py, which a template session may not edit. It used to
+   * carry `bg-paper`, and on an inverted ground that painted the field in the
+   * page's own colour and put the near-white focus halo around it — 1.17:1, a
+   * focus indicator nobody can see, on the form the whole page is for.
    *
-   * That is python and a template session may not edit it. The one that
-   * actually breaks something is `bg-paper`: on the dark card of B.7 point 6 it
-   * paints the field in the page's warm grey and puts the near-white focus halo
-   * around it, which measured 1.17:1 — a focus indicator nobody can see, on the
-   * form the whole page is for.
-   *
-   * A class plus an element is (0,1,1) and beats the widget's single utility
-   * class, so the ground can take the fill back without touching python. The
-   * remaining three are cosmetic and stay for LEAD:
-   *
-   *   FIELD_CLASS    = "u-field h-13 w-full rounded border-1.5 border-line px-4 transition"
-   *   TEXTAREA_CLASS = "u-field w-full rounded border-1.5 border-line px-4 py-3 transition"
+   * FIELD_CLASS now carries `u-field`, so the fill comes from the ground and
+   * no call site has to know where the form landed. This rule stays as the
+   * belt to that braces: a class plus an element is (0,1,1) and beats a single
+   * utility class, so an input dropped on the wine band comes out right even
+   * if it never got the class.
    */
-  .u-dark-card :is(input, select, textarea),
-  .u-ground-primary :is(input, select, textarea) {
+  .u-ground-wine :is(input, select, textarea),
+  .u-ground-brand :is(input, select, textarea) {
     background-color: rgb(var(--field));
-    color: rgb(var(--on-ground));
-    border-color: rgb(var(--on-ground) / 0.25);
+    color: rgb(var(--ink));
+    border-color: rgb(var(--line));
   }
 
   /* ------------------------------------------------------------------ *

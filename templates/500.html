@@ -24,7 +24,7 @@ it: /kontakt/ is a plain link and needs no database to resolve.
   <meta name="theme-color" content="#FBEDEF" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#1A1417" media="(prefers-color-scheme: dark)">
 </head>
-<body class="flex min-h-screen flex-col bg-paper u-on-ground">
+<body class="flex min-h-screen flex-col bg-brand-100 u-on-ground">
   <main class="u-container u-section grow">
     <p class="label u-muted-on-ground">{% translate "Błąd 500" %}</p>
     <h1 class="mt-4">{% translate "Coś poszło nie tak" %}</h1>
@@ -43,7 +43,7 @@ it: /kontakt/ is a plain link and needs no database to resolve.
     <div class="mt-12 flex flex-wrap gap-4">
       {% if site_settings.phone_primary %}
         <a href="tel:{{ site_settings.phone_primary|cut:' ' }}"
-           class="inline-flex h-12 items-center justify-center rounded border-2 border-accent bg-accent px-6 font-bold u-fixed-ink">
+           class="inline-flex h-12 items-center justify-center rounded border-2 border-brand-500 bg-brand-200 px-6 font-bold u-fixed-ink">
           <span class="data">{{ site_settings.phone_primary }}</span>
         </a>
       {% endif %}

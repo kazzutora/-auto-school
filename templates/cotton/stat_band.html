@@ -17,10 +17,10 @@ Takes: ground (ink | accent | deep | paper), items — rows carrying .value,
 .label and optionally .note.
 {% endcomment %}
 <section class="u-section-compact
-{% if ground == 'accent' %} u-ground-accent
-{% elif ground == 'deep' %} u-dark-card
-{% elif ground == 'paper' %} bg-paper-50
-{% else %} u-ground-ink
+{% if ground == 'accent' %} u-ground-pink
+{% elif ground == 'deep' %} u-ground-wine
+{% elif ground == 'paper' %} bg-brand-50
+{% else %} u-ground-wine
 {% endif %} {{ class }}" {{ attrs }}>
   <div class="u-container">
     {% if heading %}<h2 class="mb-10{% if ground != 'paper' %} u-on-ground{% endif %}">{{ heading }}</h2>{% endif %}

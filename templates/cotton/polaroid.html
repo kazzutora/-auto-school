@@ -1,0 +1,21 @@
+<c-vars src="" alt="" caption="" tilt="-4" width="640" height="480" class="" />
+{% comment %}
+A photograph as a print, ROSE.md B.5 and C.1 block 3.
+
+White frame, deep lower edge, tilted, and straightening under the pointer,
+which is C.7 point 4. The tilt is a custom property rather than a class per
+angle, so a gallery can give every print a different one from the loop counter.
+
+B.7 keeps it inside -6 to 6 degrees. Past that the frame starts eating the
+grid it sits in, and on a phone it pushes the column sideways.
+
+The caption is handwriting and does not take the tilt twice: .script rotates
+by itself, and the frame is already rotated, so the caption asks for it flat.
+
+alt is required of the caller. A photograph of the school's own car carries
+information — which car, in what weather, with whom — and "zdjęcie" is not it.
+{% endcomment %}
+<figure class="u-polaroid {{ class }}" style="--tilt: {{ tilt }}deg" {{ attrs }}>
+  {% if src %}<img src="{{ src }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async">{% else %}{{ slot }}{% endif %}
+  {% if caption %}<figcaption class="script script-sm script-flat">{{ caption }}</figcaption>{% endif %}
+</figure>

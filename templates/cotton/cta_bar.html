@@ -15,7 +15,7 @@ The title is desktop copy and there is no desktop here, so it rides as the
 accessible name of the bar rather than as text nobody below md would see.
 {% endcomment %}
 <c-vars title="" phone="" href="" class="" />
-<div class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface shadow-card-hover pb-[env(safe-area-inset-bottom)] md:hidden {{ class }}"
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-brand-50 shadow-card-hover pb-[env(safe-area-inset-bottom)] md:hidden {{ class }}"
   {% if title %}role="region" aria-label="{{ title }}"{% endif %} {{ attrs }}>
   <div class="flex h-16 items-center gap-3 px-5">
     {% if phone %}<c-button variant="primary" full="1" href="tel:{{ phone|cut:' ' }}">

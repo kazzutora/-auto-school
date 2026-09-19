@@ -137,14 +137,16 @@ STATICFILES_DIRS = [
     ("js", BASE_DIR / "static" / "js"),
     ("fonts", BASE_DIR / "static" / "fonts"),
     ("icons", BASE_DIR / "static" / "icons"),
-    # The logo kit: lettering, mark, favicon and the og card. Self hosted like
-    # everything else, tech.md section 2.
-    ("brand", BASE_DIR / "static" / "brand"),
-    # The photographs, PHOTOS.md. scripts/optimize_photos.py writes the crops
-    # into static/img/<ratio>/ and they are served from here; the 2400px
-    # originals live in static/img/source/ beside their CREDITS.txt and are
-    # never served — nothing links to them, and they are three times the weight
-    # of anything the page asks for.
+    # The photographs, PHOTOS.md, and the logo kit, ROSE.md K1, which moved
+    # under img/brand/ at core v29 so the owner's own source files sit beside
+    # what was drawn from them.
+    #
+    # Two subtrees here are inputs rather than assets and never reach the
+    # public tree: img/brand/source/ holds the owner's raster logo, their style
+    # sheet and a generated mockup carrying invented numbers, and img/source/
+    # holds the 2400px originals the crops are cut from. Neither is excluded by
+    # a flag that can be forgotten — apps/core/staticfiles.py drops them in the
+    # finder, so the dev server cannot serve them either.
     ("img", BASE_DIR / "static" / "img"),
 ]
 

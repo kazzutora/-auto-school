@@ -17,19 +17,26 @@ from apps.leads.services import normalize_phone
 # A field no human sees and every naive bot fills in, DEV.md S3.1.
 HONEYPOT = "website"
 
-# The field box from FRONTEND.md A.5, the same one <c-input> draws: 48px, a
-# line.soft hairline, and a second pixel of ink on focus that arrives as an
-# inset shadow so the layout does not shift.
+# The field box from ROSE.md B.5: 52px, radius 14, the pale card face as the
+# fill, and a 1.5px hairline. The focus frame is not here — B.5 puts a 2px
+# inset on it so the row does not shift, and that lives in the base layer of
+# app.css beside the focus halo, because a `focus:` utility is a class plus a
+# pseudo class and would outrank :focus-visible, replacing the halo instead of
+# joining it.
 #
 # It is repeated here because <c-field> hands rendering to django, and a django
 # widget knows nothing about the design system unless the form tells it. The
 # alternative — styling bare inputs in the base layer — would reach into the
 # shared stylesheet from a feature slice.
+#
+# u-field is what lets the ground decide the fill: on the wine band of C.1
+# block 6 the form sits on a dark ground and the box has to stay pale, and the
+# ground publishes --field rather than every call site knowing where it landed.
 FIELD_CLASS = (
-    "h-12 w-full rounded border border-line-soft bg-paper px-4 text-ink transition focus:border-ink"
+    "u-field h-13 w-full rounded-field border-1.5 border-line px-4 text-ink transition"
 )
 TEXTAREA_CLASS = (
-    "w-full rounded border border-line-soft bg-paper px-4 py-3 text-ink transition focus:border-ink"
+    "u-field w-full rounded-field border-1.5 border-line px-4 py-3 text-ink transition"
 )
 ERROR_CLASS = "border-state-err"
 

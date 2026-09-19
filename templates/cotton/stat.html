@@ -1,0 +1,24 @@
+<c-vars value="" label="" note="" class="" />
+{% comment %}
+One figure, ROSE.md C.1 block 4 and B.5.
+
+**No value, no element.** That is the whole contract: the band asks for four
+figures, the school has three, and a fourth reading "—" or "0" would be worse
+than a gap. tech.md's rule that a block with no data does not render, at the
+size of a single number.
+
+The figure is the display face in the crimson, which B.3 permits at 24px and
+up and refuses below it. This is never below it.
+
+The counter that runs the number up on first sight is static/js/motion.js, K7.
+It reads data-count off the element; under prefers-reduced-motion it never
+starts and the final value is what was in the markup all along, so the number
+is right with javascript off.
+{% endcomment %}
+{% if value %}
+<div class="flex flex-col gap-1 {{ class }}" {{ attrs }}>
+  <p class="u-bignum text-brand-500" data-count>{{ value }}</p>
+  {% if label %}<p class="label u-muted-on-ground">{{ label }}</p>{% endif %}
+  {% if note %}<p class="text-small u-muted-on-ground">{{ note }}</p>{% endif %}
+</div>
+{% endif %}

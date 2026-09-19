@@ -1,27 +1,12 @@
-{% load i18n %}
-{% comment %}
-Testimonials, tech.md section 7, FRONTEND.md A.9 point 7.
-
-Every card carries a source link. A.9 is blunt about the rule behind that: no
-invented reviews under any circumstances, so a testimonial with nowhere to
-check it does not belong here.
-
-The rating is drawn from the sprite, filled up to the score and outlined past
-it, with the number spelled out for anyone not seeing the stars.
-{% endcomment %}
 <c-vars items="" class="" />
+{% comment %}
+The review grid, ROSE.md C.1 block 5. One <c-review-card> per row of the
+database and nothing of its own but the columns.
+
+Fewer than two and the block does not render — that is the selector's job and
+the page's, not this component's, but it is worth saying twice: one review on a
+page reads as the only one there has ever been.
+{% endcomment %}
 <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 {{ class }}" {{ attrs }}>
-  {% for item in items %}<li class="flex h-full flex-col rounded border border-line bg-paper p-6">
-    <p class="flex gap-1 text-accent-600" role="img" aria-label="Ocena {{ item.rating }} na 5">
-      {% for _ in "12345"|make_list %}
-        {% if forloop.counter <= item.rating %}<c-icon name="star" size="sm" fill="currentColor" />
-        {% else %}<c-icon name="star" size="sm" class="text-ink-300" />{% endif %}
-      {% endfor %}
-    </p>
-    <blockquote class="mt-4 grow u-body-on-ground">{{ item.text }}</blockquote>
-    <footer class="mt-6 text-small u-muted-on-ground">
-      <span class="font-bold u-on-ground">{{ item.author_name }}</span>{% if item.published_on %}<span class="data">, {{ item.published_on|date:"m.Y" }}</span>{% endif %}
-      {% if item.source_url %}<a href="{{ item.source_url }}" rel="nofollow noopener" target="_blank" class="ml-2 inline-flex items-center gap-1 underline underline-offset-4 hover:u-on-ground">{% translate "źródło" %}<c-icon name="external" size="sm" /></a>{% endif %}
-    </footer>
-  </li>{% endfor %}
+  {% for item in items %}<c-review-card :item="item" />{% endfor %}
 </ul>

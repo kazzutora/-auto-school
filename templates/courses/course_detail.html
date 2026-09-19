@@ -62,7 +62,7 @@ only action on the page.
     <ul class="grid gap-5 md:grid-cols-3">
       {% for variant in variants %}
         <li class="flex">
-          <c-card class="flex w-full flex-col{% if forloop.first %} u-ground-primary shadow-card-hover{% endif %}">
+          <c-card class="flex w-full flex-col{% if forloop.first %} u-ground-brand shadow-card-hover{% endif %}">
             {% if forloop.first %}
               <p class="mb-4"><c-badge tone="accent">{% translate "Najczęściej wybierany" %}</c-badge></p>
             {% endif %}

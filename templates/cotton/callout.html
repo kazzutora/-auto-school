@@ -19,9 +19,9 @@ light grey on mid grey.
 Takes: tone (default | accent | dark), title, icon.
 {% endcomment %}
 <aside class="rounded-card border-l-2 py-5 pl-6 pr-5
-{% if tone == 'accent' %} border-l-accent bg-accent-100/50
-{% elif tone == 'dark' or tone == 'ink' %} u-dark-card border-l-accent p-6
-{% else %} border-l-line bg-surface-muted
+{% if tone == 'accent' %} border-l-accent bg-brand-200/50
+{% elif tone == 'dark' or tone == 'ink' %} u-ground-wine border-l-accent p-6
+{% else %} border-l-line bg-brand-100
 {% endif %} {{ class }}" {{ attrs }}>
   {% if title %}
     <p class="flex items-center gap-2 font-bold u-on-ground">

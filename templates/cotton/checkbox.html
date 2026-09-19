@@ -16,7 +16,7 @@ The label text is the slot: the RODO sentence is long and carries links.
 <label for="id_{{ name }}" class="flex cursor-pointer items-start gap-3 py-2 u-muted-on-ground">
   <input type="checkbox" name="{{ name }}" id="id_{{ name }}" {% if checked %}checked{% endif %}
     {% if error %}aria-invalid="true" aria-describedby="err_{{ name }}"{% endif %}
-    class="mt-0.5 h-6 w-6 shrink-0 rounded border-1.5 accent-primary disabled:cursor-not-allowed{% if error %} border-state-err{% else %} border-line{% endif %} {{ class }}"
+    class="mt-0.5 h-6 w-6 shrink-0 rounded border-1.5 accent-brand-500 disabled:cursor-not-allowed{% if error %} border-state-err{% else %} border-line{% endif %} {{ class }}"
     {{ attrs }}>
   <span class="text-small">{{ slot }}</span>
 </label>

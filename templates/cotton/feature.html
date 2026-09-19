@@ -1,0 +1,22 @@
+<c-vars icon="" title="" class="" />
+{% comment %}
+Feature, ROSE.md C.1 block 2.
+
+An icon inside a drawn ring, a label, and one line under it. Four of them in a
+row with hairlines between, which the section does rather than the item.
+
+The ring is <c-ornament kind="circle"> and not a border, B.5: a perfect circle
+beside a hand-drawn heart and a brush stroke is the one element that gives the
+page away as a template. The icon sits inside it, centred, at half the width.
+
+The line under the label is one line. If it needs two sentences it is not a
+feature, it is a paragraph, and it belongs in the block above.
+{% endcomment %}
+<div class="flex flex-col items-start gap-3 {{ class }}" {{ attrs }}>
+  <span class="relative grid h-18 w-18 shrink-0 place-items-center text-brand-500">
+    <c-ornament kind="circle" class="absolute inset-0 h-full w-full" />
+    <c-icon name="{{ icon }}" size="lg" class="relative" />
+  </span>
+  {% if title %}<p class="label u-on-ground">{{ title }}</p>{% endif %}
+  {% if slot %}<p class="text-small u-muted-on-ground">{{ slot }}</p>{% endif %}
+</div>

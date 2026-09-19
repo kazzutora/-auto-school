@@ -59,12 +59,12 @@ elements rather than two <img> tags, which would fetch both.
          then on. The alt sits on the light one only: two <img> with the same
          alt make a screen reader read the school's name twice, so the hidden
          one is decorative by definition. #}
-      <img src="{% static 'brand/logo-lockup.svg' %}" width="278" height="23"
+      <img src="{% static 'img/brand/logo-compact.svg' %}" width="340" height="112"
            alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-           class="h-[18px] w-auto sm:h-[23px] dark:hidden">
-      <img src="{% static 'brand/logo-lockup-dark.svg' %}" width="278" height="23"
+           class="h-9 w-auto sm:h-11 dark:hidden">
+      <img src="{% static 'img/brand/logo-compact-dark.svg' %}" width="340" height="112"
            alt="" aria-hidden="true"
-           class="hidden h-[18px] w-auto sm:h-[23px] dark:block">
+           class="hidden h-9 w-auto sm:h-11 dark:block">
     </a>
 
     {% include "layout/nav.html" %}
@@ -84,7 +84,7 @@ elements rather than two <img> tags, which would fetch both.
         {# The route by name, not `enrol_url`: that variable is set by the
            views that happen to need it and the header is on every page,
            including the ones that do not. #}
-        <c-button variant="outline-accent" href="{% url 'leads:enroll' %}"
+        <c-button variant="outline" href="{% url 'leads:enroll' %}"
                   class="hidden xl:inline-flex">
           {% translate "Oddzwonimy do Ciebie" %}
         </c-button>

@@ -20,7 +20,7 @@ separately is a page nobody can skim. C.4 names that outright.
 {% endcomment %}
 <c-vars id="" tone="default" size="normal" reveal="1" class="" />
 <section {% if id %}id="{{ id }}"{% endif %}
-  class="u-section{% if reveal %} reveal{% endif %}{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-paper-50{% elif tone == 'surface' %} bg-surface{% elif tone == 'dark' or tone == 'brand' %} u-dark-card rounded-none{% elif tone == 'accent' %} u-ground-accent{% endif %} {{ class }}"
+  class="u-section{% if reveal %} reveal{% endif %}{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-brand-50{% elif tone == 'surface' %} bg-brand-50{% elif tone == 'dark' or tone == 'brand' %} u-ground-wine rounded-none{% elif tone == 'accent' %} u-ground-pink{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container">
     {% if heading %}<h2>{{ heading }}</h2>{% endif %}

@@ -1,52 +1,54 @@
 {% comment %}
-Button, tech.md section 7, states from REDESIGN.md B.5.
+Button, tech.md section 7, states from ROSE.md B.5.
 
-Heights 44/52/60 for sm/md/lg, radius 12px, and four variants with the two
-accents kept strictly apart — B.1 is blunt about it: a yellow "Zapisz się" and a
-blue "nabór otwarty" are the same mistake twice.
+A pill. That is not decoration: every control in the owner's own mockup is a
+pill, and a 14px radius beside them reads as a different site. Heights stay
+44/52/60 for sm/md/lg.
 
-  primary          blue fill, white label. The action. One per screen, usually.
-  secondary        transparent, 1.5px frame in whatever reads on the ground.
-  outline-accent   yellow frame, fills yellow on hover. B.5 allows exactly one
-                   per screen and names it: the callback offer in the header.
-  ghost            text and an arrow, nothing else.
+  primary   crimson fill, white label, arrow. The action.
+  outline   crimson pill frame on the pale card face, crimson label, fills with
+            the page's pink on hover. The quieter half of a pair.
+  ghost     label and arrow, with a scribbled underline under it.
 
-primary carries u-fixed-paper rather than text-surface. The blue does not swap
-with the theme and neither may its label: --surface is a card colour, so in the
-dark theme text-surface would print near black on blue at 3.6:1. B.2 fixes the
-pair as white on blue and the token is fixed to match.
+The label on primary is never smaller than 16px and never lighter than 600, and
+B.3 says why: white on brand.500 measures 4.64, which clears AA for normal text
+and has nothing to spare. A 14px 400 label on that fill is the one place this
+palette can fail, so the size prop cannot make it smaller — `sm` keeps text-body
+on the primary and only loses height.
 
-secondary and outline-accent name no colour at all. Both read --on-ground, so
-one button is an ink frame on the page, a near-white frame on a dark card, and a
-near-black one on the yellow strip. Overriding that with a utility from outside
-does not work: two text- utilities have the same specificity and the winner is
-whichever tailwind happened to emit last.
+primary carries u-fixed-paper rather than text-brand-50. The crimson does not
+swap with the theme and neither may its label: brand.50 is a card colour, so in
+the dark theme text-brand-50 would print near-black-ish on crimson. B.2 fixes
+the pair as white on crimson and the token is fixed to match.
 
-**No shadow on any variant, and that is not an oversight.** B.4 gives the two
-shadows to cards; B.5 describes a button by its height, its radius and its four
-states and mentions neither. The primary carried `shadow-card` for one
-afternoon, and it silently took the focus halo with it: a `shadow-*` utility
-lands in @layer utilities, the `:focus-visible` halo is a box-shadow in @layer
-base, and the utility wins — so the button focused with a bare yellow outline at
-1.43:1 on a white card, which is WCAG 1.4.11 failed on the one control the whole
-site is built around. The same trap is documented on the field rule in app.css.
+outline names no ink colour here. It reads --brand-link, so it is the darker
+crimson that clears 4.5 as text in both themes, rather than the fill crimson
+that does not.
+
+**No shadow on any variant, and that is not an oversight.** B.5 gives the two
+shadows to cards and describes a button by its height, its radius and its four
+states. The primary carried `shadow-card` for one afternoon and it silently
+took the focus halo with it: a `shadow-*` utility lands in @layer utilities,
+the :focus-visible halo is a box-shadow in @layer base, and the utility wins —
+so the button focused with a bare outline and no halo, which is WCAG 1.4.11
+failed on the one control the whole site is built around.
 
 size="icon" is a 44px square with no horizontal padding, for the handful of
-controls B.6 lets stand without a word beside them — a close, a burger, a
-carousel arrow. Such a button has no visible text, so it must carry an
-aria-label; there is nothing else for a screen reader to read.
+controls that stand without a word beside them — a close, a burger, a carousel
+arrow. Such a button has no visible text, so it must carry an aria-label; there
+is nothing else for a screen reader to read.
 
 A button says what happens: Zapisz się, Zadzwoń, Zobacz terminy. Never Więcej.
 {% endcomment %}
 <c-vars variant="primary" size="md" type="button" href="" full="" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<button type="{{ type }}"{% endif %}
-  class="u-btn inline-flex items-center justify-center gap-2 rounded border-1.5 px-6 text-center font-bold leading-none transition
+  class="u-btn inline-flex items-center justify-center gap-2 rounded-full border-1.5 px-7 text-center leading-none transition
 {% if full %} w-full{% endif %}
-{% if size == 'sm' %} h-11 text-small{% elif size == 'lg' %} h-15 text-body-lg{% elif size == 'icon' %} h-11 w-11 !px-0 text-body{% else %} h-13 text-body{% endif %}
-{% if variant == 'secondary' %} u-btn-secondary bg-transparent
-{% elif variant == 'outline-accent' %} u-btn-outline-accent bg-transparent
-{% elif variant == 'ghost' %} border-transparent bg-transparent px-0 underline-offset-4 hover:underline disabled:text-ink-300 disabled:no-underline
-{% else %} border-primary bg-primary u-fixed-paper hover:border-primary-600 hover:bg-primary-600 disabled:border-line disabled:bg-line disabled:text-ink-300
+{% if size == 'sm' %} h-11 text-body{% elif size == 'lg' %} h-15 text-body-lg{% elif size == 'icon' %} h-11 w-11 !px-0 text-body{% else %} h-13 text-body{% endif %}
+{% if variant == 'outline' or variant == 'secondary' %} u-btn-outline
+{% elif variant == 'ghost' %} u-btn-ghost border-transparent bg-transparent px-0 font-bold disabled:text-ink-300
+{% else %} border-brand-500 bg-brand-500 u-fixed-paper font-semibold hover:border-brand-600 hover:bg-brand-600 disabled:border-line disabled:bg-line disabled:text-ink-300
 {% endif %}
+{% if variant != 'primary' %} font-bold{% endif %}
 disabled:cursor-not-allowed {{ class }}"
   {{ attrs }}>{{ slot }}{% if href %}</a>{% else %}</button>{% endif %}

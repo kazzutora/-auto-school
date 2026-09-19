@@ -20,7 +20,7 @@ all of it, so the tile cannot drift from every other card on the site.
 <a href="{{ course.get_absolute_url }}" data-testid="category-tile"
   class="u-card u-card-link group flex h-full flex-col p-6 {{ class }}" {{ attrs }}>
   {% if course.code %}
-    <p class="font-display text-h1 font-extrabold uppercase leading-none u-on-ground [font-stretch:125%]">{{ course.code }}</p>
+    <p class="font-display italic text-h1 font-extrabold uppercase leading-none u-on-ground">{{ course.code }}</p>
   {% endif %}
 
   {# The vehicle rides with the title, not with the code. Beside the code it

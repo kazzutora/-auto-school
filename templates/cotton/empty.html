@@ -20,7 +20,7 @@ Takes: title, phone, href, action (the label on the button).
    the section's near-white foreground and printed white on near-white — which
    is what happened to "Zdjęcia aut w przygotowaniu" the moment the cars block
    took the page's one dark ground. #}
-<div class="u-empty flex flex-col items-start gap-4 rounded-card border-1.5 border-dashed border-line bg-surface-muted p-8 {{ class }}" {{ attrs }}>
+<div class="u-empty flex flex-col items-start gap-4 rounded-card border-1.5 border-dashed border-line bg-brand-100 p-8 {{ class }}" {{ attrs }}>
   {% if title %}<p class="font-bold u-on-ground">{{ title }}</p>{% endif %}
   {% if slot %}<div class="u-narrow u-muted-on-ground">{{ slot }}</div>{% endif %}
   {% if phone %}

@@ -4,7 +4,7 @@ Every public view puts a Seo instance in the context. The rules the gate checks
 live here so no slice reimplements them.
 
 DEV.md S8 wanted the default og image to come from SiteSettings, which has no
-image field. It comes from the brand kit instead: static/brand/og-image.png is
+image field. It comes from the brand kit instead: static/img/brand/og-default.jpg is
 a 1200x630 card carrying the school's own wordmark, so every page has a share
 image without the owner having to upload one. A page that owns a better picture
 — a course with a hero_image — still overrides it.
@@ -17,9 +17,9 @@ from django.templatetags.static import static
 from django.utils.functional import Promise
 
 TITLE_SUFFIX = "OSK Ostrycharz Wieluń"
-# The share card, static/brand/og-image.png. Named here rather than in each
-# view: it is the same picture on every page that has nothing better.
-DEFAULT_OG_IMAGE = "brand/og-image.png"
+# The share card, static/img/brand/og-default.jpg. Named here rather than in
+# each view: it is the same picture on every page that has nothing better.
+DEFAULT_OG_IMAGE = "img/brand/og-default.jpg"
 TITLE_SEPARATOR = " — "
 TITLE_LIMIT = 70
 DESCRIPTION_LIMIT = 170

@@ -1,0 +1,34 @@
+[
+{
+  "model": "core.sitesettings",
+  "pk": 1,
+  "fields": {
+    "created_at": "2026-09-10T01:31:57.816Z",
+    "updated_at": "2026-09-10T17:30:49.188Z",
+    "legal_name": "OSK Ostrycharz — Ośrodek Szkolenia Kierowców",
+    "short_name": "OSK Ostrycharz",
+    "street": "ul. Asnyka 7",
+    "postal_code": "98-300",
+    "city": "Wieluń",
+    "nip": "",
+    "email": "oskostrycharz@poczta.onet.pl",
+    "phone_primary": "691 570 489",
+    "phone_secondary": "",
+    "phone_tertiary": "",
+    "whatsapp": "",
+    "bank_account": "",
+    "bank_account_public": false,
+    "founded_year": null,
+    "map_lat": "51.220600",
+    "map_lng": "18.569700",
+    "facebook_url": "https://pl-pl.facebook.com/osrodekostrycharz/",
+    "google_business_url": "",
+    "youtube_url": "https://www.youtube.com/channel/UCbXki-U-CJjcQ36tZ5GZ4lw",
+    "youtube_video_url": "https://www.youtube.com/watch?v=abeQhB0RfV4",
+    "youtube_poster": "",
+    "youtube_poster_alt": "",
+    "lead_notify_emails": "oskostrycharz@poczta.onet.pl",
+    "analytics_enabled": false
+  }
+}
+]

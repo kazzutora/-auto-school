@@ -57,7 +57,7 @@ switcher. A row that does not fit has to be visibly wrong, not quietly wrong.
             {% for child in item.children %}
               {% nav_url child as child_url %}
               <li><a href="{% if child_url %}{{ child_url }}{% else %}#{% endif %}"
-                class="block rounded px-3 py-2 u-body-on-ground transition hover:bg-surface-muted hover:u-on-ground">{{ child.title }}</a></li>
+                class="block rounded px-3 py-2 u-body-on-ground transition hover:bg-brand-100 hover:u-on-ground">{{ child.title }}</a></li>
             {% endfor %}
           </ul>
         {% else %}

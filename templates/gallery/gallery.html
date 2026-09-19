@@ -31,7 +31,7 @@ here is decorative: every image is content, so every alt says what it shows.
         {% for filter in filters %}
           <a href="{{ filter.url }}"{% if filter.is_active %} aria-current="page"{% endif %}
              class="inline-flex h-10 items-center gap-2 rounded border-2 px-4 font-bold transition
-  {% if filter.is_active %} border-accent bg-accent u-fixed-ink{% else %} border-line u-on-ground hover:border-ink{% endif %}">
+  {% if filter.is_active %} border-brand-500 bg-brand-200 u-fixed-ink{% else %} border-line u-on-ground hover:border-ink{% endif %}">
             {{ filter.label }}
             <span class="data text-small {% if filter.is_active %}u-fixed-ink{% else %}u-muted-on-ground{% endif %}">{{ filter.total }}</span>
           </a>

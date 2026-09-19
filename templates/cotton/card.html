@@ -8,7 +8,7 @@ two shadows are the only two in the design.
 tone="dark" is the other half of B.1's language: the same card on the ink
 ground. In the light theme that is a near-black block on the warm grey page; in
 the dark theme the roles swap and it becomes the light block on a near-black
-page. Nothing here names a colour for it — .u-dark-card publishes the pair.
+page. Nothing here names a colour for it — .u-ground-wine publishes the pair.
 
 B.5 wants the whole card clickable with focus caught by the card. That needs the
 anchor to wrap it, which the title slot cannot express on its own, so the href
@@ -20,7 +20,7 @@ with it.
 {% endcomment %}
 <c-vars href="" padded="1" level="3" tone="light" class="" />
 {% if href %}<a href="{{ href }}"{% else %}<article{% endif %}
-  class="u-card{% if tone == 'dark' %} u-dark-card{% endif %}{% if padded %} p-6{% endif %}{% if href %} u-card-link{% endif %} {{ class }}"
+  class="u-card{% if tone == 'dark' %} u-ground-wine{% endif %}{% if padded %} p-6{% endif %}{% if href %} u-card-link{% endif %} {{ class }}"
   {{ attrs }}>
   {# The level is the page's to choose: a card sitting straight under the h1
      is a level 2 item, and one inside a section that already has an h2 is a
