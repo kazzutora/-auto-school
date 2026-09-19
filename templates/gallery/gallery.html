@@ -86,7 +86,7 @@ here is decorative: every image is content, so every alt says what it shows.
 </c-section>
 
 {% for section in sections %}
-  <c-section tone="{% cycle 'muted' 'default' %}">
+  <c-section tone="{% if forloop.counter0|divisibleby:2 %}muted{% else %}default{% endif %}">
     <c-heading level="2">{{ section.label }}</c-heading>
     <div class="mt-6">{% include "gallery/_lightbox.html" with items=section.images testid="gallery-grid" %}</div>
   </c-section>
@@ -96,7 +96,7 @@ here is decorative: every image is content, so every alt says what it shows.
    block above it has to be light for the footer's rounded top to read. On a
    gallery the photographs are the page's strongest thing anyway — a dark band
    competing with them would be the wrong block to darken. #}
-<c-section tone="surface" size="compact">
+<c-section tone="{% if sections|length|divisibleby:2 %}muted{% else %}default{% endif %}" size="compact">
   <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div>
       <c-heading level="2">{% translate "Chcesz zobaczyć ośrodek na żywo?" %}</c-heading>

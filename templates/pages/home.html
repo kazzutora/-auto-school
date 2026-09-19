@@ -177,25 +177,14 @@ is a forgery, not a placeholder.
          draws that line and it is the same line ROSE.md A.3 draws about the
          reviews. The caption is the school's own slogan, not a claim about
          the people in the picture. #}
-      {% translate "Plac manewrowy, instruktor i kursant przy aucie" as t_about_alt %}
+      {# Not the same photograph as the film below. They were both about-plac
+         for an afternoon, which put one picture in a column twice — and paid
+         for it twice on the first screen. #}
+      {% translate "Wnętrze auta, ręce na kierownicy" as t_about_alt %}
       <c-polaroid caption="{% translate 'Twoja droga do niezależności' %}" tilt="-4" class="mt-10 w-full max-w-sm">
-        <c-photo stem="about-plac" crop="card" alt="{{ t_about_alt }}" sizes="(min-width: 1024px) 24rem, 90vw" />
+        <c-photo stem="bento-white" crop="card" alt="{{ t_about_alt }}" sizes="(min-width: 1024px) 24rem, 90vw" />
       </c-polaroid>
 
-      {% if video_id or video_url %}
-        {# The film is a link until somebody presses it, tech.md section 2: up
-           to the click this page sends nothing to Google. #}
-        <div id="wideo" class="mt-10 scroll-mt-32">
-          {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
-          <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
-                         poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
-                         photo="{% if not site_settings.youtube_poster %}about-plac{% endif %}"
-                         alt="{% if site_settings.youtube_poster_alt %}{{ site_settings.youtube_poster_alt }}{% else %}{{ t_poster_alt }}{% endif %}" />
-          <p class="mt-3 text-small u-muted-on-ground">
-            {% translate "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google." %}
-          </p>
-        </div>
-      {% endif %}
     </div>
 
     {% if variants %}
@@ -206,7 +195,13 @@ is a forgery, not a placeholder.
             <c-course-tile :course="variant" active="{% if forloop.first %}1{% endif %}" />
           {% endfor %}
         </div>
-        <p class="mt-8 flex flex-wrap items-center gap-4">
+        {# Both ways on, and the second one is not decoration: the tiles link
+           to a price row, and somebody who wants to read about the course
+           itself has no other door out of this block. #}
+        <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <c-button variant="ghost" href="{% url 'courses:detail' slug='kat-b' %}">
+            {% translate "O kursie kat. B" %} <c-icon name="arrow-right" size="sm" />
+          </c-button>
           <c-button variant="ghost" href="{% url 'courses:pricing' %}">
             {% translate "Pełny cennik" %} <c-icon name="arrow-right" size="sm" />
           </c-button>
@@ -241,8 +236,19 @@ is a forgery, not a placeholder.
    attempts leaves three figures rather than a fourth reading nothing.
    ========================================================= #}
 {% if stat_items %}
-<section class="reveal relative overflow-hidden py-16 md:py-20">
-  <c-ornament kind="brush" variant="3" class="u-brush absolute inset-x-[-4%] top-1/2 w-[108%] -translate-y-1/2" />
+<section class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
+  {# C.1 block 4 wants a ragged pink band across the page with the figures on
+     it, and B.7 point 6 wants every piece of text on a flat fill. Both, by
+     making the strokes the band's two edges rather than a wash behind the
+     numbers.
+
+     It is not only a rule. The figures are brand.500 at the display size, and
+     that colour is measured: 4.51 on the pale card face, 3.47 over a stroke
+     laid on the page, and 2.75 on a flat brand.200 band — which is under the
+     3.0 that B.3 allows even a heading. The arrangement that satisfies the
+     composition is also the only one of the three that clears AA. #}
+  <c-ornament kind="brush" variant="3" class="u-brush-edge-top" />
+  <c-ornament kind="brush" variant="3" class="u-brush-edge-bottom" />
   <div class="u-container relative">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div>
@@ -265,6 +271,30 @@ is a forgery, not a placeholder.
     {% endif %}
   </div>
 </section>
+{% endif %}
+
+{# ============================================================ 4b. FILM
+   Not in C.1, and kept because it is real content the owner can fill. It sits
+   below the figures rather than beside the school's paragraph, where its
+   poster was the second copy of the photograph already in the print above it
+   — and was being paid for on the first screen.
+
+   A link until somebody presses it, tech.md section 2: up to the click this
+   page sends nothing to Google.
+   ============================================================ #}
+{% if video_id or video_url %}
+  <c-section id="wideo" tone="muted">
+    <div class="u-narrow">
+      {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
+      <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
+                     poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
+                     photo="{% if not site_settings.youtube_poster %}about-plac{% endif %}"
+                     alt="{% if site_settings.youtube_poster_alt %}{{ site_settings.youtube_poster_alt }}{% else %}{{ t_poster_alt }}{% endif %}" />
+      <p class="mt-3 text-small u-muted-on-ground">
+        {% translate "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google." %}
+      </p>
+    </div>
+  </c-section>
 {% endif %}
 
 {# ========================================================= 5. INSTRUKTORZY

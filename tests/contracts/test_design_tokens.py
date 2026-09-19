@@ -43,7 +43,7 @@ LIGHT = {
     "ink-500": (94, 74, 82),
     "ink-300": (156, 138, 145),
     "line": (235, 211, 217),
-    "state-ok": (30, 122, 86),
+    "state-ok": (26, 108, 76),
     "state-err": (142, 27, 18),
     # Not in B.2, which gives ok and err only. The site had a third state
     # before this core did, and it is measured the same way: 5.68 on the page.
@@ -224,7 +224,26 @@ def themes() -> dict[str, dict[str, tuple[int, ...]]]:
     light = declarations(block("  :root {"))
     media = declarations(block("    :root:not([data-theme='light']) {"))
     explicit = declarations(block("  :root[data-theme='dark'] {"))
-    return {"light": light, "dark": {**light, **explicit}, "media": media, "explicit": explicit}
+    tables = {
+        "light": light,
+        "dark": {**light, **explicit},
+        "media": media,
+        "explicit": explicit,
+    }
+
+    # Not a token: the fill a state chip paints for itself, which is a tenth of
+    # the ground's own foreground over the ground. scripts/check_contrast.py
+    # builds the same two and says why — the colours on a chip have to be
+    # checked against the chip, not against the bare page, and two of the three
+    # cleared the page and failed the chip.
+    def mix(fg, bg, alpha=0.1):
+        return tuple(round(alpha * f + (1 - alpha) * b) for f, b in zip(fg, bg, strict=True))
+
+    for name in ("light", "dark"):
+        table = tables[name]
+        table["chip-on-page"] = mix(table["ink"], table["brand-100"])
+        table["chip-on-card"] = mix(table["ink"], table["brand-50"])
+    return tables
 
 
 def test_light_palette_matches_the_contract(themes: dict) -> None:

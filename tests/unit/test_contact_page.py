@@ -324,11 +324,15 @@ def test_the_two_states_differ_by_more_than_colour(
     assert "Zamknięte" in closed
 
     # The badge is a filled chip since REDESIGN.md B.5 rather than a bordered
-    # one, so the fill is what carries the state colour. What the test is
-    # actually about has not moved: the two states differ by the word and by
-    # the mark as well as by the colour, which is the point — green against
-    # grey is invisible to a good few readers.
-    assert "state-ok" in open_now
+    # one, so the fill is what carries the state colour, and at core v29 the
+    # colour comes from u-chip-ok rather than text-state-ok: tailwind emits
+    # utilities in a later layer than components and layer order beats
+    # specificity, so the components layer could not adjust a text- utility for
+    # the ground it landed on. What the test is actually about has not moved:
+    # the two states differ by the word and by the mark as well as by the
+    # colour, which is the point — green against grey is invisible to a good
+    # few readers.
+    assert "u-chip-ok" in open_now
     assert "state-ok" not in closed
 
     assert "#i-check" in open_now

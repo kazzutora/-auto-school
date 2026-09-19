@@ -13,7 +13,15 @@ import math
 
 
 def num(value: float) -> str:
-    return f"{value:.1f}".rstrip("0").rstrip(".") or "0"
+    """Whole units.
+
+    Everything drawn with these helpers is built in a coordinate space ten
+    times the size it is painted at — gen_logo.py works at a wheel radius of
+    430 for a mark that is never wider than a few hundred css pixels — so an
+    integer here is a tenth of a unit at the size anybody sees. "123.4" is five
+    characters against three, and the lettering is thousands of them.
+    """
+    return f"{value:.0f}"
 
 
 def circle(cx: float, cy: float, r: float, *, hole: bool = False) -> str:

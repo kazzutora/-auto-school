@@ -104,7 +104,7 @@ def set_line(
             continue
         font, name = _find(face, char, weight)
         glyphs = font.getGlyphSet()
-        pen = SVGPathPen(glyphs, ntos=lambda v: f"{v:.1f}".rstrip("0").rstrip(".") or "0")
+        pen = SVGPathPen(glyphs, ntos=lambda v: f"{v:.0f}")
         # y is flipped: font space grows upward, svg space downward.
         glyphs[name].draw(TransformPen(pen, (scale, 0, 0, -scale, pen_x, y)))
         drawn = pen.getCommands()

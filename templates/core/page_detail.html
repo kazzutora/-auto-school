@@ -306,3 +306,13 @@ nothing.
 <c-cta-bar data-testid="call-bar" title="{{ t_chcesz_zaczac_kurs }}"
            phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}
+
+{# B.7 point 4: the policy and the RODO notice carry no ornament, and the
+   footer is part of the page they carry it on. #}
+{% block footer %}
+  {% if page.slug == 'polityka-prywatnosci' or page.slug == 'rodo' %}
+    {% include "layout/footer.html" with plain=1 %}
+  {% else %}
+    {% include "layout/footer.html" %}
+  {% endif %}
+{% endblock %}

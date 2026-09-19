@@ -98,15 +98,18 @@ BANDED = ["/terminy/", "/kontakt/", "/galeria/", "/certyfikaty/", "/cennik/", "/
 
 RHYTHM = r"""() => {
     const sections = [...document.querySelectorAll('main section')];
-    // The grounds REDESIGN.md B.2 gives a section, tested in the order the
-    // class list has to be read: the two that are utilities before the two
-    // that are a background colour, because a dark card carries no bg- class.
+    // The grounds ROSE.md B.2 gives a section, tested in the order the class
+    // list has to be read: the ones that are a utility before the one that is
+    // a background colour, because the wine band carries no bg- class.
+    //
+    // There is no white and no `paper`: B.8 gives the page one ground,
+    // brand.100, and it is what a section falls through to.
     const groundOf = (s) =>
-          s.classList.contains('u-dark-card') || s.classList.contains('u-ground-ink') ? 'dark'
-        : s.classList.contains('u-ground-accent') ? 'accent'
-        : s.classList.contains('bg-surface') ? 'surface'
-        : s.classList.contains('bg-paper-50') ? 'muted'
-        : 'paper';
+          s.classList.contains('u-ground-wine') ? 'wine'
+        : s.classList.contains('u-ground-pink') ? 'pink'
+        : s.classList.contains('u-ground-brand') ? 'brand'
+        : s.classList.contains('bg-brand-50') ? 'card'
+        : 'page';
 
     const report = sections.map(s => ({
         ground: groundOf(s),
@@ -123,7 +126,7 @@ RHYTHM = r"""() => {
         count: report.length,
         grounds: report.map(r => r.ground),
         repeats: repeats,
-        dark: report.filter(r => r.ground === 'dark').length,
+        dark: report.filter(r => r.ground === 'wine').length,
         last: report.length ? report[report.length - 1].ground : null,
         lastActs: report.length ? report[report.length - 1].action : false,
         // A section whose content is a map or a wall of photographs is tall
@@ -177,10 +180,14 @@ def test_the_eyebrow_says_where_you_are(
     live_server, site: SiteSettings, page: Page, path: str
 ) -> None:
     """X0 point 3: it read OSK NAWROCKI WIELUŃ on every page, which the
-    breadcrumbs above it had already said."""
+    breadcrumbs above it had already said.
+
+    The eyebrow became the handwriting at core v29, ROSE.md C.2 — the school's
+    own voice saying what the page is, rather than a label repeating the crumb
+    above it."""
     page.goto(f"{live_server.url}{path}")
     page.wait_for_selector("h1")
 
-    eyebrow = page.locator("main p.label").first
+    eyebrow = page.locator("main p.script").first
     assert eyebrow.count() == 1
     assert "NAWROCKI" not in eyebrow.inner_text().upper()

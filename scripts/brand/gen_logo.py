@@ -17,6 +17,7 @@ lockup a few percent wider beats one that cannot spell the russian page.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from scripts.brand import geometry as g
@@ -33,7 +34,11 @@ PINK = "#D4385E"  # brand.500
 SOFT = "#F2B8C6"  # brand.200
 FACE = "#FFFBFA"  # brand.50
 
-R = 43.0  # wheel radius, the unit everything else is stated in
+# The wheel radius, and the unit everything else is stated in. Ten times the
+# size the mark is ever painted at, so the path data can be whole numbers: the
+# lettering is thousands of coordinates and a decimal point on each of them is
+# a third of the file.
+R = 430.0
 
 WORD = "OSTRYCHARZ"
 SUBLINE = "OŚRODEK SZKOLENIA KIEROWCÓW"
@@ -239,7 +244,7 @@ def svg(width: float, height: float, body: str, *, title: str) -> str:
 def lockup(*, slogan: bool, cap: bool, dark: bool) -> str:
     ink = FACE if dark else INK
     soft = SOFT if dark else INK
-    pad = 8.0
+    pad = 80.0
     gap = 0.34 * R
 
     word_size = 0.767 * R / 0.70
@@ -356,25 +361,69 @@ def write(name: str, content: str) -> None:
     print(f"{path.relative_to(ROOT)}  {len(content.encode()) / 1024:.1f} KB")
 
 
+def symbol_file(name: str, symbol_id: str, content: str) -> None:
+    """The lockup as a <symbol>, for the pages to reference with <use>.
+
+    Three arrangements were tried and this is the only one right on every
+    count.
+
+    Two <img>, one hidden per theme, is two requests for one picture and the
+    browser fetches both — 138 KB of logo on every page, against the 400 KB the
+    whole first screen gets in REDESIGN.md C.6.
+
+    One inlined copy fixes the theme, because currentColor reaches it, and
+    costs no request. But the header and the footer both carry the lockup, so
+    the page then carries it twice: 33 KB of html on every page of the site,
+    uncached.
+
+    A <symbol> referenced twice is one cacheable file, one request for the
+    whole site, and `color` still crosses into the shadow tree that <use>
+    builds — static/icons/sprite.svg has relied on that since the first core.
+
+    The crimson of the cap stays a literal. It is a fill rather than a role and
+    does not swap with the theme, B.2.
+    """
+    body = content.replace(f'fill="{INK}"', 'fill="currentColor"')
+    body = body.replace(f'stroke="{INK}"', 'stroke="currentColor"')
+    box = re.search(r'viewBox="([^"]+)"', body)
+    assert box, "no viewBox on the lockup"
+    inner = body[body.index(">") + 1 : body.rindex("</svg>")]
+    # The <title> goes: the page names the lockup with aria-label on the <svg>
+    # that references it, and two names on one image is one name read twice.
+    inner = inner[inner.index("</title>") + len("</title>") :]
+    write(
+        name,
+        '<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+        f'<symbol id="{symbol_id}" viewBox="{box[1]}">{inner}</symbol></svg>\n',
+    )
+
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    write("logo-full.svg", lockup(slogan=True, cap=True, dark=False))
+    full = lockup(slogan=True, cap=True, dark=False)
+    compact = lockup(slogan=False, cap=False, dark=False)
+    write("logo-full.svg", full)
     write("logo-full-dark.svg", lockup(slogan=True, cap=True, dark=True))
-    write("logo-compact.svg", lockup(slogan=False, cap=False, dark=False))
+    write("logo-compact.svg", compact)
     write("logo-compact-dark.svg", lockup(slogan=False, cap=False, dark=True))
 
-    size = 2 * R + 6
+    # What the pages actually use. The files above stay for the places that
+    # need a picture rather than a reference — an email, a press kit.
+    symbol_file("lockup-compact.svg", "lockup-compact", compact)
+
+    size = 2 * R + 60
     wheel = '<path fill="' + INK + '" d="' + wheel_path(size / 2, size / 2, R) + '"/>'
     write("mark-wheel.svg", svg(size, size, wheel, title="OSK Ostrycharz"))
 
-    w = 60.0
-    mark = plate_paths(10, 0.60 * w, w) + cap_paths(10, 0.60 * w, w)
+    w = 600.0
+    mark = plate_paths(100, 0.60 * w, w) + cap_paths(100, 0.60 * w, w)
     write("mark-l.svg", svg(w * 1.42, w * 1.94, "".join(mark), title="Tabliczka L"))
 
     # The cap is dropped from the favicon: at 16px it is three pixels of noise
     # on top of the only shape that still reads, ROSE.md K1 step 4.
-    fav = 64.0
-    plate = plate_paths(3, 3, fav - 6, aspect=1.0)
+    fav = 640.0
+    plate = plate_paths(30, 30, fav - 60, aspect=1.0)
     write("favicon.svg", svg(fav, fav, "".join(plate), title="L"))
     return 0
 

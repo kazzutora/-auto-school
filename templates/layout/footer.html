@@ -23,8 +23,8 @@ public page.
 
    The top edge is a brush stroke rather than a border — the closing band of a
    page whose whole language is painted. #}
-<footer class="relative mt-auto overflow-hidden bg-brand-50 pt-6">
-  <c-ornament kind="brush" variant="3" class="u-brush-edge-top" />
+<footer class="relative mt-auto overflow-hidden bg-brand-50 pt-6{% if plain %} border-t border-line{% endif %}">
+  {% if not plain %}<c-ornament kind="brush" variant="3" class="u-brush-edge-top" />{% endif %}
   {# The compact rhythm, not the normal one. A footer is the closing band, not
      a section somebody reads: at the full step the air above and below it came
      to 192px against 396px of actual links, and the block read as empty rather
@@ -42,14 +42,19 @@ public page.
        answered the first time. The cluster below is the one B.7 describes. #}
     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div class="u-narrow">
-        {# The full lockup here, with the slogan: the header carries the
-           compact one because a handwritten line at 40px is a smudge, and the
-           footer is where it has room to be read. #}
-        <img src="{% static 'img/brand/logo-full.svg' %}" width="420" height="180"
-             alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-             class="h-16 w-auto dark:hidden">
-        <img src="{% static 'img/brand/logo-full-dark.svg' %}" width="420" height="180"
-             alt="" aria-hidden="true" class="hidden h-16 w-auto dark:block">
+        {# The compact lockup and the slogan as text, rather than the full
+           lockup as a picture. The full one is 43 KB — the handwriting in it
+           is a thousand bezier nodes — and it was being fetched twice, once
+           for each theme, on every page of the site. The slogan set in Caveat
+           says the same thing in a face the page has already loaded, and a
+           reader can select it. #}
+        <span class="block h-10 w-auto text-brand-700 dark:text-brand-50 [&>svg]:h-full [&>svg]:w-auto">
+          <svg viewBox="0 0 5151 1020" class="h-full w-auto" role="img"
+               aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}">
+            <use href="{% static 'img/brand/lockup-compact.svg' %}#lockup-compact"></use>
+          </svg>
+        </span>
+        <p class="script script-sm mt-3">{% translate "Twoja droga do niezależności" %}</p>
         <p class="mt-4 text-small u-muted-on-ground">
           {% translate "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie." %}
         </p>
@@ -146,10 +151,12 @@ public page.
     {# The closing note, C.1 block 9. The last heart on the page, and the third
        of the three B.7 point 2 allows in a screen — the other two are far
        enough up that they are never in the same viewport as this one. #}
-    <p class="script mt-10 flex items-center justify-end gap-2 text-right">
-      {% translate "Z nami zawsze do celu" %}
-      <c-ornament kind="heart" variant="3" class="h-6 w-6 shrink-0" />
-    </p>
+    {% if not plain %}
+      <p class="script mt-10 flex items-center justify-end gap-2 text-right">
+        {% translate "Z nami zawsze do celu" %}
+        <c-ornament kind="heart" variant="3" class="h-6 w-6 shrink-0" />
+      </p>
+    {% endif %}
 
     {# B.7 point 11: the privacy and RODO line sits under everything else,
        separated, because it is the legal footer and not a fifth column of

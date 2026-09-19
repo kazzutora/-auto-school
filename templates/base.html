@@ -69,7 +69,12 @@
     {% block content %}{% endblock %}
   </main>
 
-  {% include "layout/footer.html" %}
+  {# A block rather than a bare include, so a page can ask for the footer
+     without its ornament. Two do: the privacy policy and the RODO notice,
+     where ROSE.md B.7 point 4 allows none at all — and a closing flourish
+     under a data-protection notice is still a flourish on that page, however
+     shared the chrome that drew it. #}
+  {% block footer %}{% include "layout/footer.html" %}{% endblock %}
   {% include "layout/cookie_banner.html" %}
   {% block scripts %}{% endblock %}
 </body>

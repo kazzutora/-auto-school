@@ -59,12 +59,18 @@ elements rather than two <img> tags, which would fetch both.
          then on. The alt sits on the light one only: two <img> with the same
          alt make a screen reader read the school's name twice, so the hidden
          one is decorative by definition. #}
-      <img src="{% static 'img/brand/logo-compact.svg' %}" width="340" height="112"
-           alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
-           class="h-9 w-auto sm:h-11 dark:hidden">
-      <img src="{% static 'img/brand/logo-compact-dark.svg' %}" width="340" height="112"
-           alt="" aria-hidden="true"
-           class="hidden h-9 w-auto sm:h-11 dark:block">
+      {# Included rather than linked, and one copy rather than a pair.
+         Two <img> with one hidden per theme is two requests for one picture
+         and the browser fetches both — 38 KB of header logo on every page,
+         against the 400 KB the whole first screen gets in C.6. An included
+         svg travels gzipped with the html and takes currentColor with it,
+         which is also what lets one file serve both themes. #}
+      <span class="block h-9 w-auto text-brand-700 sm:h-11 dark:text-brand-50 [&>svg]:h-full [&>svg]:w-auto">
+        <svg viewBox="0 0 5151 1020" class="h-full w-auto" role="img"
+             aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}">
+          <use href="{% static 'img/brand/lockup-compact.svg' %}#lockup-compact"></use>
+        </svg>
+      </span>
     </a>
 
     {% include "layout/nav.html" %}

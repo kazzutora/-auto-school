@@ -387,7 +387,8 @@ def test_neither_hover_move_happens_under_reduced_motion(
 def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, page: Page) -> None:
     """A row people scan straight down answers the pointer with a fill.
 
-    The value moved with the palette: paper-50 is #F2F1EE now rather than
+    The value moved with the palette twice: it is brand-50, #FFFBFA, now
+    rather than
     #FAFAFA, because B.2 gave the page a warm grey ground and the half step
     above it had to move with it. Read off the token rather than written out
     again, so the next change to B.2 does not need an edit here.
@@ -402,11 +403,11 @@ def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, pag
     row.hover()
     page.wait_for_timeout(300)
     expected = page.evaluate(
-        "() => getComputedStyle(document.documentElement).getPropertyValue('--paper-50').trim()"
+        "() => getComputedStyle(document.documentElement).getPropertyValue('--brand-50').trim()"
     )
     settled = row.evaluate("el => getComputedStyle(el).backgroundColor")
     assert settled == f"rgb({expected.replace(' ', ', ')})", (
-        f"the row settled on {settled}, not --paper-50 ({expected})"
+        f"the row settled on {settled}, not --brand-50 ({expected})"
     )
 
 

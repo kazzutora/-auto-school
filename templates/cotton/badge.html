@@ -15,10 +15,20 @@ swap with the theme, so its text must not either, or the dark theme lands on
 white-on-yellow at 1.43:1, banned outright in B.2.
 {% endcomment %}
 <c-vars tone="neutral" class="" />
+{% comment %}
+Badge, tech.md section 7.
+
+The state tones name a component class rather than a text- utility, and that is
+load bearing: tailwind emits utilities in a later layer than components, and
+layer order beats specificity. `text-state-ok` therefore won against any rule
+in @layer components trying to adjust it — including the one that makes a chip
+on the wine band read, where the light theme's green measures 3.4 on the chip's
+own fill.
+{% endcomment %}
 <span class="label inline-flex h-[26px] items-center rounded-full px-3
-{% if tone == 'success' %} u-chip-state text-state-ok
-{% elif tone == 'warning' %} u-chip-state text-state-warn
-{% elif tone == 'danger' %} u-chip-state text-state-err
+{% if tone == 'success' %} u-chip-state u-chip-ok
+{% elif tone == 'warning' %} u-chip-state u-chip-warn
+{% elif tone == 'danger' %} u-chip-state u-chip-err
 {% elif tone == 'accent' %} bg-brand-200 u-fixed-ink
 {% elif tone == 'brand' %} bg-brand-500 u-fixed-paper
 {% elif tone == 'muted' %} u-chip-muted

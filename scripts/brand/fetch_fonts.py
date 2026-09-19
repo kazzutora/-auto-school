@@ -22,11 +22,16 @@ site is written in them.
 from __future__ import annotations
 
 import argparse
+import io
 import re
 import sys
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+
+from fontTools import subset as ft_subset
+from fontTools.ttLib import TTFont
+from fontTools.varLib.instancer import instantiateVariableFont
 
 ROOT = Path(__file__).resolve().parents[2]
 FONT_DIR = ROOT / "static" / "fonts"
@@ -46,6 +51,38 @@ USER_AGENT = (
 # into the system sans on every ukrainian page; scripts/check_fonts.py is what
 # caught it, and what will catch it again.
 KEEP_SUBSETS = ("cyrillic-ext", "cyrillic", "latin-ext", "latin")
+
+
+# What the handwriting has to be able to write, and nothing else.
+#
+# Caveat arrives from the api at 102 KB for the two subsets a polish page
+# pulls, which is half the font weight of the first screen for a face that sets
+# eight short phrases. It can be cut because unlike the other two it never sets
+# anything from the database: every string in it is a fixed, translated phrase
+# — `Z nami zdasz`, `O nas`, `Nasze kursy`, the slogan under the print.
+#
+# The set below is deliberately wider than those phrases: all of ascii, the
+# polish diacritics and both cyrillic alphabets, so new copy in any of the
+# three languages sets correctly without anybody remembering this file exists.
+# scripts/check_fonts.py is the gate either way — it opens these files and
+# fails the build on a missing glyph.
+KEEP_CHARS = (
+    "".join(chr(c) for c in range(0x20, 0x7F))
+    + "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ"
+    + "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    + "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+    + "ґєіїҐЄІЇ"
+    + "—–„”“‘’…·♡«»§№°"
+)
+
+# Only the handwriting is cut, and the value is the weight its axis is pinned
+# to. Rubik sets headings out of the database and Nunito sets every paragraph
+# on the site, so both keep their full subsets and their axes: a course title
+# the owner types tomorrow has to render, at whatever weight it lands on.
+#
+# Caveat is set at 700 everywhere it appears — the .script class in app.css and
+# nothing else — so the axis is worth more as bytes than as a range.
+SUBSET_FACES = {"caveat": 700.0}
 
 
 @dataclass(frozen=True)
@@ -101,6 +138,37 @@ def get(url: str) -> bytes:
         return bytes(response.read())
 
 
+def cut(payload: bytes, weight: float | None = None) -> bytes:
+    """Keep only KEEP_CHARS, and only the glyphs that draw them.
+
+    ``weight`` pins the variable axis and throws the variation tables away
+    with it. That is most of the saving on Caveat: a variable font carries a
+    delta per point per axis, and this site sets the handwriting at one weight.
+    """
+    font = TTFont(io.BytesIO(payload))
+    if weight is not None and "fvar" in font:
+        font = instantiateVariableFont(font, {"wght": weight}, updateFontNames=False)
+    options = ft_subset.Options()
+    options.flavor = "woff2"
+    # Ligatures, kerning and mark placement. Not calt.
+    #
+    # Caveat's contextual alternates are a second shape for most letters, so a
+    # repeated `a` is drawn differently the second time. They are also 104
+    # extra glyphs and 21 KB — half the file — on every first visit, for eight
+    # short phrases whose repeated letters you have to look for. The letterforms
+    # are what make it handwriting; calt only varies them.
+    options.layout_features = ["ccmp", "locl", "kern", "liga", "clig", "mark", "mkmk"]
+    options.retain_gids = False
+    options.drop_tables += ["DSIG"]
+    subsetter = ft_subset.Subsetter(options=options)
+    subsetter.populate(text=KEEP_CHARS)
+    subsetter.subset(font)
+    out = io.BytesIO()
+    font.flavor = "woff2"
+    font.save(out)
+    return out.getvalue()
+
+
 def collect(face: Face) -> list[tuple[str, str, str]]:
     """Return (subset, source url, unicode-range) for the subsets we keep."""
     css = get(f"https://fonts.googleapis.com/css2?family={face.query}&display=swap")
@@ -152,9 +220,15 @@ def main() -> int:
                 continue
             target = FONT_DIR / f"{face.slug}-{subset}.woff2"
             payload = get(url)
+            before = len(payload)
+            if face.slug in SUBSET_FACES:
+                payload = cut(payload, weight=SUBSET_FACES[face.slug])
             target.write_bytes(payload)
             total += len(payload)
-            print(f"{target.relative_to(ROOT)}  {len(payload) / 1024:.1f} KB")
+            saved = (
+                f"  (was {before / 1024:.1f})" if len(payload) != before else ""
+            )
+            print(f"{target.relative_to(ROOT)}  {len(payload) / 1024:.1f} KB{saved}")
     if args.css:
         print("\n\n".join(blocks))
     else:

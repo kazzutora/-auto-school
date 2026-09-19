@@ -25,8 +25,13 @@ class the call site passes, the way the icons do.
 {% endcomment %}
 {% if kind == 'brush' %}
   {% with file="img/ornament/brush-"|add:variant|add:".svg" %}
+  {# An edge stroke is stretched to its box and every other one keeps its
+     shape. A stroke that runs the width of a 1440px page at its own 520:110
+     would be 300px tall — a field rather than an edge, and the handwritten
+     note above it would be sitting on a stroke, which B.7 point 6 forbids. #}
   <svg data-ornament="brush" class="u-brush pointer-events-none select-none {{ class }}"
     viewBox="{% if variant == '2' %}0 0 260 260{% elif variant == '3' %}0 0 520 110{% elif variant == '4' %}0 0 190 190{% else %}0 0 420 80{% endif %}"
+    {% if 'u-brush-edge' in class %}preserveAspectRatio="none"{% endif %}
     aria-hidden="true" focusable="false" {{ attrs }}>
     <use href="{% static file %}#brush-{{ variant }}"></use>
   </svg>

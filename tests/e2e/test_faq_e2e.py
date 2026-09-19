@@ -70,7 +70,14 @@ def test_the_accordion_opens_with_javascript_too(live_server, page: Page, questi
 
 
 def test_the_rows_open_one_by_one(live_server, page: Page, questions: None) -> None:
-    """No shared state between rows: opening the second leaves the first alone."""
+    """No shared state between rows: opening the second leaves the first alone.
+
+    expect() rather than is_visible(). A panel opens over 180ms, REDESIGN.md
+    C.3 row 8, and an element mid-transition is zero pixels tall — which
+    is_visible() reports as not visible. The assertion was racing the animation
+    and lost about one run in two; expect() retries until the panel has
+    finished, which is the question the test is actually asking.
+    """
     page.goto(f"{live_server.url}/faq/")
 
     first = page.get_by_text("Trzy miesiące przed 18. urodzinami.")
@@ -79,8 +86,8 @@ def test_the_rows_open_one_by_one(live_server, page: Page, questions: None) -> N
     page.get_by_text("Od jakiego wieku mogę zapisać się na kurs?").click()
     page.get_by_text("Co to jest PKK i gdzie go otrzymam?").click()
 
-    assert first.is_visible()
-    assert second.is_visible()
+    expect(first).to_be_visible()
+    expect(second).to_be_visible()
 
 
 def test_the_page_does_not_move_sideways(live_server, page: Page, questions: None) -> None:

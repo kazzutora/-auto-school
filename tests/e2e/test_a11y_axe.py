@@ -125,16 +125,22 @@ def test_the_header_is_told_apart_from_the_page_it_floats_on(
 def test_the_dark_band_reads_as_well_as_the_page(
     live_server, site: SiteSettings, page: Page, path: str
 ) -> None:
-    """Every inner page carries one inverted band now, and axe measures what is
-    painted on it — the grounds publish their own foreground, so a component
-    that named a page colour instead would show up here."""
+    """axe measures what is painted on the page, and on the band if it has one.
+
+    The grounds publish their own foreground, so a component that named a page
+    colour instead shows up here.
+
+    At most one band, never exactly one. ROSE.md B.8 allows a page nought or
+    one, and several have nought: the pricing page closes on a pale invitation
+    because the block above it is already a card. This asked every page for
+    one and passed until core v29 only because the footer was a dark card —
+    which it no longer is, for B.8's own reason.
+    """
     violations = audit(page, f"{live_server.url}{path}")
     assert not violations, f"{path}\n{json.dumps(violations, indent=2, ensure_ascii=False)}"
 
-    # u-dark-card since core v25, when B.1 moved the darkness into the cards
-    # and dropped the purple ground; u-ground-ink is its alias.
-    band = page.locator(".u-dark-card, .u-ground-ink").first
-    assert band.count() == 1, f"{path} has no inverted band"
+    bands = page.locator(".u-ground-wine")
+    assert bands.count() <= 1, f"{path} has {bands.count()} inverted bands, B.8 allows one"
 
 
 @pytest.mark.parametrize(
@@ -166,9 +172,8 @@ def test_no_dark_section_touches_the_dark_footer(
                 previous = previous.previousElementSibling;
             }
             const dark = (el) => !!el && (
-                el.classList.contains('u-dark-card') ||
-                el.classList.contains('u-ground-ink') ||
-                !!el.querySelector(':scope > .u-dark-card, :scope > .u-ground-ink')
+                el.classList.contains('u-ground-wine') ||
+                !!el.querySelector(':scope > .u-ground-wine')
             );
             return dark(previous);
         }"""
@@ -192,7 +197,7 @@ def test_a_card_on_a_dark_band_takes_the_page_back(
     page.goto(f"{live_server.url}/certyfikaty/")
     page.wait_for_selector("h1")
 
-    tile = page.locator(".u-dark-card .u-card, .u-ground-ink .u-card").first
+    tile = page.locator(".u-ground-wine .u-card").first
     tile.scroll_into_view_if_needed()
 
     measured = tile.evaluate(

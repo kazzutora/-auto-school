@@ -57,7 +57,13 @@ STREAK_OPACITY = "0.72"
 
 
 def num(value: float) -> str:
-    return f"{value:.1f}".rstrip("0").rstrip(".") or "0"
+    """Whole units.
+
+    The strokes are drawn in viewBoxes of 190 to 520 units and painted between
+    26 and 420 css pixels, so a tenth of a unit is a fifth of a device pixel at
+    the largest they are ever seen. It was 12% of the weight of the set.
+    """
+    return f"{value:.0f}"
 
 
 class Wobble:
@@ -114,7 +120,7 @@ def stroke(
     width: float,
     rng: random.Random,
     *,
-    steps: int = 44,
+    steps: int = 28,
     head: float = 0.07,
     tail: float = 0.42,
     ragged: float = 0.30,
@@ -156,7 +162,7 @@ def streaks(
     rng: random.Random,
     count: int,
     *,
-    steps: int = 26,
+    steps: int = 16,
 ) -> list[str]:
     """The dry lines a worn brush leaves inside its own stroke."""
     out = []

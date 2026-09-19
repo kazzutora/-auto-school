@@ -34,6 +34,12 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("light", "ink-500", "brand-50", 4.5, "secondary text on a card"),
     ("light", "state-err", "brand-50", 4.5, "a field error on a card"),
     ("light", "state-ok", "brand-100", 4.5, "an open intake on the page"),
+    # A state chip fills itself with a tenth of the ground's foreground, so the
+    # pair that has to read is the colour against that wash, not against the
+    # bare ground. Two of the three cleared the ground and failed the chip.
+    ("light", "state-ok", "chip-on-page", 4.5, "an open intake, on its own chip"),
+    ("light", "state-warn", "chip-on-page", 4.5, "a planned intake, on its own chip"),
+    ("light", "state-err", "chip-on-page", 4.5, "a closed intake, on its own chip"),
     ("light", "state-warn", "brand-100", 4.5, "a warning on the page"),
     # ---- light: the crimson -----------------------------------------
     # brand.500 is a fill and a heading, never small text: on the page it is
@@ -98,6 +104,10 @@ FORBIDDEN: list[tuple[str, tuple[int, int, int], str]] = [
 FORBIDDEN_LITERALS = {"#da6085": "the mockup's button crimson, 3.50 under white"}
 
 
+def mix(fg: tuple[int, int, int], bg: tuple[int, int, int], alpha: float):
+    return tuple(round(alpha * f + (1 - alpha) * b) for f, b in zip(fg, bg, strict=True))
+
+
 def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
     """The light and dark token tables, straight out of the stylesheet.
 
@@ -122,6 +132,13 @@ def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
     merged = dict(themes["light"])
     merged.update(themes["dark"])
     themes["dark"] = merged
+    # Not a token: the fill a state chip paints for itself, which is a tenth of
+    # the ground's own foreground over the ground. app.css says the same in one
+    # declaration, and the colours on it have to be checked against it rather
+    # than against the bare page.
+    for table in themes.values():
+        table["chip-on-page"] = mix(table["ink"], table["brand-100"], 0.1)
+        table["chip-on-card"] = mix(table["ink"], table["brand-50"], 0.1)
     return themes
 
 
@@ -165,7 +182,11 @@ def main() -> int:
         if literal in text:
             failures.append(f"{literal} is in the stylesheet — {why}")
 
-    for what, fg, bg, in ((name, rgb, token) for name, rgb, token in FORBIDDEN):
+    for (
+        what,
+        fg,
+        bg,
+    ) in ((name, rgb, token) for name, rgb, token in FORBIDDEN):
         for theme in ("light", "dark"):
             value = ratio(fg, themes[theme][bg])
             print(f"     {theme:5} {what:31} {value:5.2f}:1  forbidden outright")

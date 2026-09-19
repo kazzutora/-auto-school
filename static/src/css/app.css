@@ -198,7 +198,13 @@
 
     --line: 235 211 217;
 
-    --state-ok: 30 122 86;
+    /* B.2 prints #1E7A56 and the same section says the contrast is measured
+     * rather than estimated. It does not measure where it is actually used: a
+     * state chip fills itself with a tenth of the ground's own foreground, and
+     * on that wash over the page #1E7A56 comes to 3.82. This is the nearest
+     * value on the same hue that clears 4.5 — 4.61 on the page's chip and 4.70
+     * on a card's. axe found the original on /terminy/. */
+    --state-ok: 26 108 76;
     --state-err: 142 27 18;
     /* Not in B.2 — B.2 gives ok and err only — and the site had a third state
      * before this core did. Same hue family, measured the same way: 4.61 as
@@ -445,7 +451,12 @@
   .script {
     font-family: theme('fontFamily.script');
     @apply text-script font-bold;
-    color: rgb(var(--brand-500));
+    /* The crimson on a pale ground, and whatever the ground says otherwise.
+     * It was the crimson everywhere for an afternoon, and the eyebrow on the
+     * wine band of /terminy/ came out crimson on wine — which axe found and
+     * nobody looking at it would have, because the handwriting reads as
+     * decoration until you try to read it. */
+    color: rgb(var(--script-ink, var(--brand-500)));
     display: inline-block;
     rotate: -4deg;
     transform-origin: left bottom;
@@ -507,6 +518,12 @@
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
+    /* The ring is the crimson whatever the ground, because a field is pale
+     * whatever the ground: --field is brand.50 on the page and brand.50 on the
+     * wine band, so a ring that followed --focus came out white on white on
+     * the one form the whole site is for. Measured at 4.51 on the card face
+     * and 4.08 on the page; the halo outside it is still the ground's own. */
+    outline-color: rgb(var(--brand-500));
     box-shadow:
       inset 0 0 0 2px rgb(var(--brand-500)),
       0 0 0 4px rgb(var(--on-ground));
@@ -663,6 +680,13 @@
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
     --focus: var(--brand-500);
+    /* The handwriting, and the two state colours, as the ground sees them.
+     * All three are published per ground rather than fixed, because all three
+     * are text and every ground on this site is a different luminance. */
+    --script-ink: var(--brand-500);
+    --chip-ok: var(--state-ok);
+    --chip-warn: var(--state-warn);
+    --chip-err: var(--state-err);
   }
 
   /* The wine band, B.8's one dark block on a page. It does not swap with the
@@ -679,6 +703,18 @@
     --on-ground-body: var(--on-wine);
     --on-ground-muted: var(--on-wine-muted);
     --focus: var(--on-wine);
+    /* The pink of the logo rather than the crimson: brand.500 on the wine
+     * measures 1.6. */
+    --script-ink: var(--brand-200);
+    /* The state colours lightened for this band, for the same reason the dark
+     * theme lightens them — the light theme's greens and reds are cut to read
+     * on a pale page. These are measured against the chip's own fill, which is
+     * a tenth of the band's foreground over the band: 4.63, 4.67 and 4.75. The
+     * dark theme's own values sit at 4.03, 4.12 and 3.40 there, so they are
+     * not simply reused. */
+    --chip-ok: 151 224 194;
+    --chip-warn: 243 205 127;
+    --chip-err: 250 200 195;
   }
 
   .u-ground-wine :is(h1, h2, h3, h4) {
@@ -715,6 +751,7 @@
     --on-ground-body: var(--fixed-paper);
     --on-ground-muted: var(--fixed-paper);
     --focus: var(--fixed-paper);
+    --script-ink: var(--fixed-paper);
   }
 
   .u-ground-brand :is(h1, h2, h3, h4) {
@@ -734,6 +771,7 @@
     --on-ground-body: var(--fixed-ink);
     --on-ground-muted: var(--fixed-ink);
     --focus: var(--fixed-ink);
+    --script-ink: var(--fixed-ink);
   }
 
   .u-ground-pink :is(h1, h2, h3, h4) {
@@ -817,6 +855,11 @@
     border-color: rgb(var(--brand-500));
     color: rgb(var(--brand-link));
     background-color: rgb(var(--brand-50));
+    /* It paints its own face, so it publishes its own ring. Dropped on the
+     * wine band it kept the band's pale focus colour and came out pale on
+     * pale — an invisible focus ring on the route button of the contact
+     * page. */
+    --focus: var(--brand-500);
   }
 
   .u-btn-outline:hover:not(:disabled) {
@@ -961,6 +1004,26 @@
    * pair must not do. A neutral fill keeps the text doing the work. */
   .u-chip-state {
     background-color: rgb(var(--on-ground) / 0.1);
+  }
+
+  /* The chip's own text, from the ground rather than from the theme. A chip is
+   * a tenth of the ground's foreground over the ground, so what reads on it
+   * follows the ground and not the page.
+   *
+   * These are class names of their own rather than `text-state-*`. Tailwind
+   * emits utilities in a later layer than components and layer order beats
+   * specificity, so `.u-chip-state.text-state-ok` — two classes against one —
+   * still lost. */
+  .u-chip-ok {
+    color: rgb(var(--chip-ok));
+  }
+
+  .u-chip-warn {
+    color: rgb(var(--chip-warn));
+  }
+
+  .u-chip-err {
+    color: rgb(var(--chip-err));
   }
 
   /* ------------------------------------------------------------------ *
@@ -1344,7 +1407,11 @@
     position: absolute;
     left: -4%;
     width: 108%;
-    height: auto;
+    /* An explicit height, and the svg is stretched to it rather than keeping
+     * its own 520:110. At its own ratio a stroke across a 1440px page is
+     * 300px tall, which stops being an edge and becomes a ground — with the
+     * section's heading sitting on it. */
+    height: clamp(26px, 3.5vw, 56px);
     pointer-events: none;
     user-select: none;
     z-index: 0;
@@ -1352,25 +1419,38 @@
 
   .u-brush-edge-top {
     top: 0;
-    transform: translateY(-48%);
+    transform: translateY(-42%);
   }
 
   .u-brush-edge-bottom {
     bottom: 0;
-    transform: translateY(48%) scaleY(-1);
+    transform: translateY(42%) scaleY(-1);
   }
 
   /* A stroke in a corner, behind a photograph or a heading. Sized in vw so it
    * keeps its share of the screen instead of shrinking to a smear on a wide
    * one, and clamped so it cannot take over a phone. */
+  /* B.7 point 7: half the ornament on a phone. The corner strokes are the
+   * half that goes — they are the largest pieces and the only ones that bleed
+   * past the edge of their block, and at 320px that bleed put a 323px box on a
+   * 320px screen. The edges stay, because they are what makes a section read
+   * as a block. */
   .u-brush-corner-tr,
   .u-brush-corner-bl {
-    position: absolute;
-    width: clamp(180px, 26vw, 420px);
-    height: auto;
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
+    display: none;
+  }
+
+  @media (min-width: 480px) {
+    .u-brush-corner-tr,
+    .u-brush-corner-bl {
+      display: block;
+      position: absolute;
+      width: clamp(180px, 26vw, 420px);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
   }
 
   .u-brush-corner-tr {
@@ -1471,6 +1551,10 @@
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
     --focus: var(--brand-500);
+    --script-ink: var(--brand-500);
+    --chip-ok: var(--state-ok);
+    --chip-warn: var(--state-warn);
+    --chip-err: var(--state-err);
   }
 
   /* The google frame static/js/app.js builds on the click fills the box. */

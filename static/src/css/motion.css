@@ -192,12 +192,18 @@
   }
 }
 
-/* A tile answers the pointer, K7 point 5: 3px up and the lifted shadow. Not
- * behind the support guard — it is a transition on hover, not a scroll driven
- * animation, and the reduced-motion block at the foot of this file turns every
- * transition on the page down to nothing. */
+/* A course tile answers the pointer, K7 point 5: 3px up and the lifted shadow.
+ *
+ * The tile only. A card lifts 2px, REDESIGN.md C.3 row 4, and that is not the
+ * same number by accident: a card is a thing on the page and a tile is a
+ * choice being offered, so the tile moves a little more. Putting the 3px on
+ * .u-card-link took every card on the site with it.
+ *
+ * Not behind the support guard — it is a transition on hover, not a scroll
+ * driven animation, and the reduced-motion block at the foot of this file
+ * turns every transition on the page down to nothing. */
 @media (hover: hover) {
-  .u-card-link:hover {
+  .u-tile:hover {
     transform: translateY(-3px);
   }
 }
@@ -241,12 +247,12 @@
  * @supports, which is the right way round — the other order leaves an
  * unsupporting browser with the transparent value. */
 .u-header {
-  background-color: rgb(var(--paper));
+  background-color: rgb(var(--brand-100));
 }
 
 @supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
   .u-header {
-    background-color: rgb(var(--paper) / 0.82);
+    background-color: rgb(var(--brand-100) / 0.82);
     -webkit-backdrop-filter: saturate(140%) blur(8px);
     backdrop-filter: saturate(140%) blur(8px);
   }
