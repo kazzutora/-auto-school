@@ -6,6 +6,7 @@ from typing import Any
 import pytest
 from django.test import Client
 from django.urls import reverse
+from django.utils.timezone import localtime
 
 from apps.core.models import Page
 from apps.core.sitemaps import CONDITIONAL_ROUTES, STATIC_ROUTES
@@ -82,10 +83,18 @@ def test_a_route_rejoins_the_file_the_moment_it_has_content(client: Client, offe
 
 
 def test_a_course_brings_its_own_url_and_date(client: Client, offer: Course) -> None:
+    """The date is the local one, which is not always the UTC one.
+
+    django.contrib.sitemaps renders lastmod through localtime, and this
+    compared it against updated_at.date() in UTC. The two differ for the two
+    hours each night between 22:00 UTC and midnight in Warsaw, so the test was
+    red between 00:00 and 02:00 local and green the rest of the day. Found at
+    00:57 on a full suite run; nothing about the sitemap changed.
+    """
     body = sitemap(client)
 
     assert "/kursy/kat-b/" in paths(body)
-    assert offer.updated_at.date().isoformat() in body
+    assert localtime(offer.updated_at).date().isoformat() in body
 
 
 def test_a_flat_page_is_listed_with_its_date(client: Client, offer: Course) -> None:
