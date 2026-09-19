@@ -7,7 +7,7 @@ keyboard traversal with the focus visible everywhere.
 """
 
 import pytest
-from playwright.sync_api import Browser, Page
+from playwright.sync_api import Browser, Page, expect
 
 from apps.core.models import SiteSettings
 from tests.e2e.conftest import PAGES
@@ -569,7 +569,14 @@ def test_an_answer_still_opens_without_javascript(
     live_server, browser: Browser, site: SiteSettings
 ) -> None:
     """<details> is the reason this degrades: with no script it toggles on its
-    own, instantly, which is what it did before any of this."""
+    own, which is what it did before any of this.
+
+    expect() rather than is_visible() on the panel. The open itself needs no
+    script, but the 260ms of C.3 row 8 is a css transition and runs either way,
+    and an element mid-transition is zero pixels tall — which is_visible()
+    reports as not visible. The assertion was racing the animation. What the
+    test is about has not moved: with javascript off the answer still opens.
+    """
     context = browser.new_context(viewport=MOBILE, java_script_enabled=False)
     page = context.new_page()
     try:
@@ -578,6 +585,6 @@ def test_an_answer_still_opens_without_javascript(
         item = page.locator("details").first
         item.locator("summary").click()
         assert item.evaluate("el => el.open")
-        assert item.locator(".u-accordion-panel").is_visible()
+        expect(item.locator(".u-accordion-panel")).to_be_visible()
     finally:
         context.close()
