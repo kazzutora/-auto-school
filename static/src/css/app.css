@@ -254,8 +254,11 @@
      * currentColor, so the one stroke serves the ghost button, the active
      * menu item and the swash under the slogan without a file per colour.
      * Inline rather than a path, because a mask on a pseudo element cannot
-     * reference a document fragment in every engine. */
-    --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='5.5' stroke-linecap='round' d='M3,14 Q31.6,2.6 32,4 Q68.9,21.9 68,20 Q97.6,6.9 97,8'/%3E%3C/svg%3E");
+     * reference a document fragment in every engine, and
+     * preserveAspectRatio='none' because without it the stroke keeps its own
+     * 100:24 and comes out as a 20px squiggle in the middle of a 300px word
+     * instead of running under all of it. */
+    --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24' preserveAspectRatio='none'%3E%3Cpath fill='none' stroke='%23000' stroke-width='5.5' stroke-linecap='round' d='M3,14 Q31.6,2.6 32,4 Q68.9,21.9 68,20 Q97.6,6.9 97,8'/%3E%3C/svg%3E");
   }
 
   /* The dark theme, B.2. A rearrangement rather than an inversion: the page
@@ -856,6 +859,30 @@
   .u-btn-ghost:focus-visible::after {
     opacity: 1;
     transform: scaleX(1);
+  }
+
+  /* A word with the scribble under it, C.1 block 1 and B.5's ghost button.
+   *
+   * The stroke is the mask from the variable above, painted with the text's
+   * own colour, so one file serves the hero, the menu and the button without a
+   * copy per colour. A straight rule under handwriting is the single detail
+   * that gives away handwriting which was set rather than written.
+   */
+  .u-scribbled {
+    position: relative;
+    display: inline-block;
+  }
+
+  .u-scribbled::after {
+    content: "";
+    position: absolute;
+    left: -0.1em;
+    right: -0.1em;
+    bottom: -0.22em;
+    height: 0.34em;
+    background: rgb(var(--brand-500));
+    mask: var(--scribble) no-repeat center / 100% 100%;
+    -webkit-mask: var(--scribble) no-repeat center / 100% 100%;
   }
 
   /* C.3: an arrow travels 4px instead of growing. On a site whose language is

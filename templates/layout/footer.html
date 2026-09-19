@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 {% comment %}
 Footer, REDESIGN.md B.7 point 11.
 
@@ -17,12 +17,19 @@ out to the right of the first row, which is what point 11 asks for. The bank
 account is deliberately absent: tech.md section 1 says it never appears on a
 public page.
 {% endcomment %}
-<footer class="u-ground-wine mt-auto rounded-b-none rounded-t-hero">
+{# The footer is pale, ROSE.md C.1 block 9, and that is a rule rather than a
+   preference: B.8 allows one dark band on a page and the enquiry block has it.
+   A wine footer under a wine form turns the bottom of every page into stripes.
+
+   The top edge is a brush stroke rather than a border — the closing band of a
+   page whose whole language is painted. #}
+<footer class="relative mt-auto overflow-hidden bg-brand-50 pt-6">
+  <c-ornament kind="brush" variant="3" class="u-brush-edge-top" />
   {# The compact rhythm, not the normal one. A footer is the closing band, not
      a section somebody reads: at the full step the air above and below it came
      to 192px against 396px of actual links, and the block read as empty rather
      than calm. #}
-  <div class="u-container u-section-compact">
+  <div class="u-container u-section-compact relative">
 
     {# B.7 point 11 asks for the mark and a description on the left, three
        columns of links, and the button and the phone on the right — one row,
@@ -35,8 +42,15 @@ public page.
        answered the first time. The cluster below is the one B.7 describes. #}
     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div class="u-narrow">
-        <p class="font-bold">{{ site_settings.short_name|default:"OSK Ostrycharz" }}</p>
-        <p class="mt-2 text-small u-muted-on-ground">
+        {# The full lockup here, with the slogan: the header carries the
+           compact one because a handwritten line at 40px is a smudge, and the
+           footer is where it has room to be read. #}
+        <img src="{% static 'img/brand/logo-full.svg' %}" width="420" height="180"
+             alt="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
+             class="h-16 w-auto dark:hidden">
+        <img src="{% static 'img/brand/logo-full-dark.svg' %}" width="420" height="180"
+             alt="" aria-hidden="true" class="hidden h-16 w-auto dark:block">
+        <p class="mt-4 text-small u-muted-on-ground">
           {% translate "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie." %}
         </p>
       </div>
@@ -96,25 +110,46 @@ public page.
           <li><a href="{% url 'core:page' slug='o-nas' %}" class="underline-offset-4 hover:underline">{% translate "O nas" %}</a></li>
           <li><a href="{% url 'gallery:index' %}" class="underline-offset-4 hover:underline">{% translate "Galeria" %}</a></li>
           <li><a href="{% url 'core:contact' %}" class="underline-offset-4 hover:underline">{% translate "Kontakt" %}</a></li>
-          {% if site_settings.facebook_url %}
-            <li>
-              <a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank"
-                 class="inline-flex items-center gap-2 underline-offset-4 hover:underline">
-                Facebook <c-icon name="external" size="sm" />
-              </a>
-            </li>
-          {% endif %}
-          {% if site_settings.youtube_url %}
-            <li>
-              <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank"
-                 class="inline-flex items-center gap-2 underline-offset-4 hover:underline">
-                YouTube <c-icon name="external" size="sm" />
-              </a>
-            </li>
-          {% endif %}
         </ul>
+
+        {# C.1 block 9: the two the school actually has, in rings.
+
+           Instagram and TikTok are on the mockup and not here. The school has
+           no account on either, and a dead icon in a footer is a promise the
+           page cannot keep — ROSE.md A.3. If the owner opens one, the link
+           goes in SiteSettings and the circle appears by itself. #}
+        {% if site_settings.facebook_url or site_settings.youtube_url %}
+          <ul class="mt-5 flex gap-3">
+            {% if site_settings.facebook_url %}
+              <li>
+                <a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank"
+                   aria-label="Facebook"
+                   class="grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500 text-brand-link transition hover:bg-brand-100">
+                  <c-icon name="external" size="sm" />
+                </a>
+              </li>
+            {% endif %}
+            {% if site_settings.youtube_url %}
+              <li>
+                <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank"
+                   aria-label="YouTube"
+                   class="grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500 text-brand-link transition hover:bg-brand-100">
+                  <c-icon name="play" size="sm" />
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        {% endif %}
       </div>
     </div>
+
+    {# The closing note, C.1 block 9. The last heart on the page, and the third
+       of the three B.7 point 2 allows in a screen — the other two are far
+       enough up that they are never in the same viewport as this one. #}
+    <p class="script mt-10 flex items-center justify-end gap-2 text-right">
+      {% translate "Z nami zawsze do celu" %}
+      <c-ornament kind="heart" variant="3" class="h-6 w-6 shrink-0" />
+    </p>
 
     {# B.7 point 11: the privacy and RODO line sits under everything else,
        separated, because it is the legal footer and not a fifth column of

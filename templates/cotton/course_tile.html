@@ -7,8 +7,12 @@ filled tile is the whole reason this exists beside <c-course-card>: the card is
 a catalogue entry with age, price and a vehicle marker, and the tile is a
 choice — a big letter, a price, an arrow.
 
-The name is the display face, which for a letter is exactly what it is for: a
-`B` at h2 in Rubik 800 italic reads as a sign rather than as a word.
+The display face carries the code, which is what it is for: a `B` at h2 in
+Rubik 800 italic reads as a sign rather than as a word. A row that has no code
+— the price list names its variants in full, "Kurs przyspieszony" — gets its
+title at h3 instead. Set in the display step, "Kurs kategorii B" is four
+oversized words that run past the tile, and a sign nobody can read is worse
+than a label.
 
 active fills it with the crimson and hands the label the fixed white pair, so
 the tile reads the same in both themes. Only one tile per grid takes it: two
@@ -21,10 +25,12 @@ course with no price says so rather than guessing, ROSE.md A.3.
   class="u-card-link group relative flex h-full flex-col gap-1 overflow-hidden rounded-tile p-5 transition
 {% if active %} u-ground-brand{% else %} bg-brand-50 border border-line{% endif %} {{ class }}"
   {{ attrs }}>
-  <p class="font-display text-h2 font-extrabold uppercase italic leading-none u-on-ground">
-    {{ course.code|default:course.title }}
-  </p>
-  <h3 class="mt-2 text-body font-bold u-on-ground">{{ course.title }}</h3>
+  {% if course.code %}
+    <p class="font-display text-h2 font-extrabold uppercase italic leading-none u-on-ground">{{ course.code }}</p>
+    <h3 class="mt-2 text-body font-bold u-on-ground">{{ course.title }}</h3>
+  {% else %}
+    <h3 class="font-display text-h3 font-extrabold uppercase italic leading-tight u-on-ground">{{ course.title }}</h3>
+  {% endif %}
   <p class="mt-auto pt-4 flex items-end justify-between gap-3">
     {% if course.price_gross %}
       <span class="data text-data-lg u-on-ground">{{ course.price_gross|floatformat:0 }} zł</span>

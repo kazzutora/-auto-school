@@ -1,30 +1,37 @@
+<c-vars id="" tone="default" size="normal" reveal="1" edge="" corner="" class="" />
 {% comment %}
-Section, tech.md section 7. Rhythm and container from REDESIGN.md B.4, the
-alternation rule from B.8 point 2.
+A section, ROSE.md B.8 and C.1.
 
-tone carries the ground:
+Grounds alternate blush, pale, blush — and never white, B.8. `dark` is the wine
+band, and there is one of those on a page: the enquiry block. A second turns the
+rhythm into stripes.
 
-  default   the page itself, warm grey
-  muted     paper-50, a half step for two sections that would otherwise touch
-  surface   a white band, for a block that is mostly cards
-  dark      the ink ground. **One per page**, B.8 point 2 and R10 point 16.
-  accent    the yellow strip, for the rare full width state
+The eyebrow is the handwritten note of B.7 point 3 — `Z nami zdasz`, `O nas`,
+`Nasze kursy`. One per section, which is why it lives here as a slot rather
+than being written into each page: a component can only render one of them, so
+the rule holds by construction rather than by review.
 
-`brand` is kept as an alias of `dark` so the pages written against the old
-contract keep rendering while they are moved over; `deep` is gone with the
-purple, which B.1 dropped when it cut the palette to two accents.
-
-The reveal class is on the section rather than on each block inside it: B.7
-animates the arrival of a section, and a page whose every paragraph fades in
-separately is a page nobody can skim. C.4 names that outright.
+`edge` and `corner` place a brush stroke, B.7 point 1: only at the edges of a
+section and behind photographs, never under a paragraph. The section turns
+`relative` and clips itself when it carries one, because a stroke that bleeds
+past the edge is the point and a horizontal scrollbar is not.
 {% endcomment %}
-<c-vars id="" tone="default" size="normal" reveal="1" class="" />
 <section {% if id %}id="{{ id }}"{% endif %}
-  class="u-section{% if reveal %} reveal{% endif %}{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}{% if tone == 'muted' %} bg-brand-50{% elif tone == 'surface' %} bg-brand-50{% elif tone == 'dark' or tone == 'brand' %} u-ground-wine rounded-none{% elif tone == 'accent' %} u-ground-pink{% endif %} {{ class }}"
+  class="u-section{% if reveal %} reveal{% endif %}
+{% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}
+{% if tone == 'muted' or tone == 'surface' %} bg-brand-50{% elif tone == 'dark' or tone == 'wine' %} u-ground-wine rounded-none{% elif tone == 'accent' or tone == 'pink' %} u-ground-pink{% endif %}
+{% if edge or corner %} relative overflow-hidden{% endif %} {{ class }}"
   {{ attrs }}>
-  <div class="u-container">
+
+  {% if edge == 'top' or edge == 'both' %}<c-ornament kind="brush" variant="3" class="u-brush-edge-top" />{% endif %}
+  {% if edge == 'bottom' or edge == 'both' %}<c-ornament kind="brush" variant="3" class="u-brush-edge-bottom" />{% endif %}
+  {% if corner == 'tr' %}<c-ornament kind="brush" variant="2" class="u-brush-corner-tr" />{% endif %}
+  {% if corner == 'bl' %}<c-ornament kind="brush" variant="2" class="u-brush-corner-bl" />{% endif %}
+
+  <div class="u-container relative">
+    {% if eyebrow %}<p class="script mb-2">{{ eyebrow }}</p>{% endif %}
     {% if heading %}<h2>{{ heading }}</h2>{% endif %}
     {% if sub %}<p class="u-narrow mt-4 text-body-lg u-muted-on-ground">{{ sub }}</p>{% endif %}
-    <div class="{% if heading or sub %}mt-10 md:mt-14{% endif %}">{{ slot }}</div>
+    <div class="{% if heading or sub or eyebrow %}mt-10 md:mt-14{% endif %}">{{ slot }}</div>
   </div>
 </section>
