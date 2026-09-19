@@ -36,3 +36,9 @@ node_modules
 bin
 .env
 .env.local
+
+# ROSE.md A.1 — the owner's raster logo, the generated mockup and the style
+# sheet. Reference material for redrawing the mark, never served: the mockup
+# carries invented numbers and must not sit on our domain under a guessable
+# name. collectstatic drops them too, apps/core/management/commands.
+static/img/brand/source

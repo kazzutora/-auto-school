@@ -148,6 +148,14 @@ STATICFILES_DIRS = [
     ("img", BASE_DIR / "static" / "img"),
 ]
 
+# The default pair, with the filesystem half swapped for one that hides the
+# source/ trees: the owner's raster logo and mockup, ROSE.md A.1, and the
+# photograph originals, PHOTOS.md. Both are inputs, not assets.
+STATICFILES_FINDERS = [
+    "apps.core.staticfiles.PrivateSourceFilteredFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
 
