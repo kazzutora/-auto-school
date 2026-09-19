@@ -569,7 +569,7 @@ class SmsClient(Protocol):
 | Карусель | `<c-carousel>` | `id`, `per_view=2\|3\|4`, `label`, слот; CSS scroll-snap, стрелки и клавиатура, без библиотеки — **v25** |
 | Бенто-сетка | `<c-bento>` / `<c-bento.item>` | у сетки `items`, у элемента `title`, `text`, `image`, `alt`, `large`, `width`, `height`, слот — **v25** |
 | Табы | `<c-tabs>` | `id`, `label`, `items` (`.id`, `.title`, `.active`); это ссылки на секции, а не ARIA-tablist — **v25** |
-| Секция | `<c-section>` | `id`, `tone=default\|muted\|surface\|dark\|accent`, `size=compact\|normal\|tall`, `reveal`, слот `heading`, слот `sub`; `brand` — псевдоним `dark`, `deep` снят вместе с фиолетовым; тёмная секция на странице ровно одна — **v25** |
+| Секция | `<c-section>` | `id`, `tone=default\|muted\|surface\|wine\|pink\|crimson`, `size=compact\|normal\|tall`, `reveal`, `edge=top\|bottom\|both`, `corner=tr\|bl`, слоты `eyebrow`, `heading`, `sub`. `dark` — псевдоним `wine`, `accent` — псевдоним `pink`. **`brand` перестал быть псевдонимом тёмной секции:** в палитре v25 это была почти чёрная карточка, в `ROSE.md` это малиновый, и имя, тихо меняющее грунт, хуже обоих — старые вызовы переведены на `wine`. Тёмная секция на странице ровно одна, `ROSE.md` B.8. `eyebrow` — рукописная заметка, одна на секцию по построению; `edge` и `corner` кладут мазок кисти, B.7 — **v29** |
 | Заголовок секции | `<c-heading>` | `level=1..4`, `eyebrow`, слот |
 | Таблица | `<c-table>` | `headers` (list), слот строк |
 | Аккордеон | `<c-accordion>` / `<c-accordion.item>` | `title`, `open` |

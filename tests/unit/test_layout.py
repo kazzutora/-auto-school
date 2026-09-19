@@ -171,17 +171,19 @@ def test_the_footer_never_shows_the_bank_account(
     assert settings_row.bank_account.replace(" ", "") not in footer.group()
 
 
-def test_the_footer_is_a_dark_card(client: Client, settings_row: SiteSettings) -> None:
-    """B.7 point 11: dark, and rounded 28px along the top only.
+def test_the_footer_is_not_the_second_dark_band(client: Client, settings_row: SiteSettings) -> None:
+    """ROSE.md B.8: one dark block on a page, and the enquiry form has it.
 
-    The purple ground it used to sit on went with core v25 — B.1 cut the
-    palette to two accents and the purple was a third. The radius is the hero's
-    own, so the page opens and closes on the same shape.
+    The footer was near black through core v28 and wine for about an hour of
+    v29, and both put a dark band directly under the dark enquiry block. Two of
+    them in a row turn the bottom of every page into stripes, which is the one
+    thing B.8 spends a paragraph on. It is the pale card face now, opened by a
+    brush stroke instead of a radius.
     """
     footer = re.search(r"<footer[^>]*>", body(client))
     assert footer
-    assert "u-dark-card" in footer.group()
-    assert "rounded-t-hero" in footer.group()
+    assert "u-ground-wine" not in footer.group()
+    assert "bg-brand-50" in footer.group()
 
 
 def test_the_header_shrinks_from_a_sentinel_rather_than_a_scroll_handler(

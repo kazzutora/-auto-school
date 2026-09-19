@@ -20,6 +20,7 @@ white-on-yellow at 1.43:1, banned outright in B.2.
 {% elif tone == 'warning' %} u-chip-state text-state-warn
 {% elif tone == 'danger' %} u-chip-state text-state-err
 {% elif tone == 'accent' %} bg-brand-200 u-fixed-ink
+{% elif tone == 'brand' %} bg-brand-500 u-fixed-paper
 {% elif tone == 'muted' %} u-chip-muted
 {% else %} border border-line u-muted-on-ground
 {% endif %} {{ class }}" {{ attrs }}>{{ slot }}</span>

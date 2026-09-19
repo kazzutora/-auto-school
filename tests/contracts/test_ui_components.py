@@ -8,7 +8,7 @@ from django.conf import settings
 
 COTTON = Path(settings.BASE_DIR) / "templates" / "cotton"
 
-# tech.md section 7 at core v25: component file -> the props its row declares.
+# tech.md section 7 at core v29: component file -> the props its row declares.
 # Slot only components carry an empty set. Cotton maps <c-gallery-grid> to
 # gallery_grid and <c-accordion.item> to accordion/item.
 TECH_MD_COMPONENTS: dict[str, set[str]] = {
@@ -21,7 +21,12 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     # reveal since v25. A section animates its own arrival by default, C.3
     # row 1; the prop is for the handful that must not, such as the one above
     # the fold on a page whose hero is already staggering in.
-    "section": {"id", "tone", "size", "reveal"},
+    #
+    # edge and corner since v29: they place a brush stroke, ROSE.md B.7, and
+    # they are props rather than classes on the call site because B.7 allows a
+    # stroke only at the edge of a section and behind a picture. A prop can
+    # only put it where the rule allows.
+    "section": {"id", "tone", "size", "reveal", "edge", "corner"},
     "quote": {"text", "author", "role"},
     "steps": {"steps"},
     "fact_card": {"label", "value", "note", "action", "href"},
@@ -63,6 +68,17 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     },
     "photo": {"stem", "crop", "crop_mobile", "alt", "sizes", "priority", "decorative"},
     "tabs": {"id", "label", "items"},
+    # The six ROSE.md B.5 and C.1 added at core v29.
+    "ornament": {"kind", "variant"},
+    "course_tile": {"course", "active"},
+    "feature": {"icon", "title"},
+    "stat": {"value", "label", "note"},
+    "polaroid": {"src", "alt", "caption", "tilt", "width", "height"},
+    "review_card": {"item"},
+    # plain since v29: it turns the header's brush stroke off, and two pages
+    # pass it — the privacy policy and the RODO notice, where B.7 point 4 says
+    # there is no ornament at all.
+    "page_header": {"eyebrow", "title", "lead", "level", "plain"},
 }
 
 

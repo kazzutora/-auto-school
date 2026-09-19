@@ -84,20 +84,22 @@ def images_without_alt(html: str) -> list[str]:
     ]
 
 
-# The grounds a section can sit on, REDESIGN.md B.2, in the order the class
-# list has to be tested: the two that are utilities of their own before the two
-# that are a background colour, because a dark card also carries no bg- class.
+# The grounds a section can sit on, ROSE.md B.2 and B.8, in the order the class
+# list has to be tested: the ones that are a utility of their own before the one
+# that is a background colour, because a wine band carries no bg- class.
 #
 # Shared for the same reason images_without_alt is: two page tests had their own
-# copy, neither knew about `surface` when B.2 introduced it, and both quietly
-# reported every white band as the page itself — which made the alternation they
+# copy, neither knew about the card face when it arrived, and both quietly
+# reported every pale band as the page itself — which made the alternation they
 # were checking look broken where it was not.
+#
+# There is no white here and there is no `paper` marker either: B.8 gives the
+# page one ground, brand.100, and it is what a section falls through to.
 _GROUNDS = (
-    ("dark", ("u-dark-card", "u-ground-ink")),
-    ("accent", ("u-ground-accent",)),
-    ("primary", ("u-ground-primary",)),
-    ("surface", ("bg-surface",)),
-    ("muted", ("bg-paper-50",)),
+    ("wine", ("u-ground-wine",)),
+    ("pink", ("u-ground-pink",)),
+    ("brand", ("u-ground-brand",)),
+    ("card", ("bg-brand-50",)),
 )
 
 

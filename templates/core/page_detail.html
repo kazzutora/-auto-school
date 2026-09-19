@@ -21,7 +21,17 @@ nothing.
 
 {% block content %}
 
-<c-page-header eyebrow="{% if enrolment %}{% translate 'Formalności' %}{% else %}{% translate 'O szkole' %}{% endif %}"
+{# B.7 point 4: no ornament at all on the policy and the RODO notice. A
+   hand-painted flourish beside a data-protection notice reads as a page that
+   is not taking the notice seriously, and the notice is the one thing on this
+   site that has to be taken at face value. The eyebrow goes with it — the
+   handwriting is the ornament here. #}
+{% if page.slug == 'polityka-prywatnosci' or page.slug == 'rodo' %}
+  <c-page-header plain="1" title="{{ page.title }}" lead="{{ page.lead }}">
+    <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+  </c-page-header>
+{% else %}
+<c-page-header eyebrow="{% if enrolment %}{% translate 'To proste!' %}{% else %}{% translate 'O nas' %}{% endif %}"
                title="{{ page.title }}" lead="{{ page.lead }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% if enrolment %}
@@ -36,6 +46,7 @@ nothing.
     </c-slot>
   {% endif %}
 </c-page-header>
+{% endif %}
 
 {# ------------------------------------------------------------------ Zapisy #}
 {% if enrolment %}

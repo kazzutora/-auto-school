@@ -23,7 +23,7 @@ złoty column line up digit under digit, A.5.
 
 {% block content %}
 
-<c-page-header eyebrow="{% translate 'Cennik' %}" title="{% translate 'Cennik' %}"
+<c-page-header eyebrow="{% translate 'Ile to kosztuje' %}" title="{% translate 'Cennik' %}"
                lead="{% translate 'Ceny brutto, bez ukrytych kosztów. Dowóz na egzamin państwowy jest w cenie kursu.' %}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 
@@ -80,7 +80,10 @@ złoty column line up digit under digit, A.5.
             <ul class="flex flex-col gap-1">
               <li>{% translate "Zajęcia teoretyczne i praktyczne w pełnym wymiarze." %}</li>
               <li>{% translate "Egzamin wewnętrzny przed państwowym." %}</li>
-              <li><strong>{% translate "Dowóz na egzamin państwowy — GRATIS." %}</strong></li>
+              <li class="flex flex-wrap items-center gap-2">
+                <strong>{% translate "Dowóz na egzamin państwowy" %}</strong>
+                <c-badge tone="brand">GRATIS</c-badge>
+              </li>
               <li>{% translate "Klimatyzowane auta z bogatym wyposażeniem." %}</li>
             </ul>
           </c-callout>

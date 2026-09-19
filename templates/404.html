@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% comment %}
 404, REDESIGN.md B.8 and R4 point 6. Large type, the way back to the sections that matter, and
 the phone — because someone who lands here from an old link is usually trying to
@@ -12,8 +12,17 @@ here. 500.html cannot say the same and stands on its own.
 
 {% block content %}
 <div class="u-container u-section">
-  <p class="label u-muted-on-ground">{% translate "Błąd 404" %}</p>
-  <h1 class="mt-4">{% translate "Nie ma takiej strony" %}</h1>
+  {# C.2's last row: the plate, big, and the school asking in its own hand.
+     The plate is the one mark on this site that already means "you are not
+     there yet", which is exactly what a 404 says. #}
+  <div class="flex flex-wrap items-center gap-8">
+    <img src="{% static 'img/brand/mark-l.svg' %}" width="240" height="292" alt="" aria-hidden="true"
+         class="h-32 w-auto md:h-40">
+    <div>
+      <p class="script">{% translate "Zgubiłeś drogę?" %}</p>
+      <h1 class="mt-2">{% translate "Nie ma takiej strony" %}</h1>
+    </div>
+  </div>
   <p class="u-narrow mt-6 text-body-lg u-body-on-ground">
     {% translate "Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca." %}
   </p>

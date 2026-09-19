@@ -270,7 +270,7 @@ def test_a_course_without_a_picture_falls_back_to_the_brand_card(
 
     assert image, "every page ships an og:image"
     assert image.group(1).startswith("http"), "og:image must be absolute"
-    assert "og-image" in image.group(1)
+    assert "og-default" in image.group(1)
 
 
 @pytest.mark.parametrize("url", PUBLIC_URLS)

@@ -64,9 +64,19 @@ is a forgery, not a placeholder.
         <c-ornament kind="heart" variant="1" class="h-6 w-6 shrink-0" />
       </p>
 
+      {# Two display lines and a third at h2, and the third one is not
+         decoration. C.1 names PRAWO JAZDY as the big words and says nothing
+         about the town; the town is what a local business is found by, and it
+         was in this h1 before the redesign. Dropping it would have traded a
+         page's best search phrase for a cleaner screenshot. #}
       <h1 class="display reveal-stagger mt-2">
-        <span class="block" style="--i: 0">{% translate "Prawo" %}</span>
-        <span class="block" style="--i: 1">{% translate "jazdy" %}</span>
+        {# One phrase, not two words. C.1 asks for PRAWO JAZDY over two lines
+           and the display step wraps it there by itself; splitting it into a
+           msgid per word would have asked a translator to guess where a
+           russian sentence breaks, and makemessages duly guessed "Автомобили"
+           for `jazdy`. #}
+        <span class="block" style="--i: 0">{% translate "Prawo jazdy" %}</span>
+        <span class="block text-h2 text-ink" style="--i: 1">{% translate "w Wieluniu" %}</span>
       </h1>
 
       {# The scribble under the line, C.1 block 1. It is the mask from app.css
@@ -79,6 +89,16 @@ is a forgery, not a placeholder.
       <p class="u-narrow mt-6 text-body-lg text-ink-500">
         {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
       </p>
+
+      {% if course.price_gross %}
+        {# The number a visitor came for, on the first screen. C.1 does not put
+           a price in the hero and the design before it did, on purpose — so it
+           is here as one line of the lead rather than as a block of its own,
+           which is the smallest thing that keeps both true. #}
+        <p class="mt-4 u-body-on-ground">
+          {% blocktranslate with price=course.price_gross|floatformat:0 %}Kurs kat. B od {{ price }} zł{% endblocktranslate %}
+        </p>
+      {% endif %}
 
       <div class="mt-8 flex flex-wrap gap-3">
         <c-button variant="primary" size="lg" href="{{ enrol_url }}">
@@ -94,7 +114,7 @@ is a forgery, not a placeholder.
     <div class="relative flex justify-center lg:col-span-5">
       <c-ornament kind="brush" variant="4" class="u-brush absolute inset-0 m-auto h-full w-auto" />
       <c-ornament kind="sparks" class="absolute -left-2 top-6 hidden h-16 w-auto text-brand-500 md:block" />
-      <img src="{% static 'img/brand/mark-l.svg' %}" width="240" height="292" alt=""
+      <img src="{% static 'img/brand/mark-l.svg' %}" width="240" height="292" alt="" aria-hidden="true"
            class="relative h-56 w-auto md:h-72 lg:h-80">
     </div>
   </div>
@@ -165,7 +185,7 @@ is a forgery, not a placeholder.
       {% if video_id or video_url %}
         {# The film is a link until somebody presses it, tech.md section 2: up
            to the click this page sends nothing to Google. #}
-        <div class="mt-10">
+        <div id="wideo" class="mt-10 scroll-mt-32">
           {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
           <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
                          poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"
@@ -179,7 +199,7 @@ is a forgery, not a placeholder.
     </div>
 
     {% if variants %}
-      <div class="relative">
+      <div id="kurs" class="relative scroll-mt-32">
         <p class="script">{% translate "Nasze kursy" %}</p>
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
           {% for variant in variants %}

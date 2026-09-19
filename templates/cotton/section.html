@@ -2,9 +2,14 @@
 {% comment %}
 A section, ROSE.md B.8 and C.1.
 
-Grounds alternate blush, pale, blush — and never white, B.8. `dark` is the wine
-band, and there is one of those on a page: the enquiry block. A second turns the
-rhythm into stripes.
+Grounds alternate blush, pale, blush — and never white, B.8. `wine` is the dark
+band, and there is one of those on a page: the closing invitation, or the
+enquiry block on the home page. A second turns the rhythm into stripes.
+
+`dark` is kept as the old name for `wine`, and `brand` no longer is one: under
+the v25 palette `brand` meant the near-black card, and under ROSE.md it means
+the crimson. A name that quietly swapped grounds would have been the worst of
+both, so the old callers were moved and the word now means what it says.
 
 The eyebrow is the handwritten note of B.7 point 3 — `Z nami zdasz`, `O nas`,
 `Nasze kursy`. One per section, which is why it lives here as a slot rather
@@ -19,7 +24,7 @@ past the edge is the point and a horizontal scrollbar is not.
 <section {% if id %}id="{{ id }}"{% endif %}
   class="u-section{% if reveal %} reveal{% endif %}
 {% if size == 'compact' %} u-section-compact{% elif size == 'tall' %} u-section-tall{% endif %}
-{% if tone == 'muted' or tone == 'surface' %} bg-brand-50{% elif tone == 'dark' or tone == 'wine' %} u-ground-wine rounded-none{% elif tone == 'accent' or tone == 'pink' %} u-ground-pink{% endif %}
+{% if tone == 'muted' or tone == 'surface' %} bg-brand-50{% elif tone == 'dark' or tone == 'wine' %} u-ground-wine rounded-none{% elif tone == 'brand' or tone == 'crimson' %} u-ground-brand rounded-none{% elif tone == 'accent' or tone == 'pink' %} u-ground-pink{% endif %}
 {% if edge or corner %} relative overflow-hidden{% endif %} {{ class }}"
   {{ attrs }}>
 
