@@ -40,6 +40,12 @@ dev = [
     "ruff>=0.6,<1",
     "mypy>=1.11,<2",
     "django-stubs>=5.0,<6",
+    # The brand generators, ROSE.md K1 and K3. fontTools cuts the lettering of
+    # the logo out of the same woff2 the site serves and checks that every face
+    # covers the polish diacritics and cyrillic; it needs brotli to open a
+    # woff2 at all. Build time only — nothing here is imported at runtime.
+    "fonttools>=4.53,<5",
+    "brotli>=1.1,<2",
 ]
 
 [tool.setuptools.packages.find]
