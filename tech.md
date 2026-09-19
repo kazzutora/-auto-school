@@ -591,6 +591,7 @@ class SmsClient(Protocol):
 | Часы работы | `<c-hours-table>` | `department` |
 | Карта | `<c-map>` | `lat`, `lng`, `zoom`, `label`, `height=sm|md|lg`; заглушка с кнопкой, iframe Google строится только после клика (v26) |
 | Иконка | `<c-icon>` | `name`, `size=sm|md|lg`, `label`; локальный спрайт `static/icons/sprite.svg` |
+| Орнамент | `<c-ornament>` | `kind=brush|heart|scribble|arrow|sparks|circle|blob`, `variant`, `class`; всегда `aria-hidden` и `pointer-events: none`, текста внутри нет. Цвет — `currentColor`: мазки берут его из `.u-brush`/`.u-brush-strong`, остальные штрихи из текста рядом. Размер задаёт класс, у мазка — утилита размещения `.u-brush-edge-top`, `.u-brush-corner-tr` и прочие. Норма расхода `ROSE.md` B.7: не больше трёх сердечек в кадре, одна рукописная заметка на секцию, на служебных страницах орнамента нет — **v29** |
 | Переключатель языка | `<c-lang-switcher>` | — |
 | Cookie-баннер | `<c-cookie-banner>` | — |
 | Панель отзывов | `<c-testimonials>` | `items` |

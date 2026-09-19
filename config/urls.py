@@ -33,8 +33,12 @@ urlpatterns += i18n_patterns(
 )
 
 if settings.DEBUG:
-    from apps.core.views import kitchen_sink
+    from apps.core.views import kitchen_sink, ornament_sandbox
 
-    # Review surface for the design system, DEV.md S0.7. Debug only.
-    urlpatterns += [path("__kitchen-sink/", kitchen_sink, name="kitchen_sink")]
+    # Review surfaces for the design system, DEV.md S0.7 and ROSE.md K3 point
+    # 7. Debug only, and robots.txt keeps them out of the index either way.
+    urlpatterns += [
+        path("__kitchen-sink/", kitchen_sink, name="kitchen_sink"),
+        path("__ornament/", ornament_sandbox, name="ornament_sandbox"),
+    ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

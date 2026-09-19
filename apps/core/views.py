@@ -685,3 +685,26 @@ def robots(request: HttpRequest) -> HttpResponse:
         {"sitemap_url": request.build_absolute_uri(reverse("sitemap"))},
         content_type="text/plain; charset=utf-8",
     )
+
+
+def ornament_sandbox(request: HttpRequest) -> HttpResponse:
+    """Every mark in static/img/ornament/ on every ground, ROSE.md K3 point 7.
+
+    Debug only, like the kitchen sink beside it. The point of the page is the
+    comparison: a stroke that reads as a brush on the blush page can read as a
+    smear on the wine band, and the only way to know is to put it on both.
+    """
+    from django.conf import settings
+
+    if not settings.DEBUG:
+        raise Http404
+
+    return render(
+        request,
+        "dev/ornament.html",
+        {
+            "brushes": ["1", "2", "3", "4"],
+            "hearts": ["1", "2", "3"],
+            "marks": ["scribble", "arrow", "sparks", "circle", "blob"],
+        },
+    )

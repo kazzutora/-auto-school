@@ -1,0 +1,40 @@
+<c-vars kind="heart" variant="1" class="" />{% load static %}
+{% comment %}
+Ornament, ROSE.md B.6 and B.7. The only way a brush stroke, a heart, a
+scribble, an arrow, a spark burst or a hand-drawn ring reaches a page: nothing
+draws one inline, so the norm in B.7 can be counted by grepping for this tag.
+
+Always decorative. aria-hidden and pointer-events: none are on the element
+itself rather than left to the call site, because an ornament that swallows a
+click on the button underneath it is the one failure mode that never shows up
+in a screenshot.
+
+**Why <use> and not a background image.** B.6 wants the strokes recoloured by
+class through --brush-a and --brush-b. A background image is a separate
+document and inherits nothing from the page, so the variables would never
+arrive; custom properties do inherit across the shadow tree <use> builds, and
+so does currentColor. That is the whole reason for the indirection.
+
+The brushes sit in files of their own and the small marks in one sprite: a
+section wants one or two strokes and four hearts, so the hearts are worth
+bundling and a 4 KB stroke nobody asked for is not.
+
+Size is not a prop. A stroke is placed by the utility that positions it —
+.u-brush-edge-top and the rest in app.css — and a heart takes its size from the
+class the call site passes, the way the icons do.
+{% endcomment %}
+{% if kind == 'brush' %}
+  {% with file="img/ornament/brush-"|add:variant|add:".svg" %}
+  <svg class="u-brush pointer-events-none select-none {{ class }}"
+    viewBox="{% if variant == '2' %}0 0 260 260{% elif variant == '3' %}0 0 520 110{% elif variant == '4' %}0 0 190 190{% else %}0 0 420 80{% endif %}"
+    aria-hidden="true" focusable="false" {{ attrs }}>
+    <use href="{% static file %}#brush-{{ variant }}"></use>
+  </svg>
+  {% endwith %}
+{% else %}
+  <svg class="pointer-events-none select-none {{ class }}"
+    viewBox="{% if kind == 'scribble' %}0 0 100 24{% elif kind == 'arrow' %}0 0 100 80{% elif kind == 'sparks' %}0 0 70 100{% else %}0 0 100 100{% endif %}"
+    aria-hidden="true" focusable="false" {{ attrs }}>
+    <use href="{% static 'img/ornament/sprite.svg' %}#{% if kind == 'heart' %}heart-{{ variant }}{% elif kind == 'scribble' %}scribble-underline{% elif kind == 'arrow' %}arrow-curly{% elif kind == 'circle' %}circle-hand{% else %}{{ kind }}{% endif %}"></use>
+  </svg>
+{% endif %}

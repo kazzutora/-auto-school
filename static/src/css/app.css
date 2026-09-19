@@ -1263,6 +1263,143 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * Ornament, ROSE.md B.6 and B.7.
+   *
+   * The marks themselves are generated files under static/img/ornament/ and
+   * reach a page only through <c-ornament>. What is here is where they go.
+   *
+   * Every one of these positions absolutely inside a section that has already
+   * declared `relative`, and none of them is in the flow: B.7 point 6 says the
+   * text always sits on a flat fill, so an ornament may never push a paragraph
+   * around or end up underneath one. They are also all pointer-events: none at
+   * the element, so nothing here can eat a click.
+   *
+   * On a phone there is half as much of it, B.7 point 7: the strokes at the
+   * edges stay, because they are what makes the section read as a block, and
+   * the hearts and arrows go, because at 390px they land on top of the words
+   * they were meant to point at.
+   * ------------------------------------------------------------------ */
+  .u-ornament {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  /* A ragged top or bottom to a section: the stroke runs the full width and
+   * bleeds past both sides, so no end of it is visible and it reads as an edge
+   * rather than as an object lying on one. */
+  .u-brush-edge-top,
+  .u-brush-edge-bottom {
+    position: absolute;
+    left: -4%;
+    width: 108%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .u-brush-edge-top {
+    top: 0;
+    transform: translateY(-48%);
+  }
+
+  .u-brush-edge-bottom {
+    bottom: 0;
+    transform: translateY(48%) scaleY(-1);
+  }
+
+  /* A stroke in a corner, behind a photograph or a heading. Sized in vw so it
+   * keeps its share of the screen instead of shrinking to a smear on a wide
+   * one, and clamped so it cannot take over a phone. */
+  .u-brush-corner-tr,
+  .u-brush-corner-bl {
+    position: absolute;
+    width: clamp(180px, 26vw, 420px);
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  .u-brush-corner-tr {
+    top: -6%;
+    right: -6%;
+  }
+
+  .u-brush-corner-bl {
+    bottom: -6%;
+    left: -6%;
+    transform: scaleX(-1);
+  }
+
+  /* A stroke takes the colour of the element it is on, so the default is the
+   * page's own pink and .u-brush-strong is the crimson for the places that
+   * need to carry weight — the band behind the figures, the corner of the wine
+   * block. See scripts/brand/gen_ornaments.py for why this is `color` and not
+   * the pair of custom properties B.6 names. */
+  .u-brush {
+    color: rgb(var(--brand-200));
+  }
+
+  .u-brush-strong {
+    color: rgb(var(--brand-500));
+  }
+
+  /* B.2's last dark-theme line: the strokes hold their colour and drop to .35,
+   * so they stay a stroke of the brand rather than turning into a grey smear.
+   * The value comes from the theme, so this is one rule and not two. */
+  .u-brush {
+    opacity: var(--brush-opacity, 1);
+  }
+
+  /* The handwritten note itself sits above the ornament, never under it. */
+  .u-ornament ~ *,
+  .u-brush ~ * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A photograph as a polaroid, B.5 and C.1 block 3: a white frame with a deep
+   * lower edge, tilted, and straightening under the pointer, C.7 point 4.
+   *
+   * The tilt is a custom property so a gallery can give every print a
+   * different angle from the template without a class per degree.
+   */
+  .u-polaroid {
+    display: inline-block;
+    background-color: rgb(var(--brand-50));
+    padding: 10px 10px 36px;
+    border-radius: 4px;
+    box-shadow: theme("boxShadow.card");
+    rotate: var(--tilt, -4deg);
+    transition: rotate var(--dur-tab) var(--ease);
+  }
+
+  .u-polaroid img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+  }
+
+  /* The caption under a print is handwriting, and it does not take the tilt of
+   * the .script class on top of the frame's own. */
+  .u-polaroid figcaption {
+    margin-top: 10px;
+    text-align: center;
+    color: rgb(var(--brand-600));
+    rotate: none;
+  }
+
+  @media (hover: hover) {
+    .u-polaroid:hover {
+      rotate: 0deg;
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
    * Odds and ends the components need.
    * ------------------------------------------------------------------ */
   /* The map keeps its stacking to itself.
