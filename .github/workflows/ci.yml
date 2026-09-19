@@ -140,13 +140,17 @@ jobs:
           ./tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
           ./tailwindcss -i static/src/css/motion.css -o static/css/motion.css --minify
 
-      - name: Asset budget and contrast
-        # REDESIGN.md R2 point 3 and R9 point 2. Both are gates: the first fails
-        # the build when the css or js grows past C.6, the second when a pair of
-        # tokens the design actually puts on screen drops under 4.5:1.
+      - name: Asset budget, contrast and font coverage
+        # Three gates, ROSE.md K2. The first fails the build when the css or js
+        # grows past REDESIGN.md C.6; the second when a pair of tokens the
+        # design actually puts on screen drops under its threshold, ROSE.md
+        # B.3; the third when a face stops covering the polish diacritics or
+        # cyrillic, B.4 — the fault that dropped every russian paragraph into
+        # the system sans before core v25 and every heading before v29.
         run: |
           python scripts/check_budget.py
           python scripts/check_contrast.py
+          python scripts/check_fonts.py
 
       - name: Tests
         # e2e runs against the built image in its own job.

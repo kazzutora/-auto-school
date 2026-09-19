@@ -1,18 +1,20 @@
-"""Design tokens and self hosted fonts, REDESIGN.md B.2 and B.3.
+"""Design tokens and self hosted fonts, ROSE.md B.2 through B.5.
 
-Core v25 replaced FRONTEND.md part A with REDESIGN.md part B: a warm grey page
-with white and near-black cards on it, two accents with separated roles, and a
-dark theme that is back — as a swap of roles rather than an inversion.
+Core v29 replaced REDESIGN.md part B with ROSE.md part B: the owner's own
+crimson and pink instead of a blue and a yellow, a page ground that is never
+white, and a dark theme that rearranges the roles rather than inverting them.
 
 The shape of the contract is unchanged. Colours are CSS variables in app.css
 that tailwind.config.js reads through rgb(var(--x) / <alpha-value>), which is
-what lets `bg-paper` mean the warm grey in one theme and near black in the
-other without a second set of utilities. So these tests check the variables and
-the wiring between the two files rather than the config alone.
+what lets `bg-brand-100` mean the blush page in one theme and the near black in
+the other without a second set of utilities. So these tests check the variables
+and the wiring between the two files rather than the config alone.
 
-Two values below differ from the numbers printed in B.2, and both are B.2's own
-doing: the same section says the contrast is measured rather than estimated, and
-those two did not measure. app.css carries the arithmetic beside them.
+Every ratio B.3 prints measures, and scripts/check_contrast.py is where they
+are measured on every build. What is here instead is the shape: that the table
+is complete, that both doors into the dark theme agree, that the grounds which
+do not swap publish a fixed pair, and that nothing off the palette reaches a
+template.
 """
 
 import re
@@ -26,77 +28,62 @@ APP_CSS = Path(settings.BASE_DIR) / "static" / "src" / "css" / "app.css"
 FONT_DIR = Path(settings.BASE_DIR) / "static" / "fonts"
 SPRITE = Path(settings.BASE_DIR) / "static" / "icons" / "sprite.svg"
 
-# REDESIGN.md B.2, light theme. Channel triplets, the form app.css declares.
+# ROSE.md B.2, light theme. Channel triplets, the form app.css declares.
 LIGHT = {
-    "paper": (233, 232, 228),
-    "paper-50": (242, 241, 238),
-    "paper-100": (222, 221, 216),
-    "surface": (255, 255, 255),
-    "surface-muted": (247, 246, 243),
-    "ink": (27, 27, 32),
-    "ink-800": (38, 38, 44),
-    "ink-700": (58, 58, 68),
-    # B.2 prints #6B6B78, which measures 4.28:1 on the warm grey page — under
-    # the 4.5 the same section demands of it. The nearest value on the hue that
-    # clears it. app.css says the same thing beside the declaration.
-    "ink-500": (103, 103, 115),
-    "ink-300": (156, 156, 168),
-    "primary": (63, 58, 230),
-    "primary-600": (51, 46, 219),
-    "primary-100": (228, 227, 252),
-    "accent": (255, 212, 0),
-    "accent-600": (229, 190, 0),
-    "accent-100": (255, 246, 204),
-    # Darkened from the values B.2 prints. They sit on a chip whose fill is a
-    # tenth of the ground's own foreground — #D4D4D0 on the warm grey page —
-    # and the printed values measured 3.59, 2.56 and 3.61 there. axe found all
-    # three on four pages. These clear 4.5 on that fill.
-    "state-ok": (26, 104, 73),
-    "state-warn": (121, 84, 0),
-    "state-err": (167, 50, 37),
-    "line": (215, 214, 209),
-    "line-dark": (51, 51, 60),
+    "brand-50": (255, 251, 250),
+    "brand-100": (251, 237, 239),
+    "brand-200": (242, 184, 198),
+    "brand-300": (233, 138, 163),
+    "brand-500": (212, 56, 94),
+    "brand-600": (196, 45, 85),
+    "brand-link": (196, 45, 85),
+    "brand-700": (161, 64, 82),
+    "brand-900": (126, 43, 69),
+    "ink": (34, 27, 30),
+    "ink-500": (94, 74, 82),
+    "ink-300": (156, 138, 145),
+    "line": (235, 211, 217),
+    "state-ok": (30, 122, 86),
+    "state-err": (142, 27, 18),
+    # Not in B.2, which gives ok and err only. The site had a third state
+    # before this core did, and it is measured the same way: 5.68 on the page.
+    "state-warn": (132, 84, 0),
+    "fixed-paper": (255, 255, 255),
+    "fixed-ink": (34, 27, 30),
+    "on-wine": (255, 251, 250),
+    "on-wine-muted": (242, 184, 198),
 }
 
-# B.2, dark theme. Only the roles that move; the rest inherit from the light
-# table, and the yellow itself does not move — it is the school's mark and it
-# reads better on black than on white either way. Its pale tint does, since
-# core v27, the way primary-100 always has.
+# B.2, dark theme. Only the roles that move.
+#
+# The fills are not here, and that is the whole idea: brand.200, brand.500,
+# brand.600 and brand.900 are the school's own colours rather than a role, so
+# they are the same in both themes and their labels are fixed to match. What
+# moves is the page, the cards, the ink ramp, the hairline, the states, and the
+# crimson used as *text* — which has to lighten to read on a near black page,
+# and which is a separate token from the crimson used as a fill for exactly
+# that reason. One token for both would paint white on #FF8FAB, at 1.90, on
+# every hovered button in the dark theme.
 DARK = {
-    "paper": (18, 18, 22),
-    "paper-50": (23, 23, 28),
-    "paper-100": (29, 29, 35),
-    "surface": (27, 27, 32),
-    "surface-muted": (34, 34, 41),
-    "ink": (242, 241, 238),
-    "ink-800": (226, 225, 220),
-    "ink-700": (196, 195, 190),
-    "ink-500": (142, 142, 153),
-    "ink-300": (99, 99, 110),
-    # B.2 prints #6C68F0. White on it is 4.31:1, under the 4.5 a button label
-    # needs, and the label is white by contract. This holds both ends: 4.76 for
-    # the label and 3.93 for the button read as an object on the near black
-    # page, which is what lightening it was for.
-    "primary": (100, 95, 238),
-    "primary-600": (86, 81, 232),
-    "primary-100": (42, 40, 88),
-    # The light cream under the accent callout's 50% wash turned khaki on near
-    # black, with light muted text on it at 1.2:1. A dark warm tint instead.
-    "accent-100": (44, 40, 20),
+    "brand-100": (26, 20, 23),
+    "brand-50": (37, 28, 32),
+    "brand-link": (255, 143, 171),
+    "ink": (246, 233, 236),
+    "ink-500": (201, 179, 187),
+    "ink-300": (138, 116, 125),
+    "line": (58, 42, 48),
     "state-ok": (74, 190, 145),
     "state-warn": (232, 176, 61),
     "state-err": (240, 130, 120),
-    "line": (46, 46, 55),
-    "line-dark": (60, 60, 71),
 }
 
-# B.3. The three families and the exact weights the woff2 subsets are cut to.
-# Manrope replaced Public Sans at core v25 and brought cyrillic with it, which
-# is most of a CONTRACT GAP closed — see test_cyrillic_is_covered_where_the_family_has_it.
+# B.4. The three families and the weights the woff2 subsets are cut to. All
+# three carry cyrillic, which is what core v29 finally closed: Public Sans had
+# none and went at v25, Archivo had none and went here.
 FAMILIES = {
-    "Archivo": "display: h1, h2, group names",
-    "Manrope": "text: paragraphs, lists, fields, buttons, h3",
-    "Roboto Mono": "data: prices, phones, dates, hours, labels",
+    "Rubik": "display: h1, h2, PRAWO JAZDY, the figures, the wordmark",
+    "Nunito": "text: paragraphs, buttons, fields, the menu, h3, prices",
+    "Caveat": "handwriting: margin notes, eyebrows, captions, the slogan",
 }
 
 # A.7 calls its list a minimum, so the sprite may carry more. What it may not do
@@ -314,39 +301,73 @@ def test_contrast_holds_across_the_palette(
 
 
 def test_the_grounds_that_do_not_swap_carry_a_fixed_pair(themes: dict) -> None:
-    """B.2 forbids white on yellow outright: 1.43:1.
+    """B.3 forbids white on brand.200 outright: 1.69:1.
 
-    Two grounds never swap with the theme. The yellow is the school's mark and
-    is the same yellow in both; the blue is the action and B.2 fixes its label
-    as white. A component sitting on either that reached for --ink or --surface
-    would be right in one theme and wrong in the other, so both grounds publish
-    a fixed pair instead and every child reads that.
+    Three grounds never swap with the theme, because they are the brand rather
+    than a role: the crimson fill, the pink tile and the wine band. A component
+    sitting on one of them that reached for --ink would be right in one theme
+    and wrong in the other — on the pink tile it would land on exactly the pair
+    B.3 bans. So each publishes a fixed pair and every child reads that.
     """
     for theme in ("light", "dark"):
         tokens = themes[theme]
-        assert contrast(tokens["fixed-ink"], tokens["accent"]) >= 4.5, theme
-        assert contrast(tokens["fixed-paper"], tokens["primary"]) >= 4.5, theme
+        assert contrast(tokens["fixed-ink"], tokens["brand-200"]) >= 4.5, theme
+        assert contrast(tokens["fixed-paper"], tokens["brand-500"]) >= 4.5, theme
+        assert contrast(tokens["fixed-paper"], tokens["brand-600"]) >= 4.5, theme
+        assert contrast(tokens["on-wine"], tokens["brand-900"]) >= 4.5, theme
 
-    grounds = (("u-ground-accent", "--fixed-ink"), ("u-ground-primary", "--fixed-paper"))
+    grounds = (
+        ("u-ground-pink", "--fixed-ink"),
+        ("u-ground-brand", "--fixed-paper"),
+        ("u-ground-wine", "--on-wine"),
+    )
     for ground, variable in grounds:
-        assert f"rgb(var({variable}))" in block(f".{ground} {{"), (
+        assert f"rgb(var({variable}))" in block(f".{ground},"), (
             f".{ground} must take its text colour from {variable}, not a token that swaps"
         )
 
 
-def test_white_on_yellow_is_never_emitted(themes: dict) -> None:
-    assert contrast((255, 255, 255), themes["light"]["accent"]) < 2.0  # 1.4:1, why it is banned
-    assert "text-paper" not in block(".u-ground-accent {")
+def test_white_on_the_pink_tile_is_never_emitted(themes: dict) -> None:
+    """1.69:1, the one pair B.3 refuses outright."""
+    for theme in ("light", "dark"):
+        assert contrast((255, 255, 255), themes[theme]["brand-200"]) < 2.0
+    assert "text-brand-50" not in block(".u-ground-pink,")
+    assert "text-fixed-paper" not in block(".u-ground-pink,")
+
+
+def test_the_fill_crimson_and_the_text_crimson_are_separate(themes: dict) -> None:
+    """One token for both is unreadable in the dark theme.
+
+    B.2 lightens the red *text* to #FF8FAB so it reads on the near black page,
+    and leaves the fills alone because they are the brand. White on the
+    lightened red is 1.90, so a single token would have painted every hovered
+    button in the dark theme at 1.90 the moment the text was made legible.
+    """
+    assert themes["light"]["brand-600"] == themes["light"]["brand-link"]
+    assert themes["dark"]["brand-600"] != themes["dark"]["brand-link"]
+    assert contrast(themes["dark"]["brand-link"], themes["dark"]["brand-100"]) >= 4.5
+    assert contrast(themes["dark"]["fixed-paper"], themes["dark"]["brand-600"]) >= 4.5
+
+
+def test_the_page_is_never_white(themes: dict) -> None:
+    """B.8: the owner does not want a white page and there is no white ground.
+
+    White survives as a card face only, and brand.50 is not it — it is a blush
+    off-white with the page's own hue in it.
+    """
+    for theme in ("light", "dark"):
+        assert themes[theme]["brand-100"] != (255, 255, 255)
+        assert themes[theme]["brand-50"] != (255, 255, 255)
+    body = block("  body {")
+    assert "bg-brand-100" in body
+    assert "bg-white" not in css() and "background: #fff" not in css().lower()
 
 
 def test_every_token_is_wired_into_the_config(themes: dict) -> None:
     """A colour the config cannot reach is a colour no template can use.
 
-    The four that are deliberately not wired are the fixed pair and the dark
-    card's own foreground ramp: --fixed-ink, --fixed-paper, --on-dark and
-    --on-dark-muted. They are read by the ground utilities in app.css and never
-    by a template, because the whole point of them is that no call site has to
-    know which ground it landed on.
+    The brush pair is deliberately not wired: --brush-a and --brush-b are read
+    by the ornament files in static/img/ornament/ and never by a template.
     """
     text = config()
     for name in LIGHT:
@@ -369,18 +390,17 @@ def test_the_palette_replaces_tailwinds_rather_than_extending_it() -> None:
         "transparent",
         "current",
         "inherit",
-        "paper",
-        "surface",
+        "brand",
         "ink",
-        "primary",
-        "accent",
+        "fixed",
+        "wine",
         "state",
         "line",
     }
 
 
 def test_the_type_scale_is_the_whole_vocabulary() -> None:
-    """A.3. A heading picks a step; a size of its own is off contract."""
+    """B.4. A heading picks a step; a size of its own is off contract."""
     text = config()
     steps = re.search(r"fontSize:\s*\{(.*?)\n    \},", text, re.S)
     assert steps
@@ -390,12 +410,14 @@ def test_the_type_scale_is_the_whole_vocabulary() -> None:
         "h1",
         "h2",
         "h3",
+        # The handwriting, B.4: one note in the margin of a section.
+        "script",
+        "script-sm",
         "body-lg",
         "body",
         "small",
         "label",
-        # B.3 gives the data face a range from 1rem to 2.5rem; these are the
-        # four steps of it the site actually sets.
+        # Prices, phones and the figures in the stat band, in four steps.
         "data",
         "data-lg",
         "data-xl",
@@ -404,18 +426,21 @@ def test_the_type_scale_is_the_whole_vocabulary() -> None:
 
 
 def test_radii_are_only_the_ones_the_contract_allows() -> None:
-    """B.4: card 20, hero 28, control 12, picture inside a card 16, chip 999.
+    """B.5: card 20, tile 18, field 14, polaroid 4, picture 16, button a pill.
 
-    Five and the pill, and nothing between them — so `rounded-2xl` cannot be
-    typed by accident and a sixth radius cannot appear without this going red.
+    A closed list, so `rounded-2xl` cannot be typed by accident and a seventh
+    radius cannot appear without this going red.
     """
     text = config()
     radii = re.search(r"borderRadius:\s*\{(.*?)\n    \},", text, re.S)
     assert radii
     assert dict(re.findall(r"\n      (\w+):\s*\"([^\"]+)\"", radii.group(1))) == {
         "none": "0",
+        "polaroid": "4px",
+        "DEFAULT": "14px",
+        "field": "14px",
         "image": "16px",
-        "DEFAULT": "12px",
+        "tile": "18px",
         "card": "20px",
         "hero": "28px",
         "full": "999px",
@@ -423,12 +448,10 @@ def test_radii_are_only_the_ones_the_contract_allows() -> None:
 
 
 def test_there_are_exactly_two_shadows() -> None:
-    """B.4: "больше двух уровней теней не заводить".
+    """B.5: two levels, a resting card and a lifted one.
 
-    The old contract had borders instead of shadows and exactly one hard
-    offset. B.1 lifted that ban and B.4 replaced it with a tighter one: two
-    levels, a resting card and a lifted one, so the page reads as one light
-    source rather than as several rooms.
+    Both are wine at low alpha rather than grey, so the page reads as one warm
+    light source rather than as a warm page with cold cutouts on it.
     """
     text = config()
     shadows = re.search(r"boxShadow:\s*\{(.*?)\n    \},", text, re.S)
@@ -479,28 +502,40 @@ def test_faces_use_display_swap() -> None:
 def test_polish_diacritics_are_covered_on_every_family() -> None:
     """latin-ext is what carries ł ą ę ś ć ż ź ń, and the whole site is polish."""
     text = css()
-    for stem in ("archivo", "manrope", "roboto-mono"):
+    for stem in ("rubik-italic", "nunito", "caveat"):
         assert f"{stem}-latin-ext.woff2" in text
 
 
-def test_cyrillic_is_covered_where_the_family_has_it() -> None:
+def test_cyrillic_is_covered_on_every_family() -> None:
     """The site ships in pl, ru and uk, so a latin only subset would show tofu.
 
-    Most of a CONTRACT GAP closed at core v25. Public Sans shipped no cyrillic
-    at all, so every paragraph on /ru/ and /uk/ fell back to the system sans;
-    Manrope carries both subsets, and the body text there is now the same face
-    as on the polish pages.
+    This is a CONTRACT GAP closed twice over. Public Sans shipped no cyrillic
+    at all, so before core v25 every paragraph on /ru/ and /uk/ fell back to
+    the system sans; Manrope fixed the paragraphs and left the headings, since
+    Archivo had none either. Core v29 took all three faces off B.4, and every
+    one of them carries both cyrillic subsets.
 
-    What is still open is narrower and documented at the top of app.css:
-    Archivo has no cyrillic either, so headings on those two languages still
-    fall back. Closing it means a fourth family or a different display face —
-    and the display face is what the school's own wordmark is set in, so it is
-    the owner's call rather than ours.
+    scripts/check_fonts.py is the gate that keeps it true glyph by glyph; this
+    only checks that the subsets are linked at all.
     """
     text = css()
-    for stem in ("manrope", "roboto-mono"):
+    for stem in ("rubik-italic", "nunito", "caveat"):
         assert f"{stem}-cyrillic.woff2" in text, stem
         assert f"{stem}-cyrillic-ext.woff2" in text, stem
+
+
+def test_the_common_subset_wins_an_overlapping_range() -> None:
+    """Declaration order is load bearing, and reads wrong at a glance.
+
+    Where two subsets claim the same character the face declared *last* wins.
+    cyrillic-ext claims U+0460-052F, which swallows the ukrainian ґ at U+0490,
+    and only the cyrillic file carries it. So cyrillic-ext goes first and
+    cyrillic after it; sorting these blocks alphabetically drops ґ into the
+    system sans on every ukrainian page, and nothing on screen says why.
+    """
+    text = css()
+    for stem in ("rubik-italic", "nunito", "caveat"):
+        assert text.index(f"{stem}-cyrillic-ext.woff2") < text.index(f"{stem}-cyrillic.woff2"), stem
 
 
 @pytest.mark.parametrize("icon", ICONS)
@@ -548,22 +583,23 @@ EMAIL_TEMPLATES = Path(settings.BASE_DIR) / "templates" / "leads" / "email"
 # inline hex is the only way to colour an email. What it may not do is invent
 # colours: these are the A.2 values, written out.
 EMAIL_PALETTE = {
-    "#FFFFFF",  # surface
-    "#E9E8E4",  # paper
-    "#D7D6D1",  # line
-    "#1B1B20",  # ink
-    "#676773",  # ink-500
-    "#3F3AE6",  # primary — the action, where the purple used to be
-    "#FFD400",  # accent
+    "#FFFBFA",  # brand.50, the card the letter sits on
+    "#FBEDEF",  # brand.100, the page around it
+    "#EBD3D9",  # line
+    "#221B1E",  # ink
+    "#5E4A52",  # ink.500
+    "#D4385E",  # brand.500 — a fill, and the rule beside a quote
+    "#C42D55",  # brand.link — the crimson as text, which brand.500 is too pale to be
 }
 
 
 def test_the_emails_use_the_site_palette() -> None:
     """The confirmation should look like the site that sent it.
 
-    Repainted twice now: once when core v2 moved the palette into FRONTEND.md,
-    and again at core v25, when B.2 gave the page a warm grey ground and
-    dropped the purple for a blue. An email cannot read a css variable — many
+    Repainted three times now: at core v2 when the palette moved into
+    FRONTEND.md, at v25 when the page went warm grey and the purple became a
+    blue, and at v29 when the whole language came off the owner's logo. An
+    email cannot read a css variable — many
     clients strip <style> outright — so inline hex is the only way to colour
     one, and this is what keeps that hand written copy in step.
     """
@@ -610,14 +646,14 @@ THEME_COLOUR = re.compile(
 
 @pytest.mark.parametrize("template", ["base.html", "500.html"])
 def test_the_theme_colour_metas_match_the_tokens(themes: dict, template: str) -> None:
-    """R10 point 3 asks for no hex literals in the templates. These are the four.
+    """No hex literals in the templates. These four are the exception.
 
     A <meta> takes a literal and nothing else — it is read by the browser chrome
     before any stylesheet exists, so there is no variable for it to resolve and
     no way to hand it a token. What can be checked is that the literals are the
     right ones, which is what this does: the phone's chrome and the page's own
     ground have to be the same colour, or the browser paints a black bar over a
-    warm grey page.
+    blush page.
 
     Two of them, not one, for the same reason: a single dark value was correct
     in the dark theme and wrong in the light one, which is the combination B.2
@@ -629,8 +665,8 @@ def test_the_theme_colour_metas_match_the_tokens(themes: dict, template: str) ->
     )
 
     assert set(found) == {"light", "dark"}, f"{template} must declare both schemes"
-    assert hex_to_rgb(found["light"]) == themes["light"]["paper"]
-    assert hex_to_rgb(found["dark"]) == themes["dark"]["paper"]
+    assert hex_to_rgb(found["light"]) == themes["light"]["brand-100"]
+    assert hex_to_rgb(found["dark"]) == themes["dark"]["brand-100"]
 
 
 def test_no_other_hex_literal_reaches_a_template() -> None:
@@ -646,7 +682,9 @@ def test_no_other_hex_literal_reaches_a_template() -> None:
         if "email" in path.parts:
             continue
         markup = THEME_COLOUR.sub("", uncommented(path.read_text("utf-8")))
-        markup = re.sub(r"\{#.*?#\}|\{%\s*comment\s*%\}.*?\{%\s*endcomment\s*%\}", "", markup, flags=re.S)
+        markup = re.sub(
+            r"\{#.*?#\}|\{%\s*comment\s*%\}.*?\{%\s*endcomment\s*%\}", "", markup, flags=re.S
+        )
         found = re.findall(r"#[0-9a-fA-F]{6}\b", markup)
         if found:
             strays[str(path.relative_to(root))] = found

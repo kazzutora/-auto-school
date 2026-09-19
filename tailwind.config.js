@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
-// Design tokens are frozen in REDESIGN.md part B, which replaced FRONTEND.md
-// part A at core v25. Where the two disagree, REDESIGN.md wins — part A is kept
-// in the repository as the record of why the old decisions were what they were,
-// not as a source of values.
+// Design tokens are frozen in ROSE.md part B, which replaced REDESIGN.md part B
+// at core v29. Where they disagree ROSE.md wins — the older parts stay in the
+// repository as the record of why the old decisions were what they were, not as
+// a source of values.
 //
 // Every colour resolves to a CSS variable defined in static/src/css/app.css.
 // That is what lets the dark theme be a swap of roles rather than a second set
-// of utilities: the class stays bg-paper, the variable underneath changes.
+// of utilities: the class stays bg-brand-100, the variable underneath changes.
 const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 module.exports = {
@@ -43,7 +43,7 @@ module.exports = {
   ],
 
   theme: {
-    // B.4. Replacing rather than extending: a 2xl breakpoint that is not in the
+    // Replacing rather than extending: a 2xl breakpoint that is not in the
     // contract has no business being reachable.
     screens: {
       sm: "480px",
@@ -52,8 +52,11 @@ module.exports = {
       xl: "1280px",
     },
 
-    // B.2. Two accents with separated roles, a ground, two card surfaces and an
-    // ink ramp — nothing else.
+    // B.2. One crimson family, an ink ramp, a hairline and two states.
+    // Nothing else, and nothing from the palette this replaced: with no
+    // `primary`, `accent`, `paper` or `surface` here, a leftover `bg-paper` in
+    // a template generates nothing and shows up, rather than quietly painting
+    // the wrong colour.
     //
     // Replacing rather than extending is deliberate: with no `gray` in the
     // palette, `text-gray-400` cannot be typed by accident. The price is two
@@ -67,47 +70,52 @@ module.exports = {
       current: "currentColor",
       inherit: "inherit",
 
-      // The page itself. Warm grey in the light theme, near black in the dark.
-      paper: {
-        DEFAULT: token("paper"),
-        50: token("paper-50"),
-        100: token("paper-100"),
+      brand: {
+        // Card faces and the page ground. B.8: no section is white.
+        50: token("brand-50"),
+        100: token("brand-100"),
+        // The pink of the tiles, the icon rings and the brush strokes. Ink on
+        // it is 10.0; white on it is 1.69 and forbidden outright.
+        200: token("brand-200"),
+        300: token("brand-300"),
+        // Action, and headings of 24px and up. Not small text: on the page it
+        // measures 4.08, which B.3 allows a heading and refuses a paragraph.
+        DEFAULT: token("brand-500"),
+        500: token("brand-500"),
+        // The button's hover fill. A fill, so it is the same crimson in both
+        // themes.
+        600: token("brand-600"),
+        // The crimson as text: a link, a price, a small red line. One token
+        // for the fill and the text would have made every hovered button in
+        // the dark theme unreadable — B.2 lightens the red text there to
+        // #FF8FAB so it reads on the near-black page, and white on that is
+        // 1.90.
+        link: token("brand-link"),
+        // The crimson of the school's own mark.
+        700: token("brand-700"),
+        // Wine: one dark band on a page, never two.
+        900: token("brand-900"),
       },
 
-      // The white cards that sit on it.
-      surface: {
-        DEFAULT: token("surface"),
-        muted: token("surface-muted"),
-      },
-
-      // Text, and the dark cards. One ramp does both because a dark card is
-      // the ink token used as a ground — B.2's role swap in one value.
       ink: {
         DEFAULT: token("ink"),
-        800: token("ink-800"),
-        700: token("ink-700"),
         500: token("ink-500"),
-        // Disabled text and hairlines only. Below the body threshold on
-        // purpose: WCAG exempts a disabled control, and a disabled button that
-        // reads at full strength is a button people keep pressing.
+        // Disabled text and hairlines only, below the body threshold on
+        // purpose.
         300: token("ink-300"),
       },
 
-      // Action. The button that signs somebody up, the submit on a form.
-      // Never a badge: B.1 splits the two accents by role and a blue badge
-      // would say "press me" about a fact.
-      primary: {
-        DEFAULT: token("primary"),
-        600: token("primary-600"),
-        100: token("primary-100"),
+      // What sits on a crimson fill. It does not swap with the theme, because
+      // the fill does not either.
+      fixed: {
+        paper: token("fixed-paper"),
+        ink: token("fixed-ink"),
       },
 
-      // State. "Nabór otwarty", the slab under a word in the hero, the mark.
-      // Never a button fill, for the mirror of the same reason.
-      accent: {
-        DEFAULT: token("accent"),
-        600: token("accent-600"),
-        100: token("accent-100"),
+      // What sits on the wine band.
+      wine: {
+        DEFAULT: token("on-wine"),
+        muted: token("on-wine-muted"),
       },
 
       state: {
@@ -116,56 +124,62 @@ module.exports = {
         err: token("state-err"),
       },
 
-      line: {
-        DEFAULT: token("line"),
-        dark: token("line-dark"),
-      },
+      line: token("line"),
     },
 
-    // B.3. Display carries the width axis: font-stretch picks Expanded.
+    // B.4. Rubik carries the display steps and is always italic — the slant is
+    // the face, not an emphasis, so app.css sets it once instead of every
+    // heading asking for it. Nunito is the text face, Caveat the handwriting.
+    // All three carry cyrillic, and scripts/check_fonts.py proves it on every
+    // build.
     fontFamily: {
-      display: ["Archivo", "ui-sans-serif", "system-ui", "sans-serif"],
-      sans: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
-      mono: ["Roboto Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+      display: ["Rubik", "ui-sans-serif", "system-ui", "sans-serif"],
+      sans: ["Nunito", "ui-sans-serif", "system-ui", "sans-serif"],
+      script: ["Caveat", "ui-sans-serif", "system-ui", "cursive"],
     },
 
-    // B.3, the whole scale and only the scale. clamp() carries the step from
+    // B.4, the whole scale and only the scale. clamp() carries the step from
     // the 320px phone to the 1280px desktop, so there are no per-breakpoint
     // type utilities to keep in step.
     fontSize: {
-      display: ["clamp(2.5rem, 6vw, 4.5rem)", { lineHeight: "1.02", letterSpacing: "-0.02em" }],
-      h1: ["clamp(2rem, 4.5vw, 3.5rem)", { lineHeight: "1.05", letterSpacing: "-0.02em" }],
-      h2: ["clamp(1.6rem, 3vw, 2.25rem)", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
+      display: ["clamp(3rem, 8vw, 6rem)", { lineHeight: "0.95", letterSpacing: "-0.02em" }],
+      h1: ["clamp(2.25rem, 5vw, 3.75rem)", { lineHeight: "1", letterSpacing: "-0.01em" }],
+      h2: ["clamp(1.75rem, 3.2vw, 2.5rem)", { lineHeight: "1.05", letterSpacing: "0" }],
       h3: ["1.25rem", { lineHeight: "1.25", letterSpacing: "0" }],
+      // The handwritten note in the margin of a section.
+      script: ["clamp(1.5rem, 3vw, 2.25rem)", { lineHeight: "1.1" }],
+      "script-sm": ["1.25rem", { lineHeight: "1.15" }],
       "body-lg": ["1.125rem", { lineHeight: "1.6" }],
       body: ["1rem", { lineHeight: "1.65" }],
       small: ["0.875rem", { lineHeight: "1.5" }],
-      label: ["0.75rem", { lineHeight: "1.2", letterSpacing: "0.1em" }],
-      // B.3 gives data as a range from 1rem to 2.5rem. Four steps of it: a
-      // price in a table, a start date in a row, a figure on a card, and the
-      // pass-rate numbers that carry their own block.
+      label: ["0.8125rem", { lineHeight: "1.2", letterSpacing: "0.06em" }],
+      // Prices, phone numbers and the figures in the stat band: Nunito 800
+      // with tabular figures, B.4.
       data: ["1rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
       "data-lg": ["1.5rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
       "data-xl": ["2rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
       "data-2xl": ["2.5rem", { lineHeight: "1.05", letterSpacing: "-0.01em" }],
     },
 
-    // B.3 uses exactly seven cuts: Archivo 700/800, Manrope 400/500/700,
-    // Roboto Mono 400/500. The woff2 subsets are sliced to those ranges, so a
-    // weight outside this list would be synthesised by the browser.
+    // B.4 uses Rubik 800, Nunito 400/600/700/800 and Caveat 600/700. The woff2
+    // subsets are sliced to those ranges, so a weight outside this list would
+    // be synthesised by the browser.
     fontWeight: {
       normal: "400",
-      medium: "500",
+      semibold: "600",
       bold: "700",
       extrabold: "800",
     },
 
-    // B.4. Five radii and the pill, and nothing between them: a card is 20,
-    // a hero 28, a control 12, a picture inside a card 16.
+    // B.5. A card is 20, a tile 18, a field 14, a polaroid 4, and a button is
+    // a pill — the shape the owner's own mockup gives every control.
     borderRadius: {
       none: "0",
+      polaroid: "4px",
+      DEFAULT: "14px",
+      field: "14px",
       image: "16px",
-      DEFAULT: "12px",
+      tile: "18px",
       card: "20px",
       hero: "28px",
       full: "999px",
@@ -174,29 +188,29 @@ module.exports = {
     borderWidth: {
       DEFAULT: "1px",
       0: "0",
-      // B.5 draws a secondary button and a field at 1.5px.
+      // B.5 draws the outline button and a focused field at 1.5px.
       1.5: "1.5px",
       2: "2px",
     },
 
-    // B.4: exactly two levels, and no third is to be added. Both are the same
-    // near black at low alpha, so they read as one light source rather than as
-    // two different rooms.
+    // B.5: exactly two levels, and no third is to be added. Both are wine at
+    // low alpha rather than grey — a warm shadow under a warm page, so a card
+    // does not look cut out of a different photograph.
     boxShadow: {
       none: "none",
-      card: "0 1px 2px rgba(27, 27, 32, .05), 0 12px 28px -20px rgba(27, 27, 32, .35)",
-      "card-hover": "0 2px 4px rgba(27, 27, 32, .06), 0 20px 40px -24px rgba(27, 27, 32, .45)",
+      card: "0 1px 2px rgba(126, 43, 69, .06), 0 14px 30px -18px rgba(126, 43, 69, .28)",
+      "card-hover": "0 2px 4px rgba(126, 43, 69, .08), 0 22px 40px -20px rgba(126, 43, 69, .36)",
     },
 
     extend: {
-      // B.4 sets the rhythm at 4px with 4 8 12 16 24 32 48 64 96 128 as the
+      // B.5 sets the rhythm at 4px with 4 8 12 16 24 32 48 64 96 128 as the
       // layout steps, which are 1 2 3 4 6 8 12 16 24 32 in tailwind units and
       // already in the default scale. The scale is not narrowed to them because
       // component sizes in B.5 (button 44/52/60, field 52, badge 26) sit
       // outside the rhythm and still have to be expressible.
       maxWidth: {
         container: "1280px",
-        // B.3: a line of text is 60 to 72 characters.
+        // B.4: a line of text is 60 to 72 characters.
         narrow: "68ch",
       },
 
@@ -212,7 +226,8 @@ module.exports = {
         18: "4.5rem",
       },
 
-      // C.3 names what may move. transform, colour, background, border and
+      // REDESIGN.md C.3 names what may move — the motion contract survived the
+      // palette change untouched. transform, colour, background, border and
       // shadow are the whole list — a card lifts, a button fills, an arrow
       // travels. opacity is on it too, for the reveal.
       transitionProperty: {

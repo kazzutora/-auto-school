@@ -32,7 +32,9 @@ ROOT = Path(__file__).resolve().parents[2]
 FONT_DIR = ROOT / "static" / "fonts"
 
 # Ordered: the first file carrying a character wins. latin before latin-ext
-# because it is the smaller lookup and covers most of what we set.
+# because it is the smaller lookup and covers most of what we set. This is a
+# lookup order, not a declaration order — unlike the stylesheet's, where the
+# last matching face wins, see scripts/brand/fetch_fonts.py.
 SUBSETS = ("latin", "latin-ext", "cyrillic", "cyrillic-ext")
 
 

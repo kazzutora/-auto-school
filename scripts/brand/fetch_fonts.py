@@ -37,7 +37,15 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
 
-KEEP_SUBSETS = ("latin", "latin-ext", "cyrillic", "cyrillic-ext")
+# Declaration order matters and is not ours to choose. Where two subsets claim
+# the same character — cyrillic-ext's U+0460-052F swallows cyrillic's
+# U+0490-0491, which is the ukrainian ґ — the face declared *last* wins, and
+# only one of the two files actually carries the glyph. Google emits them
+# rarest first for exactly this reason, so we keep their order and the common
+# subset wins every overlap. Reordering this list to read more tidily drops ґ
+# into the system sans on every ukrainian page; scripts/check_fonts.py is what
+# caught it, and what will catch it again.
+KEEP_SUBSETS = ("cyrillic-ext", "cyrillic", "latin-ext", "latin")
 
 
 @dataclass(frozen=True)

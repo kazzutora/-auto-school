@@ -54,9 +54,10 @@ optimize-photos: ## crop, convert and weigh them, unstamped, REDESIGN.md D.6
 watermark-demo: ## the same for the owner's demo; stock is stamped ZDJĘCIE POGLĄDOWE, D.2
 	python scripts/optimize_photos.py --watermark
 
-budget: ## REDESIGN.md C.6 — gzip size of the css and js, and the contrast gate
+budget: ## the three asset gates: size, contrast, font coverage
 	$(COMPOSE) exec -T web python scripts/check_budget.py
 	$(COMPOSE) exec -T web python scripts/check_contrast.py
+	$(COMPOSE) exec -T web python scripts/check_fonts.py
 
 e2e: ## playwright end to end suite, runs in the web container
 	$(COMPOSE) exec web pytest tests/e2e

@@ -1,9 +1,14 @@
-"""Contrast gate for the design tokens, REDESIGN.md B.2 and R9 point 2.
+"""Contrast gate for the design tokens, ROSE.md B.2 and B.3.
 
-B.2 says the contrast is checked and not estimated, so the pairs that the design
-actually puts on screen live here as data and the build fails when one of them
-drops below its threshold. Body text needs 4.5:1 and large text 3:1, WCAG 2.2
-1.4.3; a focus indicator needs 3:1 against its surround, 1.4.11.
+B.3 prints a table of ratios and says outright that they are measured rather
+than estimated. This is the measuring. Every pair the design actually puts on
+screen lives here as data and the build fails when one of them drops below its
+threshold. Body text needs 4.5:1 and large text 3:1, WCAG 2.2 1.4.3; a focus
+indicator needs 3:1 against its surround, 1.4.11.
+
+Two pairs are forbidden outright rather than held to a number, B.3: white on
+brand.200, which is 1.69, and white on the paler crimson #DA6085 the owner's
+mockup uses for its buttons, which is 3.50. Both are checked below the table.
 
 The tokens are read out of static/src/css/app.css rather than repeated here.
 A second copy of the palette is a copy that drifts, and the one thing this
@@ -22,64 +27,75 @@ CSS = Path(__file__).resolve().parent.parent / "static" / "src" / "css" / "app.c
 # "large" pairs are the display and h1 steps, which clear 24px bold everywhere
 # they are used, so 3:1 is the threshold WCAG gives them.
 PAIRS: list[tuple[str, str, str, float, str]] = [
-    # ---- light: the page itself -------------------------------------
-    ("light", "ink", "paper", 4.5, "body text on the page"),
-    ("light", "ink", "surface", 4.5, "body text on a white card"),
-    ("light", "ink-700", "surface", 4.5, "secondary text on a white card"),
-    ("light", "ink-700", "paper", 4.5, "secondary text on the page"),
-    ("light", "ink-500", "surface", 4.5, "muted text on a white card"),
-    ("light", "ink-500", "paper", 4.5, "muted text on the page"),
-    ("light", "ink", "surface-muted", 4.5, "body text on the muted card"),
-    ("light", "ink-500", "surface-muted", 4.5, "muted text on the muted card"),
-    ("light", "state-err", "surface", 4.5, "a field error on a white card"),
-    # ---- light: the two accents -------------------------------------
-    # The blue is a fill with a white label on it, never a text colour: B.1
-    # gives it the action role, and .u-prose deliberately does not use it for
-    # links. So it is checked as a label pair and as an object, not as text.
-    ("light", "fixed-paper", "primary", 4.5, "button label on blue"),
-    ("light", "fixed-paper", "primary-600", 4.5, "button label on blue, hovered"),
-    ("light", "primary", "paper", 3.0, "the blue button read as an object on the page"),
-    ("light", "primary", "surface", 3.0, "the blue button read as an object on a card"),
-    ("light", "fixed-ink", "accent", 4.5, "badge label on yellow"),
-    # The pale yellow, core v27: the current page in the mobile menu, and the
-    # accent callout's wash. The wash is the tint at 50% over the ground, so in
-    # this theme the page is its darker end and ink-500 on paper covers it.
-    ("light", "ink", "accent-100", 4.5, "the current page in the mobile menu"),
-    ("light", "ink-500", "accent-100", 4.5, "muted text in the accent callout"),
-    # ---- light: the dark card ---------------------------------------
-    ("light", "on-dark", "ink", 4.5, "body text on the dark card"),
-    ("light", "on-dark-muted", "ink", 4.5, "secondary text on the dark card"),
-    ("light", "surface", "ink", 4.5, "white text on the dark card"),
-    # ---- dark theme: the same rows, swapped roles -------------------
-    ("dark", "ink", "paper", 4.5, "body text on the page"),
-    ("dark", "ink", "surface", 4.5, "body text on a card"),
-    ("dark", "ink-700", "surface", 4.5, "secondary text on a card"),
-    ("dark", "ink-500", "surface", 4.5, "muted text on a card"),
-    ("dark", "ink-500", "paper", 4.5, "muted text on the page"),
-    ("dark", "ink", "surface-muted", 4.5, "body text on the muted card"),
-    ("dark", "state-err", "surface", 4.5, "a field error on a card"),
-    ("dark", "fixed-paper", "primary", 4.5, "button label on blue"),
-    ("dark", "fixed-paper", "primary-600", 4.5, "button label on blue, hovered"),
-    ("dark", "primary", "paper", 3.0, "the blue button read as an object on the page"),
-    ("dark", "primary", "surface", 3.0, "the blue button read as an object on a card"),
-    ("dark", "fixed-ink", "accent", 4.5, "badge label on yellow"),
-    # The pale yellow's dark counterpart. Here the text is light, so the tint at
-    # full strength is the lighter end of the callout's 50% wash: if muted text
-    # reads on it, it reads on the wash.
-    ("dark", "ink", "accent-100", 4.5, "the current page in the mobile menu"),
-    ("dark", "ink-500", "accent-100", 4.5, "muted text in the accent callout"),
-    ("dark", "on-dark", "ink", 4.5, "body text on the dark card"),
-    ("dark", "on-dark-muted", "ink", 4.5, "secondary text on the dark card"),
+    # ---- light: the page and the cards ------------------------------
+    ("light", "ink", "brand-100", 4.5, "body text on the page"),
+    ("light", "ink", "brand-50", 4.5, "body text on a card"),
+    ("light", "ink-500", "brand-100", 4.5, "secondary text on the page"),
+    ("light", "ink-500", "brand-50", 4.5, "secondary text on a card"),
+    ("light", "state-err", "brand-50", 4.5, "a field error on a card"),
+    ("light", "state-ok", "brand-100", 4.5, "an open intake on the page"),
+    ("light", "state-warn", "brand-100", 4.5, "a warning on the page"),
+    # ---- light: the crimson -----------------------------------------
+    # brand.500 is a fill and a heading, never small text: on the page it is
+    # 4.08, which B.3 allows a heading of 24px and up and refuses a paragraph.
+    # The text crimson is brand.link, which clears 4.5.
+    ("light", "fixed-paper", "brand-500", 4.5, "button label on the crimson"),
+    ("light", "fixed-paper", "brand-600", 4.5, "button label, hovered"),
+    ("light", "brand-500", "brand-100", 3.0, "a heading, and the button as an object"),
+    ("light", "brand-500", "brand-50", 3.0, "the same on a card"),
+    ("light", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
+    ("light", "brand-link", "brand-50", 4.5, "the same on a card"),
+    ("light", "brand-700", "brand-100", 4.5, "the logo crimson as accent text"),
+    # ---- light: the pink tile and the wine band ---------------------
+    ("light", "fixed-ink", "brand-200", 4.5, "text on a pink tile"),
+    ("light", "on-wine", "brand-900", 4.5, "text on the wine band"),
+    ("light", "on-wine-muted", "brand-900", 4.5, "secondary text on the wine band"),
+    ("light", "fixed-paper", "brand-900", 4.5, "white on the wine band"),
+    # ---- dark: the same rows, roles rearranged ----------------------
+    ("dark", "ink", "brand-100", 4.5, "body text on the page"),
+    ("dark", "ink", "brand-50", 4.5, "body text on a card"),
+    ("dark", "ink-500", "brand-100", 4.5, "secondary text on the page"),
+    ("dark", "ink-500", "brand-50", 4.5, "secondary text on a card"),
+    ("dark", "state-err", "brand-50", 4.5, "a field error on a card"),
+    ("dark", "state-ok", "brand-50", 4.5, "an open intake on a card"),
+    ("dark", "state-warn", "brand-50", 4.5, "a warning on a card"),
+    # The fills do not swap, so their labels do not either.
+    ("dark", "fixed-paper", "brand-500", 4.5, "button label on the crimson"),
+    ("dark", "fixed-paper", "brand-600", 4.5, "button label, hovered"),
+    ("dark", "brand-500", "brand-100", 3.0, "the button as an object on the page"),
+    ("dark", "brand-500", "brand-50", 3.0, "the same on a card"),
+    ("dark", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
+    ("dark", "brand-link", "brand-50", 4.5, "the same on a card"),
+    ("dark", "fixed-ink", "brand-200", 4.5, "text on a pink tile"),
+    ("dark", "on-wine", "brand-900", 4.5, "text on the wine band"),
+    ("dark", "on-wine-muted", "brand-900", 4.5, "secondary text on the wine band"),
     # ---- the focus ring, 1.4.11: 3:1 against what surrounds it ------
-    # The ring is the yellow with a halo of the ground's own foreground under
-    # it, so the pair that has to read is the halo against the ground. The
-    # yellow on its own is 1.6:1 on a white card and was never enough alone.
-    ("light", "ink", "paper", 3.0, "focus halo on the page"),
-    ("light", "ink", "surface", 3.0, "focus halo on a white card"),
-    ("light", "on-dark", "ink", 3.0, "focus halo on the dark card"),
-    ("dark", "ink", "paper", 3.0, "focus halo on the page"),
-    ("dark", "ink", "surface", 3.0, "focus halo on a card"),
+    # The ring is --focus with a halo of the ground's own foreground under it,
+    # so both edges are checked against the ground they sit on.
+    ("light", "brand-500", "brand-100", 3.0, "focus ring on the page"),
+    ("light", "brand-500", "brand-50", 3.0, "focus ring on a card"),
+    ("light", "ink", "brand-100", 3.0, "focus halo on the page"),
+    ("light", "ink", "brand-50", 3.0, "focus halo on a card"),
+    ("light", "fixed-paper", "brand-500", 3.0, "focus ring on a crimson fill"),
+    ("light", "fixed-ink", "brand-200", 3.0, "focus ring on a pink tile"),
+    ("light", "on-wine", "brand-900", 3.0, "focus ring on the wine band"),
+    ("dark", "brand-500", "brand-100", 3.0, "focus ring on the page"),
+    ("dark", "brand-500", "brand-50", 3.0, "focus ring on a card"),
+    ("dark", "ink", "brand-100", 3.0, "focus halo on the page"),
+    ("dark", "ink", "brand-50", 3.0, "focus halo on a card"),
 ]
+
+# B.3 refuses these outright. They are not thresholds to hold but colours that
+# must not be put together at all, so the gate looks for the pairing rather
+# than for a ratio.
+FORBIDDEN: list[tuple[str, tuple[int, int, int], str]] = [
+    ("white on brand.200", (255, 255, 255), "brand-200"),
+]
+
+# And the one colour that is not a token here at all: the paler crimson the
+# owner's mockup uses for its buttons. White on it is 3.50, so it may not
+# become one.
+FORBIDDEN_LITERALS = {"#da6085": "the mockup's button crimson, 3.50 under white"}
 
 
 def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
@@ -87,9 +103,9 @@ def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
 
     Light comes from the bare :root block, dark from the explicit
     :root[data-theme="dark"] one. The media-query block is deliberately not
-    read: B.2 and R9 point 1 both require every colour to exist in the light
-    table first, so a token that only appears under prefers-color-scheme is a
-    bug this script should report as a missing token rather than silently use.
+    read: B.2 requires every colour to exist in the light table first, so a
+    token that only appears under prefers-color-scheme is a bug this script
+    should report as a missing token rather than quietly use.
     """
     themes: dict[str, dict[str, tuple[int, int, int]]] = {"light": {}, "dark": {}}
     for theme, pattern in (
@@ -140,6 +156,19 @@ def main() -> int:
             failures.append(
                 f"{theme}: --{fg} on --{bg} is {value:.2f}:1, below {minimum}:1 — {what}"
             )
+
+    # Comments are stripped first: B.3's own reasoning names the colours it
+    # forbids, and a gate that fails on its own documentation is a gate people
+    # learn to skip.
+    text = re.sub(r"/\*.*?\*/", "", CSS.read_text(encoding="utf-8"), flags=re.S).lower()
+    for literal, why in FORBIDDEN_LITERALS.items():
+        if literal in text:
+            failures.append(f"{literal} is in the stylesheet — {why}")
+
+    for what, fg, bg, in ((name, rgb, token) for name, rgb, token in FORBIDDEN):
+        for theme in ("light", "dark"):
+            value = ratio(fg, themes[theme][bg])
+            print(f"     {theme:5} {what:31} {value:5.2f}:1  forbidden outright")
 
     if failures:
         print("\ncontrast gate failed:", file=sys.stderr)

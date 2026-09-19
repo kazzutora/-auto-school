@@ -1,139 +1,136 @@
 /* Tailwind input. Build with `make css`.
  *
- * The design contract is REDESIGN.md part B, which replaced FRONTEND.md part A
- * at core v25. Colours live as CSS variables so the dark theme is a swap of
- * roles rather than a second set of classes, and tailwind.config.js reads every
- * one of them through rgb(var(--x) / alpha).
+ * The design contract is ROSE.md part B, which replaced REDESIGN.md part B at
+ * core v29. Colours live as CSS variables so the dark theme is a swap of roles
+ * rather than a second set of classes, and tailwind.config.js reads every one
+ * of them through rgb(var(--x) / alpha).
  *
- * Fonts are self hosted; tech.md section 2 and REDESIGN.md A both ban third
+ * Fonts are self hosted; tech.md section 2 and ROSE.md B.4 both ban third
  * party font hosts, animation libraries included. The faces below are variable
- * woff2 subsets sliced to exactly the weights B.3 uses, every one of them on
- * `swap` so text paints before the font arrives.
+ * woff2 subsets sliced to exactly the weights B.4 uses, every one of them on
+ * `swap` so text paints before the font arrives. Pull them again with
+ * `python -m scripts.brand.fetch_fonts`.
  *
- * Manrope replaced Public Sans here and closed a CONTRACT GAP on the way out:
- * Public Sans ships no cyrillic at all, so /ru/ and /uk/ fell back to the
- * system sans for every paragraph on the site. Manrope carries cyrillic and
- * cyrillic-ext, and both subsets are below. What remains open is narrower —
- * Archivo has no cyrillic either, so headings on those two languages still
- * fall back. That is one face rather than the whole page, and closing it means
- * a fourth family, which is the owner's call.
+ * All three carry cyrillic, and that closes the gap core v25 left open. The
+ * old display face, Archivo, had none, so every heading on /ru/ and /uk/ fell
+ * back to the system sans; Rubik carries cyrillic and cyrillic-ext, Nunito and
+ * Caveat the same. scripts/check_fonts.py holds the line: it opens every file
+ * linked below and fails the build if one of them has lost a polish diacritic
+ * or a cyrillic letter.
  */
 
-/* Archivo, display. One variable file per subset covering 700 and 800. */
-@font-face {
-  font-family: 'Archivo';
-  font-style: normal;
-  font-weight: 700 800;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(../fonts/archivo-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+/* Rubik — display: h1, h2, PRAWO JAZDY, the numerals, the wordmark. */
 
 @font-face {
-  font-family: 'Archivo';
-  font-style: normal;
-  font-weight: 700 800;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(../fonts/archivo-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Archivo Expanded 800, the display scale. Same family, wider width axis: the
- * browser picks this file when font-stretch asks for 125%. */
-@font-face {
-  font-family: 'Archivo';
-  font-style: normal;
+  font-family: 'Rubik';
+  font-style: italic;
   font-weight: 800;
-  font-stretch: 125%;
   font-display: swap;
-  src: url(../fonts/archivo-expanded-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url(../fonts/rubik-italic-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
 
 @font-face {
-  font-family: 'Archivo';
-  font-style: normal;
+  font-family: 'Rubik';
+  font-style: italic;
   font-weight: 800;
-  font-stretch: 125%;
   font-display: swap;
-  src: url(../fonts/archivo-expanded-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Manrope, text. 400 through 700 off one variable file per subset. */
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/manrope-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/manrope-latin-ext.woff2) format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url(../fonts/manrope-cyrillic.woff2) format('woff2');
+  src: url(../fonts/rubik-italic-cyrillic.woff2) format('woff2');
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
 @font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-weight: 400 700;
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
   font-display: swap;
-  src: url(../fonts/manrope-cyrillic-ext.woff2) format('woff2');
-  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
-}
-
-/* Roboto Mono, the utility face that carries data: prices, dates, phones. */
-@font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400 500;
-  font-display: swap;
-  src: url(../fonts/roboto-mono-latin.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400 500;
-  font-display: swap;
-  src: url(../fonts/roboto-mono-latin-ext.woff2) format('woff2');
+  src: url(../fonts/rubik-italic-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400 500;
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
   font-display: swap;
-  src: url(../fonts/roboto-mono-cyrillic.woff2) format('woff2');
+  src: url(../fonts/rubik-italic-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Nunito — text: paragraphs, buttons, fields, menu, h3, prices. */
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-cyrillic.woff2) format('woff2');
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
 @font-face {
-  font-family: 'Roboto Mono';
+  font-family: 'Nunito';
   font-style: normal;
-  font-weight: 400 500;
+  font-weight: 400 800;
   font-display: swap;
-  src: url(../fonts/roboto-mono-cyrillic-ext.woff2) format('woff2');
+  src: url(../fonts/nunito-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Caveat — handwriting: margin notes, eyebrows, photo captions, the slogan. */
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url(../fonts/caveat-cyrillic-ext.woff2) format('woff2');
   unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url(../fonts/caveat-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url(../fonts/caveat-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url(../fonts/caveat-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @tailwind base;
@@ -142,108 +139,99 @@
 
 @layer base {
   /* ------------------------------------------------------------------ *
-   * Tokens, REDESIGN.md B.2
+   * Tokens, ROSE.md B.2
    *
    * Channel triplets rather than hex, so tailwind can put an alpha on any of
-   * them. Every colour is defined here in the light theme first, and R9 point 1
-   * is explicit about why: a value that exists only inside a media block leaves
+   * them. Every colour is defined here in the light theme first, and B.2 is
+   * explicit about why: a value that exists only inside a media block leaves
    * the explicit theme with nothing to fall back to, and the reader who picked
    * light on a dark machine gets half a palette.
    *
-   * Two values differ from the numbers printed in B.2, both because B.2 also
-   * says the contrast is measured rather than estimated and these two did not
-   * measure. scripts/check_contrast.py is what measures them, and it runs in
-   * the gate.
+   * The whole of this table came off the owner's logo and their style sheet,
+   * then through scripts/check_contrast.py. B.3 prints the ratios and every
+   * one of them measures: white on brand.500 is 4.64, brand.600 on the page is
+   * 4.79, body ink on the page is 14.85. One number in B.3 is conservative
+   * rather than wrong — the dark theme's red on the dark ground measures 8.45
+   * against the 7.86 printed — and nothing is left unmeasured.
    *
-   *   --ink-500   B.2 prints #6B6B78, which is 4.28:1 on the warm grey page —
-   *               under the 4.5 the same paragraph demands. #676773 is the
-   *               nearest value on the same hue that clears it, at 4.55.
-   *   --primary   in the dark theme B.2 prints #6C68F0. White on it is 4.31:1,
-   *               again under 4.5, and the blue is a button fill whose label is
-   *               white by contract. #645FEE holds both ends: 4.76 for the
-   *               label, 3.93 for the button read as an object against the
-   *               near black page, which is what lightening it was for.
+   * Two pairs are forbidden outright and the gate enforces both: white on
+   * brand.200, which is 1.69, and the mockup's paler button #DA6085 under
+   * white, which is 3.50.
    * ------------------------------------------------------------------ */
   :root {
-    /* The page. */
-    --paper: 233 232 228;
-    --paper-50: 242 241 238;
-    --paper-100: 222 221 216;
+    /* The page and the cards on it. There is no white ground: the owner asked
+     * for none, B.8, and white survives only as a card face. */
+    --brand-50: 255 251 250;
+    --brand-100: 251 237 239;
+    --brand-200: 242 184 198;
+    --brand-300: 233 138 163;
 
-    /* The white cards on it. */
-    --surface: 255 255 255;
-    --surface-muted: 247 246 243;
+    /* Action, and the large headings. brand.500 on the page is 4.08, which is
+     * a heading of 24px and up and nothing smaller — B.3 names the limit and
+     * the gate holds it. */
+    --brand-500: 212 56 94;
+    /* The hover fill under a white label. A fill, so it does not swap: the
+     * same crimson in both themes, 5.45 under white in both. */
+    --brand-600: 196 45 85;
+    /* And the crimson as *text* — links, a price, a small red line. The two
+     * are one colour in the light theme and cannot be in the dark one: B.2
+     * lightens the red text there to #FF8FAB so it reads on the near-black
+     * page, and white on that is 1.90. One token for both would have made
+     * every hovered button in the dark theme unreadable. */
+    --brand-link: 196 45 85;
 
-    /* Text, and the ground of a dark card. */
-    --ink: 27 27 32;
-    --ink-800: 38 38 44;
-    --ink-700: 58 58 68;
-    --ink-500: 103 103 115;
-    --ink-300: 156 156 168;
+    /* The crimson of the logo itself: the wheel, the wordmark, the letter on
+     * the plate. Text weight, 5.48 on the page. */
+    --brand-700: 161 64 82;
 
-    /* Action. */
-    --primary: 63 58 230;
-    --primary-600: 51 46 219;
-    --primary-100: 228 227 252;
+    /* Wine. The one dark band on a page, B.8, and the only ground that is not
+     * pink. White on it is 9.06, so anything may sit there. */
+    --brand-900: 126 43 69;
 
-    /* State. */
-    --accent: 255 212 0;
-    --accent-600: 229 190 0;
-    --accent-100: 255 246 204;
+    /* Text. */
+    --ink: 34 27 30;
+    --ink-500: 94 74 82;
+    /* Disabled text and hairlines only, 2.86 on the page. Below the body
+     * threshold on purpose: WCAG exempts a disabled control, and a disabled
+     * button that reads at full strength is a button people keep pressing. */
+    --ink-300: 156 138 145;
 
-    /* Darkened from the values B.2 prints — #1E7A56, #B27C00, #C0392B — for
-     * the reason B.2 itself gives: the contrast is measured, not estimated.
-     * These sit on a chip whose fill is a tenth of the ground's foreground,
-     * which on the warm grey page comes to #D4D4D0, and the printed values
-     * measured 3.59, 2.56 and 3.61 there. These clear 4.5 on that fill and
-     * better than 5.4 as plain text on the page. */
-    --state-ok: 26 104 73;
-    --state-warn: 121 84 0;
-    --state-err: 167 50 37;
+    --line: 235 211 217;
 
-    --line: 215 214 209;
-    --line-dark: 51 51 60;
+    --state-ok: 30 122 86;
+    --state-err: 142 27 18;
+    /* Not in B.2 — B.2 gives ok and err only — and the site had a third state
+     * before this core did. Same hue family, measured the same way: 4.61 as
+     * text on the page. */
+    --state-warn: 132 84 0;
 
-    /* The yellow is the one ground that does not swap: it is the same yellow
-     * in both themes, because the school's mark is built on it. So the text on
-     * it cannot swap either — following --ink would land on white-on-yellow at
-     * 1.43:1 in the dark theme, the single pair B.2 forbids outright. */
-    --fixed-ink: 27 27 32;
-
-    /* The mirror of it, and for the mirror of the reason: the blue does not
-     * swap either, and B.2 fixes its label as white — "белый на синем
-     * #FFFFFF/#3F3AE6 = 7.4:1, это основная пара кнопки". Reaching for
-     * --surface there would work in the light theme and print near black on
-     * blue at 3.6:1 in the dark, because --surface is a card and cards swap. */
+    /* The label on a crimson fill does not swap with the theme, because the
+     * fill does not either: brand.500 and brand.900 are the same colour in
+     * both, B.2's last line. Reaching for a card token there would be white in
+     * the light theme and near black on crimson in the dark. */
     --fixed-paper: 255 255 255;
+    --fixed-ink: 34 27 30;
 
-    /* A dark card's own foreground ramp, B.2's last line: on a dark card the
-     * body text is ink.800 and the secondary text ink.500 *of the dark theme*.
-     * Published as a pair here so the card can hand it to whatever is dropped
-     * inside it without every component knowing which ground it landed on.
-     *
-     * In the dark theme these two swap with everything else, because there the
-     * contrasting card is the light one. That is B.2's "перестановка ролей"
-     * spelled out in two variables. */
-    --on-dark: 226 225 220;
-    --on-dark-muted: 142 142 153;
+    /* What sits on the wine band: its own foreground pair, published here so a
+     * component dropped into the band does not have to know it landed there. */
+    --on-wine: 255 251 250;
+    --on-wine-muted: 242 184 198;
 
     color-scheme: light;
 
     /* The header's own height, in one place. Everything that has to clear it
-     * reads this rather than repeating the number, so moving the header moves
-     * them all. B.7 point 0: 76px, 64px once the page has scrolled. */
+     * reads this rather than repeating the number. */
     --header-h: 76px;
     --header-h-scrolled: 64px;
 
-    /* C.3: one curve on the whole site, and the table of durations beside it.
+    /* REDESIGN.md C.3 — still in force, ROSE.md changes the palette and the
+     * composition, not the motion contract. One curve on the whole site and
+     * the table of durations beside it.
      *
      * These live here rather than only in tailwind.config.js because
      * static/src/css/motion.css is plain css — it carries no @tailwind
      * directive, so theme() is not available to it — and the two files must
-     * not each keep their own copy of a number C.3 fixes once. The tailwind
-     * config reads these same variables, so `duration-card` and
-     * `var(--dur-card)` cannot drift apart.
+     * not each keep their own copy of a number C.3 fixes once.
      */
     --ease: cubic-bezier(.22, .61, .36, 1);
 
@@ -254,84 +242,70 @@
     --dur-menu: 240ms;
     --dur-panel: 260ms;
     --dur-hero: 500ms;
+
+    /* The two fills a brush stroke is drawn with, ROSE.md B.6: the body of the
+     * stroke and the dry streaks inside it. Named here so a stroke can be
+     * recoloured by a class instead of regenerating the file. */
+    --brush-a: 242 184 198;
+    --brush-b: 233 138 163;
+    --brush-opacity: 1;
   }
 
-  /* The dark theme, B.2. Two doors into it and the same values behind both:
-   * the system preference unless the reader has explicitly asked for light,
-   * and the explicit data-theme="dark". Only the tokens whose role changes are
-   * redefined; everything else falls through to the table above. */
+  /* The dark theme, B.2. A rearrangement rather than an inversion: the page
+   * goes to the darkest wine-black, the cards to the next step up, the ink
+   * ramp turns over, and the two crimson fills stay exactly where they are
+   * because they are the brand rather than a role.
+   *
+   * Two doors into it and the same values behind both: the system preference
+   * unless the reader has explicitly asked for light, and the explicit
+   * data-theme="dark". Only the tokens whose role changes are redefined. */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
-      --paper: 18 18 22;
-      --paper-50: 23 23 28;
-      --paper-100: 29 29 35;
+      --brand-100: 26 20 23;
+      --brand-50: 37 28 32;
 
-      --surface: 27 27 32;
-      --surface-muted: 34 34 41;
+      /* Red text and links. The light theme's value is 1.90 on the dark page;
+       * this one is 8.45. B.2 names the colour, B.3 the ratio. The fills —
+       * brand.200, brand.500, brand.600, brand.900 — are not here, because
+       * they are the brand rather than a role and do not swap. */
+      --brand-link: 255 143 171;
 
-      --ink: 242 241 238;
-      --ink-800: 226 225 220;
-      --ink-700: 196 195 190;
-      --ink-500: 142 142 153;
-      --ink-300: 99 99 110;
+      --ink: 246 233 236;
+      --ink-500: 201 179 187;
+      --ink-300: 138 116 125;
 
-      --primary: 100 95 238;
-      --primary-600: 86 81 232;
-      --primary-100: 42 40 88;
+      --line: 58 42 48;
 
-      /* The yellow stays the yellow; its pale tint does not, core v27. The
-       * light table's cream under the accent callout's 50% wash came out a
-       * muddy khaki on near black, with the page's muted text on it at 1.2:1.
-       * A dark warm tint instead, the way primary-100 went — dark enough that
-       * muted text clears 4.5 on the tint at full strength, which in this
-       * theme is the lighter end of that wash. */
-      --accent-100: 44 40 20;
-
-      /* The two state colours that are text on a dark card rather than a fill.
-       * The light theme's greens and reds are too dark to read on near black. */
+      /* Text on a dark ground, so lighter than the light theme's fills. */
       --state-ok: 74 190 145;
       --state-warn: 232 176 61;
       --state-err: 240 130 120;
 
-      --line: 46 46 55;
-      --line-dark: 60 60 71;
-
-      --on-dark: 38 38 44;
-      --on-dark-muted: 103 103 115;
+      /* B.2: the brush strokes hold their colour and drop to .35 here, so they
+       * stay a stroke of the brand instead of turning into a grey smear. */
+      --brush-opacity: .35;
 
       color-scheme: dark;
     }
   }
 
   :root[data-theme='dark'] {
-    --paper: 18 18 22;
-    --paper-50: 23 23 28;
-    --paper-100: 29 29 35;
+    --brand-100: 26 20 23;
+    --brand-50: 37 28 32;
 
-    --surface: 27 27 32;
-    --surface-muted: 34 34 41;
+    --brand-link: 255 143 171;
 
-    --ink: 242 241 238;
-    --ink-800: 226 225 220;
-    --ink-700: 196 195 190;
-    --ink-500: 142 142 153;
-    --ink-300: 99 99 110;
+    --ink: 246 233 236;
+    --ink-500: 201 179 187;
+    --ink-300: 138 116 125;
 
-    --primary: 100 95 238;
-    --primary-600: 86 81 232;
-    --primary-100: 42 40 88;
-
-    --accent-100: 44 40 20;
+    --line: 58 42 48;
 
     --state-ok: 74 190 145;
     --state-warn: 232 176 61;
     --state-err: 240 130 120;
 
-    --line: 46 46 55;
-    --line-dark: 60 60 71;
-
-    --on-dark: 38 38 44;
-    --on-dark-muted: 103 103 115;
+    --brush-opacity: .35;
 
     color-scheme: dark;
   }
@@ -351,7 +325,7 @@
   }
 
   html {
-    @apply bg-paper text-ink antialiased;
+    @apply bg-brand-100 text-ink antialiased;
     font-family: theme('fontFamily.sans');
     font-size: 100%;
     -webkit-text-size-adjust: 100%;
@@ -363,7 +337,7 @@
   }
 
   body {
-    @apply bg-paper text-body;
+    @apply bg-brand-100 text-body;
   }
 
   /* Polish stacks long words like `psychologiczne` and `kwalifikacja`, and at
@@ -374,13 +348,18 @@
 
   /* ------------------------------------------------------------------ *
    * Typography, B.3. The scale is the whole vocabulary: a heading picks a
-   * step, never a size of its own. Headings are uppercase — B.3 says so, and
+   * step, never a size of its own. Headings are uppercase — B.4 says so, and
    * says paragraphs never are.
+   *
+   * The italic on h1 and h2 is the face rather than an emphasis: the owner's
+   * wordmark is a heavy slanted sans and the headings are the same voice.
+   * Setting it here is what keeps `<em>` meaning emphasis inside a heading
+   * instead of meaning nothing.
    * ------------------------------------------------------------------ */
   h1,
   h2 {
     font-family: theme('fontFamily.display');
-    font-stretch: 125%;
+    font-style: italic;
     @apply uppercase text-ink;
     text-wrap: balance;
   }
@@ -397,7 +376,7 @@
   }
 
   h2 {
-    @apply text-h2 font-bold;
+    @apply text-h2 font-extrabold;
   }
 
   h3,
@@ -435,27 +414,54 @@
   }
 
   /* Data reads down a column: the price, the start date, the phone number.
-   * tabular-nums is what keeps the digits in line, B.3. */
+   * B.4 sets it in Nunito 800 with tabular figures — there is no mono face in
+   * this language, and the alignment a column needs comes from the figures
+   * being tabular rather than from the whole face being fixed width. */
   .data {
-    font-family: theme('fontFamily.mono');
     font-variant-numeric: tabular-nums;
-    @apply text-data font-medium;
+    @apply text-data font-extrabold;
   }
 
   .label {
-    font-family: theme('fontFamily.mono');
-    @apply text-label font-medium uppercase;
+    @apply text-label font-extrabold uppercase;
   }
 
-  /* Archivo carries a width axis, so Expanded is a font-stretch away. The
-   * display step is the hero's h1 and nothing else on the site is this large.
+  /* The handwriting, B.4. One note in the margin of a section, tilted the way
+   * the owner tilts theirs, and never more than one — B.7 point 3.
+   *
+   * The rotation is on a wrapper's own axis rather than on the text flow, so
+   * it takes no space with it: a tilted eyebrow that pushed the heading down
+   * by its own diagonal would put a different gap above every section. */
+  .script {
+    font-family: theme('fontFamily.script');
+    @apply text-script font-bold;
+    color: rgb(var(--brand-500));
+    display: inline-block;
+    rotate: -4deg;
+    transform-origin: left bottom;
+  }
+
+  .script-sm {
+    @apply text-script-sm;
+  }
+
+  /* Straight, for the places a tilt would fight the grid: a photo caption
+   * under a polaroid that is already tilted, and the legal pages, where B.7
+   * point 4 says there is no ornament at all. */
+  .script-flat {
+    rotate: none;
+  }
+
+  /* The display step is PRAWO JAZDY in the hero and nothing else on the site
+   * is this large, C.1 block 1.
    *
    * overflow-wrap, because the school's own name is one unbreakable word and
-   * the page must not move sideways at 320px, B.4. */
+   * the page must not move sideways at 320px. */
   .display {
     font-family: theme('fontFamily.display');
-    font-stretch: 125%;
+    font-style: italic;
     @apply text-display font-extrabold uppercase;
+    color: rgb(var(--brand-500));
     overflow-wrap: break-word;
   }
 
@@ -471,13 +477,14 @@
    * the dark theme turns the hero into. WCAG 1.4.11 asks 3:1 of a focus
    * indicator against what surrounds it. A ring nobody can see is no ring.
    *
-   * So the yellow keeps the ring and a halo underneath gives it an edge. The
-   * halo is --on-ground, which every ground publishes: near white on a dark
-   * card, near black on the page. Whatever the yellow sits on, one of the two
-   * edges reads.
+   * ROSE.md has no yellow, so the ring is --focus, which every ground
+   * publishes alongside its foreground: the crimson on the pink page, white on
+   * a crimson fill, near black on a pink tile. A halo of --on-ground sits
+   * under it and gives it a second edge, so whichever ground the control
+   * landed on, one of the two reads.
    * ------------------------------------------------------------------ */
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
+    outline: 2px solid rgb(var(--focus));
     outline-offset: 2px;
     box-shadow: 0 0 0 4px rgb(var(--on-ground));
   }
@@ -491,15 +498,16 @@
   select:focus-visible,
   textarea:focus-visible {
     box-shadow:
-      inset 0 0 0 2px rgb(var(--primary)),
+      inset 0 0 0 2px rgb(var(--brand-500)),
       0 0 0 4px rgb(var(--on-ground));
   }
 
-  /* On the yellow itself there is no yellow ring to see, so the ring becomes
-   * the near black and the halo the yellow it stands on. */
+  /* On a pink tile the halo would be the near black the ring already is, so
+   * the two swap: the ring stays dark and the halo becomes the tile. */
+  .u-ground-pink :focus-visible,
   .u-ground-accent :focus-visible {
-    outline-color: rgb(var(--fixed-ink));
-    box-shadow: 0 0 0 4px rgb(var(--accent));
+    outline-color: rgb(var(--ink));
+    box-shadow: 0 0 0 4px rgb(var(--brand-200));
   }
 
   /* ------------------------------------------------------------------ *
@@ -589,7 +597,7 @@
    * when the whole card is a link.
    * ------------------------------------------------------------------ */
   .u-card {
-    @apply block min-w-0 rounded-card bg-surface shadow-card;
+    @apply block min-w-0 rounded-card bg-brand-50 shadow-card;
   }
 
   .u-card-link {
@@ -621,7 +629,7 @@
    * layer, so whichever is written later paints.
    *
    * With the cards last, a featured intake card — which carries both — came out
-   * white from `.u-card`'s bg-surface while its foreground variables still said
+   * white from `.u-card`'s own face while its foreground variables still said
    * white from `.u-ground-primary`. White text on a white card, on the one card
    * B.7 point 5 wants pressed. A ground is a deliberate override of a card's
    * paint, so the grounds have to be able to win.
@@ -641,27 +649,33 @@
    * invisible the moment it lands on a dark card.
    * ------------------------------------------------------------------ */
   :root {
-    --ground: var(--paper);
+    --ground: var(--brand-100);
     --on-ground: var(--ink);
-    --on-ground-body: var(--ink-700);
+    --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
+    --focus: var(--brand-500);
   }
 
-  /* The dark card, B.1's other half of the language. Near black on the light
-   * theme, near white on the dark one — the roles swap, the contrast does not. */
+  /* The wine band, B.8's one dark block on a page. It does not swap with the
+   * theme — it is the brand rather than a role — so the pair it publishes is
+   * fixed and white on it measures 9.06 either way.
+   *
+   * .u-ground-ink and .u-dark-card are the old names for it and still answer,
+   * because the templates have not been rewritten yet; K5 and K6 move them to
+   * .u-ground-wine and the aliases go. */
+  .u-ground-wine,
   .u-dark-card,
   .u-ground-ink {
-    background-color: rgb(var(--ink));
-    color: rgb(var(--on-dark));
-    --ground: var(--ink);
-    --on-ground: var(--on-dark);
-    /* B.2 gives a dark card two levels, not three: the body is ink.800 of the
-     * dark theme and the secondary is its ink.500. So body and heading share a
-     * value here, and only the muted step steps down. */
-    --on-ground-body: var(--on-dark);
-    --on-ground-muted: var(--on-dark-muted);
+    background-color: rgb(var(--brand-900));
+    color: rgb(var(--on-wine));
+    --ground: var(--brand-900);
+    --on-ground: var(--on-wine);
+    --on-ground-body: var(--on-wine);
+    --on-ground-muted: var(--on-wine-muted);
+    --focus: var(--on-wine);
   }
 
+  .u-ground-wine :is(h1, h2, h3, h4),
   .u-dark-card :is(h1, h2, h3, h4),
   .u-ground-ink :is(h1, h2, h3, h4) {
     color: rgb(var(--on-ground));
@@ -674,45 +688,54 @@
   .u-ground-paper,
   .u-card,
   .u-empty {
-    --ground: var(--surface);
+    --ground: var(--brand-50);
     --on-ground: var(--ink);
-    --on-ground-body: var(--ink-700);
+    --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
+    --focus: var(--brand-500);
   }
 
-  /* The blue, as a ground rather than as a button fill: B.7 point 5 puts one
-   * intake card filled with the primary beside two plain ones.
+  /* The crimson as a ground rather than as a button fill: the active course
+   * tile of C.1 block 3, filled solid beside the plain ones.
    *
-   * Like the yellow, it does not swap with the theme, so the pair it publishes
-   * is the fixed one. That is what lets a secondary button dropped on it come
-   * out as a white frame that fills white on hover — on the blue the primary
-   * button would be blue on blue, and naming white from the call site would
-   * break the moment the same card appeared on the page instead. */
+   * It does not swap with the theme, so the pair it publishes is the fixed
+   * one. That is what lets an outline button dropped on it come out as a white
+   * frame — on the crimson the primary button would be crimson on crimson, and
+   * naming white from the call site would break the moment the same tile
+   * appeared on the page instead. */
+  .u-ground-brand,
   .u-ground-primary {
-    background-color: rgb(var(--primary));
+    background-color: rgb(var(--brand-500));
     color: rgb(var(--fixed-paper));
-    --ground: var(--primary);
+    --ground: var(--brand-500);
     --on-ground: var(--fixed-paper);
     --on-ground-body: var(--fixed-paper);
     --on-ground-muted: var(--fixed-paper);
+    --focus: var(--fixed-paper);
   }
 
+  .u-ground-brand :is(h1, h2, h3, h4),
   .u-ground-primary :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-paper));
   }
 
-  /* The yellow does not swap with the theme, so the text on it must not either:
-   * text-ink would resolve to near white in the dark and land on the one pair
-   * B.2 forbids outright, white on yellow at 1.43:1. */
+  /* The pink tile. It swaps with the theme — in the dark it is a muted plum —
+   * but the text on it must not be reached for through --ink, because in the
+   * light theme that would be near black on pink and in the dark near white on
+   * pink, and white on brand.200 is 1.69, the one pair B.3 forbids outright.
+   * So the pair is fixed and ink stays ink. */
+  .u-ground-pink,
   .u-ground-accent {
-    background-color: rgb(var(--accent));
+    background-color: rgb(var(--brand-200));
     color: rgb(var(--fixed-ink));
-    --ground: var(--accent);
+    --ground: var(--brand-200);
     --on-ground: var(--fixed-ink);
     --on-ground-body: var(--fixed-ink);
     --on-ground-muted: var(--fixed-ink);
+    --focus: var(--fixed-ink);
   }
 
+  .u-ground-pink :is(h1, h2, h3, h4),
   .u-ground-accent :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-ink));
   }
@@ -749,7 +772,7 @@
    * under it and the aside beside it are three different weights of the same
    * voice, and collapsing the middle one is what makes a page read flat.
    *
-   * On the page these are ink, ink-700 and ink-500. On a dark card B.2 gives
+   * On the page these are ink and ink-500. On the wine band B.2 gives
    * only two, so body and heading share a value there. */
   .u-body-on-ground {
     color: rgb(var(--on-ground-body));
@@ -784,17 +807,24 @@
     background-color: transparent;
   }
 
-  /* outline-accent, the one button B.5 allows once per screen: the callback
-   * offer in the header. Yellow frame, fills yellow on hover, near black text
-   * either way — the yellow is a state, and this button is offering one. */
+  /* The outline button, B.5: a crimson pill frame on the pale card face that
+   * fills with the page's own pink on hover rather than with the crimson. A
+   * crimson fill here would be the primary button, and the point of two
+   * variants is that one of them is quieter.
+   *
+   * .u-btn-outline-accent is the old name and still answers; the components
+   * move to .u-btn-outline at K4 and the alias goes. */
+  .u-btn-outline,
   .u-btn-outline-accent {
-    border-color: rgb(var(--accent));
-    color: rgb(var(--on-ground));
+    border-color: rgb(var(--brand-500));
+    color: rgb(var(--brand-link));
+    background-color: rgb(var(--brand-50));
   }
 
+  .u-btn-outline:hover:not(:disabled),
   .u-btn-outline-accent:hover:not(:disabled) {
-    background-color: rgb(var(--accent));
-    color: rgb(var(--fixed-ink));
+    background-color: rgb(var(--brand-100));
+    color: rgb(var(--brand-link));
   }
 
   /* C.3: an arrow travels 4px instead of growing. On a site whose language is
@@ -1006,9 +1036,10 @@
    * black on a near black card was never going to clear 3:1.
    * ------------------------------------------------------------------ */
   .u-bignum {
-    font-family: theme('fontFamily.mono');
+    font-family: theme('fontFamily.display');
+    font-style: italic;
     font-variant-numeric: tabular-nums;
-    @apply text-data-2xl font-medium;
+    @apply text-data-2xl font-extrabold;
     color: rgb(var(--on-ground));
   }
 
@@ -1035,7 +1066,7 @@
     bottom: -2px;
     height: 3px;
     border-radius: 999px;
-    background-color: rgb(var(--accent));
+    background-color: rgb(var(--brand-500));
     transform: scaleX(0);
     transform-origin: left;
     transition: transform var(--dur) var(--ease);
@@ -1081,11 +1112,12 @@
    * :focus-visible — replacing the halo instead of joining it.
    * ------------------------------------------------------------------ */
   :root {
-    --field: var(--surface-muted);
+    --field: var(--brand-50);
   }
 
+  .u-ground-wine,
   .u-dark-card {
-    --field: var(--ink-800);
+    --field: var(--brand-50);
   }
 
   .u-field {
@@ -1177,7 +1209,7 @@
     width: 7px;
     height: 7px;
     border-radius: 999px;
-    background-color: rgb(var(--accent));
+    background-color: rgb(var(--brand-500));
   }
 
   /* An ordered list keeps its numbers: they are the content there, and a row
@@ -1202,15 +1234,13 @@
     color: rgb(var(--on-ground-muted));
   }
 
-  /* A link inside running text is navigation, not the page's action, and B.1
-   * reserves the blue for the action. It is also the one place blue-as-text
-   * would have to hold 4.5:1, and in the dark theme the lightened primary
-   * measures 3.61 on a card — so the underline carries the link and the colour
-   * stays the ground's own. */
+  /* A link inside running text takes the crimson B.3 clears for it: brand.600
+   * on the page is 4.79, which is a link at body size. brand.500 is 4.08 and
+   * would not be. */
   .u-prose a {
     @apply underline underline-offset-4;
-    color: rgb(var(--on-ground));
-    text-decoration-color: rgb(var(--accent));
+    color: rgb(var(--brand-link));
+    text-decoration-color: rgb(var(--brand-500));
     text-decoration-thickness: 2px;
   }
 
@@ -1223,9 +1253,13 @@
     color: rgb(var(--on-ground));
   }
 
+  /* There is no mono face in this language, B.4, and the one place code
+   * appears is a fragment inside prose from the database. ui-monospace is the
+   * reader's own, which is the right answer for a run of characters that has
+   * to be read exactly. */
   .u-prose code {
-    @apply rounded bg-surface-muted px-1.5 py-0.5 text-small;
-    font-family: theme('fontFamily.mono');
+    @apply rounded bg-brand-100 px-1.5 py-0.5 text-small;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   /* ------------------------------------------------------------------ *
@@ -1245,10 +1279,11 @@
     /* The placeholder and google's map are both light whatever the section
      * around them is, so the map is the page. On a dark card the focus halo
      * was following the card and painting near-white on a pale map. */
-    --ground: var(--surface);
+    --ground: var(--brand-50);
     --on-ground: var(--ink);
-    --on-ground-body: var(--ink-700);
+    --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
+    --focus: var(--brand-500);
   }
 
   /* The google frame static/js/app.js builds on the click fills the box. */

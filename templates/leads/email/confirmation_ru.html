@@ -8,22 +8,22 @@
 
   <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:15px;">
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Курс</td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Курс</td>
       <td style="padding:6px 0;font-weight:bold;">{% if lead.course %}{{ lead.course.title }}{% else %}уточним при звонке{% endif %}</td>
     </tr>
     {% if lead.intake %}
       <tr>
-        <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Набор</td>
+        <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Набор</td>
         <td style="padding:6px 0;font-weight:bold;">{{ lead.intake.start_date|date:"d.m.Y" }}</td>
       </tr>
     {% endif %}
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Телефон</td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Телефон</td>
       <td style="padding:6px 0;">{{ lead.phone }}</td>
     </tr>
   </table>
 
   <p style="margin:20px 0 0;">Занятия у нас проходят в том числе на русском языке, так что спрашивать можно на нём же.</p>
-  <p style="margin:16px 0 0;">Если вопрос срочный, позвоните: <a href="tel:{{ site.phone_primary }}" style="color:#3F3AE6;font-weight:bold;">{{ site.phone_primary }}</a>.</p>
+  <p style="margin:16px 0 0;">Если вопрос срочный, позвоните: <a href="tel:{{ site.phone_primary }}" style="color:#C42D55;font-weight:bold;">{{ site.phone_primary }}</a>.</p>
   <p style="margin:16px 0 0;">До встречи,<br>команда {{ site.short_name }}</p>
 {% endblock %}

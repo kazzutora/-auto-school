@@ -117,32 +117,41 @@ def test_every_font_the_first_screen_needs_is_local() -> None:
     assert weight < 250 * 1024, f"the polish faces come to {weight} B"
 
 
-def test_public_sans_is_gone() -> None:
-    """B.3 replaced it with Manrope, and R1 point 3 says to delete it.
+def test_the_replaced_faces_are_gone() -> None:
+    """A face nobody references is dead weight, and one @font-face from a
+    comeback.
 
-    A face nobody references is dead weight in the image and one @font-face
-    away from coming back by accident.
+    Public Sans went at core v25 because it had no cyrillic; Archivo, Manrope
+    and Roboto Mono went at v29 when ROSE.md B.4 took the whole language off
+    the owner's logo. None of them may still be in the image.
     """
-    leftovers = list((STATIC / "fonts").glob("public-sans*"))
-    assert not leftovers, f"Public Sans is still shipped: {leftovers}"
+    for stem in ("public-sans", "archivo", "manrope", "roboto-mono"):
+        leftovers = list((STATIC / "fonts").glob(f"{stem}*"))
+        assert not leftovers, f"{stem} is still shipped: {leftovers}"
 
-    # The declaration, not the name. app.css explains at length why the face was
-    # swapped and what that closed, and a test that reads prose would fail over
-    # the record of the change it is checking for.
+    # The declaration, not the name. app.css and the readme beside it explain
+    # at length why the faces were swapped and what that closed, and a test
+    # that read the prose would fail over the record of the change it checks.
     source = (STATIC / "src" / "css" / "app.css").read_text(encoding="utf-8")
-    assert "font-family: 'Public Sans'" not in source, "app.css still declares Public Sans"
-    assert "public-sans" not in source, "app.css still points at a Public Sans file"
+    for family in ("Public Sans", "Archivo", "Manrope", "Roboto Mono"):
+        assert f"font-family: '{family}'" not in source, f"app.css still declares {family}"
 
 
-def test_manrope_carries_cyrillic() -> None:
-    """The half of the old CONTRACT GAP that B.3 closed.
+def test_every_face_carries_cyrillic() -> None:
+    """The CONTRACT GAP that took two cores to close.
 
-    Public Sans shipped no cyrillic at all, so /ru/ and /uk/ fell back to the
-    system sans for every paragraph. If the cyrillic subsets ever stop being
-    shipped, that regression comes straight back and nothing else would catch
-    it — the pages still render, just in the wrong face.
+    Public Sans shipped no cyrillic at all, so before v25 /ru/ and /uk/ fell
+    back to the system sans for every paragraph. Archivo had none either, so
+    after v25 they kept doing it for every heading. All three faces of B.4
+    carry both subsets, and if one of them stops being shipped the regression
+    comes straight back — the pages still render, just in the wrong face, which
+    is exactly the kind of fault nobody files a bug about.
+
+    scripts/check_fonts.py checks the coverage glyph by glyph. This checks that
+    the files are in the repository at all.
     """
-    for subset in ("cyrillic", "cyrillic-ext"):
-        assert (STATIC / "fonts" / f"manrope-{subset}.woff2").exists(), (
-            f"manrope-{subset}.woff2 is missing"
-        )
+    for stem in ("rubik-italic", "nunito", "caveat"):
+        for subset in ("cyrillic", "cyrillic-ext"):
+            assert (STATIC / "fonts" / f"{stem}-{subset}.woff2").exists(), (
+                f"{stem}-{subset}.woff2 is missing"
+            )

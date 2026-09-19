@@ -7,47 +7,47 @@
 
   <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:15px;">
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Imię i nazwisko</td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Imię i nazwisko</td>
       <td style="padding:6px 0;font-weight:bold;">{{ lead.first_name }} {{ lead.last_name }}</td>
     </tr>
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Telefon</td>
-      <td style="padding:6px 0;font-weight:bold;"><a href="tel:{{ lead.phone }}" style="color:#3F3AE6;">{{ lead.phone }}</a></td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Telefon</td>
+      <td style="padding:6px 0;font-weight:bold;"><a href="tel:{{ lead.phone }}" style="color:#C42D55;">{{ lead.phone }}</a></td>
     </tr>
     {% if lead.email %}
       <tr>
-        <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">E-mail</td>
-        <td style="padding:6px 0;"><a href="mailto:{{ lead.email }}" style="color:#3F3AE6;">{{ lead.email }}</a></td>
+        <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">E-mail</td>
+        <td style="padding:6px 0;"><a href="mailto:{{ lead.email }}" style="color:#C42D55;">{{ lead.email }}</a></td>
       </tr>
     {% endif %}
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Kurs</td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Kurs</td>
       <td style="padding:6px 0;">{% if lead.course %}{{ lead.course.title }}{% else %}nie wybrano{% endif %}</td>
     </tr>
     {% if lead.intake %}
       <tr>
-        <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Termin</td>
+        <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Termin</td>
         <td style="padding:6px 0;">{{ lead.intake.start_date|date:"d.m.Y" }}, {{ lead.intake.get_mode_display }}</td>
       </tr>
     {% endif %}
     <tr>
-      <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Język</td>
+      <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Język</td>
       <td style="padding:6px 0;">{{ language_name }}</td>
     </tr>
     {% if lead.source_path %}
       <tr>
-        <td style="padding:6px 12px 6px 0;color:#676773;vertical-align:top;">Strona</td>
+        <td style="padding:6px 12px 6px 0;color:#5E4A52;vertical-align:top;">Strona</td>
         <td style="padding:6px 0;">{{ lead.source_path }}</td>
       </tr>
     {% endif %}
   </table>
 
   {% if lead.message %}
-    <p style="margin:20px 0 6px;color:#676773;font-size:15px;">Wiadomość</p>
-    <p style="margin:0;padding:12px 16px;background:#E9E8E4;border-left:3px solid #FFD400;white-space:pre-line;">{{ lead.message }}</p>
+    <p style="margin:20px 0 6px;color:#5E4A52;font-size:15px;">Wiadomość</p>
+    <p style="margin:0;padding:12px 16px;background:#FBEDEF;border-left:3px solid #D4385E;white-space:pre-line;">{{ lead.message }}</p>
   {% endif %}
 
   <p style="margin:24px 0 0;">
-    <a href="{{ admin_url }}" style="display:inline-block;padding:12px 20px;border-radius:6px;background:#3F3AE6;color:#FFFFFF;font-weight:bold;text-decoration:none;">Otwórz zgłoszenie w panelu</a>
+    <a href="{{ admin_url }}" style="display:inline-block;padding:12px 20px;border-radius:6px;background:#D4385E;color:#FFFBFA;font-weight:bold;text-decoration:none;">Otwórz zgłoszenie w panelu</a>
   </p>
 {% endblock %}
