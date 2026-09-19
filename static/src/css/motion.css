@@ -91,6 +91,118 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * 2b. The ornament, ROSE.md K7.
+ *
+ * Every rule here sits inside both guards, and the base state of every one of
+ * them is the finished state. A browser without animation-timeline, a reader
+ * who asked for less motion, and a printer all get the page exactly as it
+ * looks after the animation — which is the only arrangement where "the
+ * animation did not run" is not a bug report.
+ *
+ * Nothing here repeats. K7 point 2 says the hearts appear once and do not beat,
+ * and it is worth saying why: a heart that pulses forever is an element
+ * competing with the text beside it for the rest of the visit, and this page
+ * has three of them.
+ * ------------------------------------------------------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The scribble is drawn on, K7 point 1.
+     *
+     * K7 asks for stroke-dasharray on the path. This scribble is not a path —
+     * it is the same stroke used as a CSS mask, so one file serves the hero,
+     * the ghost button and the menu in whatever colour the text is, and a mask
+     * has no stroke to dash. A clip that opens left to right gives the same
+     * reading: the line arrives the way a hand draws it, from the start of the
+     * word to the end of it. 700ms and the site's one curve, as asked.
+     */
+    @keyframes u-draw {
+      from {
+        clip-path: inset(0 100% 0 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .u-scribbled::after {
+      animation: u-draw 700ms var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 25%;
+    }
+
+    /* A heart arrives once, K7 point 2. Scale from .8 and fade in, 300ms, and
+     * then it is a heart on a page and does nothing else for the rest of the
+     * visit. The range ends inside entry so scrolling back up does not replay
+     * it — the same trick .reveal-once uses. */
+    @keyframes u-pop {
+      from {
+        opacity: 0;
+        scale: 0.8;
+      }
+      to {
+        opacity: 1;
+        scale: 1;
+      }
+    }
+
+    [data-ornament="heart"] {
+      animation: u-pop 300ms var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 85%;
+    }
+
+    /* A stroke slides in from its own edge, K7 point 3. 16px, 600ms, and from
+     * whichever side it is anchored to, so a stroke on the right edge comes
+     * from the right rather than crossing the block to get there. */
+    @keyframes u-brush-in-y {
+      from {
+        opacity: 0;
+        translate: 0 16px;
+      }
+      to {
+        opacity: var(--brush-opacity, 1);
+        translate: 0 0;
+      }
+    }
+
+    @keyframes u-brush-in-x {
+      from {
+        opacity: 0;
+        translate: 16px 0;
+      }
+      to {
+        opacity: var(--brush-opacity, 1);
+        translate: 0 0;
+      }
+    }
+
+    .u-brush-edge-top,
+    .u-brush-edge-bottom {
+      animation: u-brush-in-y 600ms var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+
+    .u-brush-corner-tr,
+    .u-brush-corner-bl {
+      animation: u-brush-in-x 600ms var(--ease) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+  }
+}
+
+/* A tile answers the pointer, K7 point 5: 3px up and the lifted shadow. Not
+ * behind the support guard — it is a transition on hover, not a scroll driven
+ * animation, and the reduced-motion block at the foot of this file turns every
+ * transition on the page down to nothing. */
+@media (hover: hover) {
+  .u-card-link:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * 3. The header, C.3 row 6.
  *
  * 76px down to 64px with a hairline appearing, 200ms. The class is toggled by
@@ -274,6 +386,12 @@ dialog[open]::backdrop {
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .reveal-once,
+  .u-scribbled::after,
+  [data-ornament="heart"],
+  .u-brush-edge-top,
+  .u-brush-edge-bottom,
+  .u-brush-corner-tr,
+  .u-brush-corner-bl,
   .reveal-stagger > * {
     animation: none !important;
     opacity: 1 !important;
@@ -304,6 +422,12 @@ dialog[open]::backdrop {
 @media print {
   .reveal,
   .reveal-once,
+  .u-scribbled::after,
+  [data-ornament="heart"],
+  .u-brush-edge-top,
+  .u-brush-edge-bottom,
+  .u-brush-corner-tr,
+  .u-brush-corner-bl,
   .reveal-stagger > * {
     animation: none !important;
     opacity: 1 !important;

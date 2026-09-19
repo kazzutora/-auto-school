@@ -25,14 +25,14 @@ class the call site passes, the way the icons do.
 {% endcomment %}
 {% if kind == 'brush' %}
   {% with file="img/ornament/brush-"|add:variant|add:".svg" %}
-  <svg class="u-brush pointer-events-none select-none {{ class }}"
+  <svg data-ornament="brush" class="u-brush pointer-events-none select-none {{ class }}"
     viewBox="{% if variant == '2' %}0 0 260 260{% elif variant == '3' %}0 0 520 110{% elif variant == '4' %}0 0 190 190{% else %}0 0 420 80{% endif %}"
     aria-hidden="true" focusable="false" {{ attrs }}>
     <use href="{% static file %}#brush-{{ variant }}"></use>
   </svg>
   {% endwith %}
 {% else %}
-  <svg class="pointer-events-none select-none {{ class }}"
+  <svg data-ornament="{{ kind }}" class="pointer-events-none select-none {{ class }}"
     viewBox="{% if kind == 'scribble' %}0 0 100 24{% elif kind == 'arrow' %}0 0 100 80{% elif kind == 'sparks' %}0 0 70 100{% else %}0 0 100 100{% endif %}"
     aria-hidden="true" focusable="false" {{ attrs }}>
     <use href="{% static 'img/ornament/sprite.svg' %}#{% if kind == 'heart' %}heart-{{ variant }}{% elif kind == 'scribble' %}scribble-underline{% elif kind == 'arrow' %}arrow-curly{% elif kind == 'circle' %}circle-hand{% else %}{{ kind }}{% endif %}"></use>
