@@ -412,7 +412,13 @@
   .u-outlined {
     color: rgb(var(--head-ink, var(--fixed-paper)));
     paint-order: stroke fill;
-    -webkit-text-stroke: 0.048em rgb(var(--head-line, var(--brand-500)));
+    /* A floor in pixels under a ratio in em. The ratio alone is right for a
+     * display heading and far too thin for a small one: the course tile's
+     * name is 20px, where 0.048em is under a pixel and the letters read as a
+     * grey haze rather than as an outline. max() keeps the big headings
+     * exactly where they were and gives the small ones a line. */
+    -webkit-text-stroke-color: rgb(var(--head-line, var(--brand-500)));
+    -webkit-text-stroke-width: max(1.5px, 0.052em);
   }
 
   h1,
