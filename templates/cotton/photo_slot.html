@@ -1,0 +1,32 @@
+<c-vars title="" note="" ratio="card" class="" />{% load i18n %}
+{% comment %}
+Where a photograph goes and has not arrived yet.
+
+<c-empty> already says "not here yet" for a whole section. This says it for one
+picture, and it says it in the shape of the picture: the box holds the ratio
+the photograph will have, so the page below it does not jump when the owner
+uploads one, and so a reader can see at a glance that the gap is a frame rather
+than a section that failed to load.
+
+Dashed and in the crimson, not the hairline. The hairline version read as a
+disabled card — it looked broken rather than pending, which is the opposite of
+what the owner needs to see when they open their own site and ask what is
+missing. REDESIGN.md part D is why these exist at all: a stock photograph
+captioned with a real instructor's name is a forgery, so a missing photograph
+stays missing and says so.
+
+Takes: title — what belongs here. note — anything more. ratio — card 3:2,
+tile 4:3, a4, square.
+{% endcomment %}
+<div class="u-photo-slot {{ class }}" {{ attrs }}>
+  <div class="u-photo-slot-frame
+{% if ratio == 'square' %} aspect-square{% elif ratio == 'tile' %} aspect-[4/3]{% elif ratio == 'a4' %} aspect-[1/1.41]{% else %} aspect-[3/2]{% endif %}">
+    <c-icon name="image" class="h-8 w-8 shrink-0 opacity-70" />
+    {% if title %}<p class="mt-3 text-center text-small font-bold">{{ title }}</p>{% endif %}
+    <p class="mt-1 text-center text-small opacity-80">
+      {% translate "Miejsce na zdjęcie" %}
+    </p>
+    {% if note %}<p class="mt-2 max-w-[28ch] text-center text-small opacity-80">{{ note }}</p>{% endif %}
+    {% if slot %}<div class="mt-2 max-w-[32ch] text-center text-small opacity-80">{{ slot }}</div>{% endif %}
+  </div>
+</div>

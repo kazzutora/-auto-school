@@ -371,9 +371,11 @@ is a forgery, not a placeholder.
               </p>
             {% endif %}
           {% else %}
-            <c-empty title="{{ person.full_name }}">
-              <p>{% translate "Zdjęcie w przygotowaniu." %}</p>
-            </c-empty>
+            {# A frame in the portrait's own shape, not a generic empty
+               state: the card beside it holds a photograph and this one has
+               to look like the same card waiting for one. #}
+            <c-photo-slot ratio="square" title="{{ person.full_name }}"
+                          note="{% translate 'Zdjęcie instruktora' %}" />
           {% endif %}
         </c-card>
       {% endfor %}

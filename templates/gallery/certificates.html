@@ -39,8 +39,14 @@ and when, and a download beside the scan wherever there is a pdf.
   </c-section>
 {% else %}
   <c-section tone="default">
-    {% translate "Certyfikaty w przygotowaniu" as t_certyfikaty_w_przygotowaniu %}
-    <c-alert tone="info" title="{{ t_certyfikaty_w_przygotowaniu }}">{% translate "Skany pojawią się wkrótce." %}</c-alert>
+    {# A4 frames: a certificate is a sheet of paper and the box says so. #}
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% translate "Certyfikaty w przygotowaniu" as t_certyfikaty_w_przygotowaniu %}
+      <li><c-photo-slot ratio="a4" title="{{ t_certyfikaty_w_przygotowaniu }}" /></li>
+      <li class="hidden sm:block"><c-photo-slot ratio="a4" /></li>
+      <li class="hidden lg:block"><c-photo-slot ratio="a4" /></li>
+    </ul>
+    <p class="mt-6 u-body-on-ground">{% translate "Skany pojawią się wkrótce." %}</p>
   </c-section>
 {% endif %}
 

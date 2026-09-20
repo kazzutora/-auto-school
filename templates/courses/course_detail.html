@@ -213,9 +213,20 @@ only action on the page.
   {% else %}
     <div class="grid gap-8 lg:grid-cols-2">
       <c-spec-list title="{% translate 'Czym jeździmy' %}" :items="fleet_facts" />
-      <c-empty title="{% translate 'Zdjęcia aut w przygotowaniu' %}" phone="{{ site_settings.phone_primary }}">
-        {% translate "Chcesz zobaczyć auto, zanim się zapiszesz? Zadzwoń i wpadnij na plac — pokażemy je na miejscu." %}
-      </c-empty>
+      {# The frame rather than the empty state: this sits beside a spec
+         list describing a car, and a reader looking for the car should see
+         where its picture goes. The phone stays under it — that is the whole
+         offer here, come and look at it. #}
+      <div class="flex flex-col gap-4">
+        <c-photo-slot ratio="card" title="{% translate 'Nasze auta szkoleniowe' %}">
+          {% translate "Chcesz zobaczyć auto, zanim się zapiszesz? Zadzwoń i wpadnij na plac — pokażemy je na miejscu." %}
+        </c-photo-slot>
+        {% if site_settings.phone_primary %}
+          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
+          </c-button>
+        {% endif %}
+      </div>
     </div>
   {% endif %}
 </c-section>

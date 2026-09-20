@@ -771,6 +771,12 @@
     --chip-err: 250 200 195;
   }
 
+  .u-ground-wine {
+    /* The dashed photo frame takes this ground's own foreground: the
+     * crimson it uses on a pale page is 1.3 against the wine. */
+    --slot-ink: var(--on-ground);
+  }
+
   .u-ground-wine :is(h1, h2, h3, h4) {
     -webkit-text-stroke-color: transparent;
     color: rgb(var(--on-ground));
@@ -807,6 +813,12 @@
     --on-ground-muted: var(--fixed-paper);
     --focus: var(--fixed-paper);
     --script-ink: var(--fixed-paper);
+  }
+
+  .u-ground-brand {
+    /* The dashed photo frame takes this ground's own foreground: the
+     * crimson it uses on a pale page is 1.3 against the wine. */
+    --slot-ink: var(--on-ground);
   }
 
   .u-ground-brand :is(h1, h2, h3, h4) {
@@ -1170,6 +1182,26 @@
    * in the panel, where they are 44px again. */
   .u-social-sm {
     @apply h-9 w-9;
+  }
+
+  /* A photograph that has not arrived. The frame keeps the ratio the picture
+   * will have, so the page does not reflow when the owner uploads one, and so
+   * the gap reads as a frame rather than as a card that failed to load.
+   *
+   * Crimson and dashed rather than the hairline the empty state uses: at the
+   * hairline it read as a disabled card, which is the opposite of what the
+   * owner needs to see when they open their own site and ask what is still
+   * missing.
+   *
+   * The colour is a token, because the first version named brand.600 outright
+   * and the fleet slot sits on the wine band — crimson on wine is 1.3 and the
+   * frame that exists to be noticed was the least visible thing on the page.
+   * A dark ground hands it its own foreground instead. */
+  .u-photo-slot-frame {
+    @apply flex w-full flex-col items-center justify-center rounded-card border-2 border-dashed p-6;
+    border-color: rgb(var(--slot-ink, var(--brand-500)) / 0.5);
+    background-color: rgb(var(--slot-ink, var(--brand-500)) / 0.06);
+    color: rgb(var(--slot-ink, var(--brand-600)));
   }
 
   .u-over-photo {

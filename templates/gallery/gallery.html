@@ -67,8 +67,16 @@ here is decorative: every image is content, so every alt says what it shows.
     </div>
   {% else %}
     <div class="mt-12">
-      {% translate "Galeria w przygotowaniu" as t_galeria_w_przygotowaniu %}
-      <c-alert tone="info" title="{{ t_galeria_w_przygotowaniu }}">{% translate "Zdjęcia pojawią się wkrótce." %}</c-alert>
+      {# Three frames, not one notice. This page is photographs and nothing
+         else, and a row of frames says what is coming far better than a line
+         of text saying it. #}
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% translate "Galeria w przygotowaniu" as t_galeria_w_przygotowaniu %}
+        <li><c-photo-slot ratio="tile" title="{% translate 'Ośrodek' %}" /></li>
+        <li><c-photo-slot ratio="tile" title="{% translate 'Plac manewrowy' %}" /></li>
+        <li><c-photo-slot ratio="tile" title="{% translate 'Pojazdy' %}" /></li>
+      </ul>
+      <p class="mt-6 u-body-on-ground">{% translate "Zdjęcia pojawią się wkrótce." %}</p>
     </div>
   {% endif %}
     </div>
