@@ -27,9 +27,11 @@ here. 500.html cannot say the same and stands on its own.
     {% translate "Adres jest nieaktualny albo zawiera literówkę. Poniżej najczęściej szukane miejsca." %}
   </p>
 
-  <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {# Three, not four: the fourth was the intakes page. A four column grid
+     with three cards in it leaves a hole where the reader looks for the next
+     option. #}
+  <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <li><c-card href="{% url 'courses:list' %}"><c-slot name="title">{% translate "Kursy" %}</c-slot>{% translate "Kategorie prawa jazdy i ceny." %}</c-card></li>
-    <li><c-card href="{% url 'courses:intakes' %}"><c-slot name="title">{% translate "Terminy" %}</c-slot>{% translate "Najbliższe starty kursów." %}</c-card></li>
     <li><c-card href="{% url 'courses:pricing' %}"><c-slot name="title">{% translate "Cennik" %}</c-slot>{% translate "Pełna lista cen." %}</c-card></li>
     <li><c-card href="{% url 'core:contact' %}"><c-slot name="title">{% translate "Kontakt" %}</c-slot>{% translate "Adres, godziny, dojazd." %}</c-card></li>
   </ul>

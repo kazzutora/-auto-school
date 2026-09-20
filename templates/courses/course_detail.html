@@ -132,30 +132,19 @@ only action on the page.
 
        It does not repeat the price: that is in the spec list at the top of the
        page, and a figure printed twice on one screen invites the reader to
-       check whether the two agree. What it carries is the next start and a
+       check whether the two agree. What it carries is how to enrol and a
        second reach for the phone, halfway down a long page. #}
     <aside class="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+24px)] lg:self-start">
       <c-card class="flex flex-col">
         <c-slot name="title">{% translate "Zacznij kurs" %}</c-slot>
 
+        {# No start date here. The school does not run announced intakes —
+           a course begins when the office and the learner agree a date on the
+           phone — so a "next start" line has nothing behind it, and the
+           fallback it used to print when the list was empty was a stand-in
+           for a fact that does not exist rather than for one nobody had
+           entered yet. #}
         <dl class="mt-2 flex flex-col gap-4">
-          <div>
-            <dt class="label u-muted-on-ground">{% translate "Najbliższy start" %}</dt>
-            {% if intakes %}
-              <dd class="mt-1 flex items-baseline gap-2">
-                <span class="data text-data-lg u-on-ground">{{ intakes.0.start_date|date:"d.m" }}</span>
-                <span class="data text-small u-muted-on-ground">{{ intakes.0.start_date|date:"Y" }}</span>
-              </dd>
-              <dd class="mt-2 flex flex-wrap gap-2">
-                <c-badge tone="neutral">{{ intakes.0.get_mode_display }}</c-badge>
-                <c-badge tone="neutral">{{ intakes.0.language|upper }}</c-badge>
-              </dd>
-            {% else %}
-              {# F5: never an empty slot where a date belongs. #}
-              <dd class="mt-2 u-body-on-ground">{% translate "Zadzwoń, ustalimy termin." %}</dd>
-            {% endif %}
-          </div>
-
           <div>
             <dt class="label u-muted-on-ground">{% translate "Zapisy" %}</dt>
             <dd class="mt-2 u-body-on-ground">{% translate "Po wcześniejszym ustaleniu telefonicznym." %}</dd>
