@@ -93,6 +93,13 @@ HIDE_TEXT = """() => {
       .u-over-photo, .u-over-photo * {
         color: transparent !important;
         text-decoration-color: transparent !important;
+        /* The keyline is part of the letter, not part of the ground behind
+         * it. Headings are paper filled with a crimson stroke since core
+         * v31, and a stroke is its own property: setting color alone left
+         * it standing, so the gate sampled a heading's own outline as the
+         * background of the line beside it and reported crimson on crimson
+         * at 1.00. */
+        -webkit-text-stroke-color: transparent !important;
       }
       .u-photo-ground svg, .u-over-photo svg { visibility: hidden !important; }
 
