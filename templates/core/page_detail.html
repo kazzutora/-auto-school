@@ -205,9 +205,17 @@ nothing.
   </c-section>
 {% endif %}
 
-{% if instructors %}
-  <c-section id="instruktorzy" size="compact">
-    <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
+{# No {% if instructors %} guard. The rule elsewhere is that a section with
+   no data does not render, and it is wrong here for the same reason the home
+   page's gallery strip ignores it: the owner asked for a place to put the
+   instructors, and a block that appears only once they are entered is a block
+   they cannot find in order to enter them. The empty state below is the
+   block — three cards shaped like the real ones. #}
+{% if about %}
+  {# Centred, because what is under it is a row of three cards of one width
+     and a ranged-left heading over a centred row reads as a mistake. #}
+  <c-section id="instruktorzy" size="compact" class="text-center [&_.u-narrow]:mx-auto">
+    <c-slot name="heading">{% translate "Nasi instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     {# REDESIGN.md D.2, and the one rule in part D that is not negotiable.
        An instructor card exists to put a face to a name. Without the face it is
@@ -253,15 +261,29 @@ nothing.
     {% endspaceless %}
 
     <div data-testid="instructors-empty" class="u-shown-when-empty">
-      {# Portrait frames, and the reason beside them. D.2 is why this block
-         exists at all: a stock face captioned with a real instructor's name
-         is a forgery, so the face stays missing and the page says so. #}
-      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <li><c-photo-slot ratio="square" title="{% translate 'Zdjęcia instruktorów w przygotowaniu' %}" /></li>
-        <li class="hidden sm:block"><c-photo-slot ratio="square" /></li>
-        <li class="hidden lg:block"><c-photo-slot ratio="square" /></li>
+      {# Three cards shaped like the real ones: a square frame with the caption
+         under it, so the owner can see in the admin what each row will look
+         like on the page — the portrait, then the name, then the line about
+         how long they have been teaching.
+
+         D.2 is why the frames are empty rather than filled with a stock face:
+         a bought portrait captioned with a real instructor's name is a
+         forgery, so the face stays missing and the page says so. #}
+      <ul class="mx-auto grid max-w-[980px] gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for _slot in "123" %}
+          <li>
+            <c-card padded="" class="overflow-hidden">
+              <c-photo-slot ratio="square" class="[&_.u-photo-slot-frame]:rounded-none [&_.u-photo-slot-frame]:border-x-0 [&_.u-photo-slot-frame]:border-t-0" />
+              <div class="p-5">
+                <p class="font-bold u-muted-on-ground">{% translate "Imię i nazwisko" %}</p>
+                <p class="mt-1 text-small u-muted-on-ground">{% translate "Szkoli od roku" %}</p>
+              </div>
+            </c-card>
+          </li>
+        {% endfor %}
       </ul>
-      <div class="u-narrow mt-6 flex flex-col items-start gap-4">
+
+      <div class="mx-auto mt-8 flex max-w-[640px] flex-col items-center gap-4 text-center">
         <p class="u-body-on-ground">
           {% translate "Nie pokazujemy cudzych twarzy jako naszych. Zadzwoń albo wpadnij do biura — poznasz instruktora, zanim się zapiszesz." %}
         </p>

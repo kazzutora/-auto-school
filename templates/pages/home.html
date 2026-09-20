@@ -290,6 +290,48 @@ is a forgery, not a placeholder.
    <c-stat> renders nothing without a value, so a year with no mean number of
    attempts leaves three figures rather than a fourth reading nothing.
    ========================================================= #}
+{# ============================================================ GALERIA
+   A strip of four, and the frames when there are none.
+
+   The block does not hide itself the way the rest of the page's optional
+   sections do. That rule is right for a section whose absence nobody notices
+   — a video, a testimonial — and wrong here: the owner asked for somewhere on
+   the home page to put photographs, and a block that disappears until they
+   are uploaded is a block they cannot find in order to fill.
+
+   Four at 4:3, the gallery's own ratio, so a real photograph drops straight
+   into the frame's place.
+   ============================================================ #}
+<c-section id="galeria">
+  <c-slot name="heading">{% translate "Nasz ośrodek w zdjęciach" %}</c-slot>
+  <c-slot name="sub">{% translate "Plac, auta i sale — zobacz, gdzie będziesz się uczyć." %}</c-slot>
+
+  <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    {% for image in gallery_preview %}
+      <li>
+        <c-card padded="" class="overflow-hidden">
+          <c-picture :image="image.image" alt="{{ image.alt|default:image.title }}" ratio="tile"
+                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+          {% if image.title %}
+            <p class="p-4 text-small font-bold u-on-ground">{{ image.title }}</p>
+          {% endif %}
+        </c-card>
+      </li>
+    {% empty %}
+      <li><c-photo-slot ratio="tile" title="{% translate 'Ośrodek' %}" /></li>
+      <li><c-photo-slot ratio="tile" title="{% translate 'Plac manewrowy' %}" /></li>
+      <li><c-photo-slot ratio="tile" title="{% translate 'Pojazdy' %}" /></li>
+      <li><c-photo-slot ratio="tile" title="{% translate 'Zajęcia' %}" /></li>
+    {% endfor %}
+  </ul>
+
+  <p class="mt-8">
+    <c-button variant="secondary" href="{% url 'gallery:index' %}">
+      {% translate "Zobacz całą galerię" %} <c-icon name="arrow-right" size="sm" />
+    </c-button>
+  </p>
+</c-section>
+
 {% if stat_items %}
 <section id="zdawalnosc" class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
   {# C.1 block 4 wants a ragged pink band across the page with the figures on
@@ -505,8 +547,13 @@ is a forgery, not a placeholder.
     <c-slot name="heading">{% translate "Częste pytania" %}</c-slot>
     <c-accordion>
       {% for faq in faqs %}
+        {# entry.answer through the prose include, the same as /faq/ does.
+           It used to print {{ faq.answer_html }}, and Faq has no such field:
+           a template naming an attribute that is not there renders nothing
+           and says nothing, so every question on the home page opened onto an
+           empty panel. #}
         <c-accordion.item title="{{ faq.question }}" open="{% if forloop.first %}1{% endif %}">
-          {{ faq.answer_html }}
+          {% include "courses/_prose.html" with html=faq.answer %}
         </c-accordion.item>
       {% endfor %}
     </c-accordion>

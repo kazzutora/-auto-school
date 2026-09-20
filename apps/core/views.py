@@ -283,6 +283,7 @@ def home(request: HttpRequest) -> HttpResponse:
     way page_detail does it: apps/core is shared and must not depend on a
     feature slice at import time.
     """
+    from apps.gallery import selectors as gallery_selectors
     from apps.core.selectors import latest_pass_rate
     from apps.courses.models import Course, PriceItem
     from apps.links.selectors import published_faqs
@@ -323,6 +324,11 @@ def home(request: HttpRequest) -> HttpResponse:
             # A.9 point 7: two is the floor, and one review is not a strip.
             "testimonials": testimonials if len(testimonials) >= TESTIMONIALS_MINIMUM else [],
             "faqs": faqs,
+            # Four for the home page's strip, and the strip renders its own
+            # empty frames when there are none: the owner uploads in the
+            # admin and the pictures appear without anyone touching a
+            # template.
+            "gallery_preview": list(gallery_selectors.published_images()[:4]),
             "directions": directions(site),
             "enrol_url": ENROL_URL,
             "lead_form": _lead_form(),
