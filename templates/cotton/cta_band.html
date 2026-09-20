@@ -17,7 +17,7 @@ Takes: title, text, href, action, phone, ground.
   {{ attrs }}>
   <div class="u-container flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
     <div class="u-narrow">
-      <h2{% if ground == 'paper' or ground == 'card' or ground == 'page' %} class="u-on-ground"{% endif %}>{{ title }}</h2>
+      <h2{% if ground == 'paper' or ground == 'card' or ground == 'page' %} class="u-head-solid"{% endif %}>{{ title }}</h2>
       {% if text %}
         <p class="mt-4 text-body-lg{% if ground == 'paper' or ground == 'card' or ground == 'page' %} u-body-on-ground{% elif ground == 'accent' or ground == 'pink' %} u-fixed-ink{% endif %}">{{ text }}</p>
       {% endif %}

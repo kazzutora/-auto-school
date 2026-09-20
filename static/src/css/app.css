@@ -195,6 +195,16 @@
      * afford: 10.66 against the page and 11.80 on a card, where body text
      * wants 4.5 and a heading 3.0. */
     --ink: 66 49 58;
+
+    /* The grey the owner picked, for headings that are solid rather than
+     * outlined — the closing bands, the tile titles, the subheads.
+     *
+     * Not the swatch itself. That was #9C9296 and it measures 2.65 against
+     * the page, where WCAG wants 3.0 even for a heading at display size and
+     * 4.5 for anything smaller. This is the same warm grey two steps down:
+     * 4.29 on the page, 4.75 on a card, which clears both floors for a
+     * heading and for the 20px bold h3 the course tiles use. */
+    --head-solid: 122 110 115;
     --ink-500: 94 74 82;
     /* Disabled text and hairlines only, 2.86 on the page. Below the body
      * threshold on purpose: WCAG exempts a disabled control, and a disabled
@@ -426,7 +436,7 @@
   h3,
   h4 {
     font-family: theme('fontFamily.sans');
-    @apply text-ink;
+    color: rgb(var(--head-solid, var(--ink)));
     text-wrap: balance;
   }
 
@@ -765,7 +775,8 @@
     --chip-err: 250 200 195;
   }
 
-  .u-ground-wine :is(h1, h2, h3, h4) {
+  .u-ground-wine :is(h1, h2, h3, h4),
+  .u-ground-wine .u-head-solid {
     -webkit-text-stroke-color: transparent;
     color: rgb(var(--on-ground));
   }
@@ -803,7 +814,8 @@
     --script-ink: var(--fixed-paper);
   }
 
-  .u-ground-brand :is(h1, h2, h3, h4) {
+  .u-ground-brand :is(h1, h2, h3, h4),
+  .u-ground-brand .u-head-solid {
     -webkit-text-stroke-color: transparent;
     color: rgb(var(--fixed-paper));
   }
@@ -824,9 +836,12 @@
     --script-ink: var(--fixed-ink);
   }
 
-  .u-ground-pink :is(h1, h2, h3, h4) {
+  .u-ground-pink :is(h1, h2, h3, h4),
+  .u-ground-pink .u-head-solid {
     -webkit-text-stroke-color: transparent;
-    color: rgb(var(--fixed-ink));
+    /* 4.16 on the pink, against 3.0 for a heading. The body text on this tile
+     * stays --fixed-ink: it is smaller and wants 4.5. */
+    color: rgb(var(--head-solid));
   }
 
   /* The same fixed pair as a text colour on its own, for the pieces that sit on
@@ -1144,6 +1159,16 @@
    * over a photograph is the thing being checked, and that is not the same
    * fact as which way round the ink runs. This says the first one. Any block
    * that lays words over a picture carries it; .u-photo-ground implies it. */
+  /* A heading that is solid rather than outlined, in the grey the owner
+   * picked. The closing bands ask for it by name: their h2 carried
+   * .u-on-ground, which is a utility and therefore beat the outline the base
+   * layer gives every other h2 — so the one heading on the page that was
+   * meant to be quiet came out as the only near-black thing on it. */
+  .u-head-solid {
+    color: rgb(var(--head-solid));
+    -webkit-text-stroke-color: transparent;
+  }
+
   .u-over-photo {
     position: relative;
   }

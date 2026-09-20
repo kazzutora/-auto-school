@@ -29,7 +29,11 @@ course with no price says so rather than guessing, ROSE.md A.3.
     <p class="font-display text-h2 font-extrabold uppercase italic leading-none u-on-ground">{{ course.code }}</p>
     <h3 class="mt-2 text-body font-bold u-on-ground">{{ course.title }}</h3>
   {% else %}
-    <h3 class="font-display text-h3 font-extrabold uppercase italic leading-tight u-on-ground">{{ course.title }}</h3>
+    {# u-head-solid, not u-on-ground: the name of the course is a heading and
+       takes the heading grey, while the figure below it stays the page's ink.
+       On the crimson tile the ground republishes both, so the pair swaps
+       together and nothing has to be said here. #}
+    <h3 class="font-display text-h3 font-extrabold uppercase italic leading-tight u-head-solid">{{ course.title }}</h3>
   {% endif %}
   <p class="mt-auto pt-4 flex items-end justify-between gap-3">
     {% if course.price_gross %}
