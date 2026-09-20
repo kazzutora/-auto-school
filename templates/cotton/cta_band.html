@@ -17,7 +17,13 @@ Takes: title, text, href, action, phone, ground.
   {{ attrs }}>
   <div class="u-container flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
     <div class="u-narrow">
-      <h2{% if ground == 'paper' or ground == 'card' or ground == 'page' %} class="u-head-solid"{% endif %}>{{ title }}</h2>
+      {# No colour class on the pale grounds. It used to carry u-on-ground,
+        which is a utility and therefore beat the paper fill and crimson
+        keyline the base layer gives every other h2 — so the one heading on
+        the page meant to be quiet came out as the only near-black thing on
+        it. On the dark and crimson grounds the ground publishes its own
+        heading colour and this needs no help either. #}
+      <h2>{{ title }}</h2>
       {% if text %}
         <p class="mt-4 text-body-lg{% if ground == 'paper' or ground == 'card' or ground == 'page' %} u-body-on-ground{% elif ground == 'accent' or ground == 'pink' %} u-fixed-ink{% endif %}">{{ text }}</p>
       {% endif %}
