@@ -47,14 +47,13 @@ złoty column line up digit under digit, A.5.
 </c-page-header>
 
 {% if groups %}
-  {# Ground alternates group by group, REDESIGN.md B.8 point 2: two sections
-     of the same colour in a row read as one long block.
-
-     paper and surface, not paper and paper-50. B.2 gave the page a warm grey
-     of its own and the cards a white, so the alternation is now between the
-     page and a white band rather than between two greys a hair apart. #}
   {% for label, rows in groups %}
-    <c-section tone="{% if forloop.counter0|divisibleby:2 %}default{% else %}muted{% endif %}" size="compact" id="grupa-{{ forloop.counter }}">
+    {# One ground for every group. They used to alternate, which over four
+       groups is four changes of a colour four per cent away from the page —
+       stripes rather than contrast. The one band on this page is the group
+       of fees that do not go to the school, below, and it is a band because
+       that is a fact about the money rather than a rhythm. #}
+    <c-section tone="{% if label == external_group %}muted{% else %}default{% endif %}" size="compact" id="grupa-{{ forloop.counter }}">
       {% translate "Pozostałe usługi" as fallback %}
       <c-heading level="2">{{ label|default:fallback }}</c-heading>
 
@@ -109,7 +108,7 @@ złoty column line up digit under digit, A.5.
      {% cycle %} looked like the tidy way to do it and is not: `{% cycle band %}`
      reads `band` as a value rather than as the cycler, so it printed the same
      ground forever and the page closed on two identical bands. #}
-  <c-section tone="{% if groups|length|divisibleby:2 %}default{% else %}muted{% endif %}" size="compact">
+  <c-section size="compact">
     {% translate "Płatności i raty" as fallback %}
     <c-heading level="2">{{ payments_title|default:fallback }}</c-heading>
     <div class="mt-6">{% include "courses/_prose.html" with html=payments %}</div>
@@ -118,7 +117,7 @@ złoty column line up digit under digit, A.5.
 
 {# Whatever the last price group landed on, this is the other, so the
    page does not close on two bands of one colour. #}
-<c-cta-band ground="{% if groups|length|divisibleby:2 %}page{% else %}card{% endif %}"
+<c-cta-band ground="page"
             title="{% translate 'Zaczynamy?' %}"
             text="{% translate 'Zapisy prowadzimy telefonicznie. Zostaw numer albo zadzwoń — powiemy, kiedy startuje najbliższa grupa.' %}"
             href="{{ enrol_url }}"

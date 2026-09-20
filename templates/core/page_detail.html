@@ -56,7 +56,7 @@ nothing.
     <c-steps :steps="steps" />
   </c-section>
 
-  <c-section id="dokumenty" tone="muted">
+  <c-section id="dokumenty">
     <c-slot name="heading">{% translate "Co przynieść" %}</c-slot>
     <div class="grid gap-10 lg:grid-cols-12">
       <div class="lg:col-span-7">
@@ -123,7 +123,7 @@ nothing.
 
 {# ------------------------------------------------------------------- O nas #}
 {% if about %}
-  <c-section id="oferta" tone="muted" size="compact">
+  <c-section id="oferta" size="compact">
     <c-slot name="heading">{% translate "Co oferujemy" %}</c-slot>
     {# Two, not three: the pass rate card went with its page. #}
     <ul class="grid gap-4 md:grid-cols-2">
@@ -171,7 +171,7 @@ nothing.
   {# The three the school posts on, on the page a reader lands on to find out
      who it is. A row of circles rather than a block: these are the quietest
      links on the page and they leave the site. #}
-  <c-section id="social" tone="muted" size="compact">
+  <c-section id="social" size="compact">
     <c-slot name="heading">{% translate "Zobacz, co u nas słychać" %}</c-slot>
     <c-slot name="sub">{% translate "Nagrania z placu i z jazd, i to, co dzieje się w ośrodku na co dzień." %}</c-slot>
     {% translate "Znajdź nas w sieci" as t_social_about %}
@@ -206,7 +206,7 @@ nothing.
 {% endif %}
 
 {% if instructors %}
-  <c-section id="instruktorzy" tone="muted" size="compact">
+  <c-section id="instruktorzy" size="compact">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     {# REDESIGN.md D.2, and the one rule in part D that is not negotiable.

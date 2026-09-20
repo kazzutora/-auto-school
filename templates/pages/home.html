@@ -180,7 +180,7 @@ is a forgery, not a placeholder.
    ring, a label and one line. Every one of the four is something the school
    says about itself in its own words, OSTRYCHARZ.md part A.
    ========================================================== #}
-<c-section id="dlaczego-my" tone="muted" edge="top">
+<c-section id="dlaczego-my" edge="top">
   <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line">
     <c-feature icon="car" title="{% translate 'Doświadczeni instruktorzy' %}" class="lg:px-8 lg:first:pl-0 lg:last:pr-0">
       {% translate "Uczą spokojnie i konkretnie, a na egzamin jedziesz tym samym autem, którym jeździłeś na kursie." %}
@@ -335,7 +335,7 @@ is a forgery, not a placeholder.
    page sends nothing to Google.
    ============================================================ #}
 {% if video_id or video_url %}
-  <c-section id="wideo" tone="muted">
+  <c-section id="wideo">
     <div class="u-narrow">
       {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
       <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
@@ -354,7 +354,7 @@ is a forgery, not a placeholder.
    `instructors`, so the block does not render.
    ========================================================= #}
 {% if instructors %}
-  <c-section id="instruktorzy" tone="muted">
+  <c-section id="instruktorzy">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>
     {% translate "Instruktorzy" as t_instruktorzy %}
     <c-carousel id="instruktorzy-rail" per_view="4" label="{{ t_instruktorzy }}">
@@ -390,7 +390,7 @@ is a forgery, not a placeholder.
    that reason, ROSE.md A.3.
    ============================================================= #}
 {% if testimonials %}
-  <c-section id="opinie" tone="muted" edge="top">
+  <c-section id="opinie" edge="top">
     <c-slot name="eyebrow">
       {% translate "Opinie" %}
     </c-slot>
@@ -499,7 +499,7 @@ is a forgery, not a placeholder.
    C.1 block 8. An accordion on the page's own ground.
    ================================================================ #}
 {% if faqs %}
-  <c-section id="faq" tone="muted" edge="top">
+  <c-section id="faq" edge="top">
     <c-slot name="heading">{% translate "Częste pytania" %}</c-slot>
     <c-accordion>
       {% for faq in faqs %}

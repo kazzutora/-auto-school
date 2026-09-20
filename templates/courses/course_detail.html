@@ -48,7 +48,7 @@ only action on the page.
    the statutory text about what the licence entitles you to.
    ------------------------------------------------------------- #}
 {% if variants %}
-  <c-section id="warianty" tone="surface">
+  <c-section id="warianty">
     <c-slot name="heading">{% translate "Wybierz wariant" %}</c-slot>
     <c-slot name="sub">{% translate "Ta sama kategoria i ten sam egzamin państwowy. Różni się tempo i skrzynia biegów." %}</c-slot>
     {# c-group-card, which REDESIGN.md B.5 added for precisely this row: the
@@ -239,7 +239,7 @@ only action on the page.
 </c-section>
 
 {% if other_courses %}
-  <c-section tone="surface" size="compact">
+  <c-section size="compact">
     <c-slot name="heading">{% translate "Inne kategorie" %}</c-slot>
     {% include "courses/_category_grid.html" with courses=other_courses %}
   </c-section>
