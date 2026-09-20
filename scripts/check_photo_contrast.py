@@ -75,6 +75,13 @@ COLLECT = """() => {
                 x: Math.round(r.left), y: Math.round(r.top),
                 w: Math.round(r.width), h: Math.round(r.height),
                 colour: cs.color,
+                // An outlined heading is paper filled with a crimson
+                // keyline, so the fill is within a hair of the page and the
+                // whole of what a reader sees is the stroke. Which colour
+                // has to clear the threshold depends on which one is
+                // actually drawing the letter.
+                stroke: cs.webkitTextStrokeColor,
+                strokeWidth: parseFloat(cs.webkitTextStrokeWidth) || 0,
                 size: parseFloat(cs.fontSize),
                 weight: parseInt(cs.fontWeight, 10) || 400,
             });
@@ -183,7 +190,11 @@ def main() -> int:
                     continue
                 checked += 1
 
-                text = parse(node["colour"])
+                # The stroke is the foreground wherever there is one: the
+                # fill of an outlined heading is paper on a pale page and
+                # carries nothing, which is the point of outlining it.
+                stroked = node.get("strokeWidth", 0) >= 0.5
+                text = parse(node["stroke"] if stroked else node["colour"])
                 large = node["size"] >= 24 or (node["size"] >= 18.66 and node["weight"] >= 700)
                 floor = LARGE_MIN if large else BODY_MIN
 
@@ -196,7 +207,9 @@ def main() -> int:
                 if found < floor:
                     failures.append(
                         f"{width:>5}px  {node['text']!r}\n"
-                        f"          text {node['colour']} on #{worst[0]:02X}{worst[1]:02X}"
+                        f"          {'keyline' if stroked else 'text'} "
+                        f"{node['stroke'] if stroked else node['colour']} "
+                        f"on #{worst[0]:02X}{worst[1]:02X}"
                         f"{worst[2]:02X} is {found:.2f}:1, needs {floor}"
                     )
             context.close()
