@@ -189,7 +189,12 @@
     --brand-900: 126 43 69;
 
     /* Text. */
-    --ink: 34 27 30;
+    /* A warm charcoal, not a black. #221B1E read as flat black beside the
+     * crimson — the owner asked for something warmer — and this carries the
+     * same plum cast the rest of the palette has. It costs contrast it can
+     * afford: 10.66 against the page and 11.80 on a card, where body text
+     * wants 4.5 and a heading 3.0. */
+    --ink: 66 49 58;
     --ink-500: 94 74 82;
     /* Disabled text and hairlines only, 2.86 on the page. Below the body
      * threshold on purpose: WCAG exempts a disabled control, and a disabled
@@ -216,7 +221,10 @@
      * both, B.2's last line. Reaching for a card token there would be white in
      * the light theme and near black on crimson in the dark. */
     --fixed-paper: 255 255 255;
-    --fixed-ink: 34 27 30;
+    /* The same charcoal where the pair must not swap with the theme: the
+     * pink tile, whose foreground is fixed because white on brand.200 is 1.69
+     * and B.3 forbids it outright. 8.17 on the pink. */
+    --fixed-ink: 66 49 58;
 
     /* What sits on the wine band: its own foreground pair, published here so a
      * component dropped into the band does not have to know it landed there. */
