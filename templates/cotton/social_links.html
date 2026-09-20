@@ -1,0 +1,61 @@
+<c-vars size="md" class="" label="" />{% load i18n %}
+{% comment %}
+The school's social accounts, in one place.
+
+Three of them and each is optional: the url is blank in SiteSettings until the
+owner fills it in, and a circle with no account behind it is a promise the page
+cannot keep — ROSE.md A.3. The row renders nothing at all when none is set,
+rather than an empty list.
+
+Every link carries its own aria-label, because the icon stands alone here and
+an icon alone is not a word, A.7. target=_blank with rel=noopener: these leave
+the site, and a reader halfway through a price list should not lose it.
+
+  size   md — 44px, the touch target A.11 asks for. sm — 36px, for a header
+         row that already has a burger and a language switch in it.
+  label  what a screen reader hears for the list itself.
+{% endcomment %}
+{% if site_settings.facebook_url or site_settings.instagram_url or site_settings.tiktok_url or site_settings.youtube_url %}
+  {% translate "Jesteśmy w sieci" as t_social_default %}
+  <ul class="flex items-center gap-2 {{ class }}"
+      aria-label="{{ label|default:t_social_default }}" {{ attrs }}>
+    {% if site_settings.facebook_url %}
+      <li>
+        <a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank" aria-label="Facebook"
+           class="u-social{% if size == 'sm' %} u-social-sm{% endif %}">
+          <c-icon name="facebook" size="sm" />
+        </a>
+      </li>
+    {% endif %}
+
+    {% if site_settings.instagram_url %}
+      <li>
+        <a href="{{ site_settings.instagram_url }}" rel="noopener" target="_blank" aria-label="Instagram"
+           class="u-social{% if size == 'sm' %} u-social-sm{% endif %}">
+          <c-icon name="instagram" size="sm" />
+        </a>
+      </li>
+    {% endif %}
+
+    {% if site_settings.tiktok_url %}
+      <li>
+        <a href="{{ site_settings.tiktok_url }}" rel="noopener" target="_blank" aria-label="TikTok"
+           class="u-social{% if size == 'sm' %} u-social-sm{% endif %}">
+          <c-icon name="tiktok" size="sm" />
+        </a>
+      </li>
+    {% endif %}
+
+    {# The channel, on the play icon it has always had: there is no youtube
+       glyph in the sprite and a fourth brand mark in a row of three is one
+       logo too many. #}
+    {% if site_settings.youtube_url %}
+      <li>
+        <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank" aria-label="YouTube"
+           class="u-social{% if size == 'sm' %} u-social-sm{% endif %}">
+          <c-icon name="play" size="sm" />
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+{% endif %}

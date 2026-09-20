@@ -1150,6 +1150,28 @@
    * over a photograph is the thing being checked, and that is not the same
    * fact as which way round the ink runs. This says the first one. Any block
    * that lays words over a picture carries it; .u-photo-ground implies it. */
+  /* A social link. A ring rather than a filled circle: three filled crimson
+   * dots in a row read as buttons, and these are the quietest links on the
+   * page — a reader who wants the price list should not be pulled off it. */
+  .u-social {
+    @apply grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500;
+    color: rgb(var(--brand-600));
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .u-social:hover {
+    background-color: rgb(var(--brand-500));
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* The header row, which already carries a lockup, a menu, a language
+   * switch and a call button. 44px is the touch target A.11 asks for and the
+   * header is a pointer row at the width these appear at — below xl they are
+   * in the panel, where they are 44px again. */
+  .u-social-sm {
+    @apply h-9 w-9;
+  }
+
   .u-over-photo {
     position: relative;
   }

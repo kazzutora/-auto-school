@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 18:23+0200\n"
+"POT-Creation-Date: 2026-09-20 19:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,67 +25,67 @@ msgstr "С первого раза"
 msgid "Rozmiar"
 msgstr "Размер"
 
-#: apps/core/models.py:59
+#: apps/core/models.py:64
 msgid "comma separated"
 msgstr "через запятую"
 
-#: apps/core/models.py:63
+#: apps/core/models.py:68
 msgid "Site settings"
 msgstr "Настройки сайта"
 
-#: apps/core/models.py:82
+#: apps/core/models.py:87
 msgid "Office"
 msgstr "Офис"
 
-#: apps/core/models.py:83
+#: apps/core/models.py:88
 msgid "Psychology lab"
 msgstr "Психологический кабинет"
 
-#: apps/core/models.py:94
+#: apps/core/models.py:99
 msgid "Opening hours"
 msgstr "Часы работы"
 
-#: apps/core/models.py:146
+#: apps/core/models.py:151
 msgid "Pass rate"
 msgstr "Сдача экзамена"
 
-#: apps/core/models.py:147
+#: apps/core/models.py:152
 msgid "Pass rates"
 msgstr "Сдача экзамена"
 
-#: apps/core/models.py:173
+#: apps/core/models.py:178
 msgid "Okres"
 msgstr "Период"
 
-#: apps/core/models.py:174 templates/cotton/passrate_table.html:30
+#: apps/core/models.py:179 templates/cotton/passrate_table.html:30
 msgid "Rok"
 msgstr "Год"
 
-#: apps/core/models.py:175
+#: apps/core/models.py:180
 msgid "Skan"
 msgstr "Скан"
 
-#: apps/core/models.py:182
+#: apps/core/models.py:187
 msgid "Pass rate scan"
 msgstr "Сводка сдаваемости"
 
-#: apps/core/models.py:183
+#: apps/core/models.py:188
 msgid "Pass rate scans"
 msgstr "Сводки сдаваемости"
 
-#: apps/core/models.py:208
+#: apps/core/models.py:213
 msgid "Grupa"
 msgstr "Группа"
 
-#: apps/core/models.py:209
+#: apps/core/models.py:214
 msgid "Nagłówek nad plikiem. Puste — plik trafia do pierwszej grupy."
 msgstr "Заголовок над файлом. Пусто — файл попадёт в первую группу."
 
-#: apps/core/models.py:216
+#: apps/core/models.py:221
 msgid "Document"
 msgstr "Документ"
 
-#: apps/core/models.py:217
+#: apps/core/models.py:222
 msgid "Documents"
 msgstr "Документы"
 
@@ -166,7 +166,7 @@ msgstr "Главная"
 
 #: apps/core/views.py:425 apps/core/views.py:433 templates/404.html:32
 #: templates/500.html:39 templates/core/contact.html:22
-#: templates/core/contact.html:23 templates/core/page_detail.html:270
+#: templates/core/contact.html:23 templates/core/page_detail.html:281
 #: templates/layout/footer.html:91
 msgid "Kontakt"
 msgstr "Контакты"
@@ -621,7 +621,7 @@ msgstr "Профиль кандидата в водители (PKK) выдаёт
 
 #: apps/leads/views.py:57 apps/leads/views.py:69 apps/leads/views.py:87
 #: templates/core/contact.html:142 templates/core/downloads.html:75
-#: templates/core/page_detail.html:262 templates/cotton/cta_band.html:28
+#: templates/core/page_detail.html:273 templates/cotton/cta_band.html:29
 #: templates/cotton/cta_bar.html:24 templates/cotton/group_card.html:58
 #: templates/cotton/intake_row.html:43 templates/courses/course_detail.html:33
 #: templates/courses/course_detail.html:125
@@ -992,76 +992,89 @@ msgid "W liczbach"
 msgstr "В цифрах"
 
 #: templates/core/page_detail.html:157
+msgid "Zobacz, co u nas słychać"
+msgstr "Смотрите, что у нас нового"
+
+#: templates/core/page_detail.html:158
+msgid "Nagrania z placu i z jazd, i to, co dzieje się w ośrodku na co dzień."
+msgstr "Съёмки с площадки и с занятий, и то, чем живёт автошкола каждый день."
+
+#: templates/core/page_detail.html:159 templates/layout/footer.html:95
+#: templates/layout/header.html:57 templates/layout/mobile_menu.html:78
+msgid "Znajdź nas w sieci"
+msgstr "Мы в соцсетях"
+
+#: templates/core/page_detail.html:168
 msgid "Zestawienia zdawalności"
 msgstr "Сводки сдаваемости"
 
-#: templates/core/page_detail.html:158
+#: templates/core/page_detail.html:169
 msgid "Dane Starostwa Powiatowego w Wieluniu. Kliknij, żeby zobaczyć całą tabelę."
 msgstr "Данные повятового староства в Велюне. Нажмите, чтобы увидеть таблицу целиком."
 
-#: templates/core/page_detail.html:164
+#: templates/core/page_detail.html:175
 msgid "Podgląd zestawienia"
 msgstr "Просмотр сводки"
 
-#: templates/core/page_detail.html:174 templates/pages/home.html:223
+#: templates/core/page_detail.html:185 templates/pages/home.html:223
 #: templates/pages/home.html:224
 msgid "Instruktorzy"
 msgstr "Инструкторы"
 
-#: templates/core/page_detail.html:175
+#: templates/core/page_detail.html:186
 msgid "Ludzie, z którymi jeździsz i którzy prowadzą wykłady."
 msgstr "Люди, с которыми вы ездите и которые ведут лекции."
 
-#: templates/core/page_detail.html:192
+#: templates/core/page_detail.html:203
 #, python-format
 msgid "Szkoli od %(year)s roku"
 msgstr "Обучает с %(year)s года"
 
-#: templates/core/page_detail.html:203
+#: templates/core/page_detail.html:214
 msgid "Zdjęcia instruktorów w przygotowaniu"
 msgstr "Фотографии инструкторов готовятся"
 
-#: templates/core/page_detail.html:205
+#: templates/core/page_detail.html:216
 msgid "Nie pokazujemy cudzych twarzy jako naszych. Zadzwoń albo wpadnij do biura — poznasz instruktora, zanim się zapiszesz."
 msgstr "Мы не выдаём чужие лица за свои. Позвоните или зайдите в офис — познакомитесь с инструктором до записи."
 
-#: templates/core/page_detail.html:213
+#: templates/core/page_detail.html:224
 msgid "Nasze pojazdy"
 msgstr "Наши автомобили"
 
-#: templates/core/page_detail.html:214
+#: templates/core/page_detail.html:225
 msgid "Uczysz się na aucie, na którym potem zdajesz."
 msgstr "Учитесь на той машине, на которой потом сдаёте."
 
-#: templates/core/page_detail.html:233 templates/courses/course_detail.html:156
+#: templates/core/page_detail.html:244 templates/courses/course_detail.html:156
 msgid "Zgodny z egzaminem"
 msgstr "Соответствует экзамену"
 
-#: templates/core/page_detail.html:250
+#: templates/core/page_detail.html:261
 msgid "Zostaw numer, oddzwonimy"
 msgstr "Оставьте номер, перезвоним"
 
-#: templates/core/page_detail.html:251
+#: templates/core/page_detail.html:262
 msgid "Wolisz nie dzwonić? Zostaw kontakt, odezwiemy się w ciągu jednego dnia roboczego."
 msgstr "Не хотите звонить? Оставьте контакт, ответим в течение одного рабочего дня."
 
-#: templates/core/page_detail.html:259 templates/courses/pricing.html:89
+#: templates/core/page_detail.html:270 templates/courses/pricing.html:89
 msgid "Zaczynamy?"
 msgstr "Начинаем?"
 
-#: templates/core/page_detail.html:260
+#: templates/core/page_detail.html:271
 msgid "Zadzwoń albo zostaw numer — ustalimy termin startu i powiemy, czego brakuje w papierach."
 msgstr "Позвоните или оставьте номер — договоримся о дате старта и скажем, каких бумаг не хватает."
 
-#: templates/core/page_detail.html:267
+#: templates/core/page_detail.html:278
 msgid "Masz pytanie do tego dokumentu?"
 msgstr "Есть вопрос по этому документу?"
 
-#: templates/core/page_detail.html:268
+#: templates/core/page_detail.html:279
 msgid "Zadzwoń albo napisz — odpowiemy, jakie dane przetwarzamy i po co."
 msgstr "Позвоните или напишите — расскажем, какие данные обрабатываем и зачем."
 
-#: templates/core/page_detail.html:275
+#: templates/core/page_detail.html:286
 msgid "Chcesz zacząć kurs?"
 msgstr "Хотите начать курс?"
 
@@ -1087,7 +1100,7 @@ msgstr "Согласие на файлы cookie"
 msgid "Używamy plików cookie, żeby strona działała poprawnie. Statystyki włączamy dopiero po Twojej zgodzie."
 msgstr "Мы используем cookie, чтобы сайт работал правильно. Статистику включаем только после вашего согласия."
 
-#: templates/cotton/cookie_banner.html:22 templates/layout/footer.html:135
+#: templates/cotton/cookie_banner.html:22 templates/layout/footer.html:115
 msgid "Polityka prywatności"
 msgstr "Политика конфиденциальности"
 
@@ -1112,7 +1125,7 @@ msgstr[1] "%(years)s года"
 msgstr[2] "%(years)s лет"
 msgstr[3] "%(years)s года"
 
-#: templates/cotton/course_card.html:48 templates/cotton/course_tile.html:38
+#: templates/cotton/course_card.html:48 templates/cotton/course_tile.html:39
 msgid "na zapytanie"
 msgstr "по запросу"
 
@@ -1156,7 +1169,9 @@ msgstr "Запланирован"
 msgid "Zapytaj"
 msgstr "Спросить"
 
-#: templates/cotton/lang_switcher.html:21
+#: templates/cotton/lang_switcher.html:27
+#: templates/cotton/lang_switcher.html:36
+#: templates/cotton/lang_switcher.html:52
 msgid "Language"
 msgstr "Язык"
 
@@ -1234,6 +1249,10 @@ msgstr "Оценка %(rating)s из 5"
 #: templates/cotton/review_card.html:46
 msgid "źródło"
 msgstr "источник"
+
+#: templates/cotton/social_links.html:19
+msgid "Jesteśmy w sieci"
+msgstr "Мы в соцсетях"
 
 #: templates/cotton/video_card.html:58
 msgid "Obejrzyj na YouTube"
@@ -1554,15 +1573,15 @@ msgstr "Формальности"
 msgid "Zapisy i dokumenty"
 msgstr "Запись и документы"
 
-#: templates/layout/footer.html:123
+#: templates/layout/footer.html:103
 msgid "Z nami zawsze do celu"
 msgstr "С нами всегда до цели"
 
-#: templates/layout/footer.html:131
+#: templates/layout/footer.html:111
 msgid "na rynku od"
 msgstr "на рынке с"
 
-#: templates/layout/footer.html:131
+#: templates/layout/footer.html:111
 msgid "Wieluń"
 msgstr "Велюнь"
 
@@ -1570,11 +1589,11 @@ msgstr "Велюнь"
 msgid "strona główna"
 msgstr "главная страница"
 
-#: templates/layout/header.html:60
+#: templates/layout/header.html:65
 msgid "Oddzwonimy do Ciebie"
 msgstr "Перезвоним вам"
 
-#: templates/layout/header.html:66 templates/layout/mobile_menu.html:22
+#: templates/layout/header.html:71 templates/layout/mobile_menu.html:22
 msgid "Menu"
 msgstr "Меню"
 

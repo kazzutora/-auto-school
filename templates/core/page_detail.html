@@ -166,6 +166,19 @@ nothing.
   </c-section>
 {% endif %}
 
+{# ---------------------------------------------------------------- social #}
+{% if about %}
+  {# The three the school posts on, on the page a reader lands on to find out
+     who it is. A row of circles rather than a block: these are the quietest
+     links on the page and they leave the site. #}
+  <c-section id="social" tone="muted" size="compact">
+    <c-slot name="heading">{% translate "Zobacz, co u nas słychać" %}</c-slot>
+    <c-slot name="sub">{% translate "Nagrania z placu i z jazd, i to, co dzieje się w ośrodku na co dzień." %}</c-slot>
+    {% translate "Znajdź nas w sieci" as t_social_about %}
+    <c-social-links label="{{ t_social_about }}" class="mt-2" />
+  </c-section>
+{% endif %}
+
 {# ------------------------------------------------- the paper behind them #}
 {% if about and scan_years %}
   {# The block of figures above says 72% and 90 candidates. This is where those

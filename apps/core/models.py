@@ -45,6 +45,11 @@ class SiteSettings(SingletonModel, TimeStampedModel):
     map_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     map_lng = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     facebook_url = models.URLField(blank=True)
+    # The other two the school posts on. Blank is the honest default and every
+    # place that shows them checks first: a dead social icon is a promise the
+    # page cannot keep, ROSE.md A.3.
+    instagram_url = models.URLField(blank=True)
+    tiktok_url = models.URLField(blank=True)
     google_business_url = models.URLField(blank=True)
     # The channel, and one promo clip for the home page. Both are urls and
     # neither pulls a script: tech.md section 2 bans third party javascript on

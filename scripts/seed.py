@@ -63,7 +63,9 @@ def seed_site_settings() -> None:
     # Town centre. The exact office pin is confirmed by the owner.
     site.map_lat = Decimal("51.220600")
     site.map_lng = Decimal("18.569700")
-    site.facebook_url = "https://pl-pl.facebook.com/osrodekostrycharz/"
+    site.facebook_url = "https://www.facebook.com/osrodekostrycharz/"
+    site.instagram_url = "https://www.instagram.com/osk_ostrycharz/"
+    site.tiktok_url = "https://www.tiktok.com/@osk.ostrycharz"
     site.youtube_url = "https://www.youtube.com/channel/UCbXki-U-CJjcQ36tZ5GZ4lw"
     site.youtube_video_url = "https://www.youtube.com/watch?v=abeQhB0RfV4"
     site.lead_notify_emails = "oskostrycharz@poczta.onet.pl"

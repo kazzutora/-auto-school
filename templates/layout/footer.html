@@ -117,32 +117,13 @@ public page.
 
         {# C.1 block 9: the two the school actually has, in rings.
 
-           Instagram and TikTok are on the mockup and not here. The school has
-           no account on either, and a dead icon in a footer is a promise the
-           page cannot keep — ROSE.md A.3. If the owner opens one, the link
-           goes in SiteSettings and the circle appears by itself. #}
-        {% if site_settings.facebook_url or site_settings.youtube_url %}
-          <ul class="mt-5 flex gap-3">
-            {% if site_settings.facebook_url %}
-              <li>
-                <a href="{{ site_settings.facebook_url }}" rel="noopener" target="_blank"
-                   aria-label="Facebook"
-                   class="grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500 text-brand-link transition hover:bg-brand-100">
-                  <c-icon name="external" size="sm" />
-                </a>
-              </li>
-            {% endif %}
-            {% if site_settings.youtube_url %}
-              <li>
-                <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank"
-                   aria-label="YouTube"
-                   class="grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500 text-brand-link transition hover:bg-brand-100">
-                  <c-icon name="play" size="sm" />
-                </a>
-              </li>
-            {% endif %}
-          </ul>
-        {% endif %}
+           Instagram and TikTok arrived at core v36 — the owner sent the two
+           accounts. The rule that kept them out until then still stands and
+           is now the component's: a url blank in SiteSettings renders no
+           circle, because a dead icon in a footer is a promise the page
+           cannot keep, ROSE.md A.3. #}
+        {% translate "Znajdź nas w sieci" as t_social_footer %}
+        <c-social-links label="{{ t_social_footer }}" class="mt-5" />
       </div>
     </div>
 

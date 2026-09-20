@@ -88,6 +88,12 @@ switcher and the phone number.
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
         </c-button>
       {% endif %}
+      <{# The accounts, for the readers who never see the header row: it hides
+      <   these below lg. #}
+      {# The accounts, for every reader who never sees the header row: it
+         hides them below lg. #}
+      {% translate "Znajdź nas w sieci" as t_social_panel %}
+      <c-social-links label="{{ t_social_panel }}" class="mb-6" />
       <c-lang-switcher />
     </div>
   </div>

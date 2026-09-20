@@ -70,7 +70,18 @@ elements rather than two <img> tags, which would fetch both.
          switcher used to share with a full menu is empty anyway, and hiding it
          until 1280 buried the one control a russian or ukrainian reader opens
          the site looking for. #}
-      <c-lang-switcher class="hidden md:flex" />
+      {# compact: a button that opens the three. The row of three cost 132px
+         of a line that also carries the lockup, the menu and the call button,
+         and spent it on two codes the reader of the current page is not going
+         to press. #}
+      <c-lang-switcher compact="1" class="hidden md:block" />
+
+      {# The accounts the school actually posts on, and only from lg: below
+         that the row is already a lockup, a switcher and a burger, and these
+         are the quietest links on the page. They are in the panel and in the
+         footer for everyone else. #}
+      {% translate "Znajdź nas w sieci" as t_social_header %}
+      <c-social-links size="sm" label="{{ t_social_header }}" class="hidden lg:flex" />
 
       {% if site_settings.phone_primary %}
         {# B.7 point 0 names this button and B.5 allows exactly one
