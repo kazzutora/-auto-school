@@ -42,10 +42,16 @@ elements rather than two <img> tags, which would fetch both.
   <div class="u-header-bar u-container flex items-center justify-between gap-2">
     <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
        aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
-      {# 44px tall below sm, 56px from there. The artwork is 4.22:1 once its
-         slogan is out, so those are 186px and 236px of row — at 320px the
-         container has 288px to spend and the burger needs 44 of them, which
-         the phone size leaves with 58 to spare. #}
+      {# 44px tall below sm, 56px from there, and four pixels back at xl.
+
+         The artwork is 4.65:1, so those are 205px, 260px and 242px of row.
+         xl is the one width where the lockup and the whole menu share a line:
+         below it the menu is a burger, above it the container keeps growing.
+         Measured there in all three languages, at 56px the row sat on its
+         minimum 8px gaps with nothing in hand, and a row that does not fit
+         here prints its overflow rather than clipping it. Four pixels off the
+         lockup is invisible; Kontakt landing on the language switcher is not.
+         #}
       {# The owner's own artwork, not the drawn lockup. It is brush texture
          end to end, so it cannot be geometry and ships as pixels;
          scripts/brand/gen_lockup_raster.py cuts it and repaints its ink for
@@ -54,7 +60,7 @@ elements rather than two <img> tags, which would fetch both.
          A background, which is why there is nothing to label here: the link
          around it already carries the school's name in its aria-label, and
          that is what a screen reader reads. #}
-      <span aria-hidden="true" class="u-lockup block h-11 sm:h-14"></span>
+      <span aria-hidden="true" class="u-lockup block h-11 sm:h-14 xl:h-[52px]"></span>
     </a>
 
     {% include "layout/nav.html" %}
