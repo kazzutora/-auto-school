@@ -1204,6 +1204,18 @@
     color: rgb(var(--slot-ink, var(--brand-600)));
   }
 
+  /* The closing band, marked off rather than filled in.
+   *
+   * It is the last thing on every page before the footer and it used to take
+   * its ground from the call site, which meant six pages said paper and one
+   * said the page: the block that closes every page looked like a different
+   * block on each. A band of its own colour here would be a second stripe
+   * immediately above the footer, which already changes colour — so what
+   * marks it is a rule above and below and the air between them. */
+  .u-cta-band {
+    border-block: 1px solid rgb(var(--line));
+  }
+
   .u-over-photo {
     position: relative;
   }

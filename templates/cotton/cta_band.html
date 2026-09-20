@@ -1,5 +1,5 @@
 {% load i18n %}
-<c-vars title="" text="" href="" action="" phone="" ground="ink" class="" />
+<c-vars title="" text="" href="" action="" phone="" ground="page" class="" />
 {% comment %}
 Closing call to action, BLOCKS.md B11.
 
@@ -7,13 +7,23 @@ The last band of every inner page. tech.md section 1 says the whole site exists
 for two actions — a form or a phone call — so both are here, and the page never
 ends on a paragraph.
 
-Ground ink, never deep: the footer is deep, and two dark purple bands touching
-read as one very long block with a hairline lost in the middle.
+One look on every page, and a rule above and below it.
+
+It used to take a ground from the call site, and the call sites disagreed:
+paper on six pages and the page's own colour on the seventh. The block that
+closes every page read as a different block on each of them. So the ground is
+the page — adding a band here would be a second stripe right where the footer
+already changes colour — and what marks it off is a hairline top and bottom.
+Two rules and the white space between them say "this is the end of the page"
+without spending a colour on it.
+
+`ground` still takes wine, pink or paper for the one page that needs to argue
+for it; nothing does today, and the default is the page.
 
 Takes: title, text, href, action, phone, ground.
 {% endcomment %}
-<section class="u-section-compact
-{% if ground == 'accent' or ground == 'pink' %} u-ground-pink{% elif ground == 'paper' or ground == 'card' %} bg-brand-50{% elif ground == 'page' %}{% else %} u-ground-wine{% endif %} {{ class }}"
+<section class="u-cta-band u-section-compact
+{% if ground == 'accent' or ground == 'pink' %} u-ground-pink{% elif ground == 'paper' or ground == 'card' %} bg-brand-50{% elif ground == 'wine' or ground == 'ink' %} u-ground-wine{% endif %} {{ class }}"
   {{ attrs }}>
   <div class="u-container flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
     <div class="u-narrow">

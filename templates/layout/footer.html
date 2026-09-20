@@ -39,7 +39,15 @@ public page.
        large buttons above the columns. That put the same invitation twice on
        every page, once in the page's own closing section and once immediately
        under it, and the two read as the site asking again because nobody had
-       answered the first time. The cluster below is the one B.7 describes. #}
+       answered the first time.
+
+       The heading went then and the two buttons go now, at core v39: the
+       closing band sits about a hundred and fifty pixels above this row and
+       carries the same pair, word for word. B.7 point 11 puts the button and
+       the phone on the right of this row, and it was written for a footer
+       with no band above it. The phone is still here, in the contact column
+       below, which is where somebody scrolling to the bottom for a number
+       looks for it. #}
     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
       <div class="u-narrow">
         {# The compact lockup and the slogan as text, rather than the full
@@ -54,18 +62,6 @@ public page.
         <p class="mt-4 text-small u-muted-on-ground">
           {% translate "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie." %}
         </p>
-      </div>
-      <div class="flex shrink-0 flex-wrap items-center gap-4">
-        <c-button variant="primary" href="{% url 'leads:enroll' %}">{% translate "Zapisz się" %}</c-button>
-        {% if site_settings.phone_primary %}
-          {# The same outline button the number wears in every closing band on
-             the site. It was a bare link here, so the one place the footer
-             repeats the page's own call to action looked like body text
-             beside a filled button. #}
-          <c-button variant="secondary" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
-            <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
-          </c-button>
-        {% endif %}
       </div>
     </div>
 

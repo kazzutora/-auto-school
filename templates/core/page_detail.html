@@ -330,7 +330,7 @@ nothing.
    legal page it would be tone deaf, so that one offers the telephone and says
    what it is for. #}
 {% if about or enrolment %}
-  <c-cta-band ground="paper"
+  <c-cta-band
               title="{% translate 'Zaczynamy?' %}"
               text="{% translate 'Zadzwoń albo zostaw numer — ustalimy termin startu i powiemy, czego brakuje w papierach.' %}"
               href="{{ enrol_url }}"
@@ -341,7 +341,7 @@ nothing.
      action when there is one, but SiteSettings may not carry it, and a closing
      band whose only control is conditional is a band that renders empty — the
      exact failure B.8 point 4 is written against. /kontakt/ always resolves. #}
-  <c-cta-band ground="paper"
+  <c-cta-band
               title="{% translate 'Masz pytanie do tego dokumentu?' %}"
               text="{% translate 'Zadzwoń albo napisz — odpowiemy, jakie dane przetwarzamy i po co.' %}"
               href="{% url 'core:contact' %}"
