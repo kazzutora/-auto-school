@@ -191,7 +191,7 @@ def test_the_header_shrinks_from_a_sentinel_rather_than_a_scroll_handler(
 ) -> None:
     """B.7 point 0 and R4 point 1.
 
-    76px down to 64px with a hairline appearing, and the class that does it is
+    88px down to 74px with a hairline appearing, and the class that does it is
     toggled from an IntersectionObserver on a one pixel sentinel above the
     header. R4 asks for it that way because the alternative — a scroll
     listener — runs on every frame of every scroll for the life of the page to

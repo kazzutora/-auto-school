@@ -48,12 +48,8 @@ public page.
            for each theme, on every page of the site. The slogan set in Caveat
            says the same thing in a face the page has already loaded, and a
            reader can select it. #}
-        <span class="block h-10 w-auto text-brand-700 dark:text-ink [&>svg]:h-full [&>svg]:w-auto">
-          <svg viewBox="0 0 5151 1020" class="h-full w-auto" role="img"
-               aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}">
-            <use href="{% static 'img/brand/lockup-compact.svg' %}#lockup-compact"></use>
-          </svg>
-        </span>
+        <span role="img" class="u-lockup block h-12 sm:h-14"
+              aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"></span>
         <p class="script script-sm mt-3">{% translate "Twoja droga do niezależności" %}</p>
         <p class="mt-4 text-small u-muted-on-ground">
           {% translate "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie." %}

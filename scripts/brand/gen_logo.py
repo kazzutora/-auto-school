@@ -241,7 +241,7 @@ def svg(width: float, height: float, body: str, *, title: str) -> str:
     )
 
 
-def lockup(*, slogan: bool, cap: bool, dark: bool) -> str:
+def lockup(*, slogan: bool, cap: bool, dark: bool, heart: bool = False) -> str:
     ink = FACE if dark else INK
     soft = SOFT if dark else INK
     pad = 80.0
@@ -347,6 +347,22 @@ def lockup(*, slogan: bool, cap: bool, dark: bool) -> str:
             + '"/>'
         )
 
+    # One heart, over the word, in the band the cap opens above the line.
+    # 0.11R rather than 0.17: the heart is 0.46 of its own width tall above
+    # centre, and at 0.17 its lower point landed exactly on the cap height of
+    # the word, touching the apex of the A it sits over.
+    # The owner's logo has three of them and a fourth over the slogan; three
+    # at 44px of header is a row of pink specks, and ROSE.md B.7 caps the
+    # ration at three per frame for the page, not per logo. One reads.
+    if heart:
+        parts.append(
+            '<path fill="'
+            + PINK
+            + '" d="'
+            + heart_path(x_text + 0.72 * text_w, body_top + 0.11 * R, 0.30 * R)
+            + '"/>'
+        )
+
     plate_y = cy - 0.62 * R
     parts.extend(plate_paths(x_plate, plate_y, plate_w))
     if cap:
@@ -401,12 +417,17 @@ def symbol_file(name: str, symbol_id: str, content: str) -> None:
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    full = lockup(slogan=True, cap=True, dark=False)
-    compact = lockup(slogan=False, cap=False, dark=False)
+    full = lockup(slogan=True, cap=True, dark=False, heart=True)
+    # The cap and the heart are in the compact one now, at the owner's
+    # request. They were left out because at 40px they read as noise — the
+    # answer was to make the lockup taller rather than to drop them: with the
+    # cap the whole thing is 4.3:1 instead of 5.05:1, so at the same row
+    # height the word is larger, not smaller.
+    compact = lockup(slogan=False, cap=True, dark=False, heart=True)
     write("logo-full.svg", full)
-    write("logo-full-dark.svg", lockup(slogan=True, cap=True, dark=True))
+    write("logo-full-dark.svg", lockup(slogan=True, cap=True, dark=True, heart=True))
     write("logo-compact.svg", compact)
-    write("logo-compact-dark.svg", lockup(slogan=False, cap=False, dark=True))
+    write("logo-compact-dark.svg", lockup(slogan=False, cap=True, dark=True, heart=True))
 
     # What the pages actually use. The files above stay for the places that
     # need a picture rather than a reference — an email, a press kit.

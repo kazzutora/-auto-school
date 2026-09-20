@@ -42,40 +42,19 @@ elements rather than two <img> tags, which would fetch both.
   <div class="u-header-bar u-container flex items-center justify-between gap-2">
     <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
        aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
-      {# 18px tall below sm, 23px from there. The lockup is 12:1, so those are
-         218px and 278px of row: at 320px the container has 288px to spend and
-         the burger needs 44 of them, which the taller one does not leave. #}
-      {# Two files and the dark: variant, not a <picture> with a
-         prefers-color-scheme source.
+      {# 44px tall below sm, 56px from there. The artwork is 4.22:1 once its
+         slogan is out, so those are 186px and 236px of row — at 320px the
+         container has 288px to spend and the burger needs 44 of them, which
+         the phone size leaves with 58 to spare. #}
+      {# The owner's own artwork, not the drawn lockup. It is brush texture
+         end to end, so it cannot be geometry and ships as pixels;
+         scripts/brand/gen_lockup_raster.py cuts it and repaints its ink for
+         the dark ground, and .u-lockup in app.css picks which file.
 
-         <picture> would fetch only the matching file, which is the cheaper
-         thing — but its media query reads the system preference and nothing
-         else, so the explicit theme switch would leave a white wordmark on the
-         light page. That is exactly the failure R9 point 1 is written to hunt
-         down, one element further out. The dark: variant follows both doors,
-         because tailwind.config.js defines it as both.
-
-         The second file costs 6.5 KB on the first load and is cached from
-         then on. The alt sits on the light one only: two <img> with the same
-         alt make a screen reader read the school's name twice, so the hidden
-         one is decorative by definition. #}
-      {# Included rather than linked, and one copy rather than a pair.
-         Two <img> with one hidden per theme is two requests for one picture
-         and the browser fetches both — 38 KB of header logo on every page,
-         against the 400 KB the whole first screen gets in C.6. An included
-         svg travels gzipped with the html and takes currentColor with it,
-         which is also what lets one file serve both themes.
-
-         dark:text-ink, not dark:text-brand-50. brand.50 swaps with the theme
-         — it is the card face, which in the dark is #251C20 — so the lockup
-         came out near black on a near black page. ink is the token that means
-         "what reads on the ground", and it is pale there. #}
-      <span class="block h-9 w-auto text-brand-700 sm:h-11 dark:text-ink [&>svg]:h-full [&>svg]:w-auto">
-        <svg viewBox="0 0 5151 1020" class="h-full w-auto" role="img"
-             aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}">
-          <use href="{% static 'img/brand/lockup-compact.svg' %}#lockup-compact"></use>
-        </svg>
-      </span>
+         A background, which is why there is nothing to label here: the link
+         around it already carries the school's name in its aria-label, and
+         that is what a screen reader reads. #}
+      <span aria-hidden="true" class="u-lockup block h-11 sm:h-14"></span>
     </a>
 
     {% include "layout/nav.html" %}
