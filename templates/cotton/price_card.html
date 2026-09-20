@@ -30,16 +30,21 @@ quiet card and in white on the pressed one — the ground publishes which.
        sat at -top-3 for one screenshot and covered the first word of the name
        it was pointing at. #}
     {% if item.featured %}
-      <p class="label mb-3 inline-flex h-7 w-fit self-start items-center rounded-full bg-brand-900 px-3 u-fixed-paper">
+      <p class="label mb-3 inline-flex h-7 w-fit self-center items-center rounded-full bg-brand-900 px-3 u-fixed-paper">
         {% translate "Najczęściej wybierany" %}
       </p>
     {% endif %}
 
-    <h3 class="font-display text-h3 font-extrabold uppercase italic leading-tight u-on-ground">
+    {# Name and figure centred, the rest of the card ranged left. The two of
+       them are what the reader compares across three cards, and a centred
+       axis is what lets the eye run along the row rather than down one card.
+       The list below is prose and stays left: centred body text has a ragged
+       left edge, which is the edge a reader returns to on every line. #}
+    <h3 class="text-center font-display text-h3 font-extrabold uppercase italic leading-tight u-on-ground">
       {{ item.title }}
     </h3>
 
-    <p class="mt-3 flex items-baseline gap-1">
+    <p class="mt-3 flex items-baseline justify-center gap-1">
       <span class="u-bignum text-data-2xl{% if not item.featured %} text-brand-500{% endif %}">
         {{ item.price_gross|floatformat:0 }}
       </span>
@@ -48,7 +53,7 @@ quiet card and in white on the pressed one — the ground publishes which.
     </p>
 
     {% if item.note %}
-      <p class="mt-2 text-small u-muted-on-ground">{{ item.note }}</p>
+      <p class="mt-2 text-center text-small u-muted-on-ground">{{ item.note }}</p>
     {% endif %}
 
     {% if item.include_lines %}

@@ -354,19 +354,9 @@ def pricing(request: HttpRequest) -> HttpResponse:
             ),
             "breadcrumbs": _crumbs(trail),
             "groups": groups,
-            # The anchors c-anchor-nav jumps between. Built from the groups that
-            # actually rendered, so the nav cannot point at a missing section.
-            "anchors": [
-                {"id": f"grupa-{position}", "title": label}
-                for position, (label, _rows) in enumerate(groups, start=1)
-                if label
-            ],
             "external_group": EXTERNAL_GROUP,
             "course_group": COURSE_PRICE_GROUP,
             "course_cards": course_cards,
-            "headline_price": format_price(
-                selectors.active_courses().values_list("price_gross", flat=True).first()
-            ),
             "headers": PRICE_HEADERS,
             "payments": render_markdown(payments.body) if payments else "",
             "payments_title": payments.title if payments else "",

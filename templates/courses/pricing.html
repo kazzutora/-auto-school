@@ -23,25 +23,28 @@ złoty column line up digit under digit, A.5.
 
 {% block content %}
 
+{# The eyebrow and the title, and nothing else above the prices.
+
+   The lead said the prices are gross, with no hidden costs, and that the lift
+   to the exam is included — and the three cards below now say the second half
+   of that in a line each, against the figure it applies to.
+
+   The fact card beside the title carried "Kurs kat. B — 3 700,00 zł". That is
+   the first of the three cards, word for word, a screen higher up: two prints
+   of one figure on one page, which is an invitation to check whether they
+   agree.
+
+   The anchor nav went with them. Four jumps down a page whose first section
+   is already in view is furniture, and it was there to make a long column of
+   rows navigable — the column the cards replaced. #}
+{# pb-0: the header's own bottom padding was sized for a lead and an aside
+   card under the title. With two lines left it put 160px of nothing between
+   CENNIK and the first section, which the section's top padding then added
+   to. #}
 <c-page-header eyebrow="{% translate 'Ile to kosztuje' %}" title="{% translate 'Cennik' %}"
-               lead="{% translate 'Ceny brutto, bez ukrytych kosztów. Dowóz na egzamin państwowy jest w cenie kursu.' %}">
+               class="pb-0">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-
-  <c-slot name="aside">
-    {% if headline_price %}
-      <c-fact-card label="{% translate 'Kurs kat. B' %}" value="{{ headline_price }}"
-                   note="{% translate 'Pełny kurs standardowy. Przyspieszony i automat po 4300 zł.' %}">
-        <c-slot name="action">
-          <c-button variant="primary" href="{{ enrol_url }}" full="1">{% translate "Zapisz się" %}</c-button>
-        </c-slot>
-      </c-fact-card>
-    {% endif %}
-  </c-slot>
 </c-page-header>
-
-{% if anchors %}
-  <c-anchor-nav :items="anchors" label="{% translate 'Sekcje cennika' %}" />
-{% endif %}
 
 {% if groups %}
   {# Ground alternates group by group, REDESIGN.md B.8 point 2: two sections
