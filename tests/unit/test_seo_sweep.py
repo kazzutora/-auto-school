@@ -33,7 +33,6 @@ PUBLIC_URLS = [
     "/kursy/kat-b/",
     "/cennik/",
     "/terminy/",
-    "/zdawalnosc/",
     "/do-pobrania/",
     "/zapisy/",
     "/o-nas/",

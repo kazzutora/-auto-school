@@ -39,7 +39,6 @@ STATIC_ROUTES = (
     "courses:list",
     "courses:pricing",
     "courses:intakes",
-    "core:pass_rates",
     "core:downloads",
     "gallery:index",
     "gallery:certificates",
@@ -79,7 +78,6 @@ CONDITIONAL_ROUTES.update(
         "courses:intakes": _has_rows("courses", "CourseIntake"),
         "links:useful": _has_rows("links", "UsefulLink", is_active=True),
         "links:faq": _has_rows("links", "Faq", is_published=True),
-        "core:pass_rates": _has_rows("core", "PassRate", is_published=True),
         "core:downloads": _has_rows("core", "DownloadFile", is_published=True),
     }
 )

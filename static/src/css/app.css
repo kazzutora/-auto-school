@@ -1331,14 +1331,16 @@
     font-style: italic;
     font-weight: 800;
     text-transform: uppercase;
-    /* 14px, not 15. Uppercase italic at 800 runs wider than the sentence
-     * case bold it replaced — the row went from 465px to 519px — and the
-     * lockup had grown by 75px in the same header. Measured at 1280, where
-     * the menu first appears, that left the polish and ukrainian rows sitting
-     * on their minimum 8px gaps with nothing in hand. A row that does not fit
-     * here does not wrap or clip: cotton/nav.html has the note, the overflow
-     * is printed, and Kontakt lands on top of the language switcher. */
-    font-size: 0.875rem;
+    /* 16px since the menu lost Zdawalność, its longest item, at core v32.
+     *
+     * The size is measured rather than chosen. A row that does not fit here
+     * does not wrap or clip: cotton/nav.html has the note, the overflow is
+     * printed, and Kontakt lands on top of the language switcher. It was 14px
+     * with seven items, where polish and ukrainian sat on their minimum 8px
+     * gaps; six items at 16px is the largest step that keeps a gap on all
+     * three languages at 1280, which is the width the menu first appears at
+     * and the only one where it and the lockup share a line. */
+    font-size: 1rem;
     letter-spacing: 0.005em;
     color: rgb(var(--fixed-paper));
     paint-order: stroke fill;

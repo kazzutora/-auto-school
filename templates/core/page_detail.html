@@ -125,17 +125,12 @@ nothing.
 {% if about %}
   <c-section id="oferta" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Co oferujemy" %}</c-slot>
-    <ul class="grid gap-4 md:grid-cols-3">
+    {# Two, not three: the pass rate card went with its page. #}
+    <ul class="grid gap-4 md:grid-cols-2">
       <li class="flex">
         <c-card href="{% url 'courses:detail' slug='kat-b' %}" class="flex w-full flex-col">
           <c-slot name="title">{% translate "Kurs kat. B" %}</c-slot>
           <p class="text-small u-muted-on-ground">{% translate "standardowy, przyspieszony i na automacie" %}</p>
-        </c-card>
-      </li>
-      <li class="flex">
-        <c-card href="{% url 'core:pass_rates' %}" class="flex w-full flex-col">
-          <c-slot name="title">{% translate "Zdawalność" %}</c-slot>
-          <p class="text-small u-muted-on-ground">{% translate "wyniki rok po roku, bez zaokrągleń" %}</p>
         </c-card>
       </li>
       <li class="flex">

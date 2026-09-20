@@ -135,7 +135,6 @@ def test_the_footer_carries_the_four_columns(client: Client, settings_row: SiteS
     for url in (
         reverse("courses:detail", kwargs={"slug": "kat-b"}),
         reverse("courses:pricing"),
-        reverse("core:pass_rates"),
         reverse("core:downloads"),
         reverse("core:page", kwargs={"slug": "zapisy"}),
         reverse("gallery:index"),

@@ -2,13 +2,15 @@
 
 from apps.core.navigation import NAV, NavItem
 
-# tech.md section 7, in order. Seven items, one level, no submenus: this school
+# tech.md section 7, in order. Six items, one level, no submenus: this school
 # sells one category, so there is no course tree to fold away.
+#
+# Zdawalność was the seventh until core v32. The page went; the figures did
+# not, and the home page still carries them as a band.
 TECH_MD_NAV = [
     ("Kurs B", "courses:detail"),
     ("Cennik", "courses:pricing"),
     ("Zapisy", "core:page"),
-    ("Zdawalność", "core:pass_rates"),
     ("O nas", "core:page"),
     ("Pliki", "core:downloads"),
     ("Kontakt", "core:contact"),
@@ -68,7 +70,6 @@ def test_the_two_pages_this_school_leads_with_are_in_the_menu() -> None:
     """
     routes = {item.route for item in NAV}
 
-    assert "core:pass_rates" in routes
     assert "courses:pricing" in routes
 
 

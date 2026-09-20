@@ -291,7 +291,7 @@ is a forgery, not a placeholder.
    attempts leaves three figures rather than a fourth reading nothing.
    ========================================================= #}
 {% if stat_items %}
-<section class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
+<section id="zdawalnosc" class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
   {# C.1 block 4 wants a ragged pink band across the page with the figures on
      it, and B.7 point 6 wants every piece of text on a flat fill. Both, by
      making the strokes the band's two edges rather than a wash behind the
@@ -310,9 +310,6 @@ is a forgery, not a placeholder.
         <p class="script">{% translate "W liczbach" %}</p>
         <h2 class="mt-1">{% translate "Zdawalność" %}</h2>
       </div>
-      <c-button variant="ghost" href="{% url 'core:pass_rates' %}">
-        {% translate "Jak to liczymy" %} <c-icon name="arrow-right" size="sm" />
-      </c-button>
     </div>
     <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       {% for item in stat_items %}

@@ -44,7 +44,6 @@ NAV: tuple[NavItem, ...] = (
     NavItem(pgettext_lazy("nav", "Kurs B"), "courses:detail", kwargs={"slug": "kat-b"}),
     NavItem(pgettext_lazy("nav", "Cennik"), "courses:pricing"),
     NavItem(pgettext_lazy("nav", "Zapisy"), "core:page", kwargs={"slug": "zapisy"}),
-    NavItem(pgettext_lazy("nav", "Zdawalność"), "core:pass_rates"),
     NavItem(pgettext_lazy("nav", "O nas"), "core:page", kwargs={"slug": "o-nas"}),
     NavItem(pgettext_lazy("nav", "Pliki"), "core:downloads"),
     NavItem(pgettext_lazy("nav", "Kontakt"), "core:contact"),

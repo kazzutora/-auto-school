@@ -28,7 +28,8 @@ OLD_ANCHORS = {
     "informacje": "/zapisy/",
     "pliki": "/do-pobrania/",
     "galeriazdjecia": "/galeria/",
-    "galeriazdjecia_stat": "/zdawalnosc/",
+    # The page went at core v32; the figures are a band on the home page.
+    "galeriazdjecia_stat": "/#zdawalnosc",
     "kontakt": "/kontakt/",
 }
 

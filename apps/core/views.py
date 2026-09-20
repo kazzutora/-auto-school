@@ -170,12 +170,6 @@ HOME_DESCRIPTION = _(
     "Dowóz na egzamin gratis."
 )
 
-PASS_RATES_SUBJECT = _("Zdawalność")
-PASS_RATES_DESCRIPTION = _(
-    "Ilu naszych kursantów zdaje egzamin państwowy za pierwszym razem. "
-    "Wyniki rok po roku, liczby bez zaokrągleń."
-)
-
 DOWNLOADS_SUBJECT = _("Do pobrania")
 DOWNLOADS_DESCRIPTION = _(
     "Regulamin, umowa i oświadczenia do pobrania. Dokumenty, które warto "
@@ -351,59 +345,6 @@ def _fragment_map() -> dict[str, str]:
     except (OSError, KeyError):
         # A missing or malformed csv costs the old anchors, not the home page.
         return {}
-
-
-def pass_rates(request: HttpRequest) -> HttpResponse:
-    """/zdawalnosc/ — the strongest argument this school has, tech.md section 1.
-
-    On the old site it was a paragraph between the gallery and the file list.
-    Here it is a page, with a url somebody can send to their parents.
-    """
-    from apps.core.selectors import published_pass_rates
-    from apps.reviews.selectors import published_testimonials
-
-    rows = [_pass_rate_row(entry) for entry in published_pass_rates()]
-    testimonials = list(published_testimonials())
-    trail: list[tuple[Label, str]] = [
-        (_("Start"), "/"),
-        (_("Zdawalność"), reverse("core:pass_rates")),
-    ]
-
-    # Only from verifiable reviews, and absent otherwise. See the docstring on
-    # aggregate_rating_jsonld: an unverifiable rating in markup is a penalty.
-    rating = aggregate_rating_jsonld(testimonials)
-    school_rating = (
-        [
-            {
-                "@context": "https://schema.org",
-                "@type": "DrivingSchool",
-                "name": SiteSettings.get_solo().legal_name,
-                "aggregateRating": rating,
-            }
-        ]
-        if rating
-        else None
-    )
-
-    return render(
-        request,
-        "core/pass_rates.html",
-        {
-            "seo": page_seo(
-                request,
-                subject=PASS_RATES_SUBJECT,
-                description=PASS_RATES_DESCRIPTION,
-                breadcrumbs=trail,
-                extra_jsonld=school_rating,
-            ),
-            "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
-            "rows": rows,
-            "latest": rows[0] if rows else None,
-            "band_items": _stat_items(rows[0]) if rows else [],
-            "testimonials": testimonials if len(testimonials) >= TESTIMONIALS_MINIMUM else [],
-            "enrol_url": ENROL_URL,
-        },
-    )
 
 
 def downloads(request: HttpRequest) -> HttpResponse:

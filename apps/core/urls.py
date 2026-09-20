@@ -1,8 +1,11 @@
 """Core routes, tech.md section 5.
 
-The url map puts /kontakt/, the two data pages and the flat pages on core.views,
-and tech.md section 7 names core:contact, core:pass_rates, core:downloads and
-core:page in NAV, so all four live here.
+The url map puts /kontakt/, the file list and the flat pages on core.views, and
+tech.md section 7 names core:contact, core:downloads and core:page in NAV, so
+all three live here.
+
+/zdawalnosc/ was the fourth until core v32. The figures did not go with it: the
+home page still carries the band, which is where the owner wanted them.
 """
 
 from django.urls import path, re_path
@@ -21,8 +24,6 @@ urlpatterns = [
     # bare "" never reaches the flat page pattern below.
     path("", views.home, name="home"),
     path("kontakt/", views.contact, name="contact"),
-    # The school's strongest argument gets a url of its own, tech.md section 1.
-    path("zdawalnosc/", views.pass_rates, name="pass_rates"),
     path("do-pobrania/", views.downloads, name="downloads"),
     re_path(rf"^(?P<slug>{FLAT_PAGES})/$", views.page_detail, name="page"),
 ]

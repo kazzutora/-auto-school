@@ -54,7 +54,6 @@ PAGES = (
     "/",
     "/kursy/kat-b/",
     "/cennik/",
-    "/zdawalnosc/",
     "/do-pobrania/",
     "/zapisy/",
     "/o-nas/",

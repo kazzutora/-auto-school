@@ -72,14 +72,18 @@ def test_a_page_with_nothing_in_it_is_not_advertised(client: Client, offer: Cour
 
 
 def test_a_route_rejoins_the_file_the_moment_it_has_content(client: Client, offer: Course) -> None:
-    """Evaluated per request, so nothing has to be remembered or rerun."""
-    from apps.core.models import PassRate
+    """Evaluated per request, so nothing has to be remembered or rerun.
 
-    assert "/zdawalnosc/" not in paths(sitemap(client))
+    It used to be checked on /zdawalnosc/, which had a page of its own until
+    core v32. The gallery behaves the same way and is still routed.
+    """
+    from apps.gallery.models import GalleryImage
 
-    PassRate.objects.create(year=2025, students=92, passed_1st=68)
+    assert "/galeria/" not in paths(sitemap(client))
 
-    assert "/zdawalnosc/" in paths(sitemap(client))
+    GalleryImage.objects.create(title="Plac manewrowy", is_published=True)
+
+    assert "/galeria/" in paths(sitemap(client))
 
 
 def test_a_course_brings_its_own_url_and_date(client: Client, offer: Course) -> None:
