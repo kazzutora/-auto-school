@@ -155,6 +155,37 @@ class PassRate(TimeStampedModel):
         return [self.passed_1st, self.passed_2nd, self.passed_3rd, self.passed_4th]
 
 
+class PassRateScan(TimeStampedModel):
+    """A county office's pass rate table, as the school published it.
+
+    The school's own figures are PassRate rows and they are typed in by hand.
+    These are the paper behind them: the Starostwo Powiatowe in Wieluń issues a
+    table per quarter comparing every school in the county, and the old site
+    showed six of them as images. A number a visitor can check is worth more
+    than a number they have to take on trust, which is the whole reason the
+    school published them in the first place.
+
+    Not a Certificate: those are the centre's own permits. This is somebody
+    else's document about the centre, and the difference matters to whoever
+    writes the next caption.
+    """
+
+    title = models.CharField(max_length=200, verbose_name=_("Okres"))
+    year = models.PositiveSmallIntegerField(db_index=True, verbose_name=_("Rok"))
+    image = models.ImageField(upload_to="passrate/", verbose_name=_("Skan"))
+    order = models.PositiveSmallIntegerField(default=100)
+    is_published = models.BooleanField(default=True)
+
+    class Meta:
+        # Newest year first, and within a year the order the owner chose.
+        ordering = ("-year", "order", "id")
+        verbose_name = _("Pass rate scan")
+        verbose_name_plural = _("Pass rate scans")
+
+    def __str__(self) -> str:
+        return self.title
+
+
 class DownloadFile(TimeStampedModel):
     """A document a candidate needs before the course starts, tech.md 4.1.
 
@@ -167,6 +198,16 @@ class DownloadFile(TimeStampedModel):
     description = models.CharField(max_length=300, blank=True)
     file = models.FileField(upload_to="documents/", blank=True)
     size_bytes = models.PositiveIntegerField(null=True, blank=True)
+    # The school's own split, kept from their old site: the papers a candidate
+    # needs before the course starts, and the ones they may or may not need at
+    # all. Free text rather than a choice list, because it is a heading on the
+    # page and the owner edits it there.
+    group = models.CharField(
+        max_length=80,
+        blank=True,
+        verbose_name=_("Grupa"),
+        help_text=_("Nagłówek nad plikiem. Puste — plik trafia do pierwszej grupy."),
+    )
     order = models.PositiveSmallIntegerField(default=100)
     is_published = models.BooleanField(default=True)
 

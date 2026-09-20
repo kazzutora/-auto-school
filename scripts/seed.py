@@ -23,6 +23,7 @@ Two things this seed deliberately does not create:
 from __future__ import annotations
 
 import os
+import pathlib
 from decimal import Decimal
 
 TODO = "TODO_OWNER:"
@@ -359,29 +360,127 @@ UNREAD_PASS_RATE_YEARS = (2019, 2020, 2021)
 # pdf files themselves belong to the school and are not in this repository, so
 # the rows are created empty and the selector keeps them off the page until the
 # owner uploads one.
-DOWNLOADS: list[tuple[str, str]] = [
-    ("Regulamin", "Zasady szkolenia w naszym ośrodku. Do przeczytania przed startem."),
-    ("Umowa z kursantem", "Umowa, którą podpisujesz przy zapisie."),
+# The school's own two groups, kept from their old site.
+BEFORE_START = "Pobierz przed rozpoczęciem kursu"
+EXTRA_FILES = "Dodatkowe pliki"
+
+# Title, description, group, and the pdf in data/documents/ — the school's own
+# files, fetched from oskostrycharz.pl at the owner's request. The file names
+# are theirs and are left alone: they are what every link anybody has ever
+# shared points at, and data/legacy/redirects.csv maps those links here.
+DOWNLOADS: list[tuple[str, str, str, str]] = [
+    (
+        "Regulamin",
+        "Zasady szkolenia w naszym ośrodku. Do przeczytania przed startem.",
+        BEFORE_START,
+        "Regulamin_-_OSK_Ostrycharz.pdf",
+    ),
+    (
+        "Umowa z kursantem",
+        "Umowa, którą podpisujesz przy zapisie.",
+        BEFORE_START,
+        "umowa_z_kursantem_OSK_Ostrycharz.pdf",
+    ),
     (
         "Oświadczenie dot. stanu zdrowia",
         "Wypełniasz przed pierwszymi zajęciami praktycznymi.",
+        BEFORE_START,
+        "oswiadczenie_dot_stanu_zdrowia.pdf",
     ),
-    ("Wzór — opłata za egzamin", "Jak i gdzie opłacić egzamin państwowy."),
+    (
+        "Wzór — opłata za egzamin",
+        "Jak i gdzie opłacić egzamin państwowy.",
+        EXTRA_FILES,
+        "wzor_oplata_za_egzamin.pdf",
+    ),
     (
         "Zgoda rodziców — osoby niepełnoletnie",
         "Podpisana przez oboje rodziców lub opiekunów.",
+        EXTRA_FILES,
+        "zgoda_rodzicow_niepelnoletni.pdf",
     ),
 ]
 
+DOCUMENT_SOURCE = pathlib.Path(__file__).resolve().parents[1] / "data" / "documents"
+
+
+# The county office's tables, as the school published them on their old site.
+# Every caption is read off the scan itself rather than off the file name: the
+# alt text on the old page had 2020_2 labelled with a paragraph of marketing
+# copy, and the scan says it is the whole of 2020 rather than a quarter.
+SCAN_SOURCE = pathlib.Path(__file__).resolve().parents[1] / "data" / "passrate-scans"
+
+PASS_RATE_SCANS: list[tuple[int, str, str]] = [
+    (2021, "I kwartał 2021", "2021_1.jpg"),
+    (2020, "Cały 2020 rok", "2020_2.jpg"),
+    (2020, "I kwartał 2020", "2020_1.jpg"),
+    (2019, "IV kwartał 2019", "2019_4.jpg"),
+    (2019, "III kwartał 2019", "2019_3.jpg"),
+    (2019, "II kwartał 2019", "2019_2.jpg"),
+]
+
+
+def seed_pass_rate_scans() -> None:
+    """One row per scan, with the image attached once.
+
+    Same rule as the documents: a row that already has an image keeps it, so
+    re-running the seed never overwrites what the owner uploaded.
+    """
+    from django.core.files import File
+
+    from apps.core.models import PassRateScan
+
+    for order, (year, title, filename) in enumerate(PASS_RATE_SCANS, start=10):
+        row, _created = PassRateScan.objects.update_or_create(
+            title=title,
+            defaults={"year": year, "order": order, "is_published": True},
+        )
+
+        if row.image:
+            continue
+
+        source = SCAN_SOURCE / filename
+        if not source.exists():
+            print(f"  PassRateScan {title}: {filename} not in data/passrate-scans/")
+            continue
+
+        with source.open("rb") as handle:
+            row.image.save(filename, File(handle), save=True)
+
 
 def seed_downloads() -> None:
+    """The rows, and the pdf on each of them.
+
+    The file is attached only when the row has none: re-running the seed must
+    not replace a pdf the owner uploaded in the admin with the copy that came
+    off their old site. That is the whole idempotency rule of tech.md section
+    12 applied to a file field.
+    """
+    from django.core.files import File
+
     from apps.core.models import DownloadFile
 
-    for order, (title, description) in enumerate(DOWNLOADS, start=10):
-        DownloadFile.objects.update_or_create(
+    for order, (title, description, group, filename) in enumerate(DOWNLOADS, start=10):
+        row, _created = DownloadFile.objects.update_or_create(
             title=title,
-            defaults={"description": description, "order": order, "is_published": True},
+            defaults={
+                "description": description,
+                "group": group,
+                "order": order,
+                "is_published": True,
+            },
         )
+
+        if row.file:
+            continue
+
+        source = DOCUMENT_SOURCE / filename
+        if not source.exists():
+            print(f"  DownloadFile {title}: {filename} not in data/documents/")
+            continue
+
+        with source.open("rb") as handle:
+            row.file.save(filename, File(handle), save=True)
 
 
 USEFUL_LINKS = [
@@ -659,6 +758,7 @@ def run() -> None:
     seed_courses()
     seed_price_items()
     seed_pass_rates()
+    seed_pass_rate_scans()
     seed_downloads()
     seed_links()
     seed_pages()

@@ -17,7 +17,7 @@ class PageTranslationOptions(TranslationOptions):
 
 @register(DownloadFile)
 class DownloadFileTranslationOptions(TranslationOptions):
-    fields = ("title", "description")
+    fields = ("title", "description", "group")
 
 
 @register(PassRate)

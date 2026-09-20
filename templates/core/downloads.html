@@ -16,7 +16,10 @@ sending the pdfs over.
 
 {% block content %}
 
+{# pb-0: the header's bottom padding plus the section's top padding left
+   282px of nothing between the lead and the first group. #}
 <c-page-header eyebrow="{% translate 'Dokumenty' %}" title="{% translate 'Do pobrania' %}"
+               class="pb-0"
                lead="{% translate 'Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować.' %}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <c-slot name="aside">
@@ -33,8 +36,19 @@ sending the pdfs over.
 </c-page-header>
 
 <c-section id="pliki">
-  {% if documents %}
-    <c-download-list :items="documents" />
+  {% if document_groups %}
+    {# One block per group, the way the school itself sorts them. A single
+       undivided list of five buries the distinction that matters: three of
+       these have to be read or signed before the first lesson and two of them
+       most candidates never open. #}
+    <div class="flex flex-col gap-12">
+      {% for label, items in document_groups %}
+        <div>
+          {% if label %}<c-heading level="2">{{ label }}</c-heading>{% endif %}
+          <c-download-list :items="items" class="{% if label %}mt-8{% endif %}" />
+        </div>
+      {% endfor %}
+    </div>
   {% else %}
     <c-empty title="{% translate 'Pliki są w drodze' %}" phone="{{ site_settings.phone_primary }}">
       {% translate "Komplet dokumentów wydajemy w biurze przy zapisie. Jeśli chcesz je zobaczyć wcześniej — zadzwoń, wyślemy mailem." %}

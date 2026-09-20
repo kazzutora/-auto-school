@@ -21,8 +21,12 @@ Takes: items — rows carrying .title, .description, .url and .size.
 {% endcomment %}
 <ul class="grid gap-4 sm:grid-cols-2 {{ class }}" {{ attrs }}>
   {% for item in items %}
-    <li>
-      <c-card class="flex h-full flex-col gap-4">
+    {# flex on the li, not only h-full on the card. A grid item stretches, but
+       the card inside it is a block measuring against a height it never
+       claimed, so two cards in a row ended up different heights whenever one
+       description wrapped and the other did not. #}
+    <li class="flex">
+      <c-card class="flex h-full w-full flex-col gap-4">
         <div class="flex items-start gap-4">
           <span aria-hidden="true"
                 class="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-line bg-brand-50 u-muted-on-ground">

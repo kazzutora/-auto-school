@@ -5,7 +5,14 @@ from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TranslationAdmin
 from solo.admin import SingletonModelAdmin
 
-from apps.core.models import DownloadFile, OpeningHours, Page, PassRate, SiteSettings
+from apps.core.models import (
+    DownloadFile,
+    OpeningHours,
+    Page,
+    PassRate,
+    PassRateScan,
+    SiteSettings,
+)
 from apps.core.services import first_attempt_percent, human_size
 
 
@@ -40,6 +47,14 @@ class PassRateAdmin(TranslationAdmin):
     @admin.display(description=_("Za pierwszym razem"))
     def first_attempt(self, obj: PassRate) -> str:
         return f"{first_attempt_percent(obj)} %"
+
+
+@admin.register(PassRateScan)
+class PassRateScanAdmin(admin.ModelAdmin):
+    list_display = ("title", "year", "order", "is_published")
+    list_filter = ("is_published", "year")
+    search_fields = ("title",)
+    list_editable = ("order", "is_published")
 
 
 @admin.register(DownloadFile)

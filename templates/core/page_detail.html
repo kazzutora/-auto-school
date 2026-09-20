@@ -166,6 +166,32 @@ nothing.
   </c-section>
 {% endif %}
 
+{# ------------------------------------------------- the paper behind them #}
+{% if about and scan_years %}
+  {# The block of figures above says 72% and 90 candidates. This is where those
+     numbers come from: the Starostwo Powiatowe in Wieluń publishes a table per
+     period comparing every school in the county, and the school is one row of
+     it. A figure a visitor can check is worth more than a figure they have to
+     take on trust, which is why the old site put these up in the first place.
+
+     Grouped by year, newest first, and each opens full size — a table at
+     thumbnail size is a grey rectangle. #}
+  <c-section id="zestawienia" tone="default" size="compact">
+    <c-slot name="heading">{% translate "Zestawienia zdawalności" %}</c-slot>
+    <c-slot name="sub">{% translate "Dane Starostwa Powiatowego w Wieluniu. Kliknij, żeby zobaczyć całą tabelę." %}</c-slot>
+
+    <div class="flex flex-col gap-10">
+      {% for year, scans in scan_years %}
+        <div>
+          <p class="label u-muted-on-ground"><span class="data">{{ year }}</span></p>
+          {% translate "Podgląd zestawienia" as scan_label %}
+          {% include "gallery/_lightbox.html" with items=scans tile="core/_scan_tile.html" grid="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" testid="passrate-scans-{{ year }}" label=scan_label %}
+        </div>
+      {% endfor %}
+    </div>
+  </c-section>
+{% endif %}
+
 {% if instructors %}
   <c-section id="instruktorzy" tone="muted" size="compact">
     <c-slot name="heading">{% translate "Instruktorzy" %}</c-slot>

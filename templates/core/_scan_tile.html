@@ -1,0 +1,21 @@
+{% load i18n %}
+{# One county table. The scan opens in the lightbox; the period stays on the
+   card.
+
+   ratio="tile", not "a4". These are landscape sheets between 1.09 and 1.26
+   wide, and an A4 box crops a table to a column of it — 4/3 is the closest
+   fixed ratio the picture component offers and it keeps the whole sheet. #}
+<c-card padded="" class="w-full">
+  <button type="button" x-on:click="show({{ position }})" aria-haspopup="dialog"
+          {# object-contain, not the component's own cover. A table cropped to
+             fill a box loses its heading, which is the line that says which
+             quarter it is — the 2021 sheet is 1.09 wide against the tile's
+             4/3 and lost its title to the crop. #}
+          class="u-photo block w-full overflow-hidden border-b border-line bg-brand-50 transition [&_img]:object-contain">
+    <c-picture :image="item.image" alt="{{ item.alt }}" ratio="tile"
+               sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+    <span class="sr-only">{% blocktranslate with title=item.title %}Powiększ skan: {{ title }}{% endblocktranslate %}</span>
+  </button>
+
+  <p class="p-5 text-small font-bold u-on-ground">{{ item.title }}</p>
+</c-card>

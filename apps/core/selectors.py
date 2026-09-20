@@ -6,7 +6,7 @@ which touches no ORM. This module only decides which rows a page may see.
 
 from django.db.models import QuerySet
 
-from apps.core.models import DownloadFile, PassRate
+from apps.core.models import DownloadFile, PassRate, PassRateScan
 
 
 def published_pass_rates() -> QuerySet[PassRate]:
@@ -31,3 +31,13 @@ def published_downloads() -> QuerySet[DownloadFile]:
     shorter list, and the owner_data report already tracks the gap.
     """
     return DownloadFile.objects.filter(is_published=True).exclude(file="").order_by("order", "id")
+
+
+def published_pass_rate_scans() -> QuerySet[PassRateScan]:
+    """The county office's tables, newest year first.
+
+    A row without an image never reaches the page: the field is required, but
+    a file can go missing from storage, and a broken img on the one block whose
+    job is to prove the figures is worse than a shorter list.
+    """
+    return PassRateScan.objects.filter(is_published=True).exclude(image="")

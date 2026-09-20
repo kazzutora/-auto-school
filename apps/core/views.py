@@ -356,15 +356,32 @@ def downloads(request: HttpRequest) -> HttpResponse:
         (_("Do pobrania"), reverse("core:downloads")),
     ]
 
-    documents = [
-        {
+    # Grouped, in the order the rows come back, and the group headings come
+    # from the rows themselves. The school splits its papers into the ones a
+    # candidate needs before the course starts and the ones they may never
+    # need at all — which is the distinction the old site drew and the one
+    # that costs a second trip to the office when it is missing.
+    #
+    # A row with no group joins the first one rather than starting a nameless
+    # heading: the field is blank by default, and a new document the owner
+    # adds in a hurry belongs somewhere.
+    groups: list[tuple[str, list[dict[str, str]]]] = []
+    for row in published_downloads():
+        entry = {
             "title": row.title,
             "description": row.description,
             "url": row.file.url,
             "size": human_size(row.size_bytes),
         }
-        for row in published_downloads()
-    ]
+        label = row.group or (groups[0][0] if groups else "")
+        for name, items in groups:
+            if name == label:
+                items.append(entry)
+                break
+        else:
+            groups.append((label, [entry]))
+
+    documents = [entry for _label, items in groups for entry in items]
 
     return render(
         request,
@@ -378,6 +395,7 @@ def downloads(request: HttpRequest) -> HttpResponse:
             ),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "documents": documents,
+            "document_groups": groups,
             "enrol_url": ENROL_URL,
         },
     )
@@ -539,6 +557,24 @@ def _enrolment_steps(site: SiteSettings) -> list[dict[str, Label]]:
     ]
 
 
+def _scans_by_year() -> list[tuple[int, list[Any]]]:
+    """Pass rate scans grouped by year, newest first.
+
+    The grouping is done here rather than with a regroup tag so the template
+    keeps no logic and the order comes from the model's Meta, which is where
+    the owner's ordering already lives.
+    """
+    from apps.core.selectors import published_pass_rate_scans
+
+    years: list[tuple[int, list[Any]]] = []
+    for scan in published_pass_rate_scans():
+        if years and years[-1][0] == scan.year:
+            years[-1][1].append(scan)
+        else:
+            years.append((scan.year, [scan]))
+    return years
+
+
 def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
     """A flat page, tech.md section 5.
 
@@ -594,6 +630,10 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "body": render_markdown(page.body),
             "breadcrumbs": [{"title": name, "url": url} for name, url in trail],
             "about": about,
+            # The county office's tables, grouped by year the way the school's
+            # own site grouped them. Only on /o-nas/, and only where the block
+            # of figures they back up already is.
+            "scan_years": _scans_by_year() if about else [],
             "facts": _about_facts(site, instructors) if about else [],
             "enrolment": enrolment,
             "steps": _enrolment_steps(site) if enrolment else [],
