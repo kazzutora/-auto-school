@@ -46,14 +46,12 @@ the site, and a reader halfway through a price list should not lose it.
       </li>
     {% endif %}
 
-    {# The channel, on the play icon it has always had: there is no youtube
-       glyph in the sprite and a fourth brand mark in a row of three is one
-       logo too many. #}
+    {# The channel, on its own mark now that the sprite carries one. #}
     {% if site_settings.youtube_url %}
       <li>
         <a href="{{ site_settings.youtube_url }}" rel="noopener" target="_blank" aria-label="YouTube"
            class="u-social{% if size == 'sm' %} u-social-sm{% endif %}">
-          <c-icon name="play" size="sm" />
+          <c-icon name="youtube" size="sm" />
         </a>
       </li>
     {% endif %}
