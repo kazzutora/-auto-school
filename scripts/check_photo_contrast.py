@@ -49,7 +49,7 @@ VIEWPORTS = ((390, 844), (768, 1024), (1440, 900), (1920, 1080))
 
 COLLECT = """() => {
     const out = [];
-    for (const ground of document.querySelectorAll('.u-photo-ground')) {
+    for (const ground of document.querySelectorAll('.u-photo-ground, .u-over-photo')) {
         // Leaves only: a wrapper's box covers its children and would drag in
         // the empty half of the hero, where there is no text and the scrim is
         // deliberately transparent.
@@ -89,11 +89,32 @@ COLLECT = """() => {
 HIDE_TEXT = """() => {
     const style = document.createElement('style');
     style.textContent = `
-      .u-photo-ground, .u-photo-ground * {
+      .u-photo-ground, .u-photo-ground *,
+      .u-over-photo, .u-over-photo * {
         color: transparent !important;
         text-decoration-color: transparent !important;
       }
-      .u-photo-ground svg { visibility: hidden !important; }
+      .u-photo-ground svg, .u-over-photo svg { visibility: hidden !important; }
+
+      /* The cookie banner is an overlay, not a ground. It is fixed to the
+       * bottom of the viewport and its own text is outside every photo
+       * region, so it stays opaque here while the measured text does not —
+       * and a box whose lower edge reaches the banner had the banner's dark
+       * paragraph sampled as the thing behind it. The centre-point guard
+       * above only catches a block the banner covers entirely.
+       *
+       * It is display:none rather than transparent because what has to be
+       * measured is the page underneath it, which is what the reader sees the
+       * moment the banner is dismissed. */
+      [data-cookie-banner] { display: none !important; }
+
+      /* The scribble belongs to the word, not to what is behind it. It is
+       * painted as a background on ::after, so making the text transparent
+       * leaves it standing, and .script is rotated — its axis aligned box
+       * contains its own stroke at any offset. The measurement that came back
+       * was the crimson stroke against crimson text, 1.00:1, about a word
+       * sitting on a pale field at 12:1. */
+      .u-scribbled::after { content: none !important; }
     `;
     document.head.appendChild(style);
 }"""

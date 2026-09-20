@@ -68,12 +68,32 @@ class Crop:
     # cutting 16:9 out of a 2400x3600 frame throws away three quarters of it,
     # and the quarter worth keeping is rarely the exact middle.
     focus: float = 0.5
+    # The same thing across, 0.0 left to 1.0 right, and it exists for the phone
+    # hero. Cutting 4:5 out of a 16:9 frame throws away more than half the
+    # width, and on a photograph whose subject stands to one side the centre is
+    # exactly where the subject is not.
+    focus_x: float = 0.5
 
 
 # PHOTOS.md section 4's table, to the kilobyte.
 HERO = (
     Crop("hero", (16, 9), 180 * KB, (960, 1440, 1920), focus=0.46),
     Crop("hero-tall", (4, 5), 120 * KB, (480, 960), focus=0.46),
+)
+
+# The school's own cars, and the frame is a banner rather than a photograph:
+# the car stands on the right and the left half is already faded to near white
+# for the words to sit on. So the wide cut is `band` at 21:9, which is within a
+# whisker of the source's own 2.21 and therefore keeps the whole composition —
+# a 16:9 cut would eat a fifth of the width, and the fifth it eats is the fade.
+#
+# The phone cannot use that frame: a 21:9 band on a portrait screen is a strip
+# with a thumbnail of a car in it. It gets a 4:5 cut pulled hard to the right,
+# which is the car alone, and the text sits under it on the page rather than
+# over it.
+FLEET = (
+    Crop("band", (21, 9), 140 * KB, (960, 1440, 1920)),
+    Crop("hero-tall", (4, 5), 120 * KB, (480, 960), focus=0.5, focus_x=0.92),
 )
 BAND = (Crop("band", (21, 9), 140 * KB, (960, 1440, 1920)),)
 CARD = (Crop("card", (3, 2), 90 * KB, (480, 960, 1440)),)
@@ -82,6 +102,7 @@ POSTER = (Crop("poster", (16, 9), 120 * KB, (960, 1440)),)
 # Which source file is cut to what. A file not named here is treated as a card,
 # which is the commonest shape and the safest default.
 ROLES: dict[str, tuple[Crop, ...]] = {
+    "hero-fleet": FLEET,
     "hero-dusk": HERO,
     "hero-motion": HERO,
     "hero-city": HERO,
@@ -126,13 +147,19 @@ def credited() -> set[str]:
     }
 
 
-def crop_to(image: Image.Image, ratio: tuple[int, int], focus: float) -> Image.Image:
+def crop_to(
+    image: Image.Image,
+    ratio: tuple[int, int],
+    focus: float,
+    focus_x: float = 0.5,
+) -> Image.Image:
     """Crop to an aspect ratio, keeping the part of the frame that matters."""
     want = ratio[0] / ratio[1]
     have = image.width / image.height
     if have > want:
         new_width = round(image.height * want)
-        left = round((image.width - new_width) * 0.5)
+        left = round((image.width - new_width) * focus_x)
+        left = max(0, min(left, image.width - new_width))
         return image.crop((left, 0, left + new_width, image.height))
     new_height = round(image.width / want)
     top = round((image.height - new_height) * focus)
@@ -235,7 +262,7 @@ def process(path: Path, watermark: bool) -> list[str]:
         original = original.convert("RGB")
 
         for crop in crops:
-            shape = crop_to(original, crop.ratio, crop.focus)
+            shape = crop_to(original, crop.ratio, crop.focus, crop.focus_x)
             usable = [width for width in crop.widths if width <= shape.width]
             if not usable:
                 problems.append(f"{path.name}: source too small for the {crop.name} crop")
@@ -263,18 +290,22 @@ def process(path: Path, watermark: bool) -> list[str]:
                     if not size:
                         continue
 
-                    # The fallback is as good as fits. One source — a 2400x3600
-                    # interior with a great deal of fine detail — came out 12 KB
-                    # over at the quality every other file managed comfortably,
-                    # and the choice there is between a fixed quality that
-                    # sometimes breaks the budget and a fixed budget that
-                    # sometimes costs quality. The budget is the one with a
-                    # reason behind it, so the quality gives way, and only for
-                    # the file that needs it.
-                    if fmt == "JPEG":
-                        while size > ceiling and quality > 55:
-                            quality -= 6
-                            size = write(resized, target, fmt, quality)
+                    # Every lossy format is as good as fits. One source — a
+                    # 2400x3600 interior with a great deal of fine detail —
+                    # came out 12 KB over at the quality every other file
+                    # managed comfortably, and the choice there is between a
+                    # fixed quality that sometimes breaks the budget and a
+                    # fixed budget that sometimes costs quality. The budget is
+                    # the one with a reason behind it, so the quality gives
+                    # way, and only for the file that needs it.
+                    #
+                    # This was JPEG only until a hero came in 1 KB over in
+                    # webp. The rule had nothing to do with the format — a
+                    # ceiling that only one of three encoders respects is a
+                    # ceiling that reports rather than holds.
+                    while size > ceiling and quality > 55:
+                        quality -= 6
+                        size = write(resized, target, fmt, quality)
 
                     if width == max(usable) and size > ceiling:
                         problems.append(
@@ -282,7 +313,8 @@ def process(path: Path, watermark: bool) -> list[str]:
                             f"{ceiling / KB:.0f} KB PHOTOS.md allows for a {crop.name}"
                             + (" fallback" if fmt == "JPEG" else "")
                         )
-                    note = f"  (q{quality})" if fmt == "JPEG" and quality != FORMATS[2][2] else ""
+                    default = next(q for f, _e, q in FORMATS if f == fmt)
+                    note = f"  (q{quality})" if quality != default else ""
                     print(f"    {target.relative_to(OUT)}  {size / KB:6.1f} KB{note}")
     return problems
 

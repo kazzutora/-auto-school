@@ -38,27 +38,77 @@ is a forgery, not a placeholder.
 {% block content %}
 
 {# ============================================================== 1. HERO
-   C.1 block 1. The page's own blush ground, not a dark card: B.8 puts the one
-   dark block further down and the hero is where the crimson has to carry.
+   C.1 block 1, on the fleet. The photograph is the block's material and the
+   text lies on the dark half of it: the scrim is 94% opaque at the left edge
+   where the words are and gone by 88% of the width, where the cars are and
+   nothing is written.
 
-   The right hand side is the L plate on a brush stroke, and that is the
-   contract rather than a stand-in. C.1 block 1 asks for a cut-out photograph
-   of the school's own car there and says outright what to do without one: the
-   plate, never the render from the mockup. The mockup's car is a white Toyota
-   with the school's logo painted on it; no such car exists, and the badge on
-   it is somebody else's trademark.
+   TODO_OWNER — static/src/img/hero-fleet.jpg is not a photograph. It was
+   generated: the plates EWI 13150 and the ones behind it are invented, the
+   badge on the bonnet is Hyundai's, and no such line of cars exists. ROSE.md
+   A.3 asks for a picture of the school's own cars and this stands in for one
+   at the owner's request. Drop a real one in under the same name and run
+   `make optimize-photos`; nothing else has to change. CREDITS.txt says the
+   same beside the file.
 
    The heading is two lines with 60ms between them, REDESIGN.md C.3 row 2 —
    still in force, ROSE.md changes the palette and not the motion. The stagger
    is on the heading and nothing else: the subtitle is the largest element on
    the first screen, an element at opacity 0 is not painted, and putting it in
    the stagger cost 1s of LCP the one time it was tried.
-   ============================================================== #}
-<section class="relative overflow-hidden">
-  <c-ornament kind="brush" variant="2" class="u-brush-corner-tr" />
 
-  <div class="u-container relative grid items-center gap-10 py-14 md:py-20 lg:grid-cols-12 lg:gap-8">
-    <div class="lg:col-span-7">
+   No brush stroke here. B.7 puts them at the edges of a section and behind
+   photographs, and there is no behind on a block that is a photograph — laid
+   over one it is a smear nobody reads as a brush.
+   ============================================================== #}
+<section class="u-over-photo relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
+  {# Not a dark ground. The frame the owner sent is a banner, not a snapshot:
+     the car stands on the right and the left half is already faded to near
+     white for the words. So the text is the page's ordinary dark ink and the
+     photograph carries its own contrast, which is what a banner is for.
+
+     Two cuts. `band` is 21:9, a whisker off the source's own 2.21, so the
+     wide screen gets the composition whole — fade and all. A phone cannot
+     use that frame at all: 21:9 on a portrait screen is a strip with a
+     thumbnail of a car in it. Below lg the picture is a block at the top of
+     the section and the words sit under it on the page, not over it.
+
+     A third of the screen there and no more. At its own 4:5 that cut is 488px
+     tall on a 390 wide phone, which puts the whole heading below the fold —
+     the picture would be the first screen, and the first screen would say
+     nothing at all.
+
+     Between md and lg the band is back but the words are still below it, so
+     the frame's pale half is doing nothing — 768px of banner is 330px tall at
+     its own ratio and half of it is empty. Forcing 420px makes the box
+     narrower than 21:9, which is the only way `cover` crops width rather than
+     height, and object-right then keeps the car.
+
+     fetchpriority high and eager: this is the LCP element, REDESIGN.md C.6.
+     Everything else on the site is lazy. #}
+  {% translate "Samochód szkoły OSK Ostrycharz na placu o zachodzie słońca" as t_hero_alt %}
+  <c-photo stem="hero-fleet" crop="band" crop_mobile="hero-tall" alt="{{ t_hero_alt }}"
+           priority="1"
+           class="h-[34vh] max-h-[340px] min-h-[200px] w-full object-cover object-center
+                  md:h-[420px] md:max-h-none md:object-right
+                  lg:absolute lg:inset-0 lg:h-full lg:object-right" />
+
+  {# Only at lg, and only in paper. Below lg nothing lies over the picture, so
+     there is nothing to protect. At lg the words are back on the frame's pale
+     half, and this repeats that fade in the page's own ground so the ink
+     stays on a flat field even at the widths where `cover` eats the width
+     and walks the car leftwards. PHOTOS.md section 2, inverted. #}
+  <span aria-hidden="true" class="u-hero-scrim absolute inset-0 hidden lg:block"></span>
+
+  <div class="u-container relative grid w-full items-center gap-10 pb-16 pt-12 md:pb-20 md:pt-16 lg:pt-32 lg:pb-20 lg:grid-cols-12 lg:gap-8">
+    {# Five columns. The words have to end while the frame is still pale, and
+       the measurement is of the box rather than of the glyphs — a block's box
+       runs the full column whether or not the letters reach the end of it.
+       At six it reached 48% of the width, into the diagonal sweep, and
+       scripts/check_photo_contrast.py read the heading at 2.88 against the
+       greys showing through there. Five ends at 41%, where the scrim is still
+       all but solid, and the car keeps its own half untouched. #}
+    <div class="lg:col-span-5">
       <p class="script flex items-center gap-2">
         {% translate "Z nami zdasz" %}
         <c-ornament kind="heart" variant="1" class="h-6 w-6 shrink-0" />
@@ -82,11 +132,11 @@ is a forgery, not a placeholder.
       {# The scribble under the line, C.1 block 1. It is the mask from app.css
          rather than a rule: a straight underline under handwriting is the one
          detail that says the handwriting was set rather than written. #}
-      <p class="script mt-3 text-brand-700">
+      <p class="script mt-3">
         <span class="u-scribbled">{% translate "Bez stresu, bez problemu!" %}</span>
       </p>
 
-      <p class="u-narrow mt-6 text-body-lg text-ink-500">
+      <p class="mt-6 max-w-[33rem] text-body-lg text-ink-500">
         {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
       </p>
 
@@ -95,12 +145,18 @@ is a forgery, not a placeholder.
            a price in the hero and the design before it did, on purpose — so it
            is here as one line of the lead rather than as a block of its own,
            which is the smallest thing that keeps both true. #}
-        <p class="mt-4 u-body-on-ground">
+        <p class="mt-4 text-ink-500">
           {% blocktranslate with price=course.price_gross|floatformat:0 %}Kurs kat. B od {{ price }} zł{% endblocktranslate %}
         </p>
       {% endif %}
 
-      <div class="mt-8 flex flex-wrap gap-3">
+      {# The row is allowed past the column at lg. Five columns is 475px at
+         1440 and the two large pills come to 532, so inside the column they
+         stack — and the column is narrow for the heading's sake, not for
+         theirs. A button carries its own opaque fill, so the few dozen pixels
+         it borrows from the car's side are the one place on this block where
+         the text is not reading the photograph at all. #}
+      <div class="mt-8 flex flex-wrap gap-3 lg:w-max lg:flex-nowrap">
         <c-button variant="primary" size="lg" href="{{ enrol_url }}">
           {% translate "Zapisz się na kurs" %} <c-icon name="arrow-right" size="sm" />
         </c-button>
@@ -110,13 +166,9 @@ is a forgery, not a placeholder.
       </div>
     </div>
 
-    {# Under lg the plate goes below the text, C.1 point 9. #}
-    <div class="relative flex justify-center lg:col-span-5">
-      <c-ornament kind="brush" variant="4" class="u-brush absolute inset-0 m-auto h-full w-auto" />
-      <c-ornament kind="sparks" class="absolute -left-2 top-6 hidden h-16 w-auto text-brand-500 md:block" />
-      <img src="{% static 'img/brand/mark-l.svg' %}" width="240" height="292" alt="" aria-hidden="true"
-           class="relative h-56 w-auto md:h-72 lg:h-80">
-    </div>
+    {# The right hand column is empty on purpose: the car is there, in the
+       photograph. C.1 block 1 puts the school's car on this side, and this
+       is it. #}
   </div>
 </section>
 

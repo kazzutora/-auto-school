@@ -226,9 +226,15 @@
     color-scheme: light;
 
     /* The header's own height, in one place. Everything that has to clear it
-     * reads this rather than repeating the number. */
-    --header-h: 76px;
-    --header-h-scrolled: 64px;
+     * reads this rather than repeating the number.
+     *
+     * 88 and 74 since the owner's artwork replaced the drawn lockup and was
+     * then asked to be larger. The artwork is trimmed to its own ink — there
+     * is no margin inside the file — so the air around it is whatever the bar
+     * leaves: at 56px of lockup in the scrolled 74px bar, nine pixels above
+     * and below. It was 76 and 64 with a 44px lockup. */
+    --header-h: 88px;
+    --header-h-scrolled: 74px;
 
     /* REDESIGN.md C.3 — still in force, ROSE.md changes the palette and the
      * composition, not the motion contract. One curve on the whole site and
@@ -482,7 +488,11 @@
     font-family: theme('fontFamily.display');
     font-style: italic;
     @apply text-display font-extrabold uppercase;
-    color: rgb(var(--brand-500));
+    /* The crimson on a pale ground, and whatever the ground says otherwise —
+     * the same arrangement .script uses. On the hero photograph brand.500
+     * measures 3.9 against the scrim at its lightest, which is a heading that
+     * clears and a heading nobody wants to read. */
+    color: rgb(var(--display-ink, var(--brand-500)));
     overflow-wrap: break-word;
   }
 
@@ -680,6 +690,7 @@
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
     --focus: var(--brand-500);
+    --display-ink: var(--brand-500);
     /* The handwriting, and the two state colours, as the ground sees them.
      * All three are published per ground rather than fixed, because all three
      * are text and every ground on this site is a different luminance. */
@@ -920,10 +931,13 @@
     content: "";
     position: absolute;
     left: -0.1em;
+    /* Under the word rather than through it. At -0.22em it crossed the
+     * descenders, which looks like a marker rather than like a line drawn
+     * under a phrase. */
     right: -0.1em;
-    bottom: -0.22em;
-    height: 0.34em;
-    background: rgb(var(--brand-500));
+    bottom: -0.34em;
+    height: 0.24em;
+    background: rgb(var(--script-ink, var(--brand-500)));
     mask: var(--scribble) no-repeat center / 100% 100%;
     -webkit-mask: var(--scribble) no-repeat center / 100% 100%;
   }
@@ -1050,6 +1064,9 @@
    *
    * So the scrim is always the near black and the text on it always the near
    * white, whichever theme the rest of the page is in. */
+  /* A photograph is a ground like any other and publishes the same pair. It is
+   * fixed rather than themed: the picture is the picture in both themes, so
+   * what reads on it cannot swap. */
   .u-photo-ground {
     background-color: rgb(var(--fixed-ink));
     color: rgb(var(--fixed-paper));
@@ -1057,20 +1074,88 @@
     --on-ground: var(--fixed-paper);
     --on-ground-body: var(--fixed-paper);
     --on-ground-muted: 209 209 206;
+    --focus: var(--fixed-paper);
+    /* The big heading goes white and the handwriting goes to the pale pink of
+     * the logo. The crimson is a brand colour on a pale page; over a
+     * photograph at dusk it is one dark red on another. */
+    --display-ink: var(--fixed-paper);
+    --script-ink: var(--brand-200);
   }
 
   .u-photo-ground :is(h1, h2, h3, h4) {
     color: rgb(var(--fixed-paper));
   }
 
+  /* Paper, not ink. The hero's frame is a banner whose left half is already
+   * faded to near white for the words, so the text there is the page's own
+   * dark ink and the scrim's job is the opposite of the usual one: it holds
+   * that pale field steady rather than darkening a bright one.
+   *
+   * It is rendered only at lg — see the hidden lg:block on the span. Below
+   * that the picture is a block above the words and covers nothing. */
   .u-hero-scrim {
-    /* The phone: text lies over the whole frame, so the gradient is vertical
-     * and much stronger. Section 2's mobile stops. */
-    background-image: linear-gradient(
-      180deg,
-      rgb(var(--fixed-ink) / 0.55) 0%,
-      rgb(var(--fixed-ink) / 0.88) 55%,
-      rgb(var(--fixed-ink) / 0.97) 100%
+    background-image: none;
+  }
+
+  /* A marker, not a style. scripts/check_photo_contrast.py used to find its
+   * work by looking for .u-photo-ground, which is the class that republishes
+   * the light-on-dark tokens — so the day the hero stopped being dark, the
+   * gate stopped measuring it and reported "0 text blocks" as a pass. Text
+   * over a photograph is the thing being checked, and that is not the same
+   * fact as which way round the ink runs. This says the first one. Any block
+   * that lays words over a picture carries it; .u-photo-ground implies it. */
+  .u-over-photo {
+    position: relative;
+  }
+
+  /* The owner's own lockup, as artwork rather than as drawn geometry.
+   *
+   * A background rather than an <img>, and that is the whole reason the
+   * theming works without paying for it twice. Two <img> with one hidden per
+   * theme are two requests for one picture and the browser fetches both, which
+   * is 60 KB of header on every page. A background declared twice in css is
+   * fetched once — the rule that does not apply never loads its file.
+   *
+   * It costs the alt text, so the <a> around it carries the school's name in
+   * an aria-label and the span is decoration. That was already true: the link
+   * has had that label since the header was written.
+   *
+   * dark: is both the media query and the [data-theme] attribute here, the way
+   * tailwind.config.js defines it, so the explicit switch in the header moves
+   * the lockup too. A <picture> with a prefers-color-scheme source would have
+   * followed the system preference only and left a pale wordmark on a light
+   * page — the failure R9 point 1 is written to hunt down.
+   *
+   * image-set falls back on its own: a browser that cannot decode avif takes
+   * the webp, and the plain background-image line above it is for one that
+   * cannot parse image-set at all. */
+  .u-lockup {
+    aspect-ratio: 2091 / 496;
+    background-image: url("../img/brand/lockup-owner.webp");
+    background-image: image-set(
+      url("../img/brand/lockup-owner.avif") type("image/avif"),
+      url("../img/brand/lockup-owner.webp") type("image/webp")
+    );
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: contain;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .u-lockup {
+      background-image: url("../img/brand/lockup-owner-dark.webp");
+      background-image: image-set(
+        url("../img/brand/lockup-owner-dark.avif") type("image/avif"),
+        url("../img/brand/lockup-owner-dark.webp") type("image/webp")
+      );
+    }
+  }
+
+  :root[data-theme="dark"] .u-lockup {
+    background-image: url("../img/brand/lockup-owner-dark.webp");
+    background-image: image-set(
+      url("../img/brand/lockup-owner-dark.avif") type("image/avif"),
+      url("../img/brand/lockup-owner-dark.webp") type("image/webp")
     );
   }
 
@@ -1082,13 +1167,20 @@
    * horizontal one describes actually arrives. */
   @media (min-width: 1024px) {
     .u-hero-scrim {
-      /* The desktop: text in the left third, photograph to the right of it. */
+      /* The desktop: words in the left half, car to the right of them.
+       *
+       * It repeats the frame's own fade in the page's ground, and it has to,
+       * because `cover` crops width rather than height whenever the viewport
+       * is taller than 21:9 — and every pixel of width it crops walks the car
+       * further left, under the words. The frame's fade moves with the frame;
+       * this one does not. It is gone by 76%, where the car is. */
       background-image: linear-gradient(
         90deg,
-        rgb(var(--fixed-ink) / 0.94) 0%,
-        rgb(var(--fixed-ink) / 0.86) 32%,
-        rgb(var(--fixed-ink) / 0.35) 62%,
-        rgb(var(--fixed-ink) / 0) 88%
+        rgb(var(--ground)) 0%,
+        rgb(var(--ground) / 0.95) 34%,
+        rgb(var(--ground) / 0.62) 48%,
+        rgb(var(--ground) / 0.18) 62%,
+        rgb(var(--ground) / 0) 76%
       );
     }
   }
@@ -1527,6 +1619,20 @@
     .u-polaroid:hover {
       rotate: 0deg;
     }
+  }
+
+  /* No scribble over a photograph, and the reason is a measurement rather than
+   * a preference. `.script` is rotated, so the box a browser reports for it is
+   * the axis-aligned one — taller and wider than the words — and the stroke
+   * lands inside it whatever its offset. scripts/check_photo_contrast.py
+   * samples that box and reads the stroke as the ground behind the text, which
+   * is 1.00:1 once both are the same pink.
+   *
+   * It is the right answer for the picture too: a hand-drawn line under
+   * hand-drawn words, over a photograph at dusk, is a third texture in a place
+   * that already has two. */
+  .u-photo-ground .u-scribbled::after {
+    content: none;
   }
 
   /* ------------------------------------------------------------------ *
