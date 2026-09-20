@@ -64,8 +64,13 @@ elements rather than two <img> tags, which would fetch both.
          and the browser fetches both — 38 KB of header logo on every page,
          against the 400 KB the whole first screen gets in C.6. An included
          svg travels gzipped with the html and takes currentColor with it,
-         which is also what lets one file serve both themes. #}
-      <span class="block h-9 w-auto text-brand-700 sm:h-11 dark:text-brand-50 [&>svg]:h-full [&>svg]:w-auto">
+         which is also what lets one file serve both themes.
+
+         dark:text-ink, not dark:text-brand-50. brand.50 swaps with the theme
+         — it is the card face, which in the dark is #251C20 — so the lockup
+         came out near black on a near black page. ink is the token that means
+         "what reads on the ground", and it is pale there. #}
+      <span class="block h-9 w-auto text-brand-700 sm:h-11 dark:text-ink [&>svg]:h-full [&>svg]:w-auto">
         <svg viewBox="0 0 5151 1020" class="h-full w-auto" role="img"
              aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}">
           <use href="{% static 'img/brand/lockup-compact.svg' %}#lockup-compact"></use>
