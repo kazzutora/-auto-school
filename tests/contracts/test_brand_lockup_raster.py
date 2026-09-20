@@ -43,19 +43,34 @@ def test_both_themes_ship_in_both_formats(stem: str, suffix: str) -> None:
     assert path.stat().st_size < WEIGHT_CEILING, path.stat().st_size
 
 
-def test_the_slogan_is_out_but_the_wheel_is_whole() -> None:
-    """The crop is the thing that failed silently.
+def test_the_shipped_piece_is_trimmed_to_its_own_ink() -> None:
+    """The trim is the thing that failed silently.
 
-    Cutting straight across under the subline is the obvious way to drop the
-    slogan and the wrong one: the wheel reaches 0.812 of the height and the
-    plate 0.763, both below the slogan's own top at 0.725. The generator
-    erases the slogan's own rectangle instead and retrims, which leaves the
-    piece at 4.22:1. A horizontal cut leaves it near 5.4:1, so the ratio is
-    enough to tell the two apart.
+    Image.getbbox() counts any alpha above nothing at all, and these files
+    arrive with a haze of 1s and 2s reaching every edge of the canvas — so the
+    plain call trimmed nothing, and after the first piece's slogan was erased
+    it went on reporting the full height of a frame whose bottom eighth was
+    empty. The box on the page is sized by height, so an untrimmed file is a
+    mark that renders small with air around it and nothing that says why.
+
+    The assertion holds whatever piece is active: ink has to reach all four
+    edges. It does not care how the piece is composed, which is the point —
+    the owner has sent two of them and will send more.
     """
-    art = Image.open(BRAND / "lockup-owner.webp")
-    ratio = art.width / art.height
-    assert 4.1 < ratio < 4.35, f"{art.width}x{art.height} is {ratio:.2f}:1"
+    art = Image.open(BRAND / "lockup-owner.webp").convert("RGBA")
+    alpha = art.getchannel("A")
+    margin = 0.02  # the trim's own rounding, no more
+
+    def inked(box: tuple[int, int, int, int]) -> bool:
+        return any(p > 8 for p in alpha.crop(box).getdata())
+
+    edge_w = max(1, round(art.width * margin))
+    edge_h = max(1, round(art.height * margin))
+
+    assert inked((0, 0, edge_w, art.height)), "empty column down the left"
+    assert inked((art.width - edge_w, 0, art.width, art.height)), "empty column down the right"
+    assert inked((0, 0, art.width, edge_h)), "empty band across the top"
+    assert inked((0, art.height - edge_h, art.width, art.height)), "empty band across the bottom"
 
 
 def test_the_stylesheet_reserves_the_shape_the_file_has() -> None:
