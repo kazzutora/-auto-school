@@ -81,7 +81,8 @@ def test_a_route_rejoins_the_file_the_moment_it_has_content(client: Client, offe
 
     assert "/galeria/" not in paths(sitemap(client))
 
-    GalleryImage.objects.create(title="Plac manewrowy", is_published=True)
+    # GalleryImage names its caption `alt`; it has no title.
+    GalleryImage.objects.create(alt="Plac manewrowy", section="yard", is_published=True)
 
     assert "/galeria/" in paths(sitemap(client))
 

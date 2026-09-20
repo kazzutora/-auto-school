@@ -213,7 +213,10 @@ def test_the_404_page_offers_a_way_out(client: Client, settings_row: SiteSetting
     assert response.status_code == 404
     html = response.content.decode()
     assert "<h1" in html
-    for url in (reverse("courses:list"), reverse("courses:intakes"), reverse("core:contact")):
+    # courses:intakes was the fourth card until core v32. The page it led to
+    # is still routed and no longer linked from anywhere, so the 404 does not
+    # offer it either.
+    for url in (reverse("courses:list"), reverse("courses:pricing"), reverse("core:contact")):
         assert f'href="{url}"' in html
     assert f'href="tel:{settings_row.phone_primary.replace(" ", "")}"' in html
 

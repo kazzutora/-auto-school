@@ -193,12 +193,14 @@ def test_only_the_next_three_intakes_are_listed(client: Client) -> None:
         )
 
     body = body_of(client, "/kursy/kat-b/")
-    # The schedule block left this page: the school enrols by telephone and has
-    # no calendar to publish. What is left is the next start, on the card, and
-    # it is the soonest of the five rather than whichever came back first.
+    # The schedule block left this page long ago and the next start left the
+    # card at core v39: the school enrols by telephone and has no calendar to
+    # publish, so five rows in the table put no date anywhere on the page.
+    # The rows stay writable in the admin — this asserts the page ignores them
+    # rather than that they cannot exist.
     assert body.count("Zapisy otwarte") == 0
-    assert (today + timedelta(days=5)).strftime("%d.%m") in body
-    assert (today + timedelta(days=10)).strftime("%d.%m") not in body
+    for offset in (5, 10, 15, 20, 25):
+        assert (today + timedelta(days=offset)).strftime("%d.%m") not in body
 
 
 def test_past_and_closed_intakes_stay_off_the_page(client: Client) -> None:
@@ -460,27 +462,6 @@ def card_of(html: str) -> str:
     return aside.group()
 
 
-def test_the_card_offers_to_agree_a_term_when_there_is_none(client: Client) -> None:
-    """F5: never an empty slot where a date belongs."""
-    make_course()
-    card = card_of(body_of(client, "/kursy/kat-b/"))
-    assert "Zadzwoń, ustalimy termin" in card
-
-
-def test_the_card_shows_the_nearest_start_when_there_is_one(client: Client) -> None:
-    course = make_course()
-    CourseIntake.objects.create(
-        course=course,
-        start_date=timezone.localdate() + timedelta(days=9),
-        mode=CourseIntake.Mode.STATIONARY,
-        status=CourseIntake.Status.OPEN,
-    )
-
-    card = card_of(body_of(client, "/kursy/kat-b/"))
-    assert "Zadzwoń, ustalimy termin" not in card
-    assert (timezone.localdate() + timedelta(days=9)).strftime("%d.%m") in card
-
-
 def test_the_card_asks_for_the_price_when_there_is_none(client: Client) -> None:
     make_course(price_gross=None)
     card = card_of(body_of(client, "/kursy/kat-b/"))
@@ -515,6 +496,30 @@ def test_the_card_only_sticks_from_lg(client: Client) -> None:
     assert "sticky" not in classes
 
 
+def test_the_card_no_longer_offers_a_date(client: Client) -> None:
+    """The school does not run announced intakes, core v39.
+
+    Two tests stood here: one for the nearest start and one for the fallback
+    when there was none. Both are gone with the line itself — the fallback was
+    standing in for a fact that does not exist rather than for one nobody had
+    entered yet. What the card carries is how to enrol and a second reach for
+    the phone.
+    """
+    course = make_course()
+    CourseIntake.objects.create(
+        course=course,
+        start_date=timezone.localdate() + timedelta(days=9),
+        mode=CourseIntake.Mode.STATIONARY,
+        status=CourseIntake.Status.OPEN,
+    )
+
+    card = card_of(body_of(client, "/kursy/kat-b/"))
+
+    assert "Zadzwoń, ustalimy termin" not in card
+    assert (timezone.localdate() + timedelta(days=9)).strftime("%d.%m") not in card
+    assert "Zapisy" in card, "the card still says how to enrol"
+
+
 # --------------------------------------------------------------------------
 # FRONTEND_FIXES.md X3
 
@@ -530,16 +535,21 @@ def test_the_course_page_alternates_its_grounds(client: Client) -> None:
 
     So the page's one dark block sits mid page and the closing band takes the
     page ground. What has not moved is B.8 point 4: the page still ends on an
-    action. It is the ground that changed, not the rule, and the old assertion
-    checked the ground because that had been a fair proxy while the closing
-    band was the only inverted thing on the page.
+    action.
+
+    The alternation itself went at core v37, and this test is the inverse of
+    what it was. B.8 point 2 used to forbid two sections of one colour
+    touching, so every page laid the blush and the near-white band
+    alternately — five or six changes on a scroll, four per cent apart, which
+    is stripes rather than contrast. One ground per page now, and the contrast
+    is the single dark block the same rule already allowed.
     """
     course = make_course()
 
     body = body_of(client, course.get_absolute_url())
     grounds = section_grounds(body)
-    repeats = repeated_grounds(body)
-    assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"
+    changes = [i for i, g in enumerate(grounds) if i and g != grounds[i - 1]]
+    assert len(changes) <= 2, f"the ground changes {len(changes)} times: {grounds}"
     assert grounds.count("dark") <= 1, f"more than one dark block: {grounds}"
     assert grounds[-1] != "dark", "the last section is dark, straight above the dark footer"
 
@@ -641,20 +651,27 @@ def test_every_vehicle_named_is_in_the_sprite() -> None:
 
 
 def test_a_course_with_no_photo_leaves_no_broken_frame(client: Client) -> None:
-    """No marker panel, and no gap pretending to be one.
+    """No marker panel beside the heading, and the frame where the cars go.
 
     The previous client had eight categories that each looked different and a
-    framed placeholder per kind. One category needs one photograph: until the
-    owner uploads it the page simply runs without a picture, and the section on
-    our cars is where it asks for them.
+    framed placeholder per kind. One category needs one photograph, so the top
+    of the page simply runs without a picture — and the section on our cars is
+    where it asks for them.
+
+    That section shows a frame since core v38 rather than a line of text: the
+    owner asked to be able to see where a photograph goes, and "Miejsce na
+    zdjęcie" is the frame saying so. What the old assertion protected — no
+    placeholder pretending to be a picture at the top of the page — is checked
+    here where it belongs, above the fleet.
     """
     make_course(slug="kat-b", code="B", title="Prawo jazdy kat. B")
 
     body = body_of(client, "/kursy/kat-b/")
+    above_the_fleet = body[: body.index("Nasze samochody")]
 
-    assert "Miejsce na zdjęcie" not in body
+    assert "Miejsce na zdjęcie" not in above_the_fleet, "a frame above the fleet section"
     assert "Nasze samochody" in body
-    assert "Zdjęcia aut w przygotowaniu" in body
+    assert "Nasze auta szkoleniowe" in body, "the fleet section asks for photographs"
 
 
 def test_a_course_with_no_licence_letter_still_names_its_vehicle(client: Client) -> None:

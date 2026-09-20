@@ -6,11 +6,12 @@ from modeltranslation.admin import TranslationAdmin
 
 from apps.gallery.models import Certificate, GalleryImage
 from apps.gallery.tasks import build_renditions
+from apps.core.admin_site import ThumbnailAdminMixin
 
 
 @admin.register(GalleryImage)
-class GalleryImageAdmin(TranslationAdmin):
-    list_display = ("alt", "section", "order", "is_published", "legacy_name")
+class GalleryImageAdmin(ThumbnailAdminMixin, TranslationAdmin):
+    list_display = ("thumbnail", "alt", "section", "order", "is_published", "legacy_name")
     list_filter = ("section", "is_published")
     search_fields = ("alt", "caption", "legacy_name")
     list_editable = ("order", "is_published")
@@ -25,8 +26,8 @@ class GalleryImageAdmin(TranslationAdmin):
 
 
 @admin.register(Certificate)
-class CertificateAdmin(TranslationAdmin):
-    list_display = ("title", "issuer", "issued_on", "order", "is_published")
+class CertificateAdmin(ThumbnailAdminMixin, TranslationAdmin):
+    list_display = ("thumbnail", "title", "issuer", "issued_on", "order", "is_published")
     list_filter = ("is_published",)
     search_fields = ("title", "issuer", "description")
     ordering = ("order", "id")

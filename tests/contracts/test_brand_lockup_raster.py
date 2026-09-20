@@ -106,14 +106,21 @@ def test_the_dark_variant_is_actually_repainted() -> None:
 
     assert light.size == dark.size
 
-    def pale(image: Image.Image) -> int:
+    def inked(image: Image.Image) -> int:
+        """Pixels that are still the near-black the piece arrived with."""
         return sum(
             1
             for r, g, b, a in image.getdata()
-            if a > 200 and min(r, g, b) > 200
+            if a > 200 and max(r, g, b) < 90
         )
 
-    assert pale(dark) > 4 * max(pale(light), 1), (pale(light), pale(dark))
+    # The ink is counted, not the paper. The first version counted pale pixels
+    # and expected four times as many in the dark file, which held for a piece
+    # whose letters were black and broke on one whose letters are white with a
+    # crimson keyline: both files are then mostly pale and the ratio is 1.08.
+    # What the repaint actually does is remove the ink, and that is true of
+    # any piece.
+    assert inked(light) > 4 * max(inked(dark), 1), (inked(light), inked(dark))
 
 
 def test_the_pages_reference_both_variants() -> None:

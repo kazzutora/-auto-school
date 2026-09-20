@@ -70,8 +70,9 @@ here is decorative: every image is content, so every alt says what it shows.
       {# Three frames, not one notice. This page is photographs and nothing
          else, and a row of frames says what is coming far better than a line
          of text saying it. #}
+      {% translate "Galeria w przygotowaniu" as t_galeria_w_przygotowaniu %}
+      <p class="mb-8 font-bold u-on-ground">{{ t_galeria_w_przygotowaniu }}</p>
       <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% translate "Galeria w przygotowaniu" as t_galeria_w_przygotowaniu %}
         <li><c-photo-slot ratio="tile" title="{% translate 'Ośrodek' %}" /></li>
         <li><c-photo-slot ratio="tile" title="{% translate 'Plac manewrowy' %}" /></li>
         <li><c-photo-slot ratio="tile" title="{% translate 'Pojazdy' %}" /></li>

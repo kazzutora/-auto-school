@@ -325,7 +325,12 @@ def test_a_vehicle_without_a_photo_still_renders_but_an_instructor_does_not(
     assert "Adam Kowalski" not in body, (
         "an instructor with no photograph was rendered as a card; REDESIGN.md D.2"
     )
-    assert "<img" not in block(body, "instructors")
+    # The card list is absent rather than present and empty. It used to be
+    # rendered always and collapsed with css, which left the placeholder's
+    # words in the markup for a screen reader; the view filters now and the
+    # template asks {% if %}.
+    assert 'data-testid="instructors"' not in body
+    assert '<img' not in block(body, "instructors-empty")
 
 
 def test_inactive_records_stay_off_the_page(
@@ -368,9 +373,10 @@ def test_the_page_holds_its_query_count(
     _load(category, instructors=3, vehicles=3)
     client.get(ABOUT)  # warm the template cache
 
-    # page, instructors, their categories, vehicles, the category count, then
-    # site settings twice: the context processor and the DrivingSchool block.
-    with django_assert_num_queries(9):
+    # page, instructors, their categories, vehicles, the category count, the
+    # county pass rate scans added at core v38, then site settings twice: the
+    # context processor and the DrivingSchool block.
+    with django_assert_num_queries(10):
         client.get(ABOUT)
 
 
@@ -381,12 +387,12 @@ def test_more_people_and_more_cars_do_not_add_queries(
     _load(category, instructors=1, vehicles=1)
     client.get(ABOUT)
 
-    with django_assert_num_queries(9):
+    with django_assert_num_queries(10):
         client.get(ABOUT)
 
     _load(category, instructors=15, vehicles=15)
 
-    with django_assert_num_queries(9):
+    with django_assert_num_queries(10):
         client.get(ABOUT)
 
 

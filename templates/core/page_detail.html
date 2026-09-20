@@ -73,18 +73,17 @@ nothing.
        So a card needs a real photograph or there is no card, and a block with
        no photographs at all says so plainly instead of rendering a row of
        empty frames. tests/unit/test_about_page.py holds this. #}
-    {# CONTRACT GAP: the clean form of this is one line in apps/core/views.py —
-       `[person for person in instructors if person.photo]` — and a template
-       session may not write it. So the filtering happens in the loop and the
-       "none of them" case is carried by :empty on the collapsed list.
+    {# The CONTRACT GAP that stood here is closed: apps/core/views.py keeps
+       only the people who have a photograph, so the list and the fallback are
+       an {% if %} apart rather than a css trick.
 
-       {% spaceless %} is load bearing, not tidiness: :empty matches an element
-       with no children *and no text*, and a whitespace text node counts. Without
-       it the <ul> always contains a newline and never matches, so the fallback
-       would never appear. #}
-    {% spaceless %}
-      <ul data-testid="instructors" class="u-empty-hides grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {% for instructor in instructors %}{% if instructor.photo %}
+       That matters beyond tidiness. The trick hid the placeholder with
+       `:empty + .u-shown-when-empty`, which is a visual hide: the words
+       "Imię i nazwisko" stayed in the markup, and a screen reader read them
+       out beside a real instructor's name. #}
+    {% if instructor_cards %}
+      <ul data-testid="instructors" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {% for instructor in instructor_cards %}
           <li class="flex">
             <c-card padded="" class="w-full overflow-hidden">
               {# alt carries the name: the person is the content. #}
@@ -102,11 +101,14 @@ nothing.
               </div>
             </c-card>
           </li>
-        {% endif %}{% endfor %}
+        {% endfor %}
       </ul>
-    {% endspaceless %}
+    {% else %}
 
-    <div data-testid="instructors-empty" class="u-shown-when-empty">
+    <div data-testid="instructors-empty">
+      <p class="mb-8 font-bold u-on-ground">
+        {% translate "Zdjęcia instruktorów w przygotowaniu" %}
+      </p>
       {# Three cards shaped like the real ones: a square frame with the caption
          under it, so the owner can see in the admin what each row will look
          like on the page — the portrait, then the name, then the line about
@@ -140,6 +142,7 @@ nothing.
         {% endif %}
       </div>
     </div>
+    {% endif %}
   </c-section>
 {% endif %}
 

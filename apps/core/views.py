@@ -607,7 +607,22 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
 
     fleet = people.vehicles_by_course() if about else []
     # Loaded once. The facts row counts them and the team section prints them.
+    # Two lists, because the page asks two different questions of them.
+    #
+    # `instructors` is how many people teach here, and it is a fact about the
+    # school — the figure in "W liczbach" counts everyone on the staff whether
+    # or not anybody has sent a photograph in.
+    #
+    # `instructor_cards` is who gets a card, and REDESIGN.md D.2 is strict: an
+    # instructor card exists to put a face to a name, and without the face it
+    # is a box inviting somebody to fill it with a stock portrait. The
+    # filtering is here rather than in the template loop, which is the
+    # CONTRACT GAP the template carried — and the template needs the
+    # distinction rather than just the shorter list, because a css-only hide
+    # left "Imię i nazwisko" in the markup for a screen reader to read out
+    # beside a real instructor's name.
     instructors = list(people.active_instructors()) if about else []
+    instructor_cards = [person for person in instructors if person.photo]
     documents = (
         [
             {
@@ -650,6 +665,7 @@ def page_detail(request: HttpRequest, slug: str) -> HttpResponse:
             ),
             "documents": documents,
             "instructors": instructors,
+            "instructor_cards": instructor_cards,
             "vehicle_groups": fleet,
             # Counted from what is already loaded rather than asked for again:
             # the about page has a query budget and this is not worth one.

@@ -14,6 +14,7 @@ from apps.core.models import (
     SiteSettings,
 )
 from apps.core.services import first_attempt_percent, human_size
+from apps.core.admin_site import ThumbnailAdminMixin
 
 
 @admin.register(SiteSettings)
@@ -50,8 +51,8 @@ class PassRateAdmin(TranslationAdmin):
 
 
 @admin.register(PassRateScan)
-class PassRateScanAdmin(admin.ModelAdmin):
-    list_display = ("title", "year", "order", "is_published")
+class PassRateScanAdmin(ThumbnailAdminMixin, admin.ModelAdmin):
+    list_display = ("thumbnail", "title", "year", "order", "is_published")
     list_filter = ("is_published", "year")
     search_fields = ("title",)
     list_editable = ("order", "is_published")

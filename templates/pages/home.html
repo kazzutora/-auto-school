@@ -310,10 +310,13 @@ is a forgery, not a placeholder.
     {% for image in gallery_preview %}
       <li>
         <c-card padded="" class="overflow-hidden">
-          <c-picture :image="image.image" alt="{{ image.alt|default:image.title }}" ratio="tile"
+          {# alt and caption, which is what GalleryImage carries. It has no
+             title field, and a template naming one renders nothing and logs
+             a VariableDoesNotExist nobody reads. #}
+          <c-picture :image="image.image" alt="{{ image.alt }}" ratio="tile"
                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-          {% if image.title %}
-            <p class="p-4 text-small font-bold u-on-ground">{{ image.title }}</p>
+          {% if image.caption %}
+            <p class="p-4 text-small font-bold u-on-ground">{{ image.caption }}</p>
           {% endif %}
         </c-card>
       </li>
@@ -334,18 +337,16 @@ is a forgery, not a placeholder.
 
 {% if stat_items %}
 <section id="zdawalnosc" class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
-  {# C.1 block 4 wants a ragged pink band across the page with the figures on
-     it, and B.7 point 6 wants every piece of text on a flat fill. Both, by
-     making the strokes the band's two edges rather than a wash behind the
-     numbers.
+  {# No brush edges. C.1 block 4 asked for a ragged pink band across the page
+     with the figures on it, and the two strokes were how that was done
+     without laying the text on a wash — B.7 point 6 wants every piece of text
+     on a flat fill, and brand.500 at display size measures 2.75 on a flat
+     brand.200 band, under the 3.0 B.3 allows even a heading.
 
-     It is not only a rule. The figures are brand.500 at the display size, and
-     that colour is measured: 4.51 on the pale card face, 3.47 over a stroke
-     laid on the page, and 2.75 on a flat brand.200 band — which is under the
-     3.0 that B.3 allows even a heading. The arrangement that satisfies the
-     composition is also the only one of the three that clears AA. #}
-  <c-ornament kind="brush" variant="3" class="u-brush-edge-top" />
-  <c-ornament kind="brush" variant="3" class="u-brush-edge-bottom" />
+     The band itself is what went, at core v42: the page runs on one ground
+     since v37, and two pale strokes on a near-white band a few per cent from
+     the page read as smudges rather than as a band. The figures keep their
+     flat fill and their 4.51, which is what the measurement was protecting. #}
   <div class="u-container relative">
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div>

@@ -53,7 +53,16 @@ TECH_MD_COMPONENTS: dict[str, set[str]] = {
     "hours_table": {"department"},
     "map": {"lat", "lng", "zoom", "label", "height"},
     "icon": {"name", "size", "label"},
-    "lang_switcher": set(),
+    # compact is the header's dropdown, v36: the row of three codes
+    # spent 132px of a line that also carries the lockup, the menu and
+    # the call button.
+    "lang_switcher": {"compact"},
+    # The school's accounts, v36. A network with a blank url gets no
+    # circle: a dead icon is a promise the page cannot keep.
+    "social_links": {"size", "label"},
+    # A frame where a photograph has not arrived, v38. It holds the
+    # ratio the picture will have, so the page does not reflow.
+    "photo_slot": {"ratio", "title", "note"},
     "cookie_banner": set(),
     "testimonials": {"items"},
     "nav": set(),

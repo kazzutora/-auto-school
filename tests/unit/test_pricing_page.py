@@ -274,15 +274,20 @@ def test_the_price_query_count_does_not_grow_with_the_offer(
     make_item()
     client.get("/cennik/")
 
-    # price items, the headline price off the course, the payments page, then
-    # site settings twice: the context processor and the DrivingSchool block.
-    with django_assert_num_queries(5):
+    # price items, the payments page, then site settings twice: the context
+    # processor and the DrivingSchool block.
+    #
+    # Four, not five. The fifth was the headline price read off the course for
+    # the card beside the title, and that card went at core v30: it carried
+    # "Kurs kat. B — 3 700,00 zł", which is the first of the three cards below
+    # it word for word, a screen higher up.
+    with django_assert_num_queries(4):
         client.get("/cennik/")
 
     for number in range(15):
         make_item(title=f"Usługa {number}")
 
-    with django_assert_num_queries(5):
+    with django_assert_num_queries(4):
         client.get("/cennik/")
 
 
@@ -426,8 +431,17 @@ def test_the_page_ends_on_an_invitation(client: Client) -> None:
     assert section_grounds(inside)[-1] != "dark"
 
 
-def test_no_two_sections_share_a_ground(client: Client) -> None:
-    """X1 point 7: two of the same colour in a row read as one long block."""
+def test_the_page_changes_ground_once(client: Client) -> None:
+    """The inverse of what X1 point 7 asked for, and core v37 is why.
+
+    The rule was that two sections of one colour must never touch, so the
+    groups alternated the blush page with the near-white band — four groups,
+    four changes of a colour four per cent away. That is not contrast on a
+    long page, it is stripes.
+
+    The one band left is the group of fees that do not go to the school, and
+    it is a band because that is a fact about the money rather than a rhythm.
+    """
     make_item(title="Kurs kategorii B", group="Kurs", unit="", price_gross=Decimal("3700"))
     make_item()
     PriceItem.objects.create(
@@ -435,5 +449,5 @@ def test_no_two_sections_share_a_ground(client: Client) -> None:
     )
 
     grounds = section_grounds(body_of(client))
-    repeats = repeated_grounds(body_of(client))
-    assert not repeats, f"sections {repeats} repeat the ground before them: {grounds}"
+    changes = [i for i, g in enumerate(grounds) if i and g != grounds[i - 1]]
+    assert len(changes) <= 2, f"the ground changes {len(changes)} times: {grounds}"

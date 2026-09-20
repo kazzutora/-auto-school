@@ -132,17 +132,26 @@ def test_there_is_no_psychology_lab(seeded: None) -> None:
     assert not OpeningHours.objects.filter(department=OpeningHours.DEPT.PSYCHOLOGY).exists()
 
 
-def test_documents_are_created_without_files(seeded: None) -> None:
-    """The pdfs are the school's and are not in this repository.
+def test_documents_are_created_with_the_school_s_own_files(seeded: None) -> None:
+    """The pdfs are the school's and they are in this repository now.
 
-    The rows exist so the admin has somewhere to upload them; the selector keeps
-    them off the page until one arrives, which is what stops a "Pobierz" button
-    pointing at nothing.
+    They used not to be: the rows existed so the admin had somewhere to upload
+    them, and the selector kept every one off the page until a file arrived.
+    The owner asked for their own five to be brought across from the old site
+    at core v33, so they live in data/documents/ and the seed attaches them.
+
+    The selector rule has not changed and is what this still holds: a row with
+    no file stays off the page, so a "Pobierz" button never points at nothing.
     """
     from apps.core.selectors import published_downloads
 
     assert DownloadFile.objects.count() == 5
-    assert not published_downloads().exists()
+    assert published_downloads().count() == 5, "the pdfs did not attach"
+
+    for row in published_downloads():
+        assert row.file, row.title
+        assert row.size_bytes, f"{row.title} has a file and no size"
+        assert row.group, f"{row.title} is in no group"
 
 
 def test_no_synthetic_review_can_reach_a_page(seeded: None) -> None:

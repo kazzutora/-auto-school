@@ -23,10 +23,13 @@ LOCALE = Path(__file__).resolve().parents[2] / "locale"
 # One word per language from the chrome every page carries: the navigation and
 # the footer. Checking a whole page instead would only prove what the fixtures
 # happen to contain.
+# Zdawalność was the third word here until core v32, when the page it named
+# was removed. The figures stayed — the home page still carries the band — but
+# the menu no longer says the word, so the chrome cannot be checked on it.
 CHROME = {
-    "pl": ("Cennik", "Zdawalność", "Kontakt"),
-    "ru": ("Цены", "Сдача экзамена", "Контакты"),
-    "uk": ("Ціни", "Складання іспиту", "Контакти"),
+    "pl": ("Cennik", "Zapisy", "Kontakt"),
+    "ru": ("Цены", "Запись", "Контакты"),
+    "uk": ("Ціни", "Запис", "Контакти"),
 }
 
 

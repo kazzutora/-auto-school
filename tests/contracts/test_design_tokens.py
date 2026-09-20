@@ -39,7 +39,9 @@ LIGHT = {
     "brand-link": (196, 45, 85),
     "brand-700": (161, 64, 82),
     "brand-900": (126, 43, 69),
-    "ink": (34, 27, 30),
+    # A warm charcoal since core v34, not the near black it was: #221B1E
+    # read as flat black beside the crimson. 10.66 against the page.
+    "ink": (66, 49, 58),
     "ink-500": (94, 74, 82),
     "ink-300": (156, 138, 145),
     "line": (235, 211, 217),
@@ -49,7 +51,9 @@ LIGHT = {
     # before this core did, and it is measured the same way: 5.68 on the page.
     "state-warn": (132, 84, 0),
     "fixed-paper": (255, 255, 255),
-    "fixed-ink": (34, 27, 30),
+    # The same warm charcoal as --ink since core v34, for the grounds whose
+    # pair must not swap with the theme.
+    "fixed-ink": (66, 49, 58),
     "on-wine": (255, 251, 250),
     "on-wine-muted": (242, 184, 198),
 }
@@ -110,6 +114,16 @@ EXTRA_ICONS = (
     "truck-trailer",
     # The one course taught on something that is not a road vehicle.
     "forklift",
+    # Where a photograph is going to be, core v38. It marks a frame the owner
+    # has not filled yet, so it sits with the pictograms rather than with the
+    # brand marks below.
+    "image",
+    # The four accounts the school posts on, core v36. They are in
+    # FILLED_ICONS: see the note there.
+    "facebook",
+    "instagram",
+    "tiktok",
+    "youtube",
 )
 
 ICONS = (
@@ -136,14 +150,21 @@ ICONS = (
     "star",
 )
 
-# The one symbol drawn as a fill rather than a stroke.
+# The symbols drawn as a fill rather than a stroke.
 #
 # B.6 sets the whole sprite at a 1.75 stroke on a 24 grid, and every pictogram
 # on the site obeys it. A play mark does not: it is a solid triangle everywhere
 # anybody has ever seen one, and an outlined one reads as a cursor rather than
 # as "press this". Named here so the exception is one line in a tuple rather
 # than a hole in the rule.
-FILLED_ICONS = ("play",)
+#
+# The four social marks joined it at core v36, and for a reason of the same
+# kind: they are the brands' own shapes, and being recognised at a glance is
+# the whole of their job. The first attempt drew them on the 1.75 grid like
+# everything else and produced three rounded squares nobody could tell apart.
+# They keep currentColor, so the rule they do obey is the one that matters —
+# an icon takes the colour of the text beside it.
+FILLED_ICONS = ("play", "facebook", "instagram", "tiktok", "youtube")
 
 
 def css() -> str:
