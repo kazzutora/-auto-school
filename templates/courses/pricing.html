@@ -65,29 +65,29 @@ złoty column line up digit under digit, A.5.
         </div>
       {% endif %}
 
-      {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
-         stops reading as one line. #}
-      <ul class="mt-6 max-w-[900px]">
-        {% for row in rows %}
-          <c-price-row title="{{ row.label }}" price="{{ row.price }}" note="{{ row.note }}"
-                       badge="{% if forloop.first and label == 'Kurs' %}{% translate 'Najczęściej wybierany' %}{% endif %}" />
-        {% endfor %}
-      </ul>
+      {# The course group is three cards side by side; everything else is a
+         list of rows.
 
-      {% if label == 'Kurs' %}
-        <div class="mt-8 max-w-[900px]">
-          <c-callout tone="accent" title="{% translate 'Co jest w cenie kursu' %}">
-            <ul class="flex flex-col gap-1">
-              <li>{% translate "Zajęcia teoretyczne i praktyczne w pełnym wymiarze." %}</li>
-              <li>{% translate "Egzamin wewnętrzny przed państwowym." %}</li>
-              <li class="flex flex-wrap items-center gap-2">
-                <strong>{% translate "Dowóz na egzamin państwowy" %}</strong>
-                <c-badge tone="brand">GRATIS</c-badge>
-              </li>
-              <li>{% translate "Klimatyzowane auta z bogatym wyposażeniem." %}</li>
-            </ul>
-          </c-callout>
-        </div>
+         The difference is what the reader is doing. Three variants of one
+         course is a choice, and a choice wants the options next to each other
+         with what each one buys under it. A tuition fee, an examination fee
+         and a certificate from the town hall are not a choice — they are a
+         bill, and a bill reads down a column. #}
+      {% if label == course_group and course_cards %}
+        <p class="script mt-2">{% translate "Wybierz kurs dopasowany do Ciebie" %}</p>
+        <ul class="mt-8 grid items-stretch gap-6 md:grid-cols-3">
+          {% for item in course_cards %}
+            <c-price-card :item="item" href="{{ enrol_url }}?kurs={{ item.pk }}" />
+          {% endfor %}
+        </ul>
+      {% else %}
+        {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
+           stops reading as one line. #}
+        <ul class="mt-6 max-w-[900px]">
+          {% for row in rows %}
+            <c-price-row title="{{ row.label }}" price="{{ row.price }}" note="{{ row.note }}" />
+          {% endfor %}
+        </ul>
       {% endif %}
     </c-section>
   {% endfor %}

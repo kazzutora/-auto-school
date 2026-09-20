@@ -183,20 +183,70 @@ def seed_courses() -> None:
     Course.objects.exclude(slug="kat-b").update(is_active=False)
 
 
-# tech.md section 1, transcribed to the złoty. Group, title, note, unit, price.
+# What every course variant buys, OSTRYCHARZ.md part A. The same four lines on
+# all three, because the course is the same course — the variants differ by
+# tempo and by gearbox, and that difference is the fifth line.
+#
+# The prices in the owner's mockup are 3700, 3900 and 4200. Two of those three
+# are invented: this school charges 4300 for both the fast track and the
+# automatic. ROSE.md A.3 — the look comes from the mockup, the numbers come
+# from here.
+COURSE_INCLUDES = (
+    "Zajęcia teoretyczne i praktyczne w pełnym wymiarze",
+    "Egzamin wewnętrzny przed państwowym",
+    "Dowóz na egzamin państwowy — gratis",
+    "Klimatyzowane auto z bogatym wyposażeniem",
+)
+
+# tech.md section 1, transcribed to the złoty. Group, title, note, unit, price,
+# what it includes, and whether the pricing page presses it.
 #
 # The group name is what the pricing page splits on and what the home page reads
 # as "the course itself", so it is not decoration.
-PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
-    ("Kurs", "Kurs kategorii B", "pełny kurs, dowóz na egzamin w cenie", "", "3700.00"),
-    ("Kurs", "Kurs przyspieszony", "ten sam program w dwa tygodnie", "", "4300.00"),
-    ("Kurs", "Skrzynia automatyczna", "cały kurs na automacie", "", "4300.00"),
+#
+# The basic course is the pressed one. The mockup presses its middle card and
+# the fast track sat there for a while to match, but the badge reads
+# "Najczęściej wybierany" — most often chosen — and that is a claim about what
+# this school's customers do, not a layout preference. Nobody has told us the
+# 4300 course outsells the 3700 one. BLOCKS.md B9, FRONTEND_FIXES.md X1 point 3
+# and OSTRYCHARZ.md all put the badge on kat. B, and it stays there until the
+# owner says otherwise — which they do by ticking another row in the admin.
+PRICE_ITEMS: list[tuple[str, str, str, str, str, tuple[str, ...], bool]] = [
+    (
+        "Kurs",
+        "Kurs kategorii B",
+        "pełny kurs, dowóz na egzamin w cenie",
+        "",
+        "3700.00",
+        (*COURSE_INCLUDES, "Tempo dopasowane do szkoły albo pracy"),
+        True,
+    ),
+    (
+        "Kurs",
+        "Kurs przyspieszony",
+        "ten sam program w dwa tygodnie",
+        "",
+        "4300.00",
+        (*COURSE_INCLUDES, "Ten sam program w dwa tygodnie"),
+        False,
+    ),
+    (
+        "Kurs",
+        "Skrzynia automatyczna",
+        "cały kurs na automacie",
+        "",
+        "4300.00",
+        (*COURSE_INCLUDES, "Cały kurs i egzamin na skrzyni automatycznej"),
+        False,
+    ),
     (
         "Jazdy doszkalające",
         "Jazda doszkalająca — manual",
         "",
         "za godzinę",
         "160.00",
+        (),
+        False,
     ),
     (
         "Jazdy doszkalające",
@@ -204,6 +254,8 @@ PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
         "cena dla osób, które robią u nas kurs",
         "za godzinę",
         "140.00",
+        (),
+        False,
     ),
     (
         "Jazdy doszkalające",
@@ -211,6 +263,8 @@ PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
         "",
         "za godzinę",
         "140.00",
+        (),
+        False,
     ),
     (
         "Opłaty zewnętrzne",
@@ -218,6 +272,8 @@ PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
         "opłata poza szkołą, u lekarza uprawnionego",
         "",
         "200.00",
+        (),
+        False,
     ),
     (
         "Opłaty zewnętrzne",
@@ -225,6 +281,8 @@ PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
         "opłata poza szkołą, w ośrodku egzaminowania",
         "",
         "230.00",
+        (),
+        False,
     ),
     (
         "Opłaty zewnętrzne",
@@ -232,15 +290,19 @@ PRICE_ITEMS: list[tuple[str, str, str, str, str]] = [
         "opłata poza szkołą, w urzędzie gminy",
         "",
         "17.00",
+        (),
+        False,
     ),
-    ("W cenie kursu", "Dowóz na egzamin", "w cenie kursu", "", "0.00"),
+    ("W cenie kursu", "Dowóz na egzamin", "w cenie kursu", "", "0.00", (), False),
 ]
 
 
 def seed_price_items() -> None:
     from apps.courses.models import PriceItem
 
-    for order, (group, title, note, unit, price) in enumerate(PRICE_ITEMS, start=10):
+    for order, (group, title, note, unit, price, includes, featured) in enumerate(
+        PRICE_ITEMS, start=10
+    ):
         PriceItem.objects.update_or_create(
             title=title,
             defaults={
@@ -248,6 +310,8 @@ def seed_price_items() -> None:
                 "unit": unit,
                 "price_gross": Decimal(price),
                 "note": note,
+                "includes": "\n".join(includes),
+                "featured": featured,
                 "order": order,
                 "is_active": True,
             },

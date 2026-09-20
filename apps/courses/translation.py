@@ -27,4 +27,6 @@ class CourseIntakeTranslationOptions(TranslationOptions):
 
 @register(PriceItem)
 class PriceItemTranslationOptions(TranslationOptions):
-    fields = ("title", "note", "unit", "group")
+    # includes is content the owner writes, so it is translated like the
+    # rest of it; featured is a flag and has nothing to translate.
+    fields = ("title", "note", "unit", "group", "includes")

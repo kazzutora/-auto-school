@@ -328,7 +328,16 @@ def pricing(request: HttpRequest) -> HttpResponse:
     """
     from apps.core.models import Page
 
-    groups = _ordered_groups(services.group_price_items(selectors.active_price_items()))
+    items = selectors.active_price_items()
+    groups = _ordered_groups(services.group_price_items(items))
+
+    # The course group is drawn as cards rather than as rows, so the template
+    # gets the model objects: a card needs `include_lines` and `featured`, and
+    # PriceRow is a flat label/price/note triple by design.
+    #
+    # Not a second query. The queryset is already evaluated by the grouping
+    # above, so this filters the rows in python and leaves the page on one.
+    course_cards = [item for item in items if item.group == COURSE_PRICE_GROUP]
 
     trail: list[tuple[Label, str]] = [(_("Start"), "/"), (_("Cennik"), reverse("courses:pricing"))]
     payments = Page.objects.filter(slug="platnosci", is_published=True).first()
@@ -353,6 +362,8 @@ def pricing(request: HttpRequest) -> HttpResponse:
                 if label
             ],
             "external_group": EXTERNAL_GROUP,
+            "course_group": COURSE_PRICE_GROUP,
+            "course_cards": course_cards,
             "headline_price": format_price(
                 selectors.active_courses().values_list("price_gross", flat=True).first()
             ),

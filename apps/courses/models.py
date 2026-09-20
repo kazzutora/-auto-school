@@ -111,8 +111,35 @@ class PriceItem(TimeStampedModel):
     order = models.PositiveSmallIntegerField(default=100)
     is_active = models.BooleanField(default=True)
 
+    # What the price buys, one line per item. The pricing page draws the three
+    # course variants as cards and each one lists what is in it, so the list
+    # has to be data: the variants differ by a line or two, and a list written
+    # into the template would be the same list under three different prices.
+    #
+    # A textarea rather than a related model. It is a handful of short lines
+    # per row, the owner edits them in one box, and a table of them would be a
+    # second admin screen for something nobody will ever query.
+    includes = models.TextField(
+        blank=True,
+        verbose_name=_("Co zawiera cena"),
+        help_text=_("Po jednej pozycji w wierszu. Puste — karta pokaże samą cenę."),
+    )
+
+    # The card the pricing page presses. One per group: two highlighted cards
+    # are two answers to a question that has one.
+    featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Wyróżniony"),
+        help_text=_("Wyróżnia kartę w cenniku. Jedna w grupie."),
+    )
+
     class Meta:
         ordering = ("group", "order", "id")
 
     def __str__(self) -> str:
         return self.title
+
+    @property
+    def include_lines(self) -> list[str]:
+        """`includes` as the template wants it: trimmed, empty lines dropped."""
+        return [line.strip() for line in self.includes.splitlines() if line.strip()]

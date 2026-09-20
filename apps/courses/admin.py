@@ -160,8 +160,16 @@ class CourseIntakeAdmin(TranslationAdmin):
 class PriceItemAdmin(TranslationAdmin):
     """The rows of the price list that belong to no course."""
 
-    list_display = ("title", "group", "price_gross", "unit", "is_active", "order")
-    list_filter = ("is_active", "group")
-    list_editable = ("is_active", "order")
+    list_display = (
+        "title",
+        "group",
+        "price_gross",
+        "unit",
+        "featured",
+        "is_active",
+        "order",
+    )
+    list_filter = ("is_active", "featured", "group")
+    list_editable = ("featured", "is_active", "order")
     search_fields = ("title", "note", "group")
     ordering = ("group", "order", "id")

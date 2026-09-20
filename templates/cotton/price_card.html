@@ -1,0 +1,74 @@
+<c-vars item="" href="" class="" />{% load i18n %}
+{% comment %}
+A price card, ROSE.md B.5 and the owner's own pricing mockup.
+
+The three course variants side by side: a name, the price in the display face,
+what the price buys, and the button that takes it. One card per PriceItem row
+in the "Kurs" group, so the owner reprices in the admin and the cards follow.
+
+**The featured card is the item's own flag, not the loop counter.** The mockup
+presses its middle card; which one this school would rather press is a decision
+about the business, so it lives in the database and the admin has a tick box
+for it. Two pressed cards are two answers to a question that has one, and the
+page above this one is what enforces the rule.
+
+The pressed card carries the crimson ground and the fixed white pair with it,
+so it reads the same in both themes — B.2's fills do not swap. The quiet ones
+are the pale card face with a hairline, which is the same card the rest of the
+site uses.
+
+The list comes from `includes`, one line per item, and a row with none prints
+no list at all rather than an empty box. A tick per line, in the crimson on a
+quiet card and in white on the pressed one — the ground publishes which.
+{% endcomment %}
+<li class="flex">
+  <div class="relative flex w-full flex-col rounded-card p-6 transition
+{% if item.featured %} u-ground-brand shadow-card-hover md:-my-3 md:py-9{% else %} border border-line bg-brand-50 shadow-card md:mt-4{% endif %} {{ class }}"
+    {{ attrs }}>
+
+    {# In the flow, above the heading, not absolutely positioned over it. It
+       sat at -top-3 for one screenshot and covered the first word of the name
+       it was pointing at. #}
+    {% if item.featured %}
+      <p class="label mb-3 inline-flex h-7 w-fit self-start items-center rounded-full bg-brand-900 px-3 u-fixed-paper">
+        {% translate "Najczęściej wybierany" %}
+      </p>
+    {% endif %}
+
+    <h3 class="font-display text-h3 font-extrabold uppercase italic leading-tight u-on-ground">
+      {{ item.title }}
+    </h3>
+
+    <p class="mt-3 flex items-baseline gap-1">
+      <span class="u-bignum text-data-2xl{% if not item.featured %} text-brand-500{% endif %}">
+        {{ item.price_gross|floatformat:0 }}
+      </span>
+      <span class="data text-body font-bold u-on-ground">zł</span>
+      {% if item.unit %}<span class="text-small u-muted-on-ground">/ {{ item.unit }}</span>{% endif %}
+    </p>
+
+    {% if item.note %}
+      <p class="mt-2 text-small u-muted-on-ground">{{ item.note }}</p>
+    {% endif %}
+
+    {% if item.include_lines %}
+      <ul class="mt-6 flex flex-col gap-2 text-small u-body-on-ground">
+        {% for line in item.include_lines %}
+          <li class="flex items-start gap-2">
+            <c-icon name="check" size="sm" class="mt-0.5 shrink-0 u-on-ground" />
+            <span>{{ line }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if href %}
+      <p class="mt-auto pt-8">
+        <c-button variant="{% if item.featured %}outline{% else %}primary{% endif %}"
+                  href="{{ href }}" full="1">
+          {% translate "Wybieram" %} <c-icon name="arrow-right" size="sm" />
+        </c-button>
+      </p>
+    {% endif %}
+  </div>
+</li>

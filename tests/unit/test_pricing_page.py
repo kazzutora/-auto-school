@@ -55,6 +55,21 @@ def rows_of(body: str) -> str:
     return "".join(re.findall(r"<li[^>]*>(.*?)</li>", body, re.S))
 
 
+def card_prices(body: str) -> list[str]:
+    """The headline number of every price card.
+
+    The course group is cards rather than rows since core v30, and a card
+    prints its price as a headline: 3700, to the zloty, no decimals and no
+    grouping, the same way the hero says "Kurs kat. B od 3700 zl". The rows
+    below still print it to the grosz -- a bill is read that way, a headline
+    is not.
+
+    `.u-bignum` is the card's price and nothing else on this page.
+    """
+    found = re.findall(r'<span class="u-bignum[^"]*">(.*?)</span>', body, re.S)
+    return [m.strip() for m in found]
+
+
 def test_the_route_matches_the_url_map() -> None:
     """tech.md sections 5 and 7."""
     assert reverse("courses:pricing") == "/cennik/"
@@ -118,12 +133,16 @@ def test_every_published_price_reaches_the_page(client: Client) -> None:
 
     seed.seed_price_items()
 
-    table = rows_of(body_of(client)).replace(" ", " ")
+    body = body_of(client)
+    table = rows_of(body).replace(" ", " ")
 
+    # The three course variants are cards now, so their figures are headlines.
+    assert card_prices(body) == ["3700", "4300", "4300"]
+    for name in ("Kurs kategorii B", "Kurs przyspieszony", "Skrzynia automatyczna"):
+        assert name in body, name
+
+    # Everything else is a row and keeps the grosz.
     for label, amount in (
-        ("Kurs kategorii B", "3 700,00"),
-        ("Kurs przyspieszony", "4 300,00"),
-        ("Skrzynia automatyczna", "4 300,00"),
         ("Jazda doszkalająca — manual", "160,00"),
         ("Jazda doszkalająca — automat", "140,00"),
         ("Badanie lekarskie", "200,00"),
@@ -344,9 +363,21 @@ def test_a_group_the_owner_invents_still_appears(client: Client) -> None:
 
 
 def test_the_most_wanted_variant_is_marked(client: Client) -> None:
-    """X1 point 3: the standard course, and only it."""
+    """X1 point 3: the standard course, and only it.
+
+    The badge used to be the loop counter -- whichever row came first in the
+    "Kurs" group wore it. It is `PriceItem.featured` since core v30, because
+    the badge says most often chosen, and that is a claim about what this
+    school's customers do. A claim like that belongs in the school's own
+    database, where the owner can move it, not in a template's forloop.first.
+    """
     make_item(
-        title="Kurs kategorii B", group="Kurs", unit="", order=10, price_gross=Decimal("3700")
+        title="Kurs kategorii B",
+        group="Kurs",
+        unit="",
+        order=10,
+        price_gross=Decimal("3700"),
+        featured=True,
     )
     make_item(
         title="Kurs przyspieszony", group="Kurs", unit="", order=20, price_gross=Decimal("4300")
@@ -358,8 +389,14 @@ def test_the_most_wanted_variant_is_marked(client: Client) -> None:
     body = body_of(client)
 
     assert body.count("Najczęściej wybierany") == 1
-    marked = body[body.index("Najczęściej wybierany") - 400 : body.index("Najczęściej wybierany")]
+
+    # The badge stands above the name it points at, so the name is downstream
+    # of it. It sat over the heading for one screenshot and covered the first
+    # word of the course it was meant to be pointing at.
+    at = body.index("Najczęściej wybierany")
+    marked = body[at : at + 400]
     assert "Kurs kategorii B" in marked
+    assert "Kurs przyspieszony" not in marked
 
 
 def test_the_page_ends_on_an_invitation(client: Client) -> None:
