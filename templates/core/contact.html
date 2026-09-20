@@ -91,15 +91,13 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
       {# A.10 puts the hours beside the number, not in a section of their own:
          somebody reading a phone number wants to know whether calling now is
          any use. #}
-      <div class="grid gap-8 sm:grid-cols-2" id="godziny">
-        <div class="min-w-0">
-          <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
-          <c-hours-table department="office" data-testid="hours-office" />
-        </div>
-        <div class="min-w-0">
-          <p class="label mb-3 u-muted-on-ground">{% translate "Pracownia psychologiczna" %}</p>
-          <c-hours-table department="psychology" data-testid="hours-psychology" />
-        </div>
+      {# One column, not two. The psychology lab had its own hours here and the
+         school does not run one — it was inherited from the previous client's
+         page and nobody had taken it down. A department nobody can visit is
+         worse than a gap: somebody drives to Asnyka 7 for it. #}
+      <div id="godziny">
+        <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
+        <c-hours-table department="office" data-testid="hours-office" />
       </div>
     </div>
 

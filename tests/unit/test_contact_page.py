@@ -217,9 +217,9 @@ def test_the_indicator_is_right_on_the_boundaries(
     clock(moment)
     office_hours(moment.weekday(), time(9, 0), time(17, 0))
 
-    # The psychology lab has no rows at all, so it always reads closed and the
-    # office badge is the only one that can move.
-    assert badges(page(client)) == [expected, "Zamknięte"]
+    # One badge on the page, not two. The psychology lab's table used to sit
+    # beside the office's and always read closed; the school does not run one.
+    assert badges(page(client)) == [expected]
 
 
 def test_a_day_off_reads_closed(client: Client, site: SiteSettings, clock: Any) -> None:
@@ -228,10 +228,18 @@ def test_a_day_off_reads_closed(client: Client, site: SiteSettings, clock: Any) 
     clock(sunday)
     office_hours(sunday.weekday(), None, None)
 
-    assert badges(page(client)) == ["Zamknięte", "Zamknięte"]
+    assert badges(page(client)) == ["Zamknięte"]
 
 
-def test_both_departments_get_their_own_table(client: Client, site: SiteSettings) -> None:
+def test_only_the_office_has_hours_on_the_page(client: Client, site: SiteSettings) -> None:
+    """The page shows the office and nothing else.
+
+    The psychology lab had its own column here, inherited from the previous
+    client. This school does not run one, and a department with an address and
+    opening hours is not a stray label — somebody drives to Asnyka 7 for it.
+    The rows stay writable in the admin, so the assertion is that the page
+    ignores them rather than that they cannot exist.
+    """
     office_hours(0, time(9, 0), time(17, 0))
     OpeningHours.objects.create(
         department=OpeningHours.DEPT.PSYCHOLOGY, weekday=1, opens=time(8, 0), closes=time(16, 0)
@@ -239,9 +247,11 @@ def test_both_departments_get_their_own_table(client: Client, site: SiteSettings
     body = page(client)
 
     assert "09:00" in block(body, "hours-office")
-    assert "08:00" in block(body, "hours-psychology")
     assert "Biuro" in body
-    assert "Pracownia psychologiczna" in body
+
+    assert "Pracownia psychologiczna" not in body
+    assert 'data-testid="hours-psychology"' not in body
+    assert "08:00" not in body
 
 
 # --------------------------------------------------------------------------
@@ -313,12 +323,16 @@ def test_the_two_states_differ_by_more_than_colour(
     Green against grey is invisible to a good few people, so open and closed
     have to be told apart by the word, by the border and by the mark as well.
     """
-    clock(WEDNESDAY.replace(hour=12, minute=0))
     office_hours(WEDNESDAY.weekday(), time(9, 0), time(17, 0))
 
-    body = page(client)
-    open_now = indicator(body, "office")
-    closed = indicator(body, "psychology")
+    # Both states off the one badge the page still has. It used to read the
+    # closed half off the psychology lab, which was closed because it had no
+    # rows rather than because the clock said so — a weaker fixture than this,
+    # and it died with the column.
+    clock(WEDNESDAY.replace(hour=12, minute=0))
+    open_now = indicator(page(client), "office")
+    clock(WEDNESDAY.replace(hour=20, minute=0))
+    closed = indicator(page(client), "office")
 
     assert "Otwarte teraz" in open_now
     assert "Zamknięte" in closed
