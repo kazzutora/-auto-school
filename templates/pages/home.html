@@ -126,7 +126,10 @@ is a forgery, not a placeholder.
            russian sentence breaks, and makemessages duly guessed "Автомобили"
            for `jazdy`. #}
         <span class="block" style="--i: 0">{% translate "Prawo jazdy" %}</span>
-        <span class="block text-h2 text-ink" style="--i: 1">{% translate "w Wieluniu" %}</span>
+        {# No text-ink: utilities beat the components layer, and this line is
+           inside the h1 — it takes the paper fill and the crimson keyline
+           the rest of the heading has. #}
+        <span class="u-outlined block text-h2" style="--i: 1">{% translate "w Wieluniu" %}</span>
       </h1>
 
       {# The scribble under the line, C.1 block 1. It is the mask from app.css

@@ -378,11 +378,40 @@
    * Setting it here is what keeps `<em>` meaning emphasis inside a heading
    * instead of meaning nothing.
    * ------------------------------------------------------------------ */
+  /* The big headings are set the way the wordmark is: paper fill, crimson
+   * keyline. They were near black, which is the one thing on the page that
+   * belonged to no part of the school's own lettering.
+   *
+   * Two tokens rather than two colours, so a ground can take them back. The
+   * wine band, the crimson tile and the pink tile all publish a heading
+   * colour of their own already — on those the keyline goes transparent,
+   * because a crimson line on a crimson ground is nothing and a crimson line
+   * on the wine is mud.
+   *
+   * The stroke is in em, so it grows with the heading. At a fixed px it was
+   * a hairline on the h1 and a slab on the h2 — the two are 60px and 28px
+   * apart at the ends of their clamps.
+   *
+   * These are large text by WCAG's measure, so the floor is 3.0 rather than
+   * 4.5 and brand.500 clears it at 4.08 against the page. The nav had to go a
+   * shade darker for exactly this reason: it is small. */
+  h1,
+  h2,
+  /* The same treatment for a line that is not itself a heading: the second
+     line of the hero's h1 sits inside a .display, and .display publishes the
+     crimson, so the line inherited crimson on crimson and the keyline
+     vanished into its own fill. */
+  .u-outlined {
+    color: rgb(var(--head-ink, var(--fixed-paper)));
+    paint-order: stroke fill;
+    -webkit-text-stroke: 0.048em rgb(var(--head-line, var(--brand-500)));
+  }
+
   h1,
   h2 {
     font-family: theme('fontFamily.display');
     font-style: italic;
-    @apply uppercase text-ink;
+    @apply uppercase;
     text-wrap: balance;
   }
 
@@ -729,6 +758,7 @@
   }
 
   .u-ground-wine :is(h1, h2, h3, h4) {
+    -webkit-text-stroke-color: transparent;
     color: rgb(var(--on-ground));
   }
 
@@ -766,6 +796,7 @@
   }
 
   .u-ground-brand :is(h1, h2, h3, h4) {
+    -webkit-text-stroke-color: transparent;
     color: rgb(var(--fixed-paper));
   }
 
@@ -786,6 +817,7 @@
   }
 
   .u-ground-pink :is(h1, h2, h3, h4) {
+    -webkit-text-stroke-color: transparent;
     color: rgb(var(--fixed-ink));
   }
 
@@ -1130,7 +1162,7 @@
    * the webp, and the plain background-image line above it is for one that
    * cannot parse image-set at all. */
   .u-lockup {
-    aspect-ratio: 2091 / 496;
+    aspect-ratio: 2005 / 431;
     background-image: url("../img/brand/lockup-owner.webp");
     background-image: image-set(
       url("../img/brand/lockup-owner.avif") type("image/avif"),
@@ -1268,8 +1300,59 @@
    * hook for the current page — the attribute is already there for screen
    * readers, so nothing extra has to be kept in step.
    * ------------------------------------------------------------------ */
+  /* The menu set the way the owner's wordmark is: heavy italic uppercase,
+   * paper fill, crimson keyline. Rubik 800 italic is the display face the
+   * lockup's own lettering is cut from, so the row and the mark agree.
+   *
+   * Type, not the picture that was sent. These labels come from
+   * apps/core/navigation.py and they are translated — a sliced image of seven
+   * Polish words leaves /ru/ and /uk/ with a Polish menu, and leaves every
+   * reader with a menu they cannot select, resize or hear read out.
+   *
+   * -webkit-text-stroke rather than a shadow ring. It centres the stroke on
+   * the glyph outline, which eats into the fill, and at 800 weight there is
+   * enough letter to spare. paint-order is set for the engines that honour it
+   * on html: there the stroke goes behind the fill and no letter thins.
+   *
+   * The fill is fixed paper in both themes and so is the keyline's colour:
+   * these are the lockup's own fills, and ROSE.md B.2 does not swap fills with
+   * the theme.
+   *
+   * brand.600, not brand.500. The fill is paper on a blush page — 1.14:1, it
+   * carries nothing — so the whole of this row's legibility is in the keyline,
+   * and at brand.500 that measured 4.08 against the page where text this size
+   * wants 4.5. CLAUDE.md 6a already says it: small red text is brand.600 and
+   * darker. At brand.600 it is 4.79. On the dark ground the paper fill is
+   * doing the work and the keyline is decoration, so one colour serves both.
+   */
   .u-navlink {
     position: relative;
+    font-family: theme("fontFamily.display");
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+    /* 14px, not 15. Uppercase italic at 800 runs wider than the sentence
+     * case bold it replaced — the row went from 465px to 519px — and the
+     * lockup had grown by 75px in the same header. Measured at 1280, where
+     * the menu first appears, that left the polish and ukrainian rows sitting
+     * on their minimum 8px gaps with nothing in hand. A row that does not fit
+     * here does not wrap or clip: cotton/nav.html has the note, the overflow
+     * is printed, and Kontakt lands on top of the language switcher. */
+    font-size: 0.875rem;
+    letter-spacing: 0.005em;
+    color: rgb(var(--fixed-paper));
+    paint-order: stroke fill;
+    -webkit-text-stroke: 1.1px rgb(var(--brand-600));
+    transition: color var(--dur) var(--ease), -webkit-text-stroke-color var(--dur) var(--ease);
+  }
+
+  /* Pointed at, and the page you are on: the keyline fills in. An outline and
+   * a solid are further apart than two shades of one colour, which is what
+   * the underline below is there to reinforce rather than to carry alone. */
+  .u-navlink:hover,
+  .u-navlink[aria-current="page"] {
+    color: rgb(var(--brand-600));
+    -webkit-text-stroke-color: rgb(var(--brand-600));
   }
 
   .u-navlink::after {
