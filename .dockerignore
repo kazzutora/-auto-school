@@ -26,7 +26,9 @@ coverage.xml
 celerybeat-schedule*
 media
 staticfiles
-static/css
+# Only the built stylesheet: the css stage makes it. motion.css is a tracked
+# source, and without it the manifest storage fails every page with a 500.
+static/css/app.css
 deploy/backups
 tests/outbox
 test-results
