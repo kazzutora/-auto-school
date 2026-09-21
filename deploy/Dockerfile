@@ -34,6 +34,18 @@ COPY apps ./apps
 RUN tailwindcss -i static/src/css/app.css -o static/css/app.css --minify
 
 
+FROM builder AS photos
+
+# The crops are gitignored build artifacts, like the stylesheet, so a checkout
+# on the server has only the sources in static/src/img/. Without this stage the
+# image ships no photographs and every <picture> on the site is a 404.
+# PHOTOS_WATERMARK=1 builds the owner's demo: stock stamped, REDESIGN.md D.2.
+ARG PHOTOS_WATERMARK=
+COPY scripts/optimize_photos.py scripts/owned.txt ./scripts/
+COPY static/src/img ./static/src/img
+RUN python scripts/optimize_photos.py ${PHOTOS_WATERMARK:+--watermark}
+
+
 FROM python:3.12-slim AS messages
 
 # The catalogues ship compiled, and gettext stays out of the runtime image:
@@ -69,6 +81,7 @@ COPY --chmod=0755 deploy/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY --chown=app:app . /app
 COPY --from=css --chown=app:app /app/static/css/app.css /app/static/css/app.css
 COPY --from=messages --chown=app:app /app/locale /app/locale
+COPY --from=photos --chown=app:app /app/static/img /app/static/img
 
 WORKDIR /app
 USER app
