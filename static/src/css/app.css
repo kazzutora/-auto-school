@@ -2004,3 +2004,49 @@
     min-width: 0;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * The one place a ground has to reach into a component's utilities.
+ *
+ * `<c-button variant="primary">` names its colours as utilities —
+ * bg-brand-500, border-brand-500 — and utilities are a later layer than
+ * components, so no rule in @layer components can override them however
+ * specific it is. That is the whole reason this block exists and is at the
+ * bottom of the file: it is @layer utilities, where specificity decides
+ * again.
+ *
+ * What it fixes: the red band. A primary button standing on it is red on
+ * red — the label still reads at 4.86, but the button has no edge at all,
+ * which is WCAG 1.4.11 failed on the submit control of the enquiry form.
+ * The screenshot after the band went red at core v43 showed the words
+ * "Wyślij zgłoszenie" floating in the middle of the band with no button
+ * under them.
+ *
+ * So on this one ground the pair turns over: white pill, red label. That is
+ * the same inversion the outline button already does here, and it keeps the
+ * action reading as the action rather than as a line of text.
+ *
+ * Deliberately outside every @layer, and that is not a style choice. Written
+ * as `@layer utilities` this block was tree-shaken away: tailwind purges what
+ * it puts in that layer by matching class names against the content globs,
+ * and a descendant selector of three classes matches nothing it recognises,
+ * so the rule silently never reached the built file. Plain css at the end of
+ * the input is copied through untouched and lands after the utilities, which
+ * is exactly the position it needs.
+ * ------------------------------------------------------------------ */
+.u-ground-brand .u-btn.bg-brand-500 {
+  background-color: rgb(var(--fixed-paper));
+  border-color: rgb(var(--fixed-paper));
+  color: rgb(var(--brand-600));
+}
+
+/* The hover takes brand.200 and not brand.100. brand.100 is the page, and the
+ * page swaps with the theme: in the dark one this button would have gone to a
+ * near-black pill under a dark red label at 1.4. brand.200 is a fill and does
+ * not swap, so the hover is the same pale tint in both themes — 5.90 under
+ * the label and 4.56 against the band it stands on. */
+.u-ground-brand .u-btn.bg-brand-500:hover:not(:disabled) {
+  background-color: rgb(var(--brand-200));
+  border-color: rgb(var(--brand-200));
+  color: rgb(var(--brand-600));
+}

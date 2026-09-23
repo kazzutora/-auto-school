@@ -445,16 +445,21 @@ is a forgery, not a placeholder.
 {% endif %}
 
 {# ========================================================== 7. ZGŁOSZENIE
-   C.1 block 6, and the one dark block on the page, B.8. Wine rather than near
-   black: the palette has no black ground, and the band has to read as the same
-   brand as the crimson button on it.
+   C.1 block 6, and the one block on the page that is not the page. Red since
+   core v43, at the owner's request: this is the block the whole page is built
+   to reach, and it now says so in the school's own colour rather than in the
+   quieter dark band it used to carry.
+
+   It publishes the fixed pair, so the heading and the copy come out white and
+   the form's fields keep their pale face with dark text in them — the rule for
+   that is in app.css beside the fields, not here.
 
    The form is the same LeadForm the full page uses, in its compact mode. The
    fields left out are the ones apps/leads/forms.py does not mark required, so
    nothing here can produce a submission the server then rejects.
    ========================================================== #}
 <section class="reveal u-container u-section-compact">
-  <div class="u-ground-wine relative overflow-hidden rounded-hero p-8 md:p-12">
+  <div class="u-ground-brand relative overflow-hidden rounded-hero p-8 md:p-12">
     <c-ornament kind="brush" variant="2" class="u-brush-corner-tr u-brush-strong opacity-40" />
     <div class="relative grid gap-10 lg:grid-cols-12 lg:items-start">
       <div class="lg:col-span-5">
