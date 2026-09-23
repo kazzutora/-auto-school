@@ -161,65 +161,77 @@
    * brand.200, the pale tint, which is 1.14.
    * ------------------------------------------------------------------ */
   :root {
-    /* ---- the brand, off the owner's logo --------------------------- *
+    /* ---- the brand: red, white, graphite --------------------------- *
      *
-     * The logo is #EA232C red, #2A61AE blue, on white. The blue is used
-     * exactly; the red is not, and the reason is one number: white on
-     * #EA232C measures 4.40, and WCAG 2.2 1.4.3 wants 4.5 for text of this
-     * size. The button the whole site is built around carries a 16px label
-     * in white, so the fill is darkened by four percent to #E1141D, where
-     * the same pair measures 4.86. The two reds are indistinguishable side
-     * by side — R 234→225, G 35→20, B 44→29 — and the artwork itself keeps
-     * the exact logo colour: the mark in the header, the favicon, the PWA
-     * icons and the og card are all still #EA232C. */
+     * Three colours and no fourth. The owner's mark carries a blue as well,
+     * and core v44 takes it off the page rather than into the palette: the
+     * header and the footer now show the school's white-on-red lockup, which
+     * is their own second version of the mark and has no blue in it at all.
+     * A single blue plate in the header with nothing on the page to answer
+     * it reads as an accident rather than as a second brand colour.
+     *
+     * The red is #E1141D and not the mark's exact #EA232C, for one number:
+     * white on #EA232C measures 4.40, and WCAG 2.2 1.4.3 wants 4.5 for text
+     * of this size. The button the whole site is built around carries a 16px
+     * white label. Four percent darker clears it at 4.86, and the two are
+     * indistinguishable side by side — R 234→225, G 35→20, B 44→29. The
+     * artwork keeps the exact colour; scripts/check_contrast.py fails the
+     * build if it ever turns up in this file. */
 
     /* Action: button fills, the red band, the figures in the stat strip,
-     * the active menu item, large headings. White on it is 4.86. */
+     * the active menu item, large headings, the focus ring. White on it is
+     * 4.86, and it clears 3.0 against both light grounds as an object. */
     --brand-red: 225 20 29;
     /* Two jobs, both needing more depth than the fill has. It is the hover
      * state under a white label, 6.31; and it is the red as *text* — a
-     * price, a link, a small red line — where 4.86 on the page would have
-     * been fine and 4.50 on a card is cutting it far too close. */
+     * price, a link, a small red line — where the fill red measures 4.42 on
+     * the page and fails outright. */
     --brand-red-dark: 192 16 23;
     /* The tint: a badge behind dark text, a soft tile, the body of a brush
      * stroke. Never carries white — the gate refuses that pairing. */
     --brand-red-light: 253 236 237;
 
-    /* The logo's blue, exactly. The quiet half of every pair: the outline
-     * button, links in running text, the icons beside the advantages, the
-     * focus ring on a light ground, the language switcher. White on it is
-     * 6.14 and it reads as text on either light ground, 6.14 and 5.68. */
-    --brand-blue: 42 97 174;
-    --brand-blue-dark: 30 74 136;
-
-    /* The brand's near-black. A neutral with no cast in it: the palette this
-     * replaced carried a plum tint all the way down the ink ramp, which is
-     * exactly what made a red-white-blue mark look wrong on it.
+    /* Graphite. The third colour, and the one that does most of the work:
+     * every heading and every paragraph on the site, the outline button, the
+     * icons beside the advantages, the dark band and the footer.
      *
-     * This one is a *fill* and never swaps with the theme — it is the dark
-     * band and the label on a light tile. The body text below is a role and
-     * does swap, which is why the two are separate tokens: an alias would
-     * have turned the dark band pale the moment the dark theme lightened the
-     * text. */
-    --brand-ink: 22 24 29;
+     * Neutral with no cast in it, which is the whole point — the palette two
+     * cores back carried a plum tint all the way down the ink ramp, and that
+     * is what made a red mark look borrowed on it.
+     *
+     * A *fill*, and it never swaps with the theme: it is the dark band, the
+     * footer and the label on a light tile. The body text below is a role and
+     * does swap, which is why the two are separate tokens. An alias would
+     * have turned the footer pale the moment the dark theme lightened the
+     * text. White on it is 17.01. */
+    --brand-ink: 28 28 30;
+    /* One step up from it: a card standing on the graphite, and the hover of
+     * a graphite fill. 1.22 against the graphite, which is a surface reading
+     * as a surface rather than as text. */
+    --ink-soft: 44 44 48;
 
-    /* And its opposite, on the same terms. White is a fill wherever the pair
-     * must not swap — the label on a red button, the text on the dark band —
-     * and a role wherever it is simply the lightest surface. --surface is the
-     * role and moves in the dark theme; this does not. */
+    /* And graphite's opposite, on the same terms. White is a fill wherever
+     * the pair must not swap — the label on a red button, the text in the
+     * footer — and a role wherever it is simply the lightest surface.
+     * --surface is the role and moves in the dark theme; this does not. */
     --brand-paper: 255 255 255;
 
-    /* Text. 17.76 on white, 16.42 on the page. */
+    /* Text. 17.01 on white, 15.48 on the page. */
     --ink: var(--brand-ink);
-    /* Secondary text. 6.05 on white, 5.59 on the page. */
-    --muted: 92 99 112;
+    /* Secondary text. 5.30 on white, 4.82 on the page — the tightest pair in
+     * the table and still over the line. */
+    --muted: 107 107 112;
+    /* The same role on the graphite, where --muted measures 3.21 and fails.
+     * Published as its own token because the footer and the dark band need a
+     * quiet grey and cannot reach for the light theme's. 6.64 on graphite. */
+    --on-ink-muted: 161 161 170;
 
     /* Cards and the page under them. The card is white and the page a step
      * below it, so a card reads as lifted without a border; sections that
      * want to alternate take the white. */
     --surface: var(--brand-paper);
-    --surface-alt: 245 246 248;
-    --border: 226 229 234;
+    --surface-alt: 244 244 245;
+    --border: 228 228 231;
 
     /* ---- the role vocabulary the templates use --------------------- *
      *
@@ -240,20 +252,23 @@
      * text lightens to sit on a near-black page and the fill does not move. */
     --brand-link: var(--brand-red-dark);
 
-    /* The accent that is not the action. It was the logo's own darker
-     * red; under a two-colour mark it is the blue, which is what gives
-     * the second colour a job on every page rather than only on buttons. */
-    --brand-700: var(--brand-blue);
+    /* The accent that is not the action: the outline button's frame, the
+     * icons beside the advantages, a small piece of emphasis. Graphite at
+     * core v44 — it was the blue, and the blue is gone with it.
+     *
+     * A role rather than a fill, so it lightens in the dark theme: graphite
+     * on a graphite page is nothing. */
+    --brand-700: var(--brand-ink);
 
-    /* The one dark band on a page, B.8. Wine until core v43, neutral ink
-     * now: a warm dark band under a pure red mark read as a third colour. */
+    /* The dark band, and the footer. Wine until v43, near-black since, and
+     * graphite now — one token so the two never drift apart. */
     --brand-900: var(--brand-ink);
 
     --ink-500: var(--muted);
-    /* Disabled text and hairlines only, 2.71 on the page. Below the body
+    /* Disabled text and hairlines only, 2.66 on the page. Below the body
      * threshold on purpose: WCAG exempts a disabled control, and a disabled
      * button that reads at full strength is a button people keep pressing. */
-    --ink-300: 154 161 174;
+    --ink-300: 156 156 162;
 
     --line: var(--border);
 
@@ -274,17 +289,17 @@
      * Reaching for a card token there would be white in the light theme and
      * near black on red in the dark. */
     --fixed-paper: var(--brand-paper);
-    /* The same near-black where the pair must not swap with the theme: the
+    /* The same graphite where the pair must not swap with the theme: the
      * tinted tile, whose foreground is fixed because white on brand.200 is
-     * 1.14 and the gate forbids it outright. 15.6 on the tint. */
+     * 1.14 and the gate forbids it outright. 15.1 on the tint. */
     --fixed-ink: var(--brand-ink);
 
-    /* What sits on the dark band: its own foreground pair, published here so
-     * a component dropped into the band does not have to know it landed
-     * there. Both neutral — a pale pink secondary line on a neutral dark band
-     * was the last of the old palette still visible. */
+    /* What sits on the graphite — the dark band and the footer. Published
+     * here so a component dropped into either does not have to know where it
+     * landed. The muted half is its own token in the brand layer, because the
+     * page's --muted measures 3.21 on graphite and fails. */
     --on-wine: var(--brand-paper);
-    --on-wine-muted: 185 191 203;
+    --on-wine-muted: var(--on-ink-muted);
 
     color-scheme: light;
 
@@ -318,11 +333,13 @@
     --dur-panel: 260ms;
     --dur-hero: 500ms;
 
-    /* The two fills a brush stroke is drawn with, ROSE.md B.6: the body of the
-     * stroke and the dry streaks inside it. Named here so a stroke can be
-     * recoloured by a class instead of regenerating the file. */
-    --brush-a: var(--brand-red-light);
-    --brush-b: var(--brand-300);
+    /* How strongly a brush stroke paints. The colour is not here and cannot
+     * be: ROSE.md B.6 asks for a --brush-a and a --brush-b, and
+     * scripts/brand/gen_ornaments.py has the measurement showing why they
+     * never worked — a var() in a presentation attribute inside an externally
+     * referenced <use> resolves to nothing in Chrome. So one `color` drives
+     * the stroke and this drives its weight. The two dead variables were
+     * carried in this table until core v44. */
     --brush-opacity: 1;
 
     /* The scribbled underline as a mask. A mask takes a url and paints it with
@@ -351,34 +368,29 @@
    * data-theme="dark". Only the tokens whose role changes are redefined. */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
-      --surface-alt: 15 17 21;
-      --surface: 26 29 35;
-      --border: 45 50 59;
+      --surface-alt: 14 14 16;
+      --surface: 26 26 28;
+      --border: 46 46 51;
 
-      --ink: 237 240 245;
-      --muted: 165 172 184;
-      --ink-300: 107 115 128;
+      --ink: 237 237 240;
+      --muted: 161 161 170;
+      --ink-300: 107 107 112;
 
       /* Red text and links. The light theme's value is 1.55 on the dark page;
-       * this one is 8.36. The fills — brand.200, brand.500, brand.600 and the
-       * dark band — are not here, because they are the brand rather than a
-       * role and do not swap. The red fill measures 3.89 against this page
-       * and the blue 3.08, which is what a button as an object needs. */
+       * this one is 8.53. The fills — brand.200, brand.500, brand.600 — are
+       * not here, because they are the brand rather than a role and do not
+       * swap. The red fill measures 3.97 against this page, which is what a
+       * button as an object needs. */
       --brand-link: 255 138 144;
-      /* And the blue as text, 8.92. The logo's own blue is 2.0 here. */
-      --brand-700: 143 180 236;
-      /* Hover goes further from the ground, which on a dark page means
-       * lighter rather than darker. */
-      --brand-blue-dark: 185 208 245;
-      /* The one fill that does have to move, and the reason is arithmetic
-       * rather than taste: the dark band is the strongest block on a page,
-       * and #16181D on the dark theme's own #0F1115 page measures 1.06 —
-       * less separation than an ordinary card manages at 1.12. The band
-       * stopped being a band. This is as light as it can go before the red
-       * button standing on it drops under the 3.0 WCAG 1.4.11 wants of a
-       * control against its surround: 1.24 against the page, 3.13 under the
-       * button. */
-      --brand-900: 33 38 46;
+      /* The graphite accent, turned over. Graphite on a graphite page is
+       * nothing; this is 13.05. */
+      --brand-700: 212 212 216;
+      /* And the band, which is the one fill that has to move. It cannot go
+       * darker than the page it interrupts, so it goes lighter, and this is
+       * as light as it can get before the red button standing on it drops
+       * under the 3.0 WCAG 1.4.11 wants of a control against its surround:
+       * 1.26 against the page, 3.14 under the button, 15.27 under white. */
+      --brand-900: 37 37 41;
 
       /* Text on a dark ground, so lighter than the light theme's fills. */
       --state-ok: 74 190 145;
@@ -394,23 +406,37 @@
   }
 
   :root[data-theme='dark'] {
-    --surface-alt: 15 17 21;
-    --surface: 26 29 35;
-    --border: 45 50 59;
+    --surface-alt: 14 14 16;
+    --surface: 26 26 28;
+    --border: 46 46 51;
 
-    --ink: 237 240 245;
-    --muted: 165 172 184;
-    --ink-300: 107 115 128;
+    --ink: 237 237 240;
+    --muted: 161 161 170;
+    --ink-300: 107 107 112;
 
+    /* Red text and links. The light theme's value is 1.55 on the dark page;
+     * this one is 8.53. The fills — brand.200, brand.500, brand.600 — are
+     * not here, because they are the brand rather than a role and do not
+     * swap. The red fill measures 3.97 against this page, which is what a
+     * button as an object needs. */
     --brand-link: 255 138 144;
-    --brand-700: 143 180 236;
-    --brand-blue-dark: 185 208 245;
-    --brand-900: 33 38 46;
+    /* The graphite accent, turned over. Graphite on a graphite page is
+     * nothing; this is 13.05. */
+    --brand-700: 212 212 216;
+    /* And the band, which is the one fill that has to move. It cannot go
+     * darker than the page it interrupts, so it goes lighter, and this is
+     * as light as it can get before the red button standing on it drops
+     * under the 3.0 WCAG 1.4.11 wants of a control against its surround:
+     * 1.26 against the page, 3.14 under the button, 15.27 under white. */
+    --brand-900: 37 37 41;
 
+    /* Text on a dark ground, so lighter than the light theme's fills. */
     --state-ok: 74 190 145;
     --state-warn: 232 176 61;
     --state-err: 255 154 147;
 
+    /* The brush strokes hold their colour and drop to .35 here, so they
+     * stay a stroke of the brand instead of turning into a grey smear. */
     --brush-opacity: .35;
 
     color-scheme: dark;
@@ -647,20 +673,20 @@
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    /* The ring is the blue whatever the ground, because a field is pale
+    /* The ring is the red whatever the ground, because a field is pale
      * whatever the ground: --field is brand.50 on the page and brand.50 on the
      * dark band, so a ring that followed --focus came out white on white on
      * the one form the whole site is for.
      *
-     * Named rather than taken from --focus for that reason, and blue rather
-     * than red for two: a red ring on a form whose submit button is the same
-     * red says nothing about which of them has the keyboard, and the blue
-     * measures better where it actually lands — 6.14 on the card face and
-     * 5.68 on the page, against the red's 4.86 and 4.50. The halo outside it
-     * is still the ground's own. */
-    outline-color: rgb(var(--brand-blue));
+     * Named rather than taken from --focus for exactly that reason. Red is
+     * the only accent this palette has left, and it measures 4.86 on the card
+     * face and 4.42 on the page against the 3.0 WCAG 1.4.11 asks. What tells
+     * the focused field from the submit button beside it is not hue any more
+     * but shape: the field gets a 2px inset frame and a halo, the button a
+     * solid fill. The halo outside it is still the ground's own. */
+    outline-color: rgb(var(--brand-red));
     box-shadow:
-      inset 0 0 0 2px rgb(var(--brand-blue)),
+      inset 0 0 0 2px rgb(var(--brand-red)),
       0 0 0 4px rgb(var(--on-ground));
   }
 
@@ -814,22 +840,24 @@
     --on-ground: var(--ink);
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
-    /* The focus ring is blue, not red. Red is the colour of the thing being
-     * pressed; a ring in the same red around a red button is a ring that
-     * cannot be seen, and the one control on the site that most needs a
-     * visible ring is a form field, which has no red on it at all. The blue
-     * measures 5.68 against the page and 6.14 against a card, where WCAG
-     * 1.4.11 wants 3.0. Grounds that are themselves blue or red override it
-     * below. */
-    --focus: var(--brand-blue);
-    /* What a link, an outline button and a ghost button are painted with.
-     * Blue on every light ground, and the ground's own foreground on the
-     * ones that are themselves dark or coloured — the blue measures 1.4 on
-     * the dark band, so a ground that inverts has to take the colour back.
-     * It reads --brand-700 rather than --brand-blue so that the dark theme's
-     * lighter blue arrives here too. */
-    --link-ink: var(--brand-700);
-    --link-ink-hover: var(--brand-blue-dark);
+    /* The focus ring, 4.42 against the page and 4.86 against a card, where
+     * WCAG 1.4.11 wants 3.0. Grounds that are themselves red or graphite
+     * override it below, because a red ring on a red band is invisible. */
+    --focus: var(--brand-red);
+    /* What a link and a ghost button are painted with: this colour on every
+     * light ground, and the ground's own foreground on the ones that are
+     * themselves red or graphite — the red measures 1.9 on the dark band, so
+     * a ground that inverts has to take the colour back.
+     *
+     * Links, the outline button and the ghost button. Red at core v44 — the
+     * blue that held this job is gone with the palette. It reads
+     * --brand-link rather than --brand-red so that the dark theme's lighter
+     * red arrives here too, and because the fill red measures 4.42 on the
+     * page, which is under the 4.5 a link at body size needs. */
+    --link-ink: var(--brand-link);
+    /* Hover goes to the body ink, which is a role and turns over with the
+     * theme on its own: graphite on a light page, near-white on a dark one. */
+    --link-ink-hover: var(--ink);
     --display-ink: var(--brand-500);
     /* The handwriting, and the two state colours, as the ground sees them.
      * All three are published per ground rather than fixed, because all three
@@ -892,7 +920,7 @@
     --on-ground: var(--ink);
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
-    --focus: var(--brand-blue);
+    --focus: var(--brand-red);
   }
 
   /* The red as a ground rather than as a button fill: the active course
@@ -1027,16 +1055,15 @@
    * quieter half of a pair. A red frame beside a red fill made the two
    * buttons in every hero read as one control drawn twice.
    *
-   * It names the blue directly rather than reading --link-ink, and that is
-   * the whole reason --link-ink exists separately: --link-ink is the ground's
-   * own foreground on a ground that inverts, and this button does not sit on
-   * the ground. It paints its own card face underneath itself, so on the dark
-   * band and on the red band it took white text onto a white pill and came
-   * out as a blank lozenge with the label invisible inside it.
+   * It names --brand-700 directly rather than reading --link-ink, and that
+   * is the whole reason --link-ink exists separately: --link-ink is the
+   * ground's own foreground on a ground that inverts, and this button does
+   * not sit on the ground. It paints its own card face underneath itself, so
+   * on the dark band and on the red band it took white text onto a white pill
+   * and came out as a blank lozenge with the label invisible inside it.
    *
-   * --brand-700 rather than --brand-blue so the dark theme's lighter blue
-   * arrives here too: there the face is the dark card and the logo's blue
-   * would measure 1.9 on it.
+   * --brand-700 rather than --brand-ink because this one has to turn over
+   * with the theme: on the dark card face graphite would measure 1.1.
    */
   .u-btn-outline {
     border-color: rgb(var(--brand-700));
@@ -1053,10 +1080,15 @@
    * percent of the blue on the white pill in the light theme, and the same
    * eight percent of the lighter blue on the dark pill in the dark one. A
    * named light blue would have been wrong in one of the two. */
+  /* The hover fills rather than washes. Graphite is a colour that can carry
+   * a solid fill where the blue before it could not sit beside the red
+   * without arguing, and a secondary button that fills on hover reads as a
+   * control rather than as a link in a box. --ink-soft is a fill and does not
+   * swap, so the pair is the same in both themes: white on it is 13.91. */
   .u-btn-outline:hover:not(:disabled) {
-    background-color: rgb(var(--brand-700) / 0.08);
-    border-color: rgb(var(--brand-700));
-    color: rgb(var(--brand-700));
+    background-color: rgb(var(--ink-soft));
+    border-color: rgb(var(--ink-soft));
+    color: rgb(var(--brand-paper));
   }
 
   /* The ghost button, B.5: a label, an arrow, and a scribble under the word
@@ -1367,7 +1399,14 @@
    * the webp, and the plain background-image line above it is for one that
    * cannot parse image-set at all. */
   .u-lockup {
-    aspect-ratio: 1088 / 216;
+    aspect-ratio: 1165 / 293;
+    /* The mark is a plate since core v44 — white lettering on the school's
+     * own red field — so it has corners, and a square corner on a page whose
+     * every card and button is rounded reads as an image that failed to load.
+     * 6px rather than the card's 20: the plate is 56px tall in the header and
+     * a card radius on it would be a lozenge. */
+    border-radius: 6px;
+    overflow: hidden;
     background-image: url("../img/brand/lockup-owner.webp");
     background-image: image-set(
       url("../img/brand/lockup-owner.avif") type("image/avif"),
@@ -1861,6 +1900,16 @@
     color: rgb(var(--brand-500));
   }
 
+  /* On graphite the stroke goes red. It is drawn in the pale tint, which is
+   * nearly white, and a nearly-white shape the width of the footer is not a
+   * brush stroke on a dark block — it is a grey smear across the top of it.
+   * Red on graphite measures 3.50: a mark that reads as a mark without
+   * shouting over the words under it. */
+  .u-ground-wine .u-brush {
+    color: rgb(var(--brand-500));
+    opacity: 0.55;
+  }
+
   /* B.2's last dark-theme line: the strokes hold their colour and drop to .35,
    * so they stay a stroke of the brand rather than turning into a grey smear.
    * The value comes from the theme, so this is one rule and not two. */
@@ -2049,4 +2098,20 @@
   background-color: rgb(var(--brand-200));
   border-color: rgb(var(--brand-200));
   color: rgb(var(--brand-600));
+}
+
+/* The footer's red top stripe, core v44. It is the one place the palette asks
+ * for red as a rule rather than as a control: the page hands over to the
+ * closing band and the line says where. Four pixels, because a hairline on a
+ * graphite block a thousand pixels wide is not a stripe, it is dirt.
+ *
+ * Here rather than on `.u-ground-wine` because the stroke belongs to the
+ * footer: the same class carries the enquiry-style dark band elsewhere, and a
+ * red line across the top of that would read as a divider that means nothing.
+ *
+ * Outside every @layer for the same reason the button override below is —
+ * tailwind purges what it puts in @layer utilities by matching class names,
+ * and it does not recognise a tag-plus-class selector. */
+footer.u-ground-wine {
+  border-top: 4px solid rgb(var(--brand-red));
 }

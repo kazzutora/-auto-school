@@ -17,13 +17,22 @@ out to the right of the first row, which is what point 11 asks for. The bank
 account is deliberately absent: tech.md section 1 says it never appears on a
 public page.
 {% endcomment %}
-{# The footer is pale, ROSE.md C.1 block 9, and that is a rule rather than a
-   preference: B.8 allows one dark band on a page and the enquiry block has it.
-   A wine footer under a wine form turns the bottom of every page into stripes.
+{# Graphite since core v44, at the owner's request, and the rule that kept it
+   pale went with the palette that wrote it: B.8 allowed one dark band on a
+   page because the dark was wine, and a wine footer under a wine form turned
+   the bottom of every page into stripes. Graphite is not an accent — it is
+   the colour the body text is already set in — so the footer reads as the
+   page closing rather than as a second coloured band, and the enquiry block
+   above it is red now in any case.
 
-   The top edge is a brush stroke rather than a border — the closing band of a
-   page whose whole language is painted. #}
-<footer class="relative mt-auto overflow-hidden bg-brand-50 pt-6{% if plain %} border-t border-line{% endif %}">
+   `u-ground-wine` is the class that publishes the light-on-dark pair. The
+   name is historical and stays: it is written into nine templates and this is
+   a palette change, not a rename.
+
+   The red hairline along the top is in app.css, on `footer.u-ground-wine`,
+   because the stroke belongs to the footer and not to every dark block. The
+   brush stroke stays over it. #}
+<footer class="relative mt-auto overflow-hidden u-ground-wine pt-6{% if plain %} border-t border-line{% endif %}">
   {% if not plain %}<c-ornament kind="brush" variant="3" class="u-brush-edge-top" />{% endif %}
   {# The compact rhythm, not the normal one. A footer is the closing band, not
      a section somebody reads: at the full step the air above and below it came

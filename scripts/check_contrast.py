@@ -1,4 +1,4 @@
-"""Contrast gate for the design tokens, ROSE.md B.2 and B.3 as amended at v43.
+"""Contrast gate for the design tokens, ROSE.md B.2 and B.3 as amended at v44.
 
 B.3 prints a table of ratios and says outright that they are measured rather
 than estimated. This is the measuring. Every pair the design actually puts on
@@ -53,11 +53,12 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("light", "brand-500", "brand-50", 3.0, "the same on a card"),
     ("light", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
     ("light", "brand-link", "brand-50", 4.5, "the same on a card"),
-    # ---- light: the blue --------------------------------------------
-    # The quiet half of every pair, and all of it is small text: the outline
-    # button's label, a link in a paragraph, the icons beside the advantages.
-    # So it is held to 4.5 on both grounds rather than to a heading's 3.0.
-    ("light", "brand-700", "brand-100", 4.5, "the blue as a link on the page"),
+    # ---- light: the graphite ----------------------------------------
+    # The third colour, and the one that carries every heading and paragraph
+    # on the site. All of it is small text — the outline button's label, the
+    # icons beside the advantages — so it is held to 4.5 rather than to a
+    # heading's 3.0.
+    ("light", "brand-700", "brand-100", 4.5, "the graphite accent on the page"),
     ("light", "brand-700", "brand-50", 4.5, "the same on a card"),
     # ---- light: the tinted tile and the dark band -------------------
     ("light", "fixed-ink", "brand-200", 4.5, "text on a tinted tile"),
@@ -70,6 +71,9 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     # being lightened any further than it already is.
     ("light", "brand-900", "brand-100", 3.0, "the dark band against the page"),
     ("light", "brand-500", "brand-900", 3.0, "the button as an object, on the band"),
+    # The footer is graphite too, and its quiet line is its own token: the
+    # page's --muted measures 3.21 there and fails.
+    ("light", "on-ink-muted", "brand-900", 4.5, "secondary text in the footer"),
     # ---- dark: the same rows, roles rearranged ----------------------
     ("dark", "ink", "brand-100", 4.5, "body text on the page"),
     ("dark", "ink", "brand-50", 4.5, "body text on a card"),
@@ -85,7 +89,7 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("dark", "brand-500", "brand-50", 3.0, "the same on a card"),
     ("dark", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
     ("dark", "brand-link", "brand-50", 4.5, "the same on a card"),
-    ("dark", "brand-700", "brand-100", 4.5, "the blue as a link on the page"),
+    ("dark", "brand-700", "brand-100", 4.5, "the graphite accent on the page"),
     ("dark", "brand-700", "brand-50", 4.5, "the same on a card"),
     ("dark", "fixed-ink", "brand-200", 4.5, "text on a tinted tile"),
     ("dark", "on-wine", "brand-900", 4.5, "text on the dark band"),
@@ -93,19 +97,19 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("dark", "brand-500", "brand-900", 3.0, "the button as an object, on the band"),
     # ---- the focus ring, 1.4.11: 3:1 against what surrounds it ------
     # The ring is --focus with a halo of the ground's own foreground under it,
-    # so both edges are checked against the ground they sit on. Since core v43
-    # --focus is the blue on every light ground: a red ring around a red
-    # button is a ring nobody can see, and the control that needs the ring
-    # most is a form field, which carries no red at all.
-    ("light", "brand-700", "brand-100", 3.0, "focus ring on the page"),
-    ("light", "brand-700", "brand-50", 3.0, "focus ring on a card"),
+    # so both edges are checked against the ground they sit on. Red on every
+    # light ground since core v44, which took the blue out of the palette: on
+    # a red band or a graphite one the ground overrides it with its own
+    # foreground, because a red ring on red is a ring nobody can see.
+    ("light", "brand-500", "brand-100", 3.0, "focus ring on the page"),
+    ("light", "brand-500", "brand-50", 3.0, "focus ring on a card"),
     ("light", "ink", "brand-100", 3.0, "focus halo on the page"),
     ("light", "ink", "brand-50", 3.0, "focus halo on a card"),
     ("light", "fixed-paper", "brand-500", 3.0, "focus ring on a red fill"),
     ("light", "fixed-ink", "brand-200", 3.0, "focus ring on a tinted tile"),
     ("light", "on-wine", "brand-900", 3.0, "focus ring on the dark band"),
-    ("dark", "brand-700", "brand-100", 3.0, "focus ring on the page"),
-    ("dark", "brand-700", "brand-50", 3.0, "focus ring on a card"),
+    ("dark", "brand-500", "brand-100", 3.0, "focus ring on the page"),
+    ("dark", "brand-500", "brand-50", 3.0, "focus ring on a card"),
     ("dark", "ink", "brand-100", 3.0, "focus halo on the page"),
     ("dark", "ink", "brand-50", 3.0, "focus halo on a card"),
 ]

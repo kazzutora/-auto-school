@@ -62,6 +62,12 @@ class Piece:
     # True where the file arrives on an opaque white card rather than on
     # transparency, and the card has to be lifted off before anything else.
     keyed: bool = False
+    # Set where the piece *is* a plate — artwork on a solid coloured field
+    # that stays. The number is how much air to leave around the ink, as a
+    # fraction of the ink's own height, and the file's own uneven margin is
+    # trimmed back to it. Mutually exclusive with `keyed`: one lifts the
+    # background off, the other keeps it.
+    plate: float | None = None
 
 
 PIECES = {
@@ -69,18 +75,24 @@ PIECES = {
     "crown": Piece("lockup-owner-v2.png"),
     "outline": Piece("lockup-owner-v3.png", keyed=True),
     "owner": Piece("lockup-owner-v4-light.png", keyed=True),
+    "owner-red": Piece("lockup-owner-v4-red.png", plate=0.18),
 }
 
 # Which one the site shows.
 #
-# `owner` since core v43, and the three before it are kept only as the record
-# of what was tried. They are all the same mistake: an image generated from a
-# description of the school's mark rather than the mark itself — a crown, a
-# steering wheel, hand-drawn hearts, and a crimson that belongs to none of it.
-# `owner` is the school's actual logo, sent by the owner, and it is where the
-# whole palette of core v43 comes from: #EA232C and #2A61AE are measured out
-# of this file.
-ACTIVE = "owner"
+# `owner-red` since core v44. The first three are the record of what was tried
+# and all of them are the same mistake: an image generated from a description
+# of the school's mark rather than the mark itself — a crown, a steering
+# wheel, hand-drawn hearts, and a crimson that belongs to none of it.
+#
+# `owner` and `owner-red` are both the real mark, in the school's own two
+# versions. v43 shipped `owner`, which is red and blue on transparency; v44
+# ships the plate, because the palette went to red, white and graphite and the
+# blue in `owner` was then the only blue on the site — a colour with nothing
+# on the page to answer it. On graphite the blue subline all but disappeared
+# as well. `owner` stays here: it is the one to come back to the day a blue
+# earns a place again.
+ACTIVE = "owner-red"
 
 # How far from white a pixel may be and still count as the card it was sent
 # on. Generous, because the edge where the artwork meets the card is a ramp
@@ -148,10 +160,46 @@ def bbox(art: Image.Image) -> tuple[int, int, int, int]:
     return box
 
 
+def plate_box(art: Image.Image, pad: float) -> tuple[int, int, int, int]:
+    """The plate, trimmed to an even margin around its own ink.
+
+    The file arrives with the artwork off centre — 23% of the height above it
+    and 30% below — which at header size reads as a mark sitting high in its
+    box. So the ink is found by asking which pixels are not the field colour,
+    and the field is then cut back to the same air on all four sides.
+
+    `pad` is a fraction of the ink's height rather than of the frame's: the
+    frame is whatever the file happened to be saved at and the ink is the
+    thing with a size worth measuring from.
+    """
+    rgb = art.convert("RGB")
+    width, height = rgb.size
+    pixels = rgb.load()
+    field = pixels[0, 0]
+
+    def is_field(x: int, y: int) -> bool:
+        return all(abs(a - b) <= CARD for a, b in zip(pixels[x, y], field, strict=True))
+
+    xs = [x for x in range(width) for y in range(0, height, 2) if not is_field(x, y)]
+    ys = [y for y in range(height) for x in range(0, width, 2) if not is_field(x, y)]
+    if not xs or not ys:
+        raise SystemExit("the plate has no ink on it")
+
+    air = round(pad * (max(ys) - min(ys)))
+    return (
+        max(0, min(xs) - air),
+        max(0, min(ys) - air),
+        min(width, max(xs) + air),
+        min(height, max(ys) + air),
+    )
+
+
 def trimmed() -> Image.Image:
-    """The active artwork, off its card and with its margin removed."""
+    """The active artwork, off its card or cut back to its plate."""
     piece = PIECES[ACTIVE]
     art = Image.open(SOURCES / piece.file).convert("RGBA")
+    if piece.plate is not None:
+        return art.crop(plate_box(art, piece.plate))
     if piece.keyed:
         art = lift_card(art)
     return art.crop(bbox(art))

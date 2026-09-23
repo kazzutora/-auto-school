@@ -28,85 +28,83 @@ APP_CSS = Path(settings.BASE_DIR) / "static" / "src" / "css" / "app.css"
 FONT_DIR = Path(settings.BASE_DIR) / "static" / "fonts"
 SPRITE = Path(settings.BASE_DIR) / "static" / "icons" / "sprite.svg"
 
-# Core v43, light theme. Channel triplets, the form app.css declares.
+# Core v44, light theme. Channel triplets, the form app.css declares.
 #
 # Two layers, and the split is the contract. BRAND names each colour once, in
 # the owner's own words; LIGHT is the role vocabulary the templates were built
 # on and every one of its entries is an alias pointing into BRAND or a literal
-# of its own. That is what let the palette change without touching a single
-# class in a single template.
+# of its own. That is what let the palette change twice without touching a
+# single class in a single template.
 BRAND = {
-    # The logo is #EA232C red and #2A61AE blue. The blue is used exactly. The
-    # red is four percent darker than the mark, because white on #EA232C is
-    # 4.40 and the primary button carries a white label at 16px.
+    # Red, white, graphite, and no fourth. The mark carries a blue as well,
+    # and v44 takes it off the page rather than into the palette: the header
+    # and footer show the school's own white-on-red lockup instead.
+    #
+    # The red is four percent darker than the mark's #EA232C, because white
+    # on that measures 4.40 and the primary button carries a white label.
     "brand-red": (225, 20, 29),
     "brand-red-dark": (192, 16, 23),
     "brand-red-light": (253, 236, 237),
-    "brand-blue": (42, 97, 174),
-    "brand-blue-dark": (30, 74, 136),
-    # A neutral near-black. The palette this replaced carried a plum cast all
-    # the way down the ink ramp, which is what made a red-white-blue mark look
-    # wrong on it.
-    "brand-ink": (22, 24, 29),
+    # Graphite. Every heading and paragraph, the outline button, the dark
+    # band and the footer. Neutral, with no cast in it.
+    "brand-ink": (28, 28, 30),
+    "ink-soft": (44, 44, 48),
     # Its opposite, on the same terms: white is a fill where the pair must not
     # swap with the theme, and --surface is the role that does.
     "brand-paper": (255, 255, 255),
-    "muted": (92, 99, 112),
+    "muted": (107, 107, 112),
+    # The quiet grey on graphite. --muted measures 3.21 there and fails.
+    "on-ink-muted": (161, 161, 170),
     "surface": (255, 255, 255),
-    "surface-alt": (245, 246, 248),
-    "border": (226, 229, 234),
+    "surface-alt": (244, 244, 245),
+    "border": (228, 228, 231),
 }
 
 LIGHT = {
     "brand-50": (255, 255, 255),
-    "brand-100": (245, 246, 248),
+    "brand-100": (244, 244, 245),
     "brand-200": (253, 236, 237),
     "brand-300": (247, 195, 198),
     "brand-500": (225, 20, 29),
     "brand-600": (192, 16, 23),
     "brand-link": (192, 16, 23),
-    # The accent that is not the action. It was the logo's darker crimson;
-    # under a two-colour mark it is the blue, which is what gives the second
-    # colour a job on every page rather than only on buttons.
-    "brand-700": (42, 97, 174),
-    "brand-900": (22, 24, 29),
-    "ink": (22, 24, 29),
-    "ink-500": (92, 99, 112),
-    "ink-300": (154, 161, 174),
-    "line": (226, 229, 234),
+    # The accent that is not the action: the outline button's frame, the
+    # icons beside the advantages. Graphite at v44 — it was the blue.
+    "brand-700": (28, 28, 30),
+    "brand-900": (28, 28, 30),
+    "ink": (28, 28, 30),
+    "ink-500": (107, 107, 112),
+    "ink-300": (156, 156, 162),
+    "line": (228, 228, 231),
     "state-ok": (19, 107, 66),
     # A form error is red and may not be the brand's red: a field that has
     # gone wrong and a button that is working must not be the same colour.
     "state-err": (164, 38, 44),
     "state-warn": (132, 84, 0),
     "fixed-paper": (255, 255, 255),
-    "fixed-ink": (22, 24, 29),
+    "fixed-ink": (28, 28, 30),
     "on-wine": (255, 255, 255),
-    "on-wine-muted": (185, 191, 203),
+    "on-wine-muted": (161, 161, 170),
 }
 
 # The dark theme. Only the roles that move.
 #
-# The fills are not here, and that is the whole idea: brand.200, brand.500,
-# brand.600 and brand.900 are the school's own colours rather than a role, so
-# they are the same in both themes and their labels are fixed to match. What
-# moves is the page, the cards, the ink ramp, the hairline, the states, and the
-# two brand colours used as *text* — the red and the blue both have to lighten
-# to read on a near black page, and each is a separate token from the fill of
-# the same colour for exactly that reason.
+# The fills are not here, and that is the whole idea: brand.200, brand.500 and
+# brand.600 are the school's own colours rather than a role, so they are the
+# same in both themes and their labels are fixed to match. What moves is the
+# page, the cards, the ink ramp, the hairline, the states, the red used as
+# *text*, the graphite accent — and the band, which is a fill that has no
+# choice: it cannot be darker than a page that is already near black.
 DARK = {
-    "brand-100": (15, 17, 21),
-    "brand-50": (26, 29, 35),
+    "brand-100": (14, 14, 16),
+    "brand-50": (26, 26, 28),
     "brand-link": (255, 138, 144),
-    "brand-700": (143, 180, 236),
-    # The band is the one fill that moves, and only because it must: the
-    # light theme's #16181D measures 1.06 against the dark page, so the
-    # strongest block on the page stopped reading as a block at all.
-    "brand-900": (33, 38, 46),
-    "ink": (237, 240, 245),
-    "ink-500": (165, 172, 184),
-    "ink-300": (107, 115, 128),
-    "line": (45, 50, 59),
+    "brand-700": (212, 212, 216),
+    "brand-900": (37, 37, 41),
+    "ink": (237, 237, 240),
+    "ink-500": (161, 161, 170),
+    "ink-300": (107, 107, 112),
+    "line": (46, 46, 51),
     "state-ok": (74, 190, 145),
     "state-warn": (232, 176, 61),
     "state-err": (255, 154, 147),
@@ -461,9 +459,11 @@ def test_the_fill_crimson_and_the_text_crimson_are_separate(themes: dict) -> Non
     """
     assert themes["light"]["brand-600"] == themes["light"]["brand-link"]
     assert themes["dark"]["brand-600"] != themes["dark"]["brand-link"]
-    # And the same for the blue: the fill stays, the text lightens.
-    assert themes["light"]["brand-700"] == themes["light"]["brand-blue"]
-    assert themes["dark"]["brand-700"] != themes["light"]["brand-blue"]
+    # And the same for the graphite accent: it is the ink in the light theme
+    # and has to turn over in the dark one, where graphite on graphite is
+    # nothing.
+    assert themes["light"]["brand-700"] == themes["light"]["brand-ink"]
+    assert themes["dark"]["brand-700"] != themes["light"]["brand-ink"]
     assert contrast(themes["dark"]["brand-link"], themes["dark"]["brand-100"]) >= 4.5
     assert contrast(themes["dark"]["fixed-paper"], themes["dark"]["brand-600"]) >= 4.5
 
