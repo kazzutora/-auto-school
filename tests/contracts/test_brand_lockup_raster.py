@@ -11,8 +11,9 @@ Three of them, and all three have been wrong once already in this file's
 history:
 
   * the crop, which silently took a slice off the wheel the first time;
-  * the dark theme, where the artwork's near-black ink would otherwise be
-    black on a near-black page;
+  * the dark theme, where whichever part of the artwork is a *role* rather
+    than a fill has to move — and on a plate, where nothing is a role, has to
+    stay exactly where it is;
   * the weight, because this is in the header of every page on the site.
 """
 
@@ -95,23 +96,42 @@ def test_the_stylesheet_reserves_the_shape_the_file_has() -> None:
     )
 
 
-def test_the_dark_variant_is_actually_repainted() -> None:
-    """Not a copy of the light one under another name.
+def active_piece():
+    """The Piece the generator is set to, loaded rather than described.
 
-    The rule the repaint follows is app.css B.2: a fill stays put across the
-    themes and a role moves. The school's mark is two colours and they fall on
-    either side of that line — the red is the brand and holds, the blue is
-    structure and has to lighten, because #2A61AE on the dark page measures
-    2.0 against the 8.9 the light version of it manages.
+    What the dark variant has to do depends on which artwork is active, and
+    the one thing this test must not do is keep its own copy of that answer.
+    """
+    import importlib.util
 
-    So this asserts both halves. Counting near-black pixels, which is what the
-    first version of this test did, only ever worked on the drawn pieces that
-    preceded the owner's own file: this mark has no black in it at all and the
-    old test passed nothing but zeroes.
+    path = Path(settings.BASE_DIR) / "scripts" / "brand" / "gen_lockup_raster.py"
+    spec = importlib.util.spec_from_file_location("gen_lockup_raster", path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.PIECES[module.ACTIVE]
+
+
+def test_the_dark_variant_matches_what_the_artwork_is() -> None:
+    """The rule is app.css B.2: a fill stays across the themes, a role moves.
+
+    Which of the two the mark contains depends on the artwork, so this asserts
+    against the active piece rather than against a remembered answer.
+
+    A plate — white lettering on the school's red field, which is what v44
+    ships — holds no role colour at all. Both of its colours are fills, so the
+    dark file is legitimately identical to the light one and the thing worth
+    guarding is that the red is the mark's own and the lettering is white.
+
+    The transparent piece is the other case: its blue is structure and has to
+    lighten, because #2A61AE on the dark page measures 2.0 against the 8.9 the
+    light version manages.
+
+    Counting near-black pixels, which is what the first version of this test
+    did, worked only on the drawn pieces that preceded the owner's own files.
     """
     light = Image.open(BRAND / "lockup-owner.webp").convert("RGBA")
     dark = Image.open(BRAND / "lockup-owner-dark.webp").convert("RGBA")
-
     assert light.size == dark.size
 
     def family(image: Image.Image, lo: float, hi: float) -> list[tuple[int, int, int]]:
@@ -125,21 +145,31 @@ def test_the_dark_variant_is_actually_repainted() -> None:
     def mean_value(pixels: list[tuple[int, int, int]]) -> float:
         return sum(max(p) for p in pixels) / len(pixels)
 
-    blue_light, blue_dark = family(light, 0.52, 0.70), family(dark, 0.52, 0.70)
-    assert blue_light and blue_dark, "no blue in the mark"
-    # Lightened, and by an amount nobody could reach by re-encoding the same
-    # file: #2A61AE tops out at 174 and #8FB4EC at 236.
-    assert mean_value(blue_dark) > mean_value(blue_light) + 30, (
-        mean_value(blue_light),
-        mean_value(blue_dark),
-    )
-
     red_light, red_dark = family(light, 0.0, 0.03), family(dark, 0.0, 0.03)
     assert red_light and red_dark, "no red in the mark"
-    # And the red did not move. A couple of points of slack for the codec.
+    # The red is a fill either way: it does not move between the themes. A
+    # couple of points of slack for the codec.
     assert abs(mean_value(red_dark) - mean_value(red_light)) < 4, (
         mean_value(red_light),
         mean_value(red_dark),
+    )
+
+    if active_piece().plate is not None:
+        # A plate. Its field is the mark's own red, and the lettering on it is
+        # white — the pair app.css forbids anywhere else and the only pair
+        # this artwork has.
+        assert 224 <= mean_value(red_light) <= 244, mean_value(red_light)
+        white = [p for p in light.convert("RGB").getdata() if min(p) > 230]
+        assert len(white) > light.width * light.height // 20, "the lettering is not white"
+        return
+
+    # Not a plate: the blue is a role and has to lighten. #2A61AE tops out at
+    # 174 and #8FB4EC at 236, so the step is one no re-encoding could produce.
+    blue_light, blue_dark = family(light, 0.52, 0.70), family(dark, 0.52, 0.70)
+    assert blue_light and blue_dark, "no blue in the mark"
+    assert mean_value(blue_dark) > mean_value(blue_light) + 30, (
+        mean_value(blue_light),
+        mean_value(blue_dark),
     )
 
 
