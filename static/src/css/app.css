@@ -235,13 +235,13 @@
 
     --brand-500: var(--brand-red);
     --brand-600: var(--brand-red-dark);
-    /* The crimson as text. One token for the fill and the text would have
+    /* The red as text. One token for the fill and the text would have
      * made every hovered button in the dark theme unreadable: there the red
      * text lightens to sit on a near-black page and the fill does not move. */
     --brand-link: var(--brand-red-dark);
 
     /* The accent that is not the action. It was the logo's own darker
-     * crimson; under a two-colour mark it is the blue, which is what gives
+     * red; under a two-colour mark it is the blue, which is what gives
      * the second colour a job on every page rather than only on buttons. */
     --brand-700: var(--brand-blue);
 
@@ -452,15 +452,15 @@
    * Setting it here is what keeps `<em>` meaning emphasis inside a heading
    * instead of meaning nothing.
    * ------------------------------------------------------------------ */
-  /* The big headings are set the way the wordmark is: paper fill, crimson
+  /* The big headings are set the way the wordmark is: paper fill, red
    * keyline. They were near black, which is the one thing on the page that
    * belonged to no part of the school's own lettering.
    *
    * Two tokens rather than two colours, so a ground can take them back. The
-   * wine band, the crimson tile and the pink tile all publish a heading
+   * dark band, the red tile and the tinted tile all publish a heading
    * colour of their own already — on those the keyline goes transparent,
-   * because a crimson line on a crimson ground is nothing and a crimson line
-   * on the wine is mud.
+   * because a red line on a red ground is nothing and a red line
+   * on the dark band is mud.
    *
    * The stroke is in em, so it grows with the heading. At a fixed px it was
    * a hairline on the h1 and a slab on the h2 — the two are 60px and 28px
@@ -473,7 +473,7 @@
   h2,
   /* The same treatment for a line that is not itself a heading: the second
      line of the hero's h1 sits inside a .display, and .display publishes the
-     crimson, so the line inherited crimson on crimson and the keyline
+     red, so the line inherited red on red and the keyline
      vanished into its own fill. */
   .u-outlined {
     color: rgb(var(--head-ink, var(--fixed-paper)));
@@ -566,9 +566,9 @@
   .script {
     font-family: theme('fontFamily.script');
     @apply text-script font-bold;
-    /* The crimson on a pale ground, and whatever the ground says otherwise.
-     * It was the crimson everywhere for an afternoon, and the eyebrow on the
-     * wine band of /terminy/ came out crimson on wine — which axe found and
+    /* The red on a pale ground, and whatever the ground says otherwise.
+     * It was the red everywhere for an afternoon, and the eyebrow on the
+     * dark band of /terminy/ came out red on the dark band — which axe found and
      * nobody looking at it would have, because the handwriting reads as
      * decoration until you try to read it. */
     color: rgb(var(--script-ink, var(--brand-500)));
@@ -597,7 +597,7 @@
     font-family: theme('fontFamily.display');
     font-style: italic;
     @apply text-display font-extrabold uppercase;
-    /* The crimson on a pale ground, and whatever the ground says otherwise —
+    /* The red on a pale ground, and whatever the ground says otherwise —
      * the same arrangement .script uses. On the hero photograph brand.500
      * measures 3.9 against the scrim at its lightest, which is a heading that
      * clears and a heading nobody wants to read. */
@@ -617,9 +617,9 @@
    * the dark theme turns the hero into. WCAG 1.4.11 asks 3:1 of a focus
    * indicator against what surrounds it. A ring nobody can see is no ring.
    *
-   * ROSE.md has no yellow, so the ring is --focus, which every ground
-   * publishes alongside its foreground: the crimson on the pink page, white on
-   * a crimson fill, near black on a pink tile. A halo of --on-ground sits
+   * The ring is --focus, which every ground publishes alongside its
+   * foreground: the blue on the page and on a card, white on a red fill or
+   * the dark band, near black on a tinted tile. A halo of --on-ground sits
    * under it and gives it a second edge, so whichever ground the control
    * landed on, one of the two reads.
    * ------------------------------------------------------------------ */
@@ -637,18 +637,24 @@
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    /* The ring is the crimson whatever the ground, because a field is pale
+    /* The ring is the blue whatever the ground, because a field is pale
      * whatever the ground: --field is brand.50 on the page and brand.50 on the
-     * wine band, so a ring that followed --focus came out white on white on
-     * the one form the whole site is for. Measured at 4.51 on the card face
-     * and 4.08 on the page; the halo outside it is still the ground's own. */
-    outline-color: rgb(var(--brand-500));
+     * dark band, so a ring that followed --focus came out white on white on
+     * the one form the whole site is for.
+     *
+     * Named rather than taken from --focus for that reason, and blue rather
+     * than red for two: a red ring on a form whose submit button is the same
+     * red says nothing about which of them has the keyboard, and the blue
+     * measures better where it actually lands — 6.14 on the card face and
+     * 5.68 on the page, against the red's 4.86 and 4.50. The halo outside it
+     * is still the ground's own. */
+    outline-color: rgb(var(--brand-blue));
     box-shadow:
-      inset 0 0 0 2px rgb(var(--brand-500)),
+      inset 0 0 0 2px rgb(var(--brand-blue)),
       0 0 0 4px rgb(var(--on-ground));
   }
 
-  /* On a pink tile the halo would be the near black the ring already is, so
+  /* On a tinted tile the halo would be the near black the ring already is, so
    * the two swap: the ring stays dark and the halo becomes the tile. */
   .u-ground-pink :focus-visible {
     outline-color: rgb(var(--ink));
@@ -824,7 +830,7 @@
     --chip-err: var(--state-err);
   }
 
-  /* The wine band, B.8's one dark block on a page. It does not swap with the
+  /* The dark band, B.8's one dark block on a page. It does not swap with the
    * theme — it is the brand rather than a role — so the pair it publishes is
    * fixed and white on it measures 9.06 either way.
    *
@@ -838,7 +844,7 @@
     --on-ground-body: var(--on-wine);
     --on-ground-muted: var(--on-wine-muted);
     --focus: var(--on-wine);
-    /* The pink of the logo rather than the crimson: brand.500 on the wine
+    /* The pink of the logo rather than the red: brand.500 on the dark band
      * measures 1.6. */
     --script-ink: var(--brand-200);
     --link-ink: var(--on-ground);
@@ -856,7 +862,7 @@
 
   .u-ground-wine {
     /* The dashed photo frame takes this ground's own foreground: the
-     * crimson it uses on a pale page is 1.3 against the wine. */
+     * red it uses on a pale page is 1.3 against the dark band. */
     --slot-ink: var(--on-ground);
   }
 
@@ -884,7 +890,7 @@
    *
    * It does not swap with the theme, so the pair it publishes is the fixed
    * one. That is what lets an outline button dropped on it come out as a white
-   * frame — on the crimson the primary button would be crimson on crimson, and
+   * frame — on the red the primary button would be red on red, and
    * naming white from the call site would break the moment the same tile
    * appeared on the page instead. */
   .u-ground-brand {
@@ -902,7 +908,7 @@
 
   .u-ground-brand {
     /* The dashed photo frame takes this ground's own foreground: the
-     * crimson it uses on a pale page is 1.3 against the wine. */
+     * red it uses on a pale page is 1.3 against the dark band. */
     --slot-ink: var(--on-ground);
   }
 
@@ -911,11 +917,15 @@
     color: rgb(var(--fixed-paper));
   }
 
-  /* The pink tile. It swaps with the theme — in the dark it is a muted plum —
-   * but the text on it must not be reached for through --ink, because in the
-   * light theme that would be near black on pink and in the dark near white on
-   * pink, and white on brand.200 is 1.69, the one pair B.3 forbids outright.
-   * So the pair is fixed and ink stays ink. */
+  /* The tinted tile. The tint is a fill and does not swap with the theme, so
+   * the text on it must not be reached for through --ink either: that would
+   * be near black on the tint in the light theme and near white on the same
+   * tint in the dark, and white on brand.200 is 1.14, the one pair the gate
+   * forbids outright. So the pair is fixed and ink stays ink.
+   *
+   * The class is still called pink. It is named in four templates and this is
+   * a palette change, not a rename — the tile is the tint, whatever colour
+   * the tint happens to be this core. */
   .u-ground-pink {
     background-color: rgb(var(--brand-200));
     color: rgb(var(--fixed-ink));
@@ -966,7 +976,7 @@
    * under it and the aside beside it are three different weights of the same
    * voice, and collapsing the middle one is what makes a page read flat.
    *
-   * On the page these are ink and ink-500. On the wine band B.2 gives
+   * On the page these are ink and ink-500. On the dark band B.2 gives
    * only two, so body and heading share a value there. */
   .u-body-on-ground {
     color: rgb(var(--on-ground-body));
@@ -1261,7 +1271,7 @@
    * over a photograph is the thing being checked, and that is not the same
    * fact as which way round the ink runs. This says the first one. Any block
    * that lays words over a picture carries it; .u-photo-ground implies it. */
-  /* A social link. A ring rather than a filled circle: three filled crimson
+  /* A social link. A ring rather than a filled circle: three filled red
    * dots in a row read as buttons, and these are the quietest links on the
    * page — a reader who wants the price list should not be pulled off it. */
   .u-social {
@@ -1287,13 +1297,13 @@
    * will have, so the page does not reflow when the owner uploads one, and so
    * the gap reads as a frame rather than as a card that failed to load.
    *
-   * Crimson and dashed rather than the hairline the empty state uses: at the
+   * Red and dashed rather than the hairline the empty state uses: at the
    * hairline it read as a disabled card, which is the opposite of what the
    * owner needs to see when they open their own site and ask what is still
    * missing.
    *
    * The colour is a token, because the first version named brand.600 outright
-   * and the fleet slot sits on the wine band — crimson on wine is 1.3 and the
+   * and the fleet slot sits on the dark band — red on the dark band is 1.3 and the
    * frame that exists to be noticed was the least visible thing on the page.
    * A dark ground hands it its own foreground instead. */
   .u-photo-slot-frame {
@@ -1480,7 +1490,7 @@
    * readers, so nothing extra has to be kept in step.
    * ------------------------------------------------------------------ */
   /* The menu set the way the owner's wordmark is: heavy italic uppercase,
-   * paper fill, crimson keyline. Rubik 800 italic is the display face the
+   * paper fill, red keyline. Rubik 800 italic is the display face the
    * lockup's own lettering is cut from, so the row and the mark agree.
    *
    * Type, not the picture that was sent. These labels come from
@@ -1616,7 +1626,7 @@
    * FIELD_CLASS now carries `u-field`, so the fill comes from the ground and
    * no call site has to know where the form landed. This rule stays as the
    * belt to that braces: a class plus an element is (0,1,1) and beats a single
-   * utility class, so an input dropped on the wine band comes out right even
+   * utility class, so an input dropped on the dark band comes out right even
    * if it never got the class.
    */
   .u-ground-wine :is(input, select, textarea),
@@ -1823,8 +1833,8 @@
   }
 
   /* A stroke takes the colour of the element it is on, so the default is the
-   * page's own pink and .u-brush-strong is the crimson for the places that
-   * need to carry weight — the band behind the figures, the corner of the wine
+   * page's own pink and .u-brush-strong is the red for the places that
+   * need to carry weight — the band behind the figures, the corner of the dark band
    * block. See scripts/brand/gen_ornaments.py for why this is `color` and not
    * the pair of custom properties B.6 names. */
   .u-brush {

@@ -25,8 +25,8 @@ from apps.core.services import (
 
 _PLACEHOLDER_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">'
-    '<rect width="400" height="400" fill="#F2F2F1"/>'
-    '<text x="200" y="210" font-family="sans-serif" font-size="28" fill="#5C5C66"'
+    '<rect width="400" height="400" fill="#F5F6F8"/>'
+    '<text x="200" y="210" font-family="sans-serif" font-size="28" fill="#5C6370"'
     ' text-anchor="middle">OSK</text></svg>'
 )
 PLACEHOLDER = "data:image/svg+xml," + quote(_PLACEHOLDER_SVG)
