@@ -27,12 +27,19 @@ from scripts.brand.svgpath import annular_sector, circle, num, polygon, rounded_
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "static" / "img" / "brand"
 
-# ROSE.md B.2. brand.700 is the crimson of the owner's logo, brand.500 the
-# lighter pink of the cap and the handwriting.
-INK = "#A14052"  # brand.700
-PINK = "#D4385E"  # brand.500
-SOFT = "#F2B8C6"  # brand.200
-FACE = "#FFFBFA"  # brand.50
+# The palette as amended at core v43. These are the mark's own colours rather
+# than the stylesheet's tokens, which is why the red here is the logo's exact
+# #EA232C and not the four-percent-darker --brand-red the pages use: nothing
+# on these files carries small white text, so the 4.40 that rules the red out
+# of a button label does not apply to a drawn letterform.
+#
+# INK is the structural colour — the plate, the frame, the subline — and it is
+# now the mark's blue. PINK keeps its name from the palette this replaced; it
+# is the red, and renaming it would have touched thirty call sites for nothing.
+INK = "#2A61AE"  # the logo's blue
+PINK = "#EA232C"  # the logo's red
+SOFT = "#FDECED"  # the pale tint, --brand-red-light
+FACE = "#FFFFFF"  # --surface
 
 # The wheel radius, and the unit everything else is stated in. Ten times the
 # size the mark is ever painted at, so the path data can be whole numbers: the
@@ -242,6 +249,16 @@ def svg(width: float, height: float, body: str, *, title: str) -> str:
 
 
 def lockup(*, slogan: bool, cap: bool, dark: bool, heart: bool = False) -> str:
+    # The wordmark and the wheel are red in both themes, and the structure —
+    # the subline, the rules, the plate — is blue. That is the division in the
+    # school's own mark: OSTRYCHARZ is red, everything holding it is blue.
+    # Before core v43 both were one colour and the lockup came out a single
+    # flat slab of it.
+    #
+    # The red does not swap with the theme for the same reason the buttons do
+    # not: it is the brand rather than a role. The blue does, because on a
+    # dark ground it measures 2.0.
+    mark = PINK
     ink = FACE if dark else INK
     soft = SOFT if dark else INK
     pad = 80.0
@@ -263,7 +280,7 @@ def lockup(*, slogan: bool, cap: bool, dark: bool, heart: bool = False) -> str:
     bottom = cy + R + (0.34 * R if slogan else 0.0)
     height = bottom + pad
 
-    parts = ['<path fill="' + ink + '" d="' + wheel_path(pad + R, cy, R) + '"/>']
+    parts = ['<path fill="' + mark + '" d="' + wheel_path(pad + R, cy, R) + '"/>']
 
     word_line = set_line(
         WORD,
@@ -273,7 +290,7 @@ def lockup(*, slogan: bool, cap: bool, dark: bool, heart: bool = False) -> str:
         x=x_text,
         y=cy + 0.07 * R,
     )
-    parts.append('<path fill="' + ink + '" d="' + word_line.path + '"/>')
+    parts.append('<path fill="' + mark + '" d="' + word_line.path + '"/>')
 
     sub_y = cy + 0.56 * R
     sub_x = x_text + (text_w - sub.width) / 2

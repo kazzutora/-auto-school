@@ -16,6 +16,7 @@ history:
   * the weight, because this is in the header of every page on the site.
 """
 
+import colorsys
 import re
 from pathlib import Path
 
@@ -97,30 +98,49 @@ def test_the_stylesheet_reserves_the_shape_the_file_has() -> None:
 def test_the_dark_variant_is_actually_repainted() -> None:
     """Not a copy of the light one under another name.
 
-    The ink is repainted and the crimson is not, ROSE.md B.2: fills stay put
-    across themes, roles move. So the two files must differ, and the dark one
-    must carry pale pixels the light one has none of.
+    The rule the repaint follows is app.css B.2: a fill stays put across the
+    themes and a role moves. The school's mark is two colours and they fall on
+    either side of that line — the red is the brand and holds, the blue is
+    structure and has to lighten, because #2A61AE on the dark page measures
+    2.0 against the 8.9 the light version of it manages.
+
+    So this asserts both halves. Counting near-black pixels, which is what the
+    first version of this test did, only ever worked on the drawn pieces that
+    preceded the owner's own file: this mark has no black in it at all and the
+    old test passed nothing but zeroes.
     """
     light = Image.open(BRAND / "lockup-owner.webp").convert("RGBA")
     dark = Image.open(BRAND / "lockup-owner-dark.webp").convert("RGBA")
 
     assert light.size == dark.size
 
-    def inked(image: Image.Image) -> int:
-        """Pixels that are still the near-black the piece arrived with."""
-        return sum(
-            1
+    def family(image: Image.Image, lo: float, hi: float) -> list[tuple[int, int, int]]:
+        """The opaque pixels whose hue falls in an arc, as rgb triples."""
+        return [
+            (r, g, b)
             for r, g, b, a in image.getdata()
-            if a > 200 and max(r, g, b) < 90
-        )
+            if a > 200 and lo <= colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)[0] <= hi
+        ]
 
-    # The ink is counted, not the paper. The first version counted pale pixels
-    # and expected four times as many in the dark file, which held for a piece
-    # whose letters were black and broke on one whose letters are white with a
-    # crimson keyline: both files are then mostly pale and the ratio is 1.08.
-    # What the repaint actually does is remove the ink, and that is true of
-    # any piece.
-    assert inked(light) > 4 * max(inked(dark), 1), (inked(light), inked(dark))
+    def mean_value(pixels: list[tuple[int, int, int]]) -> float:
+        return sum(max(p) for p in pixels) / len(pixels)
+
+    blue_light, blue_dark = family(light, 0.52, 0.70), family(dark, 0.52, 0.70)
+    assert blue_light and blue_dark, "no blue in the mark"
+    # Lightened, and by an amount nobody could reach by re-encoding the same
+    # file: #2A61AE tops out at 174 and #8FB4EC at 236.
+    assert mean_value(blue_dark) > mean_value(blue_light) + 30, (
+        mean_value(blue_light),
+        mean_value(blue_dark),
+    )
+
+    red_light, red_dark = family(light, 0.0, 0.03), family(dark, 0.0, 0.03)
+    assert red_light and red_dark, "no red in the mark"
+    # And the red did not move. A couple of points of slack for the codec.
+    assert abs(mean_value(red_dark) - mean_value(red_light)) < 4, (
+        mean_value(red_light),
+        mean_value(red_dark),
+    )
 
 
 def test_the_pages_reference_both_variants() -> None:

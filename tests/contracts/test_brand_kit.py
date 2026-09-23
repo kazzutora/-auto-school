@@ -35,10 +35,16 @@ RASTER = [
     "og-default.jpg",
 ]
 
-# ROSE.md B.2. Nothing in the kit may reach outside this list, and in
-# particular nothing may keep the blue, the yellow or the paper grey of the
-# language cores v25 to v28 replaced.
-ALLOWED = {"#A14052", "#D4385E", "#F2B8C6", "#FFFBFA", "#FBEDEF", "#221B1E"}
+# Core v43. Nothing in the kit may reach outside this list, and in particular
+# nothing may keep the crimson family of cores v29 to v42.
+#
+# The two brand colours here are the mark's own, measured out of the file the
+# owner sent: #EA232C and #2A61AE. The red is deliberately not the stylesheet's
+# --brand-red, which is four percent darker so that a white button label
+# clears 4.5 — a drawn letterform carries no white text on it and has no such
+# constraint. scripts/check_contrast.py holds the other side of that line: it
+# fails if #EA232C ever turns up in app.css.
+ALLOWED = {"#EA232C", "#2A61AE", "#FDECED", "#FFFFFF", "#F5F6F8", "#16181D"}
 HEX = re.compile(r"#[0-9A-Fa-f]{3,8}")
 
 

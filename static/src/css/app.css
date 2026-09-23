@@ -1326,7 +1326,7 @@
    * the webp, and the plain background-image line above it is for one that
    * cannot parse image-set at all. */
   .u-lockup {
-    aspect-ratio: 2005 / 431;
+    aspect-ratio: 1088 / 216;
     background-image: url("../img/brand/lockup-owner.webp");
     background-image: image-set(
       url("../img/brand/lockup-owner.avif") type("image/avif"),

@@ -30,11 +30,15 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "static" / "img" / "brand"
 FONT_DIR = ROOT / "static" / "fonts"
 
-INK = (161, 64, 82)  # brand.700
-PINK = (212, 56, 94)  # brand.500
-SOFT = (242, 184, 198)  # brand.200
-FACE = (255, 251, 250)  # brand.50
-GROUND = (251, 237, 239)  # brand.100
+# Core v43. The same pair gen_logo.py draws the vectors with: the mark's own
+# colours, so the red here is the logo's exact #EA232C. An icon carries no
+# small white text, so the ratio that rules that red out of a button label
+# does not reach it.
+INK = (42, 97, 174)  # the logo's blue
+PINK = (234, 35, 44)  # the logo's red
+SOFT = (253, 236, 237)  # --brand-red-light
+FACE = (255, 255, 255)  # --surface
+GROUND = (245, 246, 248)  # --surface-alt
 
 SS = 4  # supersampling factor
 
@@ -129,7 +133,9 @@ def plate(draw: ImageDraw.ImageDraw, x: float, y: float, w: float, aspect: float
     )
 
 
-def wheel(draw: ImageDraw.ImageDraw, cx: float, cy: float, r: float, ground) -> None:
+def wheel(
+    draw: ImageDraw.ImageDraw, cx: float, cy: float, r: float, ground, colour=INK
+) -> None:
     """The steering wheel, painted rather than cut.
 
     The svg is one path with the holes wound against it; here they are simply
@@ -139,6 +145,7 @@ def wheel(draw: ImageDraw.ImageDraw, cx: float, cy: float, r: float, ground) -> 
     about 300px, and written down so nobody goes looking for a bug.
     """
     box = [cx - r, cy - r, cx + r, cy + r]
+    INK = colour  # noqa: N806 — one name for the wheel's own ink, below
     draw.ellipse(box, fill=INK)
     # Pulled in by the corner radius the svg rounds its cutouts with, so the
     # spokes come out the same width in both renderers.
@@ -198,10 +205,12 @@ def social_card() -> Image.Image:
 
     x0 = (w - total) / 2
     cy = 0.47 * h
-    wheel(draw, x0 + r, cy, r, GROUND)
+    wheel(draw, x0 + r, cy, r, GROUND, PINK)
 
     x_text = x0 + 2 * r + gap
-    draw_line(draw, (x_text, cy + 0.07 * r), "OSTRYCHARZ", word, INK, -0.015 * 1.55 * r)
+    # Red word, blue subline: the school's own mark, and the reason the og
+    # card is not one flat slab of a single colour.
+    draw_line(draw, (x_text, cy + 0.07 * r), "OSTRYCHARZ", word, PINK, -0.015 * 1.55 * r)
     draw_line(
         draw,
         (x_text + (text_w - sub_w) / 2, cy + 0.56 * r),

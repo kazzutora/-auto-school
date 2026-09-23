@@ -68,10 +68,19 @@ PIECES = {
     "wheel": Piece("lockup-owner.png", slogan=(0.375, 0.722, 0.765)),
     "crown": Piece("lockup-owner-v2.png"),
     "outline": Piece("lockup-owner-v3.png", keyed=True),
+    "owner": Piece("lockup-owner-v4-light.png", keyed=True),
 }
 
 # Which one the site shows.
-ACTIVE = "outline"
+#
+# `owner` since core v43, and the three before it are kept only as the record
+# of what was tried. They are all the same mistake: an image generated from a
+# description of the school's mark rather than the mark itself — a crown, a
+# steering wheel, hand-drawn hearts, and a crimson that belongs to none of it.
+# `owner` is the school's actual logo, sent by the owner, and it is where the
+# whole palette of core v43 comes from: #EA232C and #2A61AE are measured out
+# of this file.
+ACTIVE = "owner"
 
 # How far from white a pixel may be and still count as the card it was sent
 # on. Generous, because the edge where the artwork meets the card is a ramp
@@ -88,8 +97,15 @@ CARD = 40
 # the trade, and only one of the two files is ever fetched.
 OUT_HEIGHT = 112
 
-# What the ink becomes on the dark ground: --ink at core v29, 246 233 236.
-PALE = (246, 233, 236)
+# What the ink becomes on the dark ground: --ink in the dark theme.
+PALE = (237, 240, 245)
+
+# And what the blue becomes there. The mark is two colours, and only one of
+# them is a fill: app.css B.2 keeps the red where it is in both themes and
+# lightens the blue, because #2A61AE on the dark page measures 2.0 and this
+# measures 8.9. It is the dark theme's own --brand-700, so the subline under
+# the wordmark and a link in the paragraph below it are the same blue.
+PALE_BLUE = (143, 180, 236)
 
 # A pixel is ink rather than crimson when it is dark and not red.
 #
@@ -102,10 +118,17 @@ PALE = (246, 233, 236)
 INK_MAX_VALUE = 0.45
 
 # Everything within this much of pure red in hue, with enough colour in it to
-# mean the hue, is crimson and stays crimson whatever its brightness — a dark
-# brush edge is still part of the stroke.
+# mean the hue, is red and stays red whatever its brightness — a dark brush
+# edge is still part of the stroke.
 RED_ARC = 0.08
 RED_MIN_SATURATION = 0.25
+
+# The blue arc. The mark's blue sits at hue 0.597 with a saturation of 0.76,
+# and the band is wide enough to take the antialiased edges with it: a pixel
+# halfway between the blue and the white it sits on keeps the hue and loses
+# the saturation, which is why the floor is low.
+BLUE_ARC = (0.52, 0.70)
+BLUE_MIN_SATURATION = 0.18
 
 
 # Below this the pixel is not part of the artwork. Image.getbbox() counts any
@@ -165,6 +188,12 @@ def is_ink(r: int, g: int, b: int) -> bool:
     return not reddish
 
 
+def is_blue(r: int, g: int, b: int) -> bool:
+    """The mark's second colour, whatever the antialiasing did to it."""
+    h, s, _ = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+    return s >= BLUE_MIN_SATURATION and BLUE_ARC[0] <= h <= BLUE_ARC[1]
+
+
 def lift_card(art: Image.Image) -> Image.Image:
     """Turn the white card the piece was sent on into transparency.
 
@@ -222,17 +251,29 @@ def lift_card(art: Image.Image) -> Image.Image:
     return out
 
 
+def recolour(r: int, g: int, b: int) -> tuple[int, int, int]:
+    """What a pixel of the mark becomes on the dark ground.
+
+    Ink goes pale and blue goes to the light blue. Red is not here on
+    purpose: it is a fill rather than a role and does not swap with the
+    theme, which is the same rule the buttons follow.
+    """
+    if is_ink(r, g, b):
+        return PALE
+    if is_blue(r, g, b):
+        return PALE_BLUE
+    return (r, g, b)
+
+
 def repaint(art: Image.Image) -> Image.Image:
-    """The same artwork with its ink pale, for the dark ground.
+    """The same artwork recoloured for the dark ground.
 
     The alpha is untouched, so every antialiased edge keeps the shape it had:
     what changes is which colour those edges are fading from.
     """
     out = art.copy()
     pixels = list(out.getdata())
-    swapped = [
-        (*PALE, a) if a and is_ink(r, g, b) else (r, g, b, a) for r, g, b, a in pixels
-    ]
+    swapped = [(*recolour(r, g, b), a) if a else (r, g, b, a) for r, g, b, a in pixels]
     out.putdata(swapped)
     return out
 
