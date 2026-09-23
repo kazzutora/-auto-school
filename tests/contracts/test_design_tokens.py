@@ -28,57 +28,84 @@ APP_CSS = Path(settings.BASE_DIR) / "static" / "src" / "css" / "app.css"
 FONT_DIR = Path(settings.BASE_DIR) / "static" / "fonts"
 SPRITE = Path(settings.BASE_DIR) / "static" / "icons" / "sprite.svg"
 
-# ROSE.md B.2, light theme. Channel triplets, the form app.css declares.
-LIGHT = {
-    "brand-50": (255, 251, 250),
-    "brand-100": (251, 237, 239),
-    "brand-200": (242, 184, 198),
-    "brand-300": (233, 138, 163),
-    "brand-500": (212, 56, 94),
-    "brand-600": (196, 45, 85),
-    "brand-link": (196, 45, 85),
-    "brand-700": (161, 64, 82),
-    "brand-900": (126, 43, 69),
-    # A warm charcoal since core v34, not the near black it was: #221B1E
-    # read as flat black beside the crimson. 10.66 against the page.
-    "ink": (66, 49, 58),
-    "ink-500": (94, 74, 82),
-    "ink-300": (156, 138, 145),
-    "line": (235, 211, 217),
-    "state-ok": (26, 108, 76),
-    "state-err": (142, 27, 18),
-    # Not in B.2, which gives ok and err only. The site had a third state
-    # before this core did, and it is measured the same way: 5.68 on the page.
-    "state-warn": (132, 84, 0),
-    "fixed-paper": (255, 255, 255),
-    # The same warm charcoal as --ink since core v34, for the grounds whose
-    # pair must not swap with the theme.
-    "fixed-ink": (66, 49, 58),
-    "on-wine": (255, 251, 250),
-    "on-wine-muted": (242, 184, 198),
+# Core v43, light theme. Channel triplets, the form app.css declares.
+#
+# Two layers, and the split is the contract. BRAND names each colour once, in
+# the owner's own words; LIGHT is the role vocabulary the templates were built
+# on and every one of its entries is an alias pointing into BRAND or a literal
+# of its own. That is what let the palette change without touching a single
+# class in a single template.
+BRAND = {
+    # The logo is #EA232C red and #2A61AE blue. The blue is used exactly. The
+    # red is four percent darker than the mark, because white on #EA232C is
+    # 4.40 and the primary button carries a white label at 16px.
+    "brand-red": (225, 20, 29),
+    "brand-red-dark": (192, 16, 23),
+    "brand-red-light": (253, 236, 237),
+    "brand-blue": (42, 97, 174),
+    "brand-blue-dark": (30, 74, 136),
+    # A neutral near-black. The palette this replaced carried a plum cast all
+    # the way down the ink ramp, which is what made a red-white-blue mark look
+    # wrong on it.
+    "brand-ink": (22, 24, 29),
+    # Its opposite, on the same terms: white is a fill where the pair must not
+    # swap with the theme, and --surface is the role that does.
+    "brand-paper": (255, 255, 255),
+    "muted": (92, 99, 112),
+    "surface": (255, 255, 255),
+    "surface-alt": (245, 246, 248),
+    "border": (226, 229, 234),
 }
 
-# B.2, dark theme. Only the roles that move.
+LIGHT = {
+    "brand-50": (255, 255, 255),
+    "brand-100": (245, 246, 248),
+    "brand-200": (253, 236, 237),
+    "brand-300": (247, 195, 198),
+    "brand-500": (225, 20, 29),
+    "brand-600": (192, 16, 23),
+    "brand-link": (192, 16, 23),
+    # The accent that is not the action. It was the logo's darker crimson;
+    # under a two-colour mark it is the blue, which is what gives the second
+    # colour a job on every page rather than only on buttons.
+    "brand-700": (42, 97, 174),
+    "brand-900": (22, 24, 29),
+    "ink": (22, 24, 29),
+    "ink-500": (92, 99, 112),
+    "ink-300": (154, 161, 174),
+    "line": (226, 229, 234),
+    "state-ok": (19, 107, 66),
+    # A form error is red and may not be the brand's red: a field that has
+    # gone wrong and a button that is working must not be the same colour.
+    "state-err": (164, 38, 44),
+    "state-warn": (132, 84, 0),
+    "fixed-paper": (255, 255, 255),
+    "fixed-ink": (22, 24, 29),
+    "on-wine": (255, 255, 255),
+    "on-wine-muted": (185, 191, 203),
+}
+
+# The dark theme. Only the roles that move.
 #
 # The fills are not here, and that is the whole idea: brand.200, brand.500,
 # brand.600 and brand.900 are the school's own colours rather than a role, so
 # they are the same in both themes and their labels are fixed to match. What
 # moves is the page, the cards, the ink ramp, the hairline, the states, and the
-# crimson used as *text* — which has to lighten to read on a near black page,
-# and which is a separate token from the crimson used as a fill for exactly
-# that reason. One token for both would paint white on #FF8FAB, at 1.90, on
-# every hovered button in the dark theme.
+# two brand colours used as *text* — the red and the blue both have to lighten
+# to read on a near black page, and each is a separate token from the fill of
+# the same colour for exactly that reason.
 DARK = {
-    "brand-100": (26, 20, 23),
-    "brand-50": (37, 28, 32),
-    "brand-link": (255, 143, 171),
-    "ink": (246, 233, 236),
-    "ink-500": (201, 179, 187),
-    "ink-300": (138, 116, 125),
-    "line": (58, 42, 48),
+    "brand-100": (15, 17, 21),
+    "brand-50": (26, 29, 35),
+    "brand-link": (255, 138, 144),
+    "brand-700": (143, 180, 236),
+    "ink": (237, 240, 245),
+    "ink-500": (165, 172, 184),
+    "ink-300": (107, 115, 128),
+    "line": (45, 50, 59),
     "state-ok": (74, 190, 145),
     "state-warn": (232, 176, 61),
-    "state-err": (240, 130, 120),
+    "state-err": (255, 154, 147),
 }
 
 # B.4. The three families and the weights the woff2 subsets are cut to. All
@@ -212,6 +239,35 @@ def declarations(body: str) -> dict[str, tuple[int, ...]]:
     }
 
 
+def aliases(body: str) -> dict[str, str]:
+    """The tokens declared as `var(--other)` rather than as a triplet.
+
+    Since core v43 the table has two layers and the second one is nothing but
+    these: --brand-500 is var(--brand-red), --line is var(--border). They are
+    real tokens as far as the cascade is concerned, so they have to be real
+    here too.
+    """
+    return dict(re.findall(r"--([a-z0-9-]+):\s*var\(--([a-z0-9-]+)\)\s*;", body))
+
+
+def resolve(table: dict, links: dict[str, str], theme: str) -> dict:
+    """Follow each alias to a triplet, in the table it belongs to.
+
+    After the merge rather than before: the dark theme redefines --surface and
+    --brand-50 points at it, so the card colour has to be worked out against
+    the dark table even though the alias itself was written in the light one.
+    """
+    for name, first in links.items():
+        seen, target = {name}, first
+        while target not in table and target in links:
+            assert target not in seen, f"--{name} resolves in a circle in {theme}"
+            seen.add(target)
+            target = links[target]
+        if target in table:
+            table[name] = table[target]
+    return table
+
+
 def hex_to_rgb(value: str) -> tuple[int, ...]:
     """#RRGGBB to the channel triplet the contrast maths wants."""
     text = value.lstrip("#")
@@ -242,14 +298,30 @@ def themes() -> dict[str, dict[str, tuple[int, ...]]]:
     `media` is the prefers-color-scheme block, kept separate because the whole
     point of test_both_doors_into_the_dark_agree is to compare the two.
     """
-    light = declarations(block("  :root {"))
-    media = declarations(block("    :root:not([data-theme='light']) {"))
-    explicit = declarations(block("  :root[data-theme='dark'] {"))
+    light_body = block("  :root {")
+    media_body = block("    :root:not([data-theme='light']) {")
+    explicit_body = block("  :root[data-theme='dark'] {")
+
+    light, light_links = declarations(light_body), aliases(light_body)
+    media, media_links = declarations(media_body), aliases(media_body)
+    explicit, explicit_links = declarations(explicit_body), aliases(explicit_body)
+
+    # A literal in the dark block beats an alias the light block declared for
+    # the same name: --brand-link is var(--brand-red-dark) in the light theme
+    # and a pale red of its own in the dark one, and resolving the inherited
+    # alias over it would put the light theme's red back on the dark page.
+    dark_links = {
+        name: target
+        for name, target in {**light_links, **explicit_links}.items()
+        if name not in explicit
+    }
     tables = {
-        "light": light,
-        "dark": {**light, **explicit},
-        "media": media,
-        "explicit": explicit,
+        "light": resolve({**light}, light_links, "light"),
+        "dark": resolve({**light, **explicit}, dark_links, "dark"),
+        # The two doors are compared as written, aliases and all, so a block
+        # that spells a colour one way and its twin the other still fails.
+        "media": {**media, **{k: ("var", v) for k, v in media_links.items()}},
+        "explicit": {**explicit, **{k: ("var", v) for k, v in explicit_links.items()}},
     }
 
     # Not a token: the fill a state chip paints for itself, which is a tenth of
@@ -385,21 +457,33 @@ def test_the_fill_crimson_and_the_text_crimson_are_separate(themes: dict) -> Non
     """
     assert themes["light"]["brand-600"] == themes["light"]["brand-link"]
     assert themes["dark"]["brand-600"] != themes["dark"]["brand-link"]
+    # And the same for the blue: the fill stays, the text lightens.
+    assert themes["light"]["brand-700"] == themes["light"]["brand-blue"]
+    assert themes["dark"]["brand-700"] != themes["light"]["brand-blue"]
     assert contrast(themes["dark"]["brand-link"], themes["dark"]["brand-100"]) >= 4.5
     assert contrast(themes["dark"]["fixed-paper"], themes["dark"]["brand-600"]) >= 4.5
 
 
-def test_the_page_is_never_white(themes: dict) -> None:
-    """B.8: the owner does not want a white page and there is no white ground.
+def test_the_card_sits_above_the_page(themes: dict) -> None:
+    """The card is lighter than the page it sits on, in both themes.
 
-    White survives as a card face only, and brand.50 is not it — it is a blush
-    off-white with the page's own hue in it.
+    B.8 used to say the stronger thing — that no ground is white at all —
+    because the owner did not want a white page under a pink palette. Core
+    v43 took the white back for the card face and kept the rule that matters:
+    a card has to read as lifted off the page without a border, and in a
+    palette with no hue in the greys the only thing that can say so is the
+    step between the two. So the page is still never white, and the card is,
+    and the relationship between them is checked rather than assumed.
     """
     for theme in ("light", "dark"):
-        assert themes[theme]["brand-100"] != (255, 255, 255)
-        assert themes[theme]["brand-50"] != (255, 255, 255)
+        assert themes[theme]["brand-100"] != (255, 255, 255), theme
+        lit = luminance(themes[theme]["brand-50"]) - luminance(themes[theme]["brand-100"])
+        assert lit > 0, f"{theme}: the card is not lighter than the page"
+
+    assert themes["light"]["brand-50"] == (255, 255, 255)
     body = block("  body {")
     assert "bg-brand-100" in body
+    # Still no literal white anywhere: the card gets there through --surface.
     assert "bg-white" not in css() and "background: #fff" not in css().lower()
 
 
@@ -630,29 +714,37 @@ EMAIL_TEMPLATES = Path(settings.BASE_DIR) / "templates" / "leads" / "email"
 # inline hex is the only way to colour an email. What it may not do is invent
 # colours: these are the A.2 values, written out.
 EMAIL_PALETTE = {
-    "#FFFBFA",  # brand.50, the card the letter sits on
-    "#FBEDEF",  # brand.100, the page around it
-    "#EBD3D9",  # line
-    "#221B1E",  # ink
-    "#5E4A52",  # ink.500
-    "#D4385E",  # brand.500 — a fill, and the rule beside a quote
-    "#C42D55",  # brand.link — the crimson as text, which brand.500 is too pale to be
+    "#FFFFFF",  # brand.50, the card the letter sits on
+    "#F5F6F8",  # brand.100, the page around it
+    "#E2E5EA",  # line
+    "#16181D",  # ink
+    "#5C6370",  # ink.500
+    "#E1141D",  # brand.500 — a fill, and the rule beside a quote
+    "#C01017",  # brand.link — the red as text, which brand.500 is too light to be
 }
 
 
 def test_the_emails_use_the_site_palette() -> None:
     """The confirmation should look like the site that sent it.
 
-    Repainted three times now: at core v2 when the palette moved into
+    Repainted four times now: at core v2 when the palette moved into
     FRONTEND.md, at v25 when the page went warm grey and the purple became a
-    blue, and at v29 when the whole language came off the owner's logo. An
-    email cannot read a css variable — many
-    clients strip <style> outright — so inline hex is the only way to colour
-    one, and this is what keeps that hand written copy in step.
+    blue, at v29 when the whole language came off the owner's logo, and at v43
+    when it came off the *right* logo. An email cannot read a css variable —
+    many clients strip <style> outright — so inline hex is the only way to
+    colour one, and this is what keeps that hand written copy in step.
+
+    It checked nothing at all until core v43. A backspace byte had got into
+    the pattern itself — a raw string, so it stayed a control character rather
+    than an escape — and it asked for that byte after the six digits. Nothing
+    ever matched, every mail reported an empty set of colours, and the test
+    passed on all of them. An editor does not show it and neither does a diff;
+    the only reason it surfaced is that the palette changed underneath the
+    test and the test went on passing.
     """
     strays: dict[str, set[str]] = {}
     for path in sorted(EMAIL_TEMPLATES.glob("*.html")):
-        found = re.findall(r"#[0-9A-Fa-f]{6}", path.read_text("utf-8"))
+        found = re.findall(r"#[0-9A-Fa-f]{6}", path.read_text("utf-8"))
         used = {value.upper() for value in found}
         if used - EMAIL_PALETTE:
             strays[path.name] = used - EMAIL_PALETTE
@@ -663,23 +755,30 @@ def test_the_emails_keep_their_text_readable(themes: dict) -> None:
     """4.5:1 on every pair the mail actually puts together.
 
     An email has no dark theme to swap into, so these are the light values and
-    they have to carry it on their own — which is also why the warm grey ground
-    had to be checked again after v25: #676773 on #E9E8E4 is 4.55, and the
-    value B.2 prints would have been 4.28.
+    they have to carry it on their own.
+
+    These were the core v25 colours until v43 — a blue and a warm grey that no
+    mail has carried since v29 — and they measured each other rather than
+    anything the templates use. They are the real pairs now, and they are
+    named out of EMAIL_PALETTE so that changing a colour there fails here
+    rather than silently.
     """
     pairs = [
-        ("#1B1B20", "#FFFFFF", "body on the card"),
-        ("#676773", "#FFFFFF", "quiet text on the card"),
-        ("#676773", "#E9E8E4", "quiet text on the ground"),
-        ("#3F3AE6", "#FFFFFF", "the name and the links"),
-        ("#FFFFFF", "#3F3AE6", "a button label, if one is ever painted here"),
+        ("#16181D", "#FFFFFF", "body on the card"),
+        ("#5C6370", "#FFFFFF", "quiet text on the card"),
+        ("#5C6370", "#F5F6F8", "quiet text on the ground"),
+        ("#C01017", "#FFFFFF", "the name, the phone number and the links"),
+        ("#FFFFFF", "#E1141D", "the label on the one button a mail paints"),
     ]
     for fore, back, what in pairs:
+        assert {fore, back} <= EMAIL_PALETTE, f"{what} names a colour off the palette"
         found = contrast(hex_to_rgb(fore), hex_to_rgb(back))
         assert found >= 4.5, f"{what} is {found:.2f}:1"
 
-    # B.2's banned pair, in case anyone paints a button here.
-    assert contrast(hex_to_rgb("#FFFFFF"), hex_to_rgb("#FFD400")) < 2.0
+    # And the mail's palette is the site's: every colour in it is a token.
+    site = {tuple(v) for v in themes["light"].values()}
+    for value in EMAIL_PALETTE:
+        assert hex_to_rgb(value) in site, f"{value} is in no token of the light theme"
 
 
 # --------------------------------------------------------------------------
@@ -736,3 +835,32 @@ def test_no_other_hex_literal_reaches_a_template() -> None:
         if found:
             strays[str(path.relative_to(root))] = found
     assert not strays, f"hex literals outside the theme-color metas: {strays}"
+
+
+def test_the_brand_layer_is_declared(themes: dict) -> None:
+    """The ten colours of core v43, named once each.
+
+    The role vocabulary above points at these. Checking both tables is what
+    catches the change that edits a role back into a literal and leaves the
+    brand layer saying something else.
+    """
+    assert {k: v for k, v in themes["light"].items() if k in BRAND} == BRAND
+
+
+def test_every_role_is_an_alias_or_its_own_literal() -> None:
+    """No role may repeat a value the brand layer already names.
+
+    A second copy is a copy that drifts. The states are the exception and say
+    so: a green, an amber and an error red are nobody's brand colour, so they
+    are literals in the role table and appear nowhere else.
+    """
+    body = block("  :root {")
+    links = aliases(body)
+    literals = declarations(body)
+    named = {value: name for name, value in literals.items() if name in BRAND}
+    strays = {
+        name: value
+        for name, value in literals.items()
+        if name not in BRAND and name not in links and value in named
+    }
+    assert not strays, f"these repeat a brand colour instead of pointing at it: {strays}"

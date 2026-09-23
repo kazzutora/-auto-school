@@ -203,6 +203,12 @@
      * text. */
     --brand-ink: 22 24 29;
 
+    /* And its opposite, on the same terms. White is a fill wherever the pair
+     * must not swap — the label on a red button, the text on the dark band —
+     * and a role wherever it is simply the lightest surface. --surface is the
+     * role and moves in the dark theme; this does not. */
+    --brand-paper: 255 255 255;
+
     /* Text. 17.76 on white, 16.42 on the page. */
     --ink: var(--brand-ink);
     /* Secondary text. 6.05 on white, 5.59 on the page. */
@@ -211,7 +217,7 @@
     /* Cards and the page under them. The card is white and the page a step
      * below it, so a card reads as lifted without a border; sections that
      * want to alternate take the white. */
-    --surface: 255 255 255;
+    --surface: var(--brand-paper);
     --surface-alt: 245 246 248;
     --border: 226 229 234;
 
@@ -267,7 +273,7 @@
      * does not either: brand.500 and brand.900 are the same colour in both.
      * Reaching for a card token there would be white in the light theme and
      * near black on red in the dark. */
-    --fixed-paper: 255 255 255;
+    --fixed-paper: var(--brand-paper);
     /* The same near-black where the pair must not swap with the theme: the
      * tinted tile, whose foreground is fixed because white on brand.200 is
      * 1.14 and the gate forbids it outright. 15.6 on the tint. */
@@ -277,7 +283,7 @@
      * a component dropped into the band does not have to know it landed
      * there. Both neutral — a pale pink secondary line on a neutral dark band
      * was the last of the old palette still visible. */
-    --on-wine: 255 255 255;
+    --on-wine: var(--brand-paper);
     --on-wine-muted: 185 191 203;
 
     color-scheme: light;
@@ -361,6 +367,9 @@
       --brand-link: 255 138 144;
       /* And the blue as text, 8.92. The logo's own blue is 2.0 here. */
       --brand-700: 143 180 236;
+      /* Hover goes further from the ground, which on a dark page means
+       * lighter rather than darker. */
+      --brand-blue-dark: 185 208 245;
 
       /* Text on a dark ground, so lighter than the light theme's fills. */
       --state-ok: 74 190 145;
@@ -386,6 +395,7 @@
 
     --brand-link: 255 138 144;
     --brand-700: 143 180 236;
+    --brand-blue-dark: 185 208 245;
 
     --state-ok: 74 190 145;
     --state-warn: 232 176 61;
@@ -803,6 +813,7 @@
      * It reads --brand-700 rather than --brand-blue so that the dark theme's
      * lighter blue arrives here too. */
     --link-ink: var(--brand-700);
+    --link-ink-hover: var(--brand-blue-dark);
     --display-ink: var(--brand-500);
     /* The handwriting, and the two state colours, as the ground sees them.
      * All three are published per ground rather than fixed, because all three
@@ -831,6 +842,7 @@
      * measures 1.6. */
     --script-ink: var(--brand-200);
     --link-ink: var(--on-ground);
+    --link-ink-hover: var(--on-ground);
     /* The state colours lightened for this band, for the same reason the dark
      * theme lightens them — the light theme's greens and reds are cut to read
      * on a pale page. These are measured against the chip's own fill, which is
@@ -885,6 +897,7 @@
     --focus: var(--fixed-paper);
     --script-ink: var(--fixed-paper);
     --link-ink: var(--on-ground);
+    --link-ink-hover: var(--on-ground);
   }
 
   .u-ground-brand {
@@ -913,6 +926,7 @@
     --focus: var(--fixed-ink);
     --script-ink: var(--fixed-ink);
     --link-ink: var(--on-ground);
+    --link-ink-hover: var(--on-ground);
   }
 
   .u-ground-pink :is(h1, h2, h3, h4) {
@@ -1222,6 +1236,7 @@
     --display-ink: var(--fixed-paper);
     --script-ink: var(--brand-200);
     --link-ink: var(--on-ground);
+    --link-ink-hover: var(--on-ground);
   }
 
   .u-photo-ground :is(h1, h2, h3, h4) {
@@ -1700,7 +1715,8 @@
   }
 
   .u-prose a:hover {
-    text-decoration-color: rgb(var(--on-ground));
+    color: rgb(var(--link-ink-hover));
+    text-decoration-color: rgb(var(--link-ink-hover));
   }
 
   .u-prose strong {
