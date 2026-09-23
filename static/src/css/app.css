@@ -255,7 +255,7 @@
      * so the number that matters is the colour against that wash rather than
      * against the bare ground. Each of these is the nearest value on its own
      * hue that clears 4.5 there. */
-    --state-ok: 21 115 71;
+    --state-ok: 19 107 66;
     /* A form error is red, and it may not be the brand's red: a field that
      * has gone wrong and a button that is working must not be the same
      * colour. Deeper and browner than --brand-red-dark, and the message

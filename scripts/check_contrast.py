@@ -1,4 +1,4 @@
-"""Contrast gate for the design tokens, ROSE.md B.2 and B.3.
+"""Contrast gate for the design tokens, ROSE.md B.2 and B.3 as amended at v43.
 
 B.3 prints a table of ratios and says outright that they are measured rather
 than estimated. This is the measuring. Every pair the design actually puts on
@@ -6,9 +6,12 @@ screen lives here as data and the build fails when one of them drops below its
 threshold. Body text needs 4.5:1 and large text 3:1, WCAG 2.2 1.4.3; a focus
 indicator needs 3:1 against its surround, 1.4.11.
 
-Two pairs are forbidden outright rather than held to a number, B.3: white on
-brand.200, which is 1.69, and white on the paler crimson #DA6085 the owner's
-mockup uses for its buttons, which is 3.50. Both are checked below the table.
+One pair is forbidden outright rather than held to a number: white on the pale
+tint brand.200, which is 1.14. It is checked below the table, together with the
+one literal that may not appear in the stylesheet at all — the logo's own red,
+#EA232C, which measures 4.40 under white and is the reason --brand-red is four
+percent darker than the mark it came from. The mark keeps that colour; the
+stylesheet may not borrow it back.
 
 The tokens are read out of static/src/css/app.css rather than repeated here.
 A second copy of the palette is a copy that drifts, and the one thing this
@@ -41,22 +44,26 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("light", "state-warn", "chip-on-page", 4.5, "a planned intake, on its own chip"),
     ("light", "state-err", "chip-on-page", 4.5, "a closed intake, on its own chip"),
     ("light", "state-warn", "brand-100", 4.5, "a warning on the page"),
-    # ---- light: the crimson -----------------------------------------
-    # brand.500 is a fill and a heading, never small text: on the page it is
-    # 4.08, which B.3 allows a heading of 24px and up and refuses a paragraph.
-    # The text crimson is brand.link, which clears 4.5.
-    ("light", "fixed-paper", "brand-500", 4.5, "button label on the crimson"),
+    # ---- light: the red ---------------------------------------------
+    # brand.500 is a fill and a heading, never small text: the text red is
+    # brand.link, which is darker and clears 4.5 on both light grounds.
+    ("light", "fixed-paper", "brand-500", 4.5, "button label on the red"),
     ("light", "fixed-paper", "brand-600", 4.5, "button label, hovered"),
     ("light", "brand-500", "brand-100", 3.0, "a heading, and the button as an object"),
     ("light", "brand-500", "brand-50", 3.0, "the same on a card"),
     ("light", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
     ("light", "brand-link", "brand-50", 4.5, "the same on a card"),
-    ("light", "brand-700", "brand-100", 4.5, "the logo crimson as accent text"),
-    # ---- light: the pink tile and the wine band ---------------------
-    ("light", "fixed-ink", "brand-200", 4.5, "text on a pink tile"),
-    ("light", "on-wine", "brand-900", 4.5, "text on the wine band"),
-    ("light", "on-wine-muted", "brand-900", 4.5, "secondary text on the wine band"),
-    ("light", "fixed-paper", "brand-900", 4.5, "white on the wine band"),
+    # ---- light: the blue --------------------------------------------
+    # The quiet half of every pair, and all of it is small text: the outline
+    # button's label, a link in a paragraph, the icons beside the advantages.
+    # So it is held to 4.5 on both grounds rather than to a heading's 3.0.
+    ("light", "brand-700", "brand-100", 4.5, "the blue as a link on the page"),
+    ("light", "brand-700", "brand-50", 4.5, "the same on a card"),
+    # ---- light: the tinted tile and the dark band -------------------
+    ("light", "fixed-ink", "brand-200", 4.5, "text on a tinted tile"),
+    ("light", "on-wine", "brand-900", 4.5, "text on the dark band"),
+    ("light", "on-wine-muted", "brand-900", 4.5, "secondary text on the dark band"),
+    ("light", "fixed-paper", "brand-900", 4.5, "white on the dark band"),
     # ---- dark: the same rows, roles rearranged ----------------------
     ("dark", "ink", "brand-100", 4.5, "body text on the page"),
     ("dark", "ink", "brand-50", 4.5, "body text on a card"),
@@ -66,27 +73,32 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("dark", "state-ok", "brand-50", 4.5, "an open intake on a card"),
     ("dark", "state-warn", "brand-50", 4.5, "a warning on a card"),
     # The fills do not swap, so their labels do not either.
-    ("dark", "fixed-paper", "brand-500", 4.5, "button label on the crimson"),
+    ("dark", "fixed-paper", "brand-500", 4.5, "button label on the red"),
     ("dark", "fixed-paper", "brand-600", 4.5, "button label, hovered"),
     ("dark", "brand-500", "brand-100", 3.0, "the button as an object on the page"),
     ("dark", "brand-500", "brand-50", 3.0, "the same on a card"),
     ("dark", "brand-link", "brand-100", 4.5, "links and small red text on the page"),
     ("dark", "brand-link", "brand-50", 4.5, "the same on a card"),
-    ("dark", "fixed-ink", "brand-200", 4.5, "text on a pink tile"),
-    ("dark", "on-wine", "brand-900", 4.5, "text on the wine band"),
-    ("dark", "on-wine-muted", "brand-900", 4.5, "secondary text on the wine band"),
+    ("dark", "brand-700", "brand-100", 4.5, "the blue as a link on the page"),
+    ("dark", "brand-700", "brand-50", 4.5, "the same on a card"),
+    ("dark", "fixed-ink", "brand-200", 4.5, "text on a tinted tile"),
+    ("dark", "on-wine", "brand-900", 4.5, "text on the dark band"),
+    ("dark", "on-wine-muted", "brand-900", 4.5, "secondary text on the dark band"),
     # ---- the focus ring, 1.4.11: 3:1 against what surrounds it ------
     # The ring is --focus with a halo of the ground's own foreground under it,
-    # so both edges are checked against the ground they sit on.
-    ("light", "brand-500", "brand-100", 3.0, "focus ring on the page"),
-    ("light", "brand-500", "brand-50", 3.0, "focus ring on a card"),
+    # so both edges are checked against the ground they sit on. Since core v43
+    # --focus is the blue on every light ground: a red ring around a red
+    # button is a ring nobody can see, and the control that needs the ring
+    # most is a form field, which carries no red at all.
+    ("light", "brand-700", "brand-100", 3.0, "focus ring on the page"),
+    ("light", "brand-700", "brand-50", 3.0, "focus ring on a card"),
     ("light", "ink", "brand-100", 3.0, "focus halo on the page"),
     ("light", "ink", "brand-50", 3.0, "focus halo on a card"),
-    ("light", "fixed-paper", "brand-500", 3.0, "focus ring on a crimson fill"),
-    ("light", "fixed-ink", "brand-200", 3.0, "focus ring on a pink tile"),
-    ("light", "on-wine", "brand-900", 3.0, "focus ring on the wine band"),
-    ("dark", "brand-500", "brand-100", 3.0, "focus ring on the page"),
-    ("dark", "brand-500", "brand-50", 3.0, "focus ring on a card"),
+    ("light", "fixed-paper", "brand-500", 3.0, "focus ring on a red fill"),
+    ("light", "fixed-ink", "brand-200", 3.0, "focus ring on a tinted tile"),
+    ("light", "on-wine", "brand-900", 3.0, "focus ring on the dark band"),
+    ("dark", "brand-700", "brand-100", 3.0, "focus ring on the page"),
+    ("dark", "brand-700", "brand-50", 3.0, "focus ring on a card"),
     ("dark", "ink", "brand-100", 3.0, "focus halo on the page"),
     ("dark", "ink", "brand-50", 3.0, "focus halo on a card"),
 ]
@@ -98,10 +110,12 @@ FORBIDDEN: list[tuple[str, tuple[int, int, int], str]] = [
     ("white on brand.200", (255, 255, 255), "brand-200"),
 ]
 
-# And the one colour that is not a token here at all: the paler crimson the
-# owner's mockup uses for its buttons. White on it is 3.50, so it may not
-# become one.
-FORBIDDEN_LITERALS = {"#da6085": "the mockup's button crimson, 3.50 under white"}
+# And the one colour that may not become a token: the logo's own red. White on
+# it is 4.40 and the primary button carries a white label, so the fill is
+# #E1141D instead. The artwork keeps #EA232C; this file keeps it out of the
+# stylesheet, because "correcting" the token back to the mark's exact hex is
+# the obvious thing for the next person to do.
+FORBIDDEN_LITERALS = {"#ea232c": "the logo's own red, 4.40 under white — use --brand-red"}
 
 
 def mix(fg: tuple[int, int, int], bg: tuple[int, int, int], alpha: float):
@@ -118,6 +132,7 @@ def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
     should report as a missing token rather than quietly use.
     """
     themes: dict[str, dict[str, tuple[int, int, int]]] = {"light": {}, "dark": {}}
+    aliases: dict[str, dict[str, str]] = {"light": {}, "dark": {}}
     for theme, pattern in (
         ("light", r":root\s*\{(.*?)\n  \}"),
         ("dark", r':root\[data-theme=[\'"]dark[\'"]\]\s*\{(.*?)\n  \}'),
@@ -127,11 +142,51 @@ def read_tokens(text: str) -> dict[str, dict[str, tuple[int, int, int]]]:
                 r"--([a-z0-9-]+):\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s*;", block
             ):
                 themes[theme].setdefault(name, (int(r), int(g), int(b)))
+            # Since core v43 the table has two layers: the brand names each
+            # colour once — --brand-red, --surface, --ink — and the role
+            # vocabulary the templates were built on points at it with var().
+            # Both are real tokens as far as the cascade is concerned, so both
+            # have to be real here, or every pair naming a role reports as a
+            # missing token.
+            for name, target in re.findall(
+                r"--([a-z0-9-]+):\s*var\(--([a-z0-9-]+)\)\s*;", block
+            ):
+                aliases[theme].setdefault(name, target)
     # The dark theme redefines only what changes role; everything else it
-    # inherits from the light table, exactly as the cascade does it.
+    # inherits from the light table, exactly as the cascade does it. Its own
+    # literals are kept aside first, because they have to beat an alias the
+    # light table declared for the same name: --brand-link is var(--brand-red-
+    # dark) in the light theme and a literal pale red in the dark one, and
+    # resolving the inherited alias over it would have put the light theme's
+    # red back on the dark page at 1.55.
+    dark_literals = set(themes["dark"])
     merged = dict(themes["light"])
     merged.update(themes["dark"])
     themes["dark"] = merged
+    aliases["dark"] = {
+        name: target
+        for name, target in {**aliases["light"], **aliases["dark"]}.items()
+        if name not in dark_literals
+    }
+
+    # Now resolve, per theme. Doing it after the merge rather than before is
+    # what makes the dark theme work at all: it redefines --surface, and
+    # --brand-50 points at --surface, so the card token has to be resolved
+    # against the dark table even though the alias was written in the light
+    # one.
+    #
+    # An alias may point at another alias — --fixed-ink is --brand-ink is a
+    # literal — so it walks, and refuses to go round in a circle.
+    for theme, table in themes.items():
+        for name, first in aliases[theme].items():
+            seen, target = {name}, first
+            while target not in table and target in aliases[theme]:
+                if target in seen:
+                    raise SystemExit(f"--{name} resolves in a circle in the {theme} theme")
+                seen.add(target)
+                target = aliases[theme][target]
+            if target in table:
+                table[name] = table[target]
     # Not a token: the fill a state chip paints for itself, which is a tenth of
     # the ground's own foreground over the ground. app.css says the same in one
     # declaration, and the colours on it have to be checked against it rather
