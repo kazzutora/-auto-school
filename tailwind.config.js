@@ -52,7 +52,8 @@ module.exports = {
       xl: "1280px",
     },
 
-    // B.2. One crimson family, an ink ramp, a hairline and two states.
+    // B.2 as amended at core v43. One red family, one blue, an ink ramp, a
+    // hairline and two states.
     // Nothing else, and nothing from the palette this replaced: with no
     // `primary`, `accent`, `paper` or `surface` here, a leftover `bg-paper` in
     // a template generates nothing and shows up, rather than quietly painting
@@ -193,13 +194,15 @@ module.exports = {
       2: "2px",
     },
 
-    // B.5: exactly two levels, and no third is to be added. Both are wine at
-    // low alpha rather than grey — a warm shadow under a warm page, so a card
-    // does not look cut out of a different photograph.
+    // Exactly two levels, and no third is to be added. Both are neutral black
+    // at low alpha. They were wine — a warm shadow under a warm page — and a
+    // warm shadow under a neutral one is a smudge of a colour the palette no
+    // longer contains: at core v43 the page is grey-white and the only warm
+    // thing on it is the red itself.
     boxShadow: {
       none: "none",
-      card: "0 1px 2px rgba(126, 43, 69, .06), 0 14px 30px -18px rgba(126, 43, 69, .28)",
-      "card-hover": "0 2px 4px rgba(126, 43, 69, .08), 0 22px 40px -20px rgba(126, 43, 69, .36)",
+      card: "0 1px 2px rgba(16, 18, 22, .05), 0 14px 30px -18px rgba(16, 18, 22, .22)",
+      "card-hover": "0 2px 4px rgba(16, 18, 22, .07), 0 22px 40px -20px rgba(16, 18, 22, .30)",
     },
 
     extend: {
