@@ -1017,30 +1017,36 @@
    * quieter half of a pair. A red frame beside a red fill made the two
    * buttons in every hero read as one control drawn twice.
    *
-   * It takes --link-ink rather than the blue directly, so that on the dark
-   * band and on the red tile it comes out as a white frame instead of a blue
-   * one nobody can see.
+   * It names the blue directly rather than reading --link-ink, and that is
+   * the whole reason --link-ink exists separately: --link-ink is the ground's
+   * own foreground on a ground that inverts, and this button does not sit on
+   * the ground. It paints its own card face underneath itself, so on the dark
+   * band and on the red band it took white text onto a white pill and came
+   * out as a blank lozenge with the label invisible inside it.
+   *
+   * --brand-700 rather than --brand-blue so the dark theme's lighter blue
+   * arrives here too: there the face is the dark card and the logo's blue
+   * would measure 1.9 on it.
    */
   .u-btn-outline {
-    border-color: rgb(var(--link-ink));
-    color: rgb(var(--link-ink));
+    border-color: rgb(var(--brand-700));
+    color: rgb(var(--brand-700));
     background-color: rgb(var(--brand-50));
     /* It paints its own face, so it publishes its own ring. Dropped on the
      * dark band it kept the band's pale focus colour and came out pale on
      * pale — an invisible focus ring on the route button of the contact
      * page. */
-    --focus: var(--link-ink);
+    --focus: var(--brand-700);
   }
 
-  /* The hover is a wash of the button's own ink rather than a named colour,
-   * which is what lets one rule serve every ground: eight percent of blue
-   * over a white card is the faint blue tint, and eight percent of white
-   * over the dark band is the same gesture in the other direction. A named
-   * light blue would have been a pale patch on the dark band. */
+  /* The hover is a wash of the button's own ink over its own face: eight
+   * percent of the blue on the white pill in the light theme, and the same
+   * eight percent of the lighter blue on the dark pill in the dark one. A
+   * named light blue would have been wrong in one of the two. */
   .u-btn-outline:hover:not(:disabled) {
-    background-color: rgb(var(--link-ink) / 0.08);
-    border-color: rgb(var(--link-ink));
-    color: rgb(var(--link-ink));
+    background-color: rgb(var(--brand-700) / 0.08);
+    border-color: rgb(var(--brand-700));
+    color: rgb(var(--brand-700));
   }
 
   /* The ghost button, B.5: a label, an arrow, and a scribble under the word
