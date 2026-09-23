@@ -494,8 +494,8 @@ def test_the_card_sits_above_the_page(themes: dict) -> None:
 def test_every_token_is_wired_into_the_config(themes: dict) -> None:
     """A colour the config cannot reach is a colour no template can use.
 
-    The brush pair is deliberately not wired: --brush-a and --brush-b are read
-    by the ornament files in static/img/ornament/ and never by a template.
+    The brand layer is deliberately not wired either: --brand-red and the rest
+    name the colours, and the roles below them are what a template can reach.
     """
     text = config()
     for name in LIGHT:
@@ -719,10 +719,10 @@ EMAIL_TEMPLATES = Path(settings.BASE_DIR) / "templates" / "leads" / "email"
 # colours: these are the A.2 values, written out.
 EMAIL_PALETTE = {
     "#FFFFFF",  # brand.50, the card the letter sits on
-    "#F5F6F8",  # brand.100, the page around it
-    "#E2E5EA",  # line
-    "#16181D",  # ink
-    "#5C6370",  # ink.500
+    "#F4F4F5",  # brand.100, the page around it
+    "#E4E4E7",  # line
+    "#1C1C1E",  # ink
+    "#6B6B70",  # ink.500
     "#E1141D",  # brand.500 — a fill, and the rule beside a quote
     "#C01017",  # brand.link — the red as text, which brand.500 is too light to be
 }
@@ -768,9 +768,9 @@ def test_the_emails_keep_their_text_readable(themes: dict) -> None:
     rather than silently.
     """
     pairs = [
-        ("#16181D", "#FFFFFF", "body on the card"),
-        ("#5C6370", "#FFFFFF", "quiet text on the card"),
-        ("#5C6370", "#F5F6F8", "quiet text on the ground"),
+        ("#1C1C1E", "#FFFFFF", "body on the card"),
+        ("#6B6B70", "#FFFFFF", "quiet text on the card"),
+        ("#6B6B70", "#F4F4F5", "quiet text on the ground"),
         ("#C01017", "#FFFFFF", "the name, the phone number and the links"),
         ("#FFFFFF", "#E1141D", "the label on the one button a mail paints"),
     ]

@@ -35,16 +35,15 @@ RASTER = [
     "og-default.jpg",
 ]
 
-# Core v43. Nothing in the kit may reach outside this list, and in particular
-# nothing may keep the crimson family of cores v29 to v42.
+# Core v44. Nothing in the kit may reach outside this list, and in particular
+# nothing may keep the crimson family of cores v29 to v42 or the blue of v43.
 #
-# The two brand colours here are the mark's own, measured out of the file the
-# owner sent: #EA232C and #2A61AE. The red is deliberately not the stylesheet's
-# --brand-red, which is four percent darker so that a white button label
-# clears 4.5 — a drawn letterform carries no white text on it and has no such
-# constraint. scripts/check_contrast.py holds the other side of that line: it
-# fails if #EA232C ever turns up in app.css.
-ALLOWED = {"#EA232C", "#2A61AE", "#FDECED", "#FFFFFF", "#F5F6F8", "#16181D"}
+# The red is the mark's own, measured out of the file the owner sent, and is
+# deliberately not the stylesheet's --brand-red: that one is four percent
+# darker so a white button label clears 4.5, and a drawn letterform carries no
+# white text on it. scripts/check_contrast.py holds the other side of the same
+# line — it fails if #EA232C ever turns up in app.css.
+ALLOWED = {"#EA232C", "#1C1C1E", "#FDECED", "#FFFFFF", "#F4F4F5"}
 HEX = re.compile(r"#[0-9A-Fa-f]{3,8}")
 
 

@@ -27,16 +27,18 @@ from scripts.brand.svgpath import annular_sector, circle, num, polygon, rounded_
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "static" / "img" / "brand"
 
-# The palette as amended at core v43. These are the mark's own colours rather
-# than the stylesheet's tokens, which is why the red here is the logo's exact
+# The palette as amended at core v44. The red here is the logo's exact
 # #EA232C and not the four-percent-darker --brand-red the pages use: nothing
 # on these files carries small white text, so the 4.40 that rules the red out
 # of a button label does not apply to a drawn letterform.
 #
-# INK is the structural colour — the plate, the frame, the subline — and it is
-# now the mark's blue. PINK keeps its name from the palette this replaced; it
-# is the red, and renaming it would have touched thirty call sites for nothing.
-INK = "#2A61AE"  # the logo's blue
+# INK is the structural colour — the plate, the frame, the subline. It was the
+# mark's blue at v43 and is graphite now, because v44 took the blue out of the
+# palette: these files are the press kit and the favicon, and a blue plate in
+# a browser tab beside a site with no blue on it reads as a different school.
+# PINK keeps its name from the palette two cores back; it is the red, and
+# renaming it would have touched thirty call sites for nothing.
+INK = "#1C1C1E"  # graphite, --brand-ink
 PINK = "#EA232C"  # the logo's red
 SOFT = "#FDECED"  # the pale tint, --brand-red-light
 FACE = "#FFFFFF"  # --surface

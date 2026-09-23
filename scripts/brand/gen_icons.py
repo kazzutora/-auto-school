@@ -30,15 +30,15 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "static" / "img" / "brand"
 FONT_DIR = ROOT / "static" / "fonts"
 
-# Core v43. The same pair gen_logo.py draws the vectors with: the mark's own
+# Core v44. The same pair gen_logo.py draws the vectors with: the mark's own
 # colours, so the red here is the logo's exact #EA232C. An icon carries no
 # small white text, so the ratio that rules that red out of a button label
 # does not reach it.
-INK = (42, 97, 174)  # the logo's blue
+INK = (28, 28, 30)  # graphite, --brand-ink
 PINK = (234, 35, 44)  # the logo's red
 SOFT = (253, 236, 237)  # --brand-red-light
 FACE = (255, 255, 255)  # --surface
-GROUND = (245, 246, 248)  # --surface-alt
+GROUND = (244, 244, 245)  # --surface-alt
 
 SS = 4  # supersampling factor
 

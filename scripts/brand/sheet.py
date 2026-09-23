@@ -27,17 +27,17 @@ SOURCE = BRAND / "source"
 OUT = ROOT / ".local" / "brand-sheet.html"
 
 STYLE = """
-body{margin:0;font:13px/1.45 system-ui,sans-serif;background:#fff;color:#16181D}
-h2{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#5C6370;
+body{margin:0;font:13px/1.45 system-ui,sans-serif;background:#fff;color:#1C1C1E}
+h2{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#6B6B70;
    margin:0 0 12px;font-weight:700}
-.row{padding:22px 28px;border-bottom:1px solid #E2E5EA}
-.dark{background:#0F1115;color:#EDF0F5;border-color:#2D323B}
-.ground{background:#F5F6F8}
+.row{padding:22px 28px;border-bottom:1px solid #E4E4E7}
+.dark{background:#0E0E10;color:#EDEDF0;border-color:#2E2E33}
+.ground{background:#F4F4F5}
 .paper{background:#FFFFFF}
 .box{display:flex;gap:34px;align-items:center;flex-wrap:wrap}
 .fav{display:flex;gap:28px;align-items:flex-end}
 .fav figure{margin:0;text-align:center}
-.fav figcaption{color:#5C6370;font-size:10px;margin-top:6px}
+.fav figcaption{color:#6B6B70;font-size:10px;margin-top:6px}
 img{display:block}
 svg{display:block}
 """
@@ -71,7 +71,7 @@ def main() -> int:
         f"{sized('logo-compact.svg', 'height:64px;width:auto')}</div></div>"
     )
     rows.append(
-        '<div class="row dark"><h2>logo-full-dark.svg on #0F1115</h2>'
+        '<div class="row dark"><h2>logo-full-dark.svg on #0E0E10</h2>'
         f'<div style="width:585px">'
         f"{sized('logo-full-dark.svg', 'width:100%;height:auto')}</div></div>"
     )
