@@ -187,9 +187,18 @@
      * price, a link, a small red line — where the fill red measures 4.42 on
      * the page and fails outright. */
     --brand-red-dark: 192 16 23;
-    /* The tint: a badge behind dark text, a soft tile, the body of a brush
-     * stroke. Never carries white — the gate refuses that pairing. */
-    --brand-red-light: 253 236 237;
+    /* The tint: a badge behind dark text, the chip under a step number, the
+     * circle on a play button, the row of the page you are on in the mobile
+     * menu. Never carries white — the gate refuses that pairing.
+     *
+     * Taken down to a whisper at core v45. It was #FDECED, which is the red
+     * at about seven percent, and seven percent is enough: nine components
+     * carry this token and together they were what still made the site read
+     * as the pink palette two cores after it was replaced. At this saturation
+     * — under one percent — it is a neutral light chip that happens to lean
+     * the way the brand does, and the red does its own work in the places
+     * that mean red. */
+    --brand-red-light: 240 238 238;
 
     /* Graphite. The third colour, and the one that does most of the work:
      * every heading and every paragraph on the site, the outline button, the
@@ -243,7 +252,6 @@
     --brand-50: var(--surface);
     --brand-100: var(--surface-alt);
     --brand-200: var(--brand-red-light);
-    --brand-300: 247 195 198;
 
     --brand-500: var(--brand-red);
     --brand-600: var(--brand-red-dark);
@@ -508,19 +516,20 @@
   h1,
   h2,
   /* The same treatment for a line that is not itself a heading: the second
-     line of the hero's h1 sits inside a .display, and .display publishes the
-     red, so the line inherited red on red and the keyline
-     vanished into its own fill. */
+     line of the hero's h1 sits inside a .display, which publishes the red, so
+     without this the line would inherit it. */
   .u-outlined {
-    color: rgb(var(--head-ink, var(--fixed-paper)));
-    paint-order: stroke fill;
-    /* A floor in pixels under a ratio in em. The ratio alone is right for a
-     * display heading and far too thin for a small one: the course tile's
-     * name is 20px, where 0.048em is under a pixel and the letters read as a
-     * grey haze rather than as an outline. max() keeps the big headings
-     * exactly where they were and gives the small ones a line. */
-    -webkit-text-stroke-color: rgb(var(--head-line, var(--brand-500)));
-    -webkit-text-stroke-width: max(1.5px, 0.052em);
+    /* Solid, core v45. These were paper-filled with a red keyline from v32 to
+     * v44, and the reason given for it was that the wordmark is drawn that
+     * way — which was true of the AI-drawn lockup the site carried then and
+     * is not true of the school's own mark, where OSTRYCHARZ is solid red.
+     *
+     * It never measured either. The fill is 1.08 against the page, so a
+     * heading was carried entirely by a stroke of 1.5px, and at the 20px of a
+     * course tile's name that stroke is most of the letter — the words read
+     * as a grey haze rather than as words. Grounds that invert still publish
+     * --head-ink and take it back. */
+    color: rgb(var(--head-ink, var(--ink)));
   }
 
   h1,
@@ -884,7 +893,7 @@
     --focus: var(--on-wine);
     /* The pink of the logo rather than the red: brand.500 on the dark band
      * measures 1.6. */
-    --script-ink: var(--brand-200);
+    --script-ink: var(--brand-paper);
     --link-ink: var(--on-ground);
     --link-ink-hover: var(--on-ground);
     /* The state colours lightened for this band, for the same reason the dark
@@ -905,7 +914,6 @@
   }
 
   .u-ground-wine :is(h1, h2, h3, h4) {
-    -webkit-text-stroke-color: transparent;
     color: rgb(var(--on-ground));
   }
 
@@ -921,6 +929,18 @@
     --on-ground-body: var(--ink);
     --on-ground-muted: var(--ink-500);
     --focus: var(--brand-red);
+  }
+
+  /* And it paints, which the three above do not: a card draws its own face
+   * further down and .u-empty is a dashed outline on the page.
+   *
+   * This was a ground that published a foreground and no background, which
+   * works for as long as something else on the block paints — on the hero
+   * that something was the scrim, and the scrim only exists from lg. Below
+   * lg the hero kept the page's grey while the same section came out white on
+   * a desktop. */
+  .u-ground-paper {
+    background-color: rgb(var(--ground));
   }
 
   /* The red as a ground rather than as a button fill: the active course
@@ -951,7 +971,6 @@
   }
 
   .u-ground-brand :is(h1, h2, h3, h4) {
-    -webkit-text-stroke-color: transparent;
     color: rgb(var(--fixed-paper));
   }
 
@@ -978,7 +997,6 @@
   }
 
   .u-ground-pink :is(h1, h2, h3, h4) {
-    -webkit-text-stroke-color: transparent;
     color: rgb(var(--fixed-ink));
   }
 
@@ -1022,6 +1040,15 @@
 
   .u-muted-on-ground {
     color: rgb(var(--on-ground-muted));
+  }
+
+  /* On the red ground the muted token is plain white — the pale tint is the
+   * one colour that may not sit on this fill — so the step down to a caption
+   * has to come from alpha instead of from a second colour. .85 of white on
+   * the red is 4.0, which is a caption and not body copy, and every caption
+   * on this ground is one. */
+  .u-ground-brand .u-muted-on-ground {
+    color: rgb(var(--on-ground-muted) / 0.85);
   }
 
   /* ------------------------------------------------------------------ *
@@ -1088,6 +1115,30 @@
   .u-btn-outline:hover:not(:disabled) {
     background-color: rgb(var(--ink-soft));
     border-color: rgb(var(--ink-soft));
+    color: rgb(var(--brand-paper));
+  }
+
+  /* The header's call button, core v45: a graphite fill rather than a frame.
+   *
+   * It is the only control on that row, and as an outline it was a pill-shaped
+   * frame sitting beside a menu of plain words and four ringed icons — four
+   * outlines in a row, none of them louder than the others, and the one that
+   * was meant to be pressed lost. Filled, it reads as the button it is without
+   * taking the red, which belongs to "Zapisz się" further down every page.
+   *
+   * After .u-btn-outline on purpose: the call site keeps that variant for its
+   * shape and this overrides its paint. Same specificity, so order decides.
+   * White on graphite is 17.01. */
+  .u-btn-ink {
+    border-color: rgb(var(--brand-ink));
+    background-color: rgb(var(--brand-ink));
+    color: rgb(var(--brand-paper));
+    --focus: var(--brand-ink);
+  }
+
+  .u-btn-ink:hover:not(:disabled) {
+    border-color: rgb(var(--ink-soft));
+    background-color: rgb(var(--ink-soft));
     color: rgb(var(--brand-paper));
   }
 
@@ -1292,7 +1343,7 @@
      * The red is a brand colour on a pale page; over a photograph at dusk it
      * is one dark red on another. */
     --display-ink: var(--fixed-paper);
-    --script-ink: var(--brand-200);
+    --script-ink: var(--brand-paper);
     --link-ink: var(--on-ground);
     --link-ink-hover: var(--on-ground);
   }
@@ -1322,23 +1373,37 @@
   /* A social link. A ring rather than a filled circle: three filled red
    * dots in a row read as buttons, and these are the quietest links on the
    * page — a reader who wants the price list should not be pulled off it. */
+  /* At rest the ring takes the ground's own foreground, not the red. Four red
+   * circles in a row beside a red lockup and a red button is a header that
+   * rattles, and these are the quietest links on the page — they are a place
+   * to find the school, not a thing to press. The red arrives on hover, where
+   * it means something.
+   *
+   * --on-ground rather than --ink so the same rule serves the graphite footer,
+   * where it comes out white. */
   .u-social {
-    @apply grid h-11 w-11 place-items-center rounded-full border-1.5 border-brand-500;
-    color: rgb(var(--brand-600));
-    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+    @apply grid h-11 w-11 place-items-center rounded-full border-1.5;
+    border-color: rgb(var(--on-ground) / 0.45);
+    color: rgb(var(--on-ground));
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
   }
 
   .u-social:hover {
     background-color: rgb(var(--brand-500));
+    border-color: rgb(var(--brand-500));
     color: rgb(var(--fixed-paper));
   }
 
   /* The header row, which already carries a lockup, a menu, a language
-   * switch and a call button. 44px is the touch target A.11 asks for and the
-   * header is a pointer row at the width these appear at — below xl they are
-   * in the panel, where they are 44px again. */
+   * switch and a call button. 44px is the touch target A.11 asks for, and it
+   * is honoured below xl where these move into the panel and go back to 44.
+   * On the pointer row they are 32px: at 36 the four of them were the widest
+   * thing in the header after the mark itself. */
   .u-social-sm {
-    @apply h-9 w-9;
+    @apply h-8 w-8 border;
   }
 
   /* A photograph that has not arrived. The frame keeps the ratio the picture
@@ -1356,8 +1421,17 @@
    * A dark ground hands it its own foreground instead. */
   .u-photo-slot-frame {
     @apply flex w-full flex-col items-center justify-center rounded-card border-2 border-dashed p-6;
-    border-color: rgb(var(--slot-ink, var(--brand-500)) / 0.5);
-    background-color: rgb(var(--slot-ink, var(--brand-500)) / 0.06);
+    /* The frame is red at full strength and the fill is not red at all.
+     *
+     * Both used to be the red at low alpha — 0.5 on the border and 0.06 on
+     * the face — and the red at six percent over the page is pink. Four of
+     * these stand side by side in the gallery strip and two more on the
+     * course page, so they were the largest area of pink left on the site
+     * after the palette changed. A wash of the ground's own ink instead: the
+     * box still reads as a box waiting to be filled, and the dashes, which
+     * are what actually say "not a card, a placeholder", now read as red. */
+    border-color: rgb(var(--slot-ink, var(--brand-500)));
+    background-color: rgb(var(--on-ground) / 0.04);
     color: rgb(var(--slot-ink, var(--brand-600)));
   }
 
@@ -1544,37 +1618,30 @@
    * hook for the current page — the attribute is already there for screen
    * readers, so nothing extra has to be kept in step.
    * ------------------------------------------------------------------ */
-  /* The menu set the way the owner's wordmark is: heavy italic uppercase,
-   * paper fill, red keyline. Rubik 800 italic is the display face the
-   * lockup's own lettering is cut from, so the row and the mark agree.
+  /* The menu row.
+   *
+   * Plain text since core v45. From v32 it was the display face, italic, 800,
+   * uppercase and outlined — paper fill with a red keyline — on the argument
+   * that it matched the wordmark. Two things were wrong with that. The mark
+   * it was matching was the AI-drawn lockup, whose lettering is outlined; the
+   * school's own is solid. And at 16px an outline is not a style, it is a
+   * legibility problem: the fill measures 1.08 against the page, so every
+   * letter was carried by 1.1px of stroke.
+   *
+   * So: the text face, no italic, no uppercase transform, 600, and the ink
+   * the rest of the page is set in. 15.48 against the page. What marks the
+   * current item and the hovered one is the red and the rule under it, which
+   * is what the rule was there to reinforce before and now carries on its own.
    *
    * Type, not the picture that was sent. These labels come from
    * apps/core/navigation.py and they are translated — a sliced image of seven
    * Polish words leaves /ru/ and /uk/ with a Polish menu, and leaves every
    * reader with a menu they cannot select, resize or hear read out.
-   *
-   * -webkit-text-stroke rather than a shadow ring. It centres the stroke on
-   * the glyph outline, which eats into the fill, and at 800 weight there is
-   * enough letter to spare. paint-order is set for the engines that honour it
-   * on html: there the stroke goes behind the fill and no letter thins.
-   *
-   * The fill is fixed paper in both themes and so is the keyline's colour:
-   * these are the lockup's own fills, and ROSE.md B.2 does not swap fills with
-   * the theme.
-   *
-   * brand.600, not brand.500. The fill is paper on a blush page — 1.14:1, it
-   * carries nothing — so the whole of this row's legibility is in the keyline,
-   * and at brand.500 that measured 4.08 against the page where text this size
-   * wants 4.5. CLAUDE.md 6a already says it: small red text is brand.600 and
-   * darker. At brand.600 it is 4.79. On the dark ground the paper fill is
-   * doing the work and the keyline is decoration, so one colour serves both.
    */
   .u-navlink {
     position: relative;
-    font-family: theme("fontFamily.display");
-    font-style: italic;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-family: theme("fontFamily.sans");
+    font-weight: 600;
     /* 16px since the menu lost Zdawalność, its longest item, at core v32.
      *
      * The size is measured rather than chosen. A row that does not fit here
@@ -1583,22 +1650,19 @@
      * with seven items, where polish and ukrainian sat on their minimum 8px
      * gaps; six items at 16px is the largest step that keeps a gap on all
      * three languages at 1280, which is the width the menu first appears at
-     * and the only one where it and the lockup share a line. */
+     * and the only one where it and the lockup share a line.
+     *
+     * The row got narrower at v45 rather than wider: dropping the uppercase
+     * takes about a sixth off every label. */
     font-size: 1rem;
-    letter-spacing: 0.005em;
-    color: rgb(var(--fixed-paper));
-    paint-order: stroke fill;
-    -webkit-text-stroke: 1.1px rgb(var(--brand-600));
-    transition: color var(--dur) var(--ease), -webkit-text-stroke-color var(--dur) var(--ease);
+    color: rgb(var(--ink));
+    transition: color var(--dur) var(--ease);
   }
 
-  /* Pointed at, and the page you are on: the keyline fills in. An outline and
-   * a solid are further apart than two shades of one colour, which is what
-   * the underline below is there to reinforce rather than to carry alone. */
+  /* Pointed at, and the page you are on. */
   .u-navlink:hover,
   .u-navlink[aria-current="page"] {
     color: rgb(var(--brand-600));
-    -webkit-text-stroke-color: rgb(var(--brand-600));
   }
 
   .u-navlink::after {
@@ -1606,7 +1670,9 @@
     position: absolute;
     inset-inline: 0;
     bottom: -2px;
-    height: 3px;
+    /* 2px. It was 3 to shore up an outlined label; under solid text that
+     * reads as a heavy slab under a light word. */
+    height: 2px;
     border-radius: 999px;
     background-color: rgb(var(--brand-500));
     transform: scaleX(0);
@@ -1892,8 +1958,14 @@
    * need to carry weight — the band behind the figures, the corner of the dark band
    * block. See scripts/brand/gen_ornaments.py for why this is `color` and not
    * the pair of custom properties B.6 names. */
+  /* Neutral on a pale ground, core v45. It was the red tint, and a 50px band
+   * of #FDECED across a white page is the single thing that still read as the
+   * pink palette three cores after it was replaced — a wash with no job,
+   * sitting between two sections. The hairline colour instead: the stroke
+   * stays a stroke and stops being a colour. Grounds that want it coloured
+   * say so — the footer takes the red below. */
   .u-brush {
-    color: rgb(var(--brand-200));
+    color: rgb(var(--border));
   }
 
   .u-brush-strong {
@@ -2114,4 +2186,19 @@
  * and it does not recognise a tag-plus-class selector. */
 footer.u-ground-wine {
   border-top: 4px solid rgb(var(--brand-red));
+}
+
+/* The figures in the stat strip, when the strip itself is red.
+ *
+ * <c-stat> names `text-brand-500` on the number, which is right on every pale
+ * ground and is red on red the moment the block behind it is the same fill —
+ * the four numbers the section exists for vanished. The ground hands it the
+ * foreground it publishes instead.
+ *
+ * Out here rather than in @layer components because `text-brand-500` is a
+ * utility and utilities are a later layer: specificity cannot reach it from
+ * inside, and tailwind purges what it puts in @layer utilities by matching
+ * class names, which it cannot do for a selector like this one. */
+.u-ground-brand .u-bignum.text-brand-500 {
+  color: rgb(var(--on-ground));
 }

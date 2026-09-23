@@ -44,7 +44,7 @@ BRAND = {
     # on that measures 4.40 and the primary button carries a white label.
     "brand-red": (225, 20, 29),
     "brand-red-dark": (192, 16, 23),
-    "brand-red-light": (253, 236, 237),
+    "brand-red-light": (240, 238, 238),
     # Graphite. Every heading and paragraph, the outline button, the dark
     # band and the footer. Neutral, with no cast in it.
     "brand-ink": (28, 28, 30),
@@ -63,8 +63,7 @@ BRAND = {
 LIGHT = {
     "brand-50": (255, 255, 255),
     "brand-100": (244, 244, 245),
-    "brand-200": (253, 236, 237),
-    "brand-300": (247, 195, 198),
+    "brand-200": (240, 238, 238),
     "brand-500": (225, 20, 29),
     "brand-600": (192, 16, 23),
     "brand-link": (192, 16, 23),

@@ -132,13 +132,19 @@ public page.
       </div>
     </div>
 
-    {# The closing note, C.1 block 9. The last heart on the page, and the third
-       of the three B.7 point 2 allows in a screen — the other two are far
-       enough up that they are never in the same viewport as this one. #}
+    {# The closing note, C.1 block 9.
+
+       The tilt goes on the words and not on the row, and that is a fix rather
+       than a preference: `.script` rotates -4deg about its left bottom corner,
+       so a full-width box carrying the line lifted its right end by the width
+       of the container times sin(4deg) — 84px at 1440 — and the words landed
+       on top of the social icons in the column above. Measured at 1920, 1440,
+       1024, 768 and 375: the overlap was 20px on the two widest and 9px at
+       768. On a span the size of the text itself the same tilt lifts 13px,
+       which is inside the margin. #}
     {% if not plain %}
-      <p class="script mt-10 flex items-center justify-end gap-2 text-right">
-        {% translate "Z nami zawsze do celu" %}
-        <c-ornament kind="heart" variant="3" class="h-6 w-6 shrink-0" />
+      <p class="mt-12 text-right">
+        <span class="script">{% translate "Z nami zawsze do celu" %}</span>
       </p>
     {% endif %}
 

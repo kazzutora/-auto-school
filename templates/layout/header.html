@@ -84,15 +84,17 @@ elements rather than two <img> tags, which would fetch both.
       <c-social-links size="sm" label="{{ t_social_header }}" class="hidden lg:flex" />
 
       {% if site_settings.phone_primary %}
-        {# B.7 point 0 names this button and B.5 allows exactly one
-           outline-accent per screen. It is an offer, which is a state, which is
-           what the yellow is for — B.1. The blue on this row would compete with
+        {# B.7 point 0 names this button. Graphite since core v45, `u-btn-ink`:
+           it keeps the outline variant's shape and takes a solid fill, because
+           as a frame it was the fourth outline on a row that already had a
+           menu and three ringed icons, and the one control meant to be pressed
+           read as the quietest thing there. Not red — that belongs to
            "Zapisz się" further down every page. #}
         {# The route by name, not `enrol_url`: that variable is set by the
            views that happen to need it and the header is on every page,
            including the ones that do not. #}
         <c-button variant="outline" href="{% url 'leads:enroll' %}"
-                  class="hidden xl:inline-flex">
+                  class="u-btn-ink hidden xl:inline-flex">
           {% translate "Oddzwonimy do Ciebie" %}
         </c-button>
       {% endif %}

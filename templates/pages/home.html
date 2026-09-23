@@ -61,7 +61,7 @@ is a forgery, not a placeholder.
    photographs, and there is no behind on a block that is a photograph — laid
    over one it is a smear nobody reads as a brush.
    ============================================================== #}
-<section class="u-over-photo relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
+<section class="u-over-photo u-ground-paper relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
   {# Not a dark ground. The frame the owner sent is a banner, not a snapshot:
      the car stands on the right and the left half is already faded to near
      white for the words. So the text is the page's ordinary dark ink and the
@@ -111,7 +111,6 @@ is a forgery, not a placeholder.
     <div class="lg:col-span-5">
       <p class="script flex items-center gap-2">
         {% translate "Z nami zdasz" %}
-        <c-ornament kind="heart" variant="1" class="h-6 w-6 shrink-0" />
       </p>
 
       {# Two display lines and a third at h2, and the third one is not
@@ -212,7 +211,6 @@ is a forgery, not a placeholder.
     <div>
       <p class="script flex items-center gap-2">
         {% translate "O nas" %}
-        <c-ornament kind="heart" variant="2" class="h-6 w-6 shrink-0" />
       </p>
       <h2 class="mt-2">
         {% translate "Ośrodek szkolenia kierowców" %}
@@ -336,7 +334,7 @@ is a forgery, not a placeholder.
 </c-section>
 
 {% if stat_items %}
-<section id="zdawalnosc" class="reveal relative overflow-hidden bg-brand-50 py-16 md:py-20">
+<section id="zdawalnosc" class="reveal relative overflow-hidden u-ground-brand py-16 md:py-20">
   {# No brush edges. C.1 block 4 asked for a ragged pink band across the page
      with the figures on it, and the two strokes were how that was done
      without laying the text on a wash — B.7 point 6 wants every piece of text

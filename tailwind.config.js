@@ -78,7 +78,6 @@ module.exports = {
         // The pink of the tiles, the icon rings and the brush strokes. Ink on
         // it is 10.0; white on it is 1.69 and forbidden outright.
         200: token("brand-200"),
-        300: token("brand-300"),
         // Action, and headings of 24px and up. Not small text: on the page it
         // measures 4.08, which B.3 allows a heading and refuses a paragraph.
         DEFAULT: token("brand-500"),
