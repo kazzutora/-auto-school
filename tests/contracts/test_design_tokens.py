@@ -99,6 +99,10 @@ DARK = {
     "brand-50": (26, 29, 35),
     "brand-link": (255, 138, 144),
     "brand-700": (143, 180, 236),
+    # The band is the one fill that moves, and only because it must: the
+    # light theme's #16181D measures 1.06 against the dark page, so the
+    # strongest block on the page stopped reading as a block at all.
+    "brand-900": (33, 38, 46),
     "ink": (237, 240, 245),
     "ink-500": (165, 172, 184),
     "ink-300": (107, 115, 128),

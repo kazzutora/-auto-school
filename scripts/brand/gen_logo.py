@@ -259,7 +259,10 @@ def lockup(*, slogan: bool, cap: bool, dark: bool, heart: bool = False) -> str:
     # not: it is the brand rather than a role. The blue does, because on a
     # dark ground it measures 2.0.
     mark = PINK
-    ink = FACE if dark else INK
+    # Only one role left to swap. The word and the wheel are the red above and
+    # the plate paints itself out of INK and FACE, so what is left is the
+    # subline and the two rules beside it: blue on a light ground, the pale
+    # tint on a dark one, where the blue would be 2.0.
     soft = SOFT if dark else INK
     pad = 80.0
     gap = 0.34 * R

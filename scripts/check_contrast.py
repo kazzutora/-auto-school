@@ -64,6 +64,12 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("light", "on-wine", "brand-900", 4.5, "text on the dark band"),
     ("light", "on-wine-muted", "brand-900", 4.5, "secondary text on the dark band"),
     ("light", "fixed-paper", "brand-900", 4.5, "white on the dark band"),
+    # The band is a block rather than text, so 3.0: it has to separate from
+    # the page it interrupts, and the red button standing on it has to
+    # separate from the band. The second is what stops the dark theme's band
+    # being lightened any further than it already is.
+    ("light", "brand-900", "brand-100", 3.0, "the dark band against the page"),
+    ("light", "brand-500", "brand-900", 3.0, "the button as an object, on the band"),
     # ---- dark: the same rows, roles rearranged ----------------------
     ("dark", "ink", "brand-100", 4.5, "body text on the page"),
     ("dark", "ink", "brand-50", 4.5, "body text on a card"),
@@ -84,6 +90,7 @@ PAIRS: list[tuple[str, str, str, float, str]] = [
     ("dark", "fixed-ink", "brand-200", 4.5, "text on a tinted tile"),
     ("dark", "on-wine", "brand-900", 4.5, "text on the dark band"),
     ("dark", "on-wine-muted", "brand-900", 4.5, "secondary text on the dark band"),
+    ("dark", "brand-500", "brand-900", 3.0, "the button as an object, on the band"),
     # ---- the focus ring, 1.4.11: 3:1 against what surrounds it ------
     # The ring is --focus with a halo of the ground's own foreground under it,
     # so both edges are checked against the ground they sit on. Since core v43

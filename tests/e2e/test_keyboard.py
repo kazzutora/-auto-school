@@ -387,11 +387,11 @@ def test_neither_hover_move_happens_under_reduced_motion(
 def test_a_schedule_row_answers_the_pointer(live_server, site: SiteSettings, page: Page) -> None:
     """A row people scan straight down answers the pointer with a fill.
 
-    The value moved with the palette twice: it is brand-50, #FFFBFA, now
-    rather than
-    #FAFAFA, because B.2 gave the page a warm grey ground and the half step
-    above it had to move with it. Read off the token rather than written out
-    again, so the next change to B.2 does not need an edit here.
+    The value has moved with the palette three times and is plain #FFFFFF
+    since core v43. It is read off --brand-50 at run time rather than written
+    out again, which is why this test survived all three: a custom property
+    computes to its substituted value, so the alias --brand-50: var(--surface)
+    still hands back a channel triplet.
     """
     page.goto(f"{live_server.url}/terminy/")
     page.wait_for_selector("h1")

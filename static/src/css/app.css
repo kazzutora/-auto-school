@@ -370,6 +370,15 @@
       /* Hover goes further from the ground, which on a dark page means
        * lighter rather than darker. */
       --brand-blue-dark: 185 208 245;
+      /* The one fill that does have to move, and the reason is arithmetic
+       * rather than taste: the dark band is the strongest block on a page,
+       * and #16181D on the dark theme's own #0F1115 page measures 1.06 —
+       * less separation than an ordinary card manages at 1.12. The band
+       * stopped being a band. This is as light as it can go before the red
+       * button standing on it drops under the 3.0 WCAG 1.4.11 wants of a
+       * control against its surround: 1.24 against the page, 3.13 under the
+       * button. */
+      --brand-900: 33 38 46;
 
       /* Text on a dark ground, so lighter than the light theme's fills. */
       --state-ok: 74 190 145;
@@ -396,6 +405,7 @@
     --brand-link: 255 138 144;
     --brand-700: 143 180 236;
     --brand-blue-dark: 185 208 245;
+    --brand-900: 33 38 46;
 
     --state-ok: 74 190 145;
     --state-warn: 232 176 61;
