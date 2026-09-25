@@ -35,6 +35,9 @@ part D would stop it rendering anyway: a stock portrait captioned with a name
 is a forgery, not a placeholder.
 {% endcomment %}
 
+{# The header lies over the hero photograph, .u-page-over in app.css. #}
+{% block body_class %}u-page-over{% endblock %}
+
 {% block content %}
 
 {# ============================================================== 1. HERO
@@ -61,7 +64,7 @@ is a forgery, not a placeholder.
    photographs, and there is no behind on a block that is a photograph — laid
    over one it is a smear nobody reads as a brush.
    ============================================================== #}
-<section class="u-over-photo u-photo-ground relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
+<section class="u-over-photo u-photo-ground u-under-header relative overflow-hidden lg:flex lg:min-h-[calc(72vh+var(--header-h))] lg:items-center">
   {# A dark ground. The frame is the car on the plac at sunset, and its left
      half is sky and a low sun — the brightest part of the picture, exactly
      where the words go. So the words are white and the scrim lays graphite
@@ -91,8 +94,8 @@ is a forgery, not a placeholder.
   {% translate "Samochód szkoły OSK Ostrycharz na placu o zachodzie słońca" as t_hero_alt %}
   <c-photo stem="hero-fleet" crop="band" crop_mobile="hero-tall" alt="{{ t_hero_alt }}"
            priority="1"
-           class="h-[34vh] max-h-[340px] min-h-[200px] w-full object-cover object-center
-                  md:h-[420px] md:max-h-none md:object-right
+           class="h-[calc(34vh+var(--header-h))] max-h-[calc(340px+var(--header-h))] min-h-[calc(200px+var(--header-h))] w-full object-cover object-center
+                  md:h-[calc(420px+var(--header-h))] md:max-h-none md:object-right
                   lg:absolute lg:inset-0 lg:h-full lg:object-right" />
 
   {# Only at lg. Below lg nothing lies over the picture, so there is nothing
@@ -100,7 +103,11 @@ is a forgery, not a placeholder.
      the ground's graphite and fades out before the car. #}
   <span aria-hidden="true" class="u-hero-scrim absolute inset-0 hidden lg:block"></span>
 
-  <div class="u-container relative grid w-full items-center gap-10 pb-16 pt-12 md:pb-20 md:pt-16 lg:pt-32 lg:pb-20 lg:grid-cols-12 lg:gap-8">
+  {# The header's row lies on the top of the frame at every width. Twice the
+     row's height so the wash has room to fade rather than end in a line. #}
+  <span aria-hidden="true" class="u-header-wash absolute inset-x-0 top-0 h-[calc(2*var(--header-h))]"></span>
+
+  <div class="u-container relative grid w-full items-center gap-10 pb-16 pt-12 md:pb-20 md:pt-16 lg:pt-[calc(8rem+var(--header-h))] lg:pb-20 lg:grid-cols-12 lg:gap-8">
     {# Five columns. The words have to end while the scrim is still dark, and
        the measurement is of the box rather than of the glyphs — a block's box
        runs the full column whether or not the letters reach the end of it.

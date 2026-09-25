@@ -54,7 +54,7 @@
   <script src="{% static 'js/app.js' %}" defer></script>
   <script src="{% static 'js/motion.js' %}" defer></script>
 </head>
-<body class="flex min-h-screen flex-col bg-brand-100 u-on-ground">
+<body class="flex min-h-screen flex-col bg-brand-100 u-on-ground {% block body_class %}{% endblock %}">
   {# First focusable thing on the page, R4 point 5. Off screen until it takes
      focus, then it lands in the top left corner where a keyboard user expects
      it. #}

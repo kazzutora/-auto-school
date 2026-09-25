@@ -61,6 +61,12 @@ elements rather than two <img> tags, which would fetch both.
          around it already carries the school's name in its aria-label, and
          that is what a screen reader reads. #}
       <span aria-hidden="true" class="u-lockup block h-11 sm:h-14 xl:h-[52px]"></span>
+      {# The owner's inverted mark — red letters, white frame and tagline — for
+         a page that lays the header over its photograph, .u-page-over. One of
+         the two is display:none at any time, and a hidden background is never
+         fetched, so every other page pays nothing for it. Heights are set for
+         the same row width as the plate above: the artwork is 5.05:1. #}
+      <span aria-hidden="true" class="u-lockup-inverse h-9 sm:h-11 xl:h-[41px]"></span>
     </a>
 
     {% include "layout/nav.html" %}
@@ -95,7 +101,7 @@ elements rather than two <img> tags, which would fetch both.
            including the ones that do not. #}
         <c-button variant="outline" href="{% url 'leads:enroll' %}"
                   class="u-btn-ink hidden xl:inline-flex">
-          {% translate "Oddzwonimy do Ciebie" %}
+          <c-icon name="phone" size="sm" /> {% translate "Oddzwonimy do Ciebie" %} <c-icon name="arrow-right" size="sm" />
         </c-button>
       {% endif %}
 

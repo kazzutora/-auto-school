@@ -1511,6 +1511,108 @@
     );
   }
 
+  /* The header laid over the page's opening photograph, the home hero.
+   *
+   * The body carries .u-page-over and the first section carries
+   * .u-under-header, which pulls it up under the header by the header's own
+   * height. At the top of the page the band is transparent and its row reads
+   * white on the photograph; once .is-stuck arrives it is a graphite band, not
+   * the paper one, so the white row and the inverted mark stay right all the
+   * way down instead of swapping logos mid-scroll.
+   *
+   * The pair is published on the bar and not on the header: the mobile panel
+   * is the header's child too, and it would inherit a white --link-ink its
+   * paper ground does not reset. */
+  .u-lockup-inverse {
+    display: none;
+    aspect-ratio: 788 / 156;
+  }
+
+  .u-page-over .u-lockup {
+    display: none;
+  }
+
+  .u-page-over .u-lockup-inverse {
+    display: block;
+    background-image: url("../img/brand/lockup-owner-inverse.webp");
+    background-image: image-set(
+      url("../img/brand/lockup-owner-inverse.avif") type("image/avif"),
+      url("../img/brand/lockup-owner-inverse.webp") type("image/webp")
+    );
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  .u-page-over .u-header-bar {
+    color: rgb(var(--fixed-paper));
+    --ground: var(--fixed-ink);
+    --on-ground: var(--fixed-paper);
+    --on-ground-body: var(--fixed-paper);
+    --on-ground-muted: 209 209 206;
+    --link-ink: var(--fixed-paper);
+    --link-ink-hover: var(--fixed-paper);
+    --focus: var(--fixed-paper);
+  }
+
+  /* White at rest and on hover: the red underline says "pointed at" by
+   * itself, and brand.600 on the dusk sky is dark red on dark. */
+  .u-page-over .u-header-bar .u-navlink,
+  .u-page-over .u-header-bar .u-navlink:hover,
+  .u-page-over .u-header-bar .u-navlink[aria-current="page"] {
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* The call button goes red over the photograph: a graphite pill on a
+   * graphite band is the quietest thing on the row. White on brand.500 is
+   * 4.64, B.3. */
+  .u-page-over .u-header-bar .u-btn-ink {
+    border-color: rgb(var(--brand-500));
+    background-color: rgb(var(--brand-500));
+    color: rgb(var(--fixed-paper));
+    --focus: var(--fixed-paper);
+  }
+
+  .u-page-over .u-header-bar .u-btn-ink:hover:not(:disabled) {
+    border-color: rgb(var(--brand-600));
+    background-color: rgb(var(--brand-600));
+  }
+
+  .u-page-over .u-header:not(.is-stuck) {
+    background-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .u-page-over .u-header.is-stuck {
+    background-color: rgb(var(--fixed-ink));
+    border-bottom-color: rgb(var(--fixed-paper) / 0.12);
+  }
+
+  @supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+    .u-page-over .u-header.is-stuck {
+      background-color: rgb(var(--fixed-ink) / 0.86);
+    }
+  }
+
+  .u-under-header {
+    /* And the sentinel's pixel above the header, or it shows as a pale hairline
+     * over the photograph. */
+    margin-top: calc(-1 * var(--header-h) - 1px);
+  }
+
+  /* A wash down from the top edge, under the header's row. The hero's own
+   * scrim runs left to right and only from lg, so without this the menu and
+   * the mark sit on bare sky — and on a phone the sky is all there is behind
+   * them. */
+  .u-header-wash {
+    background-image: linear-gradient(
+      180deg,
+      rgb(var(--fixed-ink) / 0.72) 0%,
+      rgb(var(--fixed-ink) / 0.4) 55%,
+      rgb(var(--fixed-ink) / 0) 100%
+    );
+  }
+
   /* lg, not md. PHOTOS.md section 2's horizontal gradient is written for the
    * layout that puts the text in the left third — and the hero only narrows to
    * that at lg. Between 768 and 1024 the heading still runs the full width, so
