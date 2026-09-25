@@ -1343,6 +1343,9 @@
      * The red is a brand colour on a pale page; over a photograph at dusk it
      * is one dark red on another. */
     --display-ink: var(--fixed-paper);
+    /* .u-outlined falls back to the page's ink without it, and the hero's
+     * "w Wieluniu" came out graphite on graphite at 1.00. */
+    --head-ink: var(--fixed-paper);
     --script-ink: var(--brand-paper);
     --link-ink: var(--on-ground);
     --link-ink-hover: var(--on-ground);
@@ -1352,10 +1355,9 @@
     color: rgb(var(--fixed-paper));
   }
 
-  /* Paper, not ink. The hero's frame is a banner whose left half is already
-   * faded to near white for the words, so the text there is the page's own
-   * dark ink and the scrim's job is the opposite of the usual one: it holds
-   * that pale field steady rather than darkening a bright one.
+  /* Ink, not paper. The hero's frame is a sunset whose left half is sky and a
+   * low sun, the brightest part of the picture, so the hero is a photo ground
+   * with white words and the scrim darkens that half in the ground's graphite.
    *
    * It is rendered only at lg — see the hidden lg:block on the span. Below
    * that the picture is a block above the words and covers nothing. */
@@ -1519,18 +1521,18 @@
     .u-hero-scrim {
       /* The desktop: words in the left half, car to the right of them.
        *
-       * It repeats the frame's own fade in the page's ground, and it has to,
-       * because `cover` crops width rather than height whenever the viewport
-       * is taller than 21:9 — and every pixel of width it crops walks the car
-       * further left, under the words. The frame's fade moves with the frame;
-       * this one does not. It is gone by 76%, where the car is. */
+       * Not solid at the edge, PHOTOS.md section 2: at 92% the sun still
+       * shows through as a warm glow, and white on the brightest pixel of it
+       * holds well above AA. Held near that to 36%, just short of where the
+       * five-column text box ends at 41%, then gone by 72%, where the car's
+       * bonnet starts — the car is never under the scrim. */
       background-image: linear-gradient(
         90deg,
-        rgb(var(--ground)) 0%,
-        rgb(var(--ground) / 0.95) 34%,
-        rgb(var(--ground) / 0.62) 48%,
-        rgb(var(--ground) / 0.18) 62%,
-        rgb(var(--ground) / 0) 76%
+        rgb(var(--ground) / 0.92) 0%,
+        rgb(var(--ground) / 0.86) 36%,
+        rgb(var(--ground) / 0.6) 48%,
+        rgb(var(--ground) / 0.2) 60%,
+        rgb(var(--ground) / 0) 72%
       );
     }
   }

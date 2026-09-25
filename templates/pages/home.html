@@ -61,26 +61,28 @@ is a forgery, not a placeholder.
    photographs, and there is no behind on a block that is a photograph — laid
    over one it is a smear nobody reads as a brush.
    ============================================================== #}
-<section class="u-over-photo u-ground-paper relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
-  {# Not a dark ground. The frame the owner sent is a banner, not a snapshot:
-     the car stands on the right and the left half is already faded to near
-     white for the words. So the text is the page's ordinary dark ink and the
-     photograph carries its own contrast, which is what a banner is for.
+<section class="u-over-photo u-photo-ground relative overflow-hidden lg:flex lg:min-h-[72vh] lg:items-center">
+  {# A dark ground. The frame is the car on the plac at sunset, and its left
+     half is sky and a low sun — the brightest part of the picture, exactly
+     where the words go. So the words are white and the scrim lays graphite
+     under them, PHOTOS.md section 2 as written. Below lg the words sit under
+     the picture on the same graphite, so the hero is one dark block at every
+     width.
 
      Two cuts. `band` is 21:9, a whisker off the source's own 2.21, so the
-     wide screen gets the composition whole — fade and all. A phone cannot
-     use that frame at all: 21:9 on a portrait screen is a strip with a
-     thumbnail of a car in it. Below lg the picture is a block at the top of
-     the section and the words sit under it on the page, not over it.
+     wide screen gets the composition whole. A phone cannot use that frame
+     at all: 21:9 on a portrait screen is a strip with a thumbnail of a car
+     in it. Below lg the picture is a block at the top of the section and the
+     words sit under it, not over it.
 
      A third of the screen there and no more. At its own 4:5 that cut is 488px
      tall on a 390 wide phone, which puts the whole heading below the fold —
      the picture would be the first screen, and the first screen would say
      nothing at all.
 
-     Between md and lg the band is back but the words are still below it, so
-     the frame's pale half is doing nothing — 768px of banner is 330px tall at
-     its own ratio and half of it is empty. Forcing 420px makes the box
+     Between md and lg the band is back but the words are still below it, and
+     768px of the frame is 330px tall at its own ratio with the car a
+     thumbnail on the right. Forcing 420px makes the box
      narrower than 21:9, which is the only way `cover` crops width rather than
      height, and object-right then keeps the car.
 
@@ -93,15 +95,13 @@ is a forgery, not a placeholder.
                   md:h-[420px] md:max-h-none md:object-right
                   lg:absolute lg:inset-0 lg:h-full lg:object-right" />
 
-  {# Only at lg, and only in paper. Below lg nothing lies over the picture, so
-     there is nothing to protect. At lg the words are back on the frame's pale
-     half, and this repeats that fade in the page's own ground so the ink
-     stays on a flat field even at the widths where `cover` eats the width
-     and walks the car leftwards. PHOTOS.md section 2, inverted. #}
+  {# Only at lg. Below lg nothing lies over the picture, so there is nothing
+     to darken. At lg the words are on the sky, and this darkens that half in
+     the ground's graphite and fades out before the car. #}
   <span aria-hidden="true" class="u-hero-scrim absolute inset-0 hidden lg:block"></span>
 
   <div class="u-container relative grid w-full items-center gap-10 pb-16 pt-12 md:pb-20 md:pt-16 lg:pt-32 lg:pb-20 lg:grid-cols-12 lg:gap-8">
-    {# Five columns. The words have to end while the frame is still pale, and
+    {# Five columns. The words have to end while the scrim is still dark, and
        the measurement is of the box rather than of the glyphs — a block's box
        runs the full column whether or not the letters reach the end of it.
        At six it reached 48% of the width, into the diagonal sweep, and
@@ -138,7 +138,7 @@ is a forgery, not a placeholder.
         <span class="u-scribbled">{% translate "Bez stresu, bez problemu!" %}</span>
       </p>
 
-      <p class="mt-6 max-w-[33rem] text-body-lg text-ink-500">
+      <p class="mt-6 max-w-[33rem] text-body-lg u-muted-on-ground">
         {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
       </p>
 
@@ -147,7 +147,7 @@ is a forgery, not a placeholder.
            a price in the hero and the design before it did, on purpose — so it
            is here as one line of the lead rather than as a block of its own,
            which is the smallest thing that keeps both true. #}
-        <p class="mt-4 text-ink-500">
+        <p class="mt-4 u-muted-on-ground">
           {% blocktranslate with price=course.price_gross|floatformat:0 %}Kurs kat. B od {{ price }} zł{% endblocktranslate %}
         </p>
       {% endif %}
