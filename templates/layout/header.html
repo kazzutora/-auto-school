@@ -2,11 +2,11 @@
 {% comment %}
 Header, REDESIGN.md B.7 point 0.
 
-Sticky, 76px, shrinking to 64px with a hairline once the page has scrolled. The
-band is the page's own paper with a saturating blur behind it, not the black
-strip of the old contract — B.1 moved the darkness into the cards, and a dark
-band over a light page was a decision the old palette forced rather than one
-anybody wanted.
+Sticky, 88px, shrinking to 74px with a hairline once the page has scrolled. A
+graphite band on every page, at the owner's request: the home page lays it
+over its photograph, transparent until the page scrolls, and every other page
+gets the same band solid. It used to be the page's pale paper, and the home
+page's dark header and the rest of the site's pale one read as two sites.
 
 **The height change is a class, not a scroll handler.** A sentinel one pixel
 tall sits above the header and an IntersectionObserver in static/js/motion.js
@@ -20,18 +20,11 @@ backdrop-filter keeps a solid band and the menu never becomes text floating over
 the content underneath it.
 
 Three clusters: the wordmark, the menu in the middle, and the two things a
-visitor reaches for. The right hand button is the one `outline-accent` B.5
-allows per screen — the callback offer.
+visitor reaches for. The right hand button is the callback offer.
 
-Nothing in here names a colour. The band publishes the page ground and its
-contents read --on-ground, so the lettering, the outlined button and the
-language codes all turn themselves the right way round in either theme.
-
-The wordmark switches file with the theme rather than colour: it is an <img>,
-not an inline <use>, because it is a logo that never takes the colour of the
-text around it and one cached file serves every page. The -dark file is the one
-with white letters, so it is the one the dark theme needs — hence two <source>
-elements rather than two <img> tags, which would fetch both.
+Nothing in here names a colour. The bar publishes the white-on-graphite pair
+in app.css and its contents read --on-ground, so the lettering, the switcher
+and the ringed icons all come out white without being told.
 {% endcomment %}
 
 {# The sentinel. Outside the header because the header is sticky and never
@@ -42,31 +35,16 @@ elements rather than two <img> tags, which would fetch both.
   <div class="u-header-bar u-container flex items-center justify-between gap-2">
     <a href="/" class="inline-flex min-h-[44px] shrink-0 items-center"
        aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }} — {% translate "strona główna" %}">
-      {# 44px tall below sm, 56px from there, and four pixels back at xl.
-
-         The artwork is 4.65:1, so those are 205px, 260px and 242px of row.
-         xl is the one width where the lockup and the whole menu share a line:
-         below it the menu is a burger, above it the container keeps growing.
-         Measured there in all three languages, at 56px the row sat on its
-         minimum 8px gaps with nothing in hand, and a row that does not fit
-         here prints its overflow rather than clipping it. Four pixels off the
-         lockup is invisible; Kontakt landing on the language switcher is not.
-         #}
-      {# The owner's own artwork, not the drawn lockup. It is brush texture
-         end to end, so it cannot be geometry and ships as pixels;
-         scripts/brand/gen_lockup_raster.py cuts it and repaints its ink for
-         the dark ground, and .u-lockup in app.css picks which file.
+      {# The owner's inverted mark — red letters, white frame and tagline — as
+         the band is graphite in both themes. The artwork is 5.05:1, so 36px,
+         44px and 41px are 182px, 222px and 207px of row: the same row the
+         plate took before it. xl is the one width where the lockup and the
+         whole menu share a line, and it sits on its minimum gaps there.
 
          A background, which is why there is nothing to label here: the link
          around it already carries the school's name in its aria-label, and
          that is what a screen reader reads. #}
-      <span aria-hidden="true" class="u-lockup block h-11 sm:h-14 xl:h-[52px]"></span>
-      {# The owner's inverted mark — red letters, white frame and tagline — for
-         a page that lays the header over its photograph, .u-page-over. One of
-         the two is display:none at any time, and a hidden background is never
-         fetched, so every other page pays nothing for it. Heights are set for
-         the same row width as the plate above: the artwork is 5.05:1. #}
-      <span aria-hidden="true" class="u-lockup-inverse h-9 sm:h-11 xl:h-[41px]"></span>
+      <span aria-hidden="true" class="u-lockup-inverse block h-9 sm:h-11 xl:h-[41px]"></span>
     </a>
 
     {% include "layout/nav.html" %}
@@ -90,12 +68,10 @@ elements rather than two <img> tags, which would fetch both.
       <c-social-links size="sm" label="{{ t_social_header }}" class="hidden lg:flex" />
 
       {% if site_settings.phone_primary %}
-        {# B.7 point 0 names this button. Graphite since core v45, `u-btn-ink`:
-           it keeps the outline variant's shape and takes a solid fill, because
-           as a frame it was the fourth outline on a row that already had a
-           menu and three ringed icons, and the one control meant to be pressed
-           read as the quietest thing there. Not red — that belongs to
-           "Zapisz się" further down every page. #}
+        {# B.7 point 0 names this button. `u-btn-ink` keeps the outline
+           variant's shape and takes a solid fill; on the graphite bar that
+           fill is red, app.css, because a graphite pill on a graphite band is
+           the quietest thing on the row. #}
         {# The route by name, not `enrol_url`: that variable is set by the
            views that happen to need it and the header is on every page,
            including the ones that do not. #}

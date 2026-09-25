@@ -32,7 +32,12 @@ public page.
    The red hairline along the top is in app.css, on `footer.u-ground-wine`,
    because the stroke belongs to the footer and not to every dark block. The
    brush stroke stays over it. #}
-<footer class="relative mt-auto overflow-hidden u-ground-wine pt-6{% if plain %} border-t border-line{% endif %}">
+<footer class="u-band-photo u-footer-photo u-over-photo relative mt-auto overflow-hidden u-ground-wine pt-6{% if plain %} border-t border-line{% endif %}">
+  {# The owner's dusk over an empty plac, under a graphite wash: the same
+     evening the home hero opens on, so the page closes where it began. Lazy,
+     like every photograph but the hero, and decorative — nothing in it is
+     information. The wash is in app.css, .u-footer-photo. #}
+  <c-photo stem="band-dusk" crop="band" decorative="1" class="object-cover object-right" />
   {% if not plain %}<c-ornament kind="brush" variant="3" class="u-brush-edge-top" />{% endif %}
   {# The compact rhythm, not the normal one. A footer is the closing band, not
      a section somebody reads: at the full step the air above and below it came
@@ -65,9 +70,9 @@ public page.
            for each theme, on every page of the site. The slogan set in Caveat
            says the same thing in a face the page has already loaded, and a
            reader can select it. #}
-        <span role="img" class="u-lockup block h-12 sm:h-14"
+        <span role="img" class="u-lockup-inverse block h-10 sm:h-11"
               aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"></span>
-        <p class="script script-sm mt-3">{% translate "Twoja droga do niezależności" %}</p>
+        <p class="script script-sm mt-5">{% translate "Twoja droga do niezależności" %}</p>
         <p class="mt-4 text-small u-muted-on-ground">
           {% translate "Ośrodek szkolenia kierowców w Wieluniu. Kategoria B, własne auta, dowóz na egzamin w cenie." %}
         </p>

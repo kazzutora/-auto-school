@@ -1511,29 +1511,25 @@
     );
   }
 
-  /* The header laid over the page's opening photograph, the home hero.
+  /* The header is a graphite band on every page, at the owner's request: the
+   * home page lays it over its photograph and every other page opened on a
+   * pale band with a different mark, and the two read as two sites.
    *
-   * The body carries .u-page-over and the first section carries
-   * .u-under-header, which pulls it up under the header by the header's own
-   * height. At the top of the page the band is transparent and its row reads
-   * white on the photograph; once .is-stuck arrives it is a graphite band, not
-   * the paper one, so the white row and the inverted mark stay right all the
-   * way down instead of swapping logos mid-scroll.
+   * One band, two states. Everywhere it is solid graphite with the owner's
+   * inverted mark and a white row. On a page that opens on a photograph —
+   * the body carries .u-page-over and the first section .u-under-header,
+   * which pulls it up under the header by the header's own height — it is
+   * transparent until .is-stuck arrives, and then the same graphite band.
+   *
+   * `header.u-header` rather than the bare class: motion.css paints the pale
+   * band on `.u-header` and loads after this file, so it is the element in
+   * the selector that wins, not the order.
    *
    * The pair is published on the bar and not on the header: the mobile panel
    * is the header's child too, and it would inherit a white --link-ink its
    * paper ground does not reset. */
   .u-lockup-inverse {
-    display: none;
     aspect-ratio: 788 / 156;
-  }
-
-  .u-page-over .u-lockup {
-    display: none;
-  }
-
-  .u-page-over .u-lockup-inverse {
-    display: block;
     background-image: url("../img/brand/lockup-owner-inverse.webp");
     background-image: image-set(
       url("../img/brand/lockup-owner-inverse.avif") type("image/avif"),
@@ -1543,7 +1539,27 @@
     background-size: contain;
   }
 
-  .u-page-over .u-header-bar {
+  header.u-header {
+    background-color: rgb(var(--fixed-ink));
+  }
+
+  header.u-header.is-stuck {
+    border-bottom-color: rgb(var(--fixed-paper) / 0.12);
+  }
+
+  @supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+    header.u-header.is-stuck {
+      background-color: rgb(var(--fixed-ink) / 0.92);
+    }
+  }
+
+  .u-page-over header.u-header:not(.is-stuck) {
+    background-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .u-header-bar {
     color: rgb(var(--fixed-paper));
     --ground: var(--fixed-ink);
     --on-ground: var(--fixed-paper);
@@ -1555,43 +1571,25 @@
   }
 
   /* White at rest and on hover: the red underline says "pointed at" by
-   * itself, and brand.600 on the dusk sky is dark red on dark. */
-  .u-page-over .u-header-bar .u-navlink,
-  .u-page-over .u-header-bar .u-navlink:hover,
-  .u-page-over .u-header-bar .u-navlink[aria-current="page"] {
+   * itself, and brand.600 on graphite is dark red on dark. */
+  .u-header-bar .u-navlink,
+  .u-header-bar .u-navlink:hover,
+  .u-header-bar .u-navlink[aria-current="page"] {
     color: rgb(var(--fixed-paper));
   }
 
-  /* The call button goes red over the photograph: a graphite pill on a
-   * graphite band is the quietest thing on the row. White on brand.500 is
-   * 4.64, B.3. */
-  .u-page-over .u-header-bar .u-btn-ink {
+  /* The call button goes red: a graphite pill on a graphite band is the
+   * quietest thing on the row. White on brand.500 is 4.64, B.3. */
+  .u-header-bar .u-btn-ink {
     border-color: rgb(var(--brand-500));
     background-color: rgb(var(--brand-500));
     color: rgb(var(--fixed-paper));
     --focus: var(--fixed-paper);
   }
 
-  .u-page-over .u-header-bar .u-btn-ink:hover:not(:disabled) {
+  .u-header-bar .u-btn-ink:hover:not(:disabled) {
     border-color: rgb(var(--brand-600));
     background-color: rgb(var(--brand-600));
-  }
-
-  .u-page-over .u-header:not(.is-stuck) {
-    background-color: transparent;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-
-  .u-page-over .u-header.is-stuck {
-    background-color: rgb(var(--fixed-ink));
-    border-bottom-color: rgb(var(--fixed-paper) / 0.12);
-  }
-
-  @supports ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
-    .u-page-over .u-header.is-stuck {
-      background-color: rgb(var(--fixed-ink) / 0.86);
-    }
   }
 
   .u-under-header {
@@ -1666,6 +1664,20 @@
     inset: 0;
     z-index: -1;
     background-color: rgb(var(--fixed-ink) / 0.88);
+  }
+
+  /* The footer's dusk is dark of itself, so it takes a lighter wash than a
+   * band: at 78% the setting sun is the brightest pixel under any word, and
+   * the muted links still clear 4.5 against it. The top is held darker for
+   * the lockup and the slogan, the one place the text is not in columns. */
+  .u-footer-photo::before {
+    background-color: transparent;
+    background-image: linear-gradient(
+      180deg,
+      rgb(var(--fixed-ink) / 0.9) 0%,
+      rgb(var(--fixed-ink) / 0.88) 40%,
+      rgb(var(--fixed-ink) / 0.88) 100%
+    );
   }
 
   /* A bento card with a photograph behind its text: the wash climbs from the

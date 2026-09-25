@@ -116,6 +116,8 @@ ROLES: dict[str, tuple[Crop, ...]] = {
     "bento-vw": CARD,
     "band-road": BAND,
     "band-day": BAND,
+    # The footer's ground: an empty plac at dusk, under a graphite wash.
+    "band-dusk": BAND,
 }
 
 WATERMARK = "ZDJĘCIE POGLĄDOWE"
