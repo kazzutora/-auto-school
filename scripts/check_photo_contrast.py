@@ -131,6 +131,16 @@ HIDE_TEXT = """() => {
       .u-scribbled::after { content: none !important; }
     `;
     document.head.appendChild(style);
+
+    // A gradient letter is a background clipped to the glyphs, not a colour,
+    // so `color: transparent` leaves it painted — the hero's PRAWO JAZDY — and
+    // the ground sampled under the word was the word, white on white at 1.00.
+    for (const el of document.querySelectorAll('.u-photo-ground *, .u-over-photo *')) {
+        const clip = getComputedStyle(el);
+        if (clip.backgroundClip === 'text' || clip.webkitBackgroundClip === 'text') {
+            el.style.setProperty('background-image', 'none', 'important');
+        }
+    }
 }"""
 
 
