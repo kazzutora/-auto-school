@@ -1757,9 +1757,9 @@
   .u-navlink {
     position: relative;
     font-family: theme("fontFamily.sans");
-    /* 500, the reference the owner sent at v45: a light sentence case label,
+    /* 400, the reference the owner sent at v45: a light sentence case label,
      * white on the band, the weight doing none of the work. */
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0.005em;
     /* 16px since the menu lost Zdawalność, its longest item, at core v32.
      *
@@ -1778,13 +1778,12 @@
     transition: color var(--dur) var(--ease);
   }
 
-  /* 18px once there is room for it. 1280 keeps the measured 16px above; from
-   * 1536 the container is wide enough for the step and a wider gap. `nav`
+  /* A wider gap once there is room for it, the reference the owner sent. From
+   * 1536 the container has the slack; 1280 keeps the measured 6px. `nav`
    * in front so the padding outranks the px-1.5 on the link. */
   @media (min-width: 1536px) {
     nav .u-navlink {
-      font-size: 1.125rem;
-      padding-inline: 0.625rem;
+      padding-inline: 0.5rem;
     }
   }
 
