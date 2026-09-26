@@ -437,8 +437,13 @@ is a forgery, not a placeholder.
    page sends nothing to Google.
    ============================================================ #}
 {% if video_id or video_url %}
-  <c-section id="wideo">
-    <div class="u-narrow">
+  {# Centred, with its own heading: a bare player on the left of an empty
+     band read as something left behind rather than as a block. The words
+     say what the thing is and claim nothing about the school. #}
+  {% translate "Obejrzyj" as t_video_eyebrow %}
+  {% translate "Nasz film" as t_video_heading %}
+  <c-section id="wideo" eyebrow="{{ t_video_eyebrow }}" heading="{{ t_video_heading }}" class="text-center">
+    <div class="mx-auto max-w-4xl">
       {% translate "Instruktor z tabletem na placu manewrowym" as t_poster_alt %}
       <c-video-embed id="{{ video_id }}" url="{{ video_url }}"
                      poster="{% if site_settings.youtube_poster %}{{ site_settings.youtube_poster.url }}{% endif %}"

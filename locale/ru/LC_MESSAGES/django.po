@@ -1885,6 +1885,14 @@ msgstr "Выпуск %(year)s года, считается от всех кан�
 msgid "Instruktor z tabletem na placu manewrowym"
 msgstr "Инструктор с планшетом на площадке"
 
+#: templates/pages/home.html:442
+msgid "Obejrzyj"
+msgstr "Смотрите"
+
+#: templates/pages/home.html:443
+msgid "Nasz film"
+msgstr "Наш фильм"
+
 #: templates/pages/home.html:245
 msgid "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google."
 msgstr "Видео открывается в новой вкладке на YouTube. До нажатия эта страница ничего не отправляет в Google."

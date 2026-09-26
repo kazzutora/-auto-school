@@ -1885,6 +1885,14 @@ msgstr ""
 msgid "Instruktor z tabletem na placu manewrowym"
 msgstr ""
 
+#: templates/pages/home.html:442
+msgid "Obejrzyj"
+msgstr ""
+
+#: templates/pages/home.html:443
+msgid "Nasz film"
+msgstr ""
+
 #: templates/pages/home.html:245
 msgid "Film otwiera się w nowej karcie na YouTube. Do momentu kliknięcia ta strona nie wysyła nic do Google."
 msgstr ""
