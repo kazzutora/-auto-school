@@ -1611,6 +1611,275 @@
     );
   }
 
+  /* ------------------------------------------------------------------ *
+   * The hero mark, the owner's hero-osk_1.html, over the site's own photo.
+   *
+   * The file draws on a 505px artboard and every length in it is a multiple
+   * of that pixel. --u is one of them, measured off the mark's own width, so
+   * the positions below are the file's numbers as they stand and the whole
+   * thing scales as one picture. The colours are the tokens, not the file's
+   * hexes: the file's #e3262b is a fourth red.
+   * ------------------------------------------------------------------ */
+  .u-hero-mark {
+    container-type: inline-size;
+    width: min(100%, 760px);
+  }
+
+  /* Past the text column at lg: the file sets the mark at about half the
+   * screen, and the column is five twelfths for the paragraph's sake. */
+  @media (min-width: 1024px) {
+    .u-hero-mark {
+      position: relative;
+      isolation: isolate;
+      width: min(40vw, 760px);
+    }
+
+    /* Its own shade. The mark runs past the column the hero scrim is built
+     * for, and brand.500 is 3.5:1 on bare graphite — so a red word clears
+     * 3.0 only on a ground within a few percent of solid. A soft graphite
+     * pool under the mark does that and leaves the rest of the photograph
+     * alone, where widening the scrim darkened the whole sky and the car's
+     * bonnet with it. The file does the same with its black side panel. */
+    .u-hero-mark::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -20% -45% -12% -30%;
+      background: radial-gradient(closest-side,
+        rgb(var(--fixed-ink) / 0.97) 70%,
+        rgb(var(--fixed-ink) / 0) 100%);
+      pointer-events: none;
+    }
+  }
+
+  /* 620 at the least from xl: under that the three points go to a column,
+   * and 40vw at 1280 is 512. */
+  @media (min-width: 1280px) {
+    .u-hero-mark {
+      width: clamp(620px, 40vw, 680px);
+    }
+  }
+
+  .u-hero-tilt,
+  .u-hero-points,
+  .u-hero-tagline {
+    --u: calc(100cqi / 505);
+  }
+
+  .u-hero-tilt {
+    position: relative;
+    height: calc(262 * var(--u));
+    rotate: -6.3deg;
+    transform-origin: calc(250 * var(--u)) calc(130 * var(--u));
+  }
+
+  .u-hero-deco {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .u-hero-brush,
+  .u-hero-rule {
+    fill: rgb(var(--brand-500));
+  }
+
+  .u-hero-speed {
+    fill: rgb(var(--brand-600));
+  }
+
+  .u-hero-kicker {
+    position: absolute;
+    left: calc(41 * var(--u));
+    top: calc(-4 * var(--u));
+    margin: 0;
+    white-space: nowrap;
+    font-family: theme('fontFamily.script');
+    font-weight: 700;
+    font-size: calc(40 * var(--u));
+    line-height: 1;
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-hero-title {
+    margin: 0;
+  }
+
+  /* Rubik's italic under the file's -13deg skew comes to about the slant the
+   * file's Saira had, and 1.12 across makes up the width Saira's 125% stretch
+   * had and Rubik has not. */
+  .u-hero-title > span {
+    position: absolute;
+    display: block;
+    white-space: nowrap;
+    line-height: 1;
+    font-family: theme('fontFamily.display');
+    font-style: italic;
+    font-weight: 800;
+    text-transform: uppercase;
+    transform: skewX(-13deg) scaleX(1.12);
+    transform-origin: 0 85%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* The gradient paints the glyphs through the fill colour; `color` stays
+     * the line's own, so check_photo_contrast.py reads what a reader sees. */
+    -webkit-text-fill-color: transparent;
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-hero-title .u-hero-l1 {
+    left: calc(30 * var(--u));
+    top: calc(47.5 * var(--u));
+    font-size: calc(94 * var(--u));
+    background-image: linear-gradient(180deg,
+      rgb(var(--fixed-paper)) 42%,
+      rgb(var(--fixed-paper) / 0.8) 100%);
+    filter: drop-shadow(0 calc(3 * var(--u)) calc(4 * var(--u)) rgb(var(--fixed-ink) / 0.55));
+  }
+
+  .u-hero-title .u-hero-l2 {
+    left: calc(104 * var(--u));
+    top: calc(119 * var(--u));
+    font-size: calc(99 * var(--u));
+    letter-spacing: -0.012em;
+    color: rgb(var(--brand-500));
+    background-image: linear-gradient(180deg,
+      rgb(var(--brand-500)) 45%,
+      rgb(var(--brand-600)) 100%);
+    filter: drop-shadow(calc(-3 * var(--u)) calc(3 * var(--u)) calc(3 * var(--u)) rgb(var(--fixed-ink) / 0.7));
+  }
+
+  .u-hero-title .u-hero-l3 {
+    left: calc(143 * var(--u));
+    top: calc(213 * var(--u));
+    font-size: calc(26 * var(--u));
+    letter-spacing: 0.1em;
+    background-image: linear-gradient(180deg,
+      rgb(var(--fixed-paper) / 0.95) 0%,
+      rgb(var(--fixed-paper) / 0.65) 100%);
+    filter: drop-shadow(0 calc(2 * var(--u)) calc(2 * var(--u)) rgb(var(--fixed-ink) / 0.6));
+  }
+
+  /* The russian and ukrainian first words are twelve and nine letters to
+   * PRAWO's five, and the artboard has no room to the right for them. */
+  :lang(ru) .u-hero-title .u-hero-l1,
+  :lang(uk) .u-hero-title .u-hero-l1 {
+    top: calc(62 * var(--u));
+    font-size: calc(56 * var(--u));
+  }
+
+  :lang(uk) .u-hero-title .u-hero-l1 {
+    top: calc(56 * var(--u));
+    font-size: calc(64 * var(--u));
+  }
+
+  /* The three points. Not tilted, the file's own choice: a slanted row of
+   * small caps is the one thing on the mark that would be hard to read. */
+  .u-hero-points {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: calc(14 * var(--u)) calc(26 * var(--u));
+    margin: calc(14 * var(--u)) 0 0;
+    padding: 0 0 0 calc(12 * var(--u));
+    list-style: none;
+    font-family: theme('fontFamily.sans');
+    font-weight: 700;
+    font-size: max(12px, calc(9 * var(--u)));
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-hero-points li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: none;
+    gap: calc(10 * var(--u));
+  }
+
+  .u-hero-points li + li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(-13 * var(--u));
+    width: max(1px, calc(1.2 * var(--u)));
+    background-color: rgb(var(--brand-600));
+  }
+
+  .u-hero-points svg {
+    flex: none;
+    height: max(26px, calc(33 * var(--u)));
+    width: auto;
+    overflow: visible;
+  }
+
+  .u-hero-points span {
+    max-width: 9.5em;
+    text-wrap: balance;
+  }
+
+  .u-hero-ico-red,
+  .u-hero-ico-white {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .u-hero-ico-red {
+    stroke: rgb(var(--brand-500));
+  }
+
+  .u-hero-ico-white {
+    stroke: rgb(var(--fixed-paper));
+  }
+
+  /* A phone: the row does not fit, and three items that wrap two and one
+   * read as a mistake. A column, as the file does below 900. */
+  @container (max-width: 590px) {
+    .u-hero-points {
+      flex-direction: column;
+      gap: 12px;
+      padding-left: 0;
+    }
+
+    .u-hero-points li + li::before {
+      display: none;
+    }
+  }
+
+  .u-hero-tagline {
+    position: relative;
+    display: inline-block;
+    margin: calc(24 * var(--u)) 0 0 calc(5 * var(--u));
+    padding-bottom: calc(10 * var(--u));
+    rotate: -6.3deg;
+    transform-origin: left center;
+    white-space: nowrap;
+    font-family: theme('fontFamily.script');
+    font-weight: 700;
+    font-size: calc(34 * var(--u));
+    line-height: 1;
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-hero-tagline > span {
+    position: relative;
+  }
+
+  .u-hero-tagline .u-hero-deco {
+    inset: auto;
+    left: calc(-5 * var(--u));
+    bottom: 0;
+    width: calc(100% + 30 * var(--u));
+    height: calc(10 * var(--u));
+  }
+
   /* lg, not md. PHOTOS.md section 2's horizontal gradient is written for the
    * layout that puts the text in the left third — and the hero only narrows to
    * that at lg. Between 768 and 1024 the heading still runs the full width, so
@@ -1625,7 +1894,8 @@
        * shows through as a warm glow, and white on the brightest pixel of it
        * holds well above AA. Held near that to 36%, just short of where the
        * five-column text box ends at 41%, then gone by 72%, where the car's
-       * bonnet starts — the car is never under the scrim. */
+       * bonnet starts — the car is never under the scrim. The hero mark runs
+       * past that column and carries its own shade, .u-hero-mark::before. */
       background-image: linear-gradient(
         90deg,
         rgb(var(--ground) / 0.92) 0%,

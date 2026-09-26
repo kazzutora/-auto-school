@@ -1937,3 +1937,21 @@ msgstr "Часті питання"
 #: templates/pages/home.html:389
 msgid "Wszystkie pytania"
 msgstr "Всі питання"
+
+#: templates/pages/home.html
+msgctxt "hero heading, first half of: Prawo jazdy"
+msgid "Prawo"
+msgstr "Водійські"
+
+#: templates/pages/home.html
+msgctxt "hero heading, second half of: Prawo jazdy"
+msgid "jazdy"
+msgstr "права"
+
+#: templates/pages/home.html
+msgid "Nowoczesne metody nauki"
+msgstr "Сучасні методи навчання"
+
+#: templates/pages/home.html
+msgid "Indywidualne podejście"
+msgstr "Індивідуальний підхід"

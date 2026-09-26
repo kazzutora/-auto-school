@@ -738,6 +738,10 @@ def owner_data_gaps() -> list[str]:
         gaps.append("1 x Testimonial: no verifiable reviews yet, the section stays hidden")
     note(Page.objects.filter(body__contains=TODO).count(), "Page body unconfirmed")
     gaps.append("1 x photographs: cars, lessons, the office — none are ours to publish")
+    gaps.append(
+        "2 x home hero points: 'Nowoczesne metody nauki' and 'Indywidualne podejście' "
+        "come from the owner's hero-osk_1.html, not the school's own text, confirm them"
+    )
 
     return gaps
 

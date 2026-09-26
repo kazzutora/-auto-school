@@ -116,34 +116,88 @@ is a forgery, not a placeholder.
        greys showing through there. Five ends at 41%, where the scrim is still
        all but solid, and the car keeps its own half untouched. #}
     <div class="lg:col-span-5">
-      <p class="script flex items-center gap-2">
-        {% translate "Z nami zdasz" %}
-      </p>
+      {# The mark, the owner's hero-osk_1.html: the kicker, the three lines
+         of the h1 and the strokes around them, all tilted as one piece, then
+         the three points and the slogan. Drawn in --u, one pixel of the
+         owner's 505px artboard, so it scales as one picture; app.css,
+         .u-hero-mark, has the rest.
 
-      {# Two display lines and a third at h2, and the third one is not
-         decoration. C.1 names PRAWO JAZDY as the big words and says nothing
-         about the town; the town is what a local business is found by, and it
-         was in this h1 before the redesign. Dropping it would have traded a
-         page's best search phrase for a cleaner screenshot. #}
-      <h1 class="display reveal-stagger mt-2">
-        {# One phrase, not two words. C.1 asks for PRAWO JAZDY over two lines
-           and the display step wraps it there by itself; splitting it into a
-           msgid per word would have asked a translator to guess where a
-           russian sentence breaks, and makemessages duly guessed "Автомобили"
-           for `jazdy`. #}
-        <span class="block" style="--i: 0">{% translate "Prawo jazdy" %}</span>
-        {# No text-ink: utilities beat the components layer, and this line is
-           inside the h1 — it takes the paper fill and the crimson keyline
-           the rest of the heading has. #}
-        <span class="u-outlined block text-h2" style="--i: 1">{% translate "w Wieluniu" %}</span>
-      </h1>
+         The faces are the site's own, not the file's. Saira and Kalam carry
+         no cyrillic, and /ru/ and /uk/ would have set this in the system
+         sans — scripts/check_fonts.py refuses the build for exactly that. #}
+      <div class="u-hero-mark">
+        <div class="u-hero-tilt">
+          <svg class="u-hero-deco" viewBox="0 0 505 262" aria-hidden="true">
+            <path class="u-hero-brush" d="M33.8 52.3C33.4 51.7 32.9 49.7 28.9 49.9C25.9 50 24.3 49.3 24.9 48.9C26.4 48.2 28.7 47.5 33.8 46.1C39.7 45.4 50.5 44.4 57.7 43.8C65.8 43.3 77.2 42.5 87.4 41.7C99.5 40.8 110.4 39.7 120 38.5C128.5 37.5 135.1 36.4 143.1 35.2C149.5 34.2 157.1 33.3 173.1 31.8C188.1 30.7 200.1 30 206.6 30C206.2 30.4 199.4 31.4 191.2 32.7C182.8 34.3 172.9 36 164.1 37.5C155.3 38.6 144.5 40 139.7 41.1C145.7 41.5 160.8 42.9 170.1 44.5C173.9 45.7 165.6 46 136.1 46.3C102.8 46.2 74.5 48.5 63.1 49.4C56.8 49.9 46.8 50.9 38.9 52C34.2 52.5 33.8 52.3 33.8 52.3Z"/>
+            <g class="u-hero-speed">
+              <path d="M-10 147.4 L106 141.1 L101 152.5Z"/>
+              <path d="M-42 166.3 L98.5 157 L93 169.5Z"/>
+              <path d="M-94 184.7 L89.5 175.9 L84 187Z"/>
+              <path d="M-18 196.9 L82.5 191.9 L77.5 201.6Z"/>
+            </g>
+            <path class="u-hero-rule" d="M104 248.4 L412 244.6 L407.2 252 L104 249.2Z"/>
+          </svg>
 
-      {# The scribble under the line, C.1 block 1. It is the mask from app.css
-         rather than a rule: a straight underline under handwriting is the one
-         detail that says the handwriting was set rather than written. #}
-      <p class="script mt-3">
-        <span class="u-scribbled">{% translate "Bez stresu, bez problemu!" %}</span>
-      </p>
+          <p class="u-hero-kicker">{% translate "Z nami zdasz" %}</p>
+
+          {# Three lines and one h1: the town is what a local business is
+             found by, and it was in this h1 before the redesign.
+
+             Two msgids for the two big words, because the file sets them
+             in two colours. Each carries a context that says which half of
+             the phrase it is, so a translator splits the whole phrase rather
+             than guessing at one word — the guess makemessages made once was
+             "Автомобили" for `jazdy`. #}
+          <h1 class="u-hero-title">
+            <span class="u-hero-l1">{% translate "Prawo" context "hero heading, first half of: Prawo jazdy" %}</span>
+            <span class="u-hero-l2">{% translate "jazdy" context "hero heading, second half of: Prawo jazdy" %}</span>
+            <span class="u-hero-l3">{% translate "w Wieluniu" %}</span>
+          </h1>
+        </div>
+
+        {# TODO_OWNER — "Nowoczesne metody nauki" and "Indywidualne podejście"
+           are the owner's file, not the school's own words, OSTRYCHARZ.md
+           part A. They stand at the owner's request and owner_data_gaps()
+           asks for them to be confirmed. #}
+        <ul class="u-hero-points">
+          <li>
+            <svg viewBox="26 276 28 33" aria-hidden="true">
+              <path class="u-hero-ico-red" d="M40.2 277.2 C35.6 280.8 31.2 282.2 27.4 282.6 C27.2 290.6 28.6 300.4 40.2 307.6 C51.8 300.4 53.2 290.6 53 282.6 C49.2 282.2 44.8 280.8 40.2 277.2Z"/>
+              <path class="u-hero-ico-white" d="M34.6 292.4 L38.8 296.6 L46.6 288"/>
+            </svg>
+            <span>{% translate "Nowoczesne metody nauki" %}</span>
+          </li>
+          <li>
+            <svg viewBox="172 276 31 33" aria-hidden="true">
+              <path class="u-hero-ico-red" d="M181.2 283.2 C181.2 279.6 184 277.2 187.6 277.2 C191.2 277.2 194 279.6 194 283.2 M180 283.4 H195.4"/>
+              <path class="u-hero-ico-red" d="M181.4 284 C181.2 290.2 184 294.2 187.6 294.2 C191.2 294.2 194 290.2 193.8 284"/>
+              <path class="u-hero-ico-red" d="M183.6 293.6 C178.4 295 174.6 298 174.2 307.2 H201 C200.6 298 196.8 295 191.6 293.6"/>
+              <path class="u-hero-ico-white" stroke-width="1.3" d="M183.8 294.8 L187.6 299.6 L191.4 294.8 M178.4 299.2 V305.8"/>
+              <path class="u-hero-ico-red" stroke-width="1.3" d="M194.4 300.2 h2.6 v4.2 h-2.6z"/>
+            </svg>
+            <span>{% translate "Doświadczeni instruktorzy" %}</span>
+          </li>
+          <li>
+            <svg viewBox="324 281 39 24" aria-hidden="true">
+              <path class="u-hero-ico-red" d="M331.4 289.6 L334 283.6 C334.4 282.8 335 282.4 336 282.4 H351.8 C352.8 282.4 353.4 282.8 353.8 283.6 L356.4 289.6"/>
+              <path class="u-hero-ico-red" d="M328.2 290.4 C327.2 290.4 326.2 289.8 326.2 288.8 C326.2 287.8 327.4 287.6 328.6 287.8 L331.6 289 M359.6 290.4 C360.6 290.4 361.6 289.8 361.6 288.8 C361.6 287.8 360.4 287.6 359.2 287.8 L356.2 289"/>
+              <path class="u-hero-ico-red" d="M328.6 300.2 V293.6 C328.6 291.4 330 289.6 332.4 289.6 H355.4 C357.8 289.6 359.2 291.4 359.2 293.6 V300.2 Z"/>
+              <path class="u-hero-ico-red" d="M330.6 300.4 V303.2 H334.8 V300.4 M353 300.4 V303.2 H357.2 V300.4"/>
+              <circle class="u-hero-ico-white" cx="333.4" cy="295" r="2" stroke-width="1.4"/>
+              <circle class="u-hero-ico-white" cx="354.4" cy="295" r="2" stroke-width="1.4"/>
+              <path class="u-hero-ico-white" stroke-width="1.2" d="M336.4 295.6 H351.4"/>
+            </svg>
+            <span>{% translate "Indywidualne podejście" %}</span>
+          </li>
+        </ul>
+
+        <p class="u-hero-tagline">
+          <svg class="u-hero-deco" viewBox="0 340 235 12" preserveAspectRatio="none" aria-hidden="true">
+            <path class="u-hero-brush" d="M174.6 349.6C171.1 349.2 162.7 348.9 158.8 349C154.1 348.9 146.5 348.4 137.5 347.9C117.6 347 53.2 347.4 30.2 347.6C11.4 347.9 1.6 347.5 1.6 347.5C0.7 346.9 -0.8 344.3 8.9 343.8C16.5 343.6 48.1 343.8 79.8 344.4C94.6 344.7 145.3 344.7 158.4 344C166.5 343.8 168.2 346 169.7 344.7L172.4 343.9C179.5 343.7 224.8 343.5 228.2 344C230.4 343.8 235 343.9 235 343.9C234.5 344.5 226.8 344.8 212.8 345.5C190 346.1 181 346.7 188.5 347.5C193.2 348.1 193.2 348.5 193.2 348.5C193.2 349.7 178.3 350.5 174.6 349.6Z"/>
+          </svg>
+          <span>{% translate "Bez stresu, bez problemu!" %}</span>
+        </p>
+      </div>
 
       <p class="mt-6 max-w-[33rem] text-body-lg u-muted-on-ground">
         {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
