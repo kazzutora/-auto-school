@@ -1757,7 +1757,10 @@
   .u-navlink {
     position: relative;
     font-family: theme("fontFamily.sans");
-    font-weight: 600;
+    /* 500, the reference the owner sent at v45: a light sentence case label,
+     * white on the band, the weight doing none of the work. */
+    font-weight: 500;
+    letter-spacing: 0.005em;
     /* 16px since the menu lost Zdawalność, its longest item, at core v32.
      *
      * The size is measured rather than chosen. A row that does not fit here
@@ -1773,6 +1776,16 @@
     font-size: 1rem;
     color: rgb(var(--ink));
     transition: color var(--dur) var(--ease);
+  }
+
+  /* 18px once there is room for it. 1280 keeps the measured 16px above; from
+   * 1536 the container is wide enough for the step and a wider gap. `nav`
+   * in front so the padding outranks the px-1.5 on the link. */
+  @media (min-width: 1536px) {
+    nav .u-navlink {
+      font-size: 1.125rem;
+      padding-inline: 0.625rem;
+    }
   }
 
   /* Pointed at, and the page you are on. */
