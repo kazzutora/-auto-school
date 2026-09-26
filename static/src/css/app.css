@@ -1633,23 +1633,6 @@
       isolation: isolate;
       width: min(40vw, 760px);
     }
-
-    /* Its own shade. The mark runs past the column the hero scrim is built
-     * for, and brand.500 is 3.5:1 on bare graphite — so a red word clears
-     * 3.0 only on a ground within a few percent of solid. A soft graphite
-     * pool under the mark does that and leaves the rest of the photograph
-     * alone, where widening the scrim darkened the whole sky and the car's
-     * bonnet with it. The file does the same with its black side panel. */
-    .u-hero-mark::before {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      inset: -20% -45% -12% -30%;
-      background: radial-gradient(closest-side,
-        rgb(var(--fixed-ink) / 0.97) 70%,
-        rgb(var(--fixed-ink) / 0) 100%);
-      pointer-events: none;
-    }
   }
 
   /* 620 at the least from xl: under that the three points go to a column,
@@ -1894,8 +1877,7 @@
        * shows through as a warm glow, and white on the brightest pixel of it
        * holds well above AA. Held near that to 36%, just short of where the
        * five-column text box ends at 41%, then gone by 72%, where the car's
-       * bonnet starts — the car is never under the scrim. The hero mark runs
-       * past that column and carries its own shade, .u-hero-mark::before. */
+       * bonnet starts — the car is never under the scrim. */
       background-image: linear-gradient(
         90deg,
         rgb(var(--ground) / 0.92) 0%,
