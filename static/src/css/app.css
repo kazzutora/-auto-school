@@ -2738,6 +2738,68 @@
     }
   }
 
+  /* The red accents on a photograph band: a heading's last words, or the
+   * handwritten line. The red needs a ground within a few per cent of black
+   * to reach 3:1, and a photograph has lamps and sky in it, so the words sit
+   * on a graphite tag of their own — a label, not a hope about the pixels
+   * under them. 3.6:1 on the tag, large text only. */
+  .u-title-accent,
+  .u-page-hero .script.u-script-accent {
+    color: rgb(var(--brand-500));
+    background-color: rgb(var(--fixed-ink));
+    padding: 0.02em 0.18em 0.06em;
+    /* A 2px lip of the same graphite, so the tag covers its box to the
+     * whole pixel however the edge falls. */
+    box-shadow: 0 0 0 2px rgb(var(--fixed-ink));
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* Square and straight: a rounded corner or the eyebrow's usual tilt
+   * leaves the corners of the words' box on the photograph. */
+  .u-page-hero .script.u-script-accent {
+    --script-ink: var(--brand-500);
+    padding: 0 0.3em 0.05em;
+    rotate: none;
+  }
+
+  /* On a phone the two-copy band gives up its blurred copy: under the
+   * full-width words it read as a smear across the top of the screen. The
+   * sharp picture goes under the whole band instead, cropped to its right
+   * end, and the scrim below carries the words — the same arrangement as
+   * photo_fit="full". */
+  @media (max-width: 1023px) {
+    .u-page-hero-photo:not(.is-full)::before {
+      display: none;
+    }
+
+    .u-page-hero-photo:not(.is-full) .u-page-hero-pic {
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 85% center;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .u-page-hero-photo:not(.is-full) {
+      --on-ground-muted: var(--fixed-paper);
+    }
+
+    .u-page-hero-photo:not(.is-full) .u-container {
+      min-height: 460px;
+      align-content: end;
+    }
+
+    .u-page-hero-photo:not(.is-full)::after {
+      background:
+        linear-gradient(180deg, rgb(var(--fixed-ink) / 0.55) 0%, rgb(var(--fixed-ink) / 0.72) 45%, rgb(var(--fixed-ink) / 0.82) 100%);
+    }
+  }
+
   /* photo_fit="full": the picture under the whole band at every width, no
    * blurred copy. The scrim above stays as it is and carries the words. */
   .u-page-hero-photo.is-full::before {

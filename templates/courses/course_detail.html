@@ -23,7 +23,12 @@ only action on the page.
 {# Pexels 12181725, free to use under the Pexels licence. A city motorway at
    night, long exposure: dark by nature, so it lies under the words whole. #}
 {% translate 'Autostrada nocą, smugi świateł samochodów' as t_photo_alt %}
-<c-page-hero eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}"
+{# "kat. B" in the red, when the title ends on it; any other title stays
+   white rather than guessing where its accent would go. #}
+<c-page-hero eyebrow="{% translate 'Kurs' %}"
+             title="{% if course.title|slice:'-6:' == 'kat. B' %}{{ course.title|slice:':-7' }}{% else %}{{ course.title }}{% endif %}"
+             title_accent="{% if course.title|slice:'-6:' == 'kat. B' %}kat. B{% endif %}"
+             lead="{{ course.lead }}"
              photo="img/pages/kurs-night-1920.webp" photo_small="img/pages/kurs-night-960.webp"
              photo_w="1920" photo_h="1282" photo_fit="full" photo_alt="{{ t_photo_alt }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>

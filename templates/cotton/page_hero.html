@@ -1,4 +1,4 @@
-<c-vars eyebrow="" title="" lead="" bleed="1" photo="" photo_alt="" photo_w="" photo_h="" photo_small="" photo_fit="" class="" />{% load static %}
+<c-vars eyebrow="" title="" lead="" bleed="1" photo="" photo_alt="" photo_w="" photo_h="" photo_small="" photo_fit="" title_accent="" eyebrow_accent="" class="" />{% load static %}
 {% comment %}
 The opening band of an inner page that has a picture to show: Cennik, Zapisy
 and the course page. The rest keep <c-page-header>.
@@ -29,16 +29,21 @@ the words whole: it covers the band edge to edge at every width, with no
 blurred copy, and the scrim alone carries the text. `photo_small` is a 960px
 copy for the srcset.
 
+`title_accent` is the last word or two of the heading, set in the red after
+the rest of it; `eyebrow_accent` puts the handwritten line in the red. Both
+are for the photograph bands, and only because the text there is large: the
+red on the graphite is 3.5:1, which a heading clears and body text does not.
+
 Takes: eyebrow, title, lead, bleed, photo, photo_alt, photo_w, photo_h,
-photo_small, photo_fit; slots: crumbs, visual, the default slot.
+photo_small, photo_fit, title_accent, eyebrow_accent; slots: crumbs, visual, the default slot.
 {% endcomment %}
 <header class="u-page-hero{% if photo %} u-page-hero-photo u-photo-ground{% if photo_fit == 'full' %} is-full{% endif %}{% endif %} relative overflow-hidden {{ class }}"
   {% if photo and photo_fit != 'full' %}style="--hero-photo: url('{% static photo %}')"{% endif %} {{ attrs }}>
   <div class="u-container relative grid items-start gap-8 pb-10 pt-8 md:pt-10 lg:grid-cols-2 lg:gap-6 lg:pb-12">
     <div class="relative z-10 min-w-0">
       {% if crumbs %}<div class="mb-6">{{ crumbs }}</div>{% endif %}
-      {% if eyebrow %}<p class="script">{{ eyebrow }}</p>{% endif %}
-      <h1 class="u-page-hero-title {% if eyebrow %}mt-1{% endif %}">{{ title }}</h1>
+      {% if eyebrow %}<p class="script{% if eyebrow_accent %} u-script-accent{% endif %}">{{ eyebrow }}</p>{% endif %}
+      <h1 class="u-page-hero-title {% if eyebrow %}mt-1{% endif %}">{{ title }}{% if title_accent %} <span class="u-title-accent">{{ title_accent }}</span>{% endif %}</h1>
       {% if lead %}<p class="mt-5 max-w-[460px] text-body-lg u-muted-on-ground">{{ lead }}</p>{% endif %}
       {% if slot %}<div class="mt-8">{{ slot }}</div>{% endif %}
     </div>
