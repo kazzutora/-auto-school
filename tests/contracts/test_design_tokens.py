@@ -146,6 +146,11 @@ EXTRA_ICONS = (
     "wallet",
     "book",
     "clipboard",
+    # The papers on /zapisy/ and the files on /do-pobrania/.
+    "home",
+    "id-card",
+    "pen",
+    "file",
     # The one course taught on something that is not a road vehicle.
     "forklift",
     # Where a photograph is going to be, core v38. It marks a frame the owner
