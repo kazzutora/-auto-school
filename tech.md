@@ -81,7 +81,7 @@
 
 ```
 OSK Ostrycharz — Ośrodek Szkolenia Kierowców
-ul. Asnyka 7, 98-300 Wieluń
+ul. Sieradzka 122C, 98-300 Wieluń
 NIP: TODO_OWNER — на сайте не указан, запросить у владельца
 tel. +48 691 570 489
 oskostrycharz@poczta.onet.pl

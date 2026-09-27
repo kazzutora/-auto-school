@@ -2146,3 +2146,8 @@ msgstr ""
 #: templates/pages/home.html
 msgid "Wszystkie przydatne linki"
 msgstr ""
+
+#: templates/core/contact.html
+#, python-format
+msgid "%(city)s, %(street)s. Zapisy po wcześniejszym ustaleniu telefonicznym."
+msgstr ""

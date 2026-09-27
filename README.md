@@ -1,6 +1,6 @@
 # OSK Ostrycharz
 
-Website of the driving school OSK Ostrycharz, ul. Asnyka 7, Wieluń. Replaces
+Website of the driving school OSK Ostrycharz, ul. Sieradzka 122C, Wieluń. Replaces
 `oskostrycharz.pl`, a one-page site with anchor navigation.
 
 The school teaches one category — B — three ways: standard, accelerated over two

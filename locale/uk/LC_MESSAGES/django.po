@@ -2146,3 +2146,8 @@ msgstr "Староство у Велюні та WORD Серадз."
 #: templates/pages/home.html
 msgid "Wszystkie przydatne linki"
 msgstr "Усі корисні посилання"
+
+#: templates/core/contact.html
+#, python-format
+msgid "%(city)s, %(street)s. Zapisy po wcześniejszym ustaleniu telefonicznym."
+msgstr "%(city)s, %(street)s. Запис за попередньою домовленістю телефоном."

@@ -112,7 +112,7 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
       {# One column, not two. The psychology lab had its own hours here and the
          school does not run one — it was inherited from the previous client's
          page and nobody had taken it down. A department nobody can visit is
-         worse than a gap: somebody drives to Asnyka 7 for it. #}
+         worse than a gap: somebody drives to the office for it. #}
       <div id="godziny" class="u-card u-contact-card">
         <span class="u-icon-ring" aria-hidden="true"><c-icon name="clock" size="sm" /></span>
         <div class="min-w-0 grow">
@@ -145,7 +145,8 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
    28px rounded top has nothing to read against. #}
 <c-section id="dojazd" tone="dark">
   <c-slot name="heading">{% translate "Dojazd" %}</c-slot>
-  <c-slot name="sub">{% translate "Wieluń, ul. Asnyka 7. Zapisy po wcześniejszym ustaleniu telefonicznym." %}</c-slot>
+  {% blocktranslate with street=site_settings.street city=site_settings.city asvar t_dojazd_sub %}{{ city }}, {{ street }}. Zapisy po wcześniejszym ustaleniu telefonicznym.{% endblocktranslate %}
+  <c-slot name="sub">{{ t_dojazd_sub }}</c-slot>
 
   {% if directions %}
     {# unlocalize: the polish locale writes the coordinates with a comma and

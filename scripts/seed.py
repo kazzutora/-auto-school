@@ -49,7 +49,9 @@ def seed_site_settings() -> None:
     site = SiteSettings.get_solo()
     site.legal_name = "OSK Ostrycharz — Ośrodek Szkolenia Kierowców"
     site.short_name = "OSK Ostrycharz"
-    site.street = "ul. Asnyka 7"
+    # The school's Google Business profile, 2026-09-27: the office moved from
+    # Asnyka 7, which the old site still gives, to Sieradzka 122C.
+    site.street = "ul. Sieradzka 122C"
     site.postal_code = "98-300"
     site.city = "Wieluń"
     # The school publishes no NIP and no founding year. Both stay empty rather
@@ -60,9 +62,9 @@ def seed_site_settings() -> None:
     site.phone_primary = "691 570 489"
     site.phone_secondary = ""
     site.phone_tertiary = ""
-    # Town centre. The exact office pin is confirmed by the owner.
-    site.map_lat = Decimal("51.220600")
-    site.map_lng = Decimal("18.569700")
+    # The building itself, OpenStreetMap node 9418579628 (Sieradzka 122C).
+    site.map_lat = Decimal("51.239143")
+    site.map_lng = Decimal("18.558918")
     site.facebook_url = "https://www.facebook.com/osrodekostrycharz/"
     site.instagram_url = "https://www.instagram.com/osk_ostrycharz/"
     site.tiktok_url = "https://www.tiktok.com/@osk.ostrycharz"
@@ -75,20 +77,24 @@ def seed_site_settings() -> None:
 
 
 def seed_opening_hours() -> None:
-    """The office answers by prior arrangement, which is a note, not a schedule.
+    """The office hours, from the school's Google Business profile, 2026-09-27.
 
-    The school's own site says only "po wcześniejszym ustaleniu telefonicznym".
-    Inventing 9-17 would be the one lie on the page a visitor can catch by
-    turning up, so every day is closed and carries that sentence instead.
+    Monday to Friday 06:30-19:00, Saturday 06:30-12:30, Sunday closed. The old
+    site said only "po wcześniejszym ustaleniu telefonicznym", and until the
+    profile was found every day was closed with that sentence on it.
     """
+    from datetime import time
+
     from apps.core.models import OpeningHours
 
-    note = "Po wcześniejszym ustaleniu telefonicznym"
-    for weekday in range(7):
+    week = {day: (time(6, 30), time(19, 0)) for day in range(5)}
+    week[5] = (time(6, 30), time(12, 30))
+    week[6] = (None, None)
+    for weekday, (opens, closes) in week.items():
         OpeningHours.objects.update_or_create(
             department=OpeningHours.DEPT.OFFICE,
             weekday=weekday,
-            defaults={"opens": None, "closes": None, "note": note},
+            defaults={"opens": opens, "closes": closes, "note": ""},
         )
     # No psychology lab at this school. The rows would render an empty table.
     OpeningHours.objects.filter(department=OpeningHours.DEPT.PSYCHOLOGY).delete()

@@ -17,7 +17,9 @@
 
 ```
 OSK Ostrycharz — Ośrodek Szkolenia Kierowców
-ul. Asnyka 7, 98-300 Wieluń
+ul. Sieradzka 122C, 98-300 Wieluń
+(до 27.09.2026 здесь стоял ul. Asnyka 7 со старого сайта; новый адрес и часы — из профиля Google Business школы)
+Godziny biura: pn–pt 06:30–19:00, sob 06:30–12:30, niedz. nieczynne
 tel. +48 691 570 489
 oskostrycharz@poczta.onet.pl
 Facebook:  https://pl-pl.facebook.com/osrodekostrycharz/
