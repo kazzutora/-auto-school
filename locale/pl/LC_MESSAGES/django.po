@@ -2151,3 +2151,8 @@ msgstr ""
 #, python-format
 msgid "%(city)s, %(street)s. Zapisy po wcześniejszym ustaleniu telefonicznym."
 msgstr ""
+
+#: apps/leads/forms.py
+#, python-format
+msgid "Wariant: %(variant)s"
+msgstr ""

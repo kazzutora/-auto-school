@@ -11,7 +11,8 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from apps.courses.models import Course, CourseIntake
+from apps.courses.models import Course, CourseIntake, PriceItem
+from apps.leads.forms import LeadForm
 from apps.leads.models import Lead
 from apps.leads.views import RATE
 
@@ -217,7 +218,8 @@ def test_the_course_is_prefilled_from_the_query(client: Client) -> None:
         kind=Course.Kind.LICENSE, slug="kat-b", code="B", title="Kategoria B"
     )
     body = client.get(f"{reverse('leads:enroll')}?course={course.pk}").content.decode()
-    assert f'value="{course.pk}" selected' in body
+    # Carried in a hidden field since the form asks for the variant instead.
+    assert f'name="course" value="{course.pk}"' in body
 
 
 def test_an_intake_prefills_its_own_course(client: Client) -> None:
@@ -234,7 +236,7 @@ def test_an_intake_prefills_its_own_course(client: Client) -> None:
     )
 
     body = client.get(f"{reverse('leads:enroll')}?intake={intake.pk}").content.decode()
-    assert f'value="{course.pk}" selected' in body
+    assert f'name="course" value="{course.pk}"' in body
     assert f'name="intake" value="{intake.pk}"' in body
 
 
@@ -277,3 +279,52 @@ def test_the_form_page_answers_and_has_one_h1(client: Client) -> None:
 
 def test_a_get_on_submit_is_refused(client: Client) -> None:
     assert client.get(SUBMIT).status_code == 405
+
+
+# --------------------------------------------------------------------------
+# the variant: standard, accelerated or automatic
+
+
+def _variants() -> list[PriceItem]:
+    rows = [
+        ("Kurs kategorii B", 3700),
+        ("Kurs przyspieszony", 4300),
+        ("Skrzynia automatyczna", 4300),
+    ]
+    return [
+        PriceItem.objects.create(group="Kurs", title=title, price_gross=price, order=order)
+        for order, (title, price) in enumerate(rows)
+    ]
+
+
+def test_the_form_offers_every_variant_of_the_course(client: Client) -> None:
+    """The owner's complaint: the list held only "Prawo jazdy kat. B"."""
+    _variants()
+    body = client.get(reverse("leads:enroll")).content.decode()
+    for title in ("Kurs kategorii B", "Kurs przyspieszony", "Skrzynia automatyczna"):
+        assert f">{title}</option>" in body
+
+
+def test_the_price_list_button_preselects_its_variant(client: Client) -> None:
+    accelerated = _variants()[1]
+    body = client.get(f"{reverse('leads:enroll')}?kurs={accelerated.pk}").content.decode()
+    assert f'value="{accelerated.pk}" selected' in body
+
+
+def test_the_chosen_variant_reaches_the_lead() -> None:
+    course = Course.objects.create(
+        kind=Course.Kind.LICENSE, slug="kat-b", code="B", title="Kategoria B"
+    )
+    automatic = _variants()[2]
+    form = LeadForm(
+        data={
+            "first_name": "Jan",
+            "phone": "691 570 489",
+            "variant": str(automatic.pk),
+            "message": "Wolę popołudnia.",
+            "consent_rodo": "on",
+        }
+    )
+    assert form.is_valid(), form.errors
+    assert form.cleaned_data["course"] == course
+    assert form.cleaned_data["message"] == "Wariant: Skrzynia automatyczna\nWolę popołudnia."

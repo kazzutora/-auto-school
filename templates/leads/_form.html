@@ -88,7 +88,10 @@ Takes:
       <c-field :field="form.email" />
     </div>
 
-    <c-field :field="form.course" />
+    {# The variant is what the visitor chooses; the course rides along
+       hidden, set by the course page the form sits on. #}
+    <c-field :field="form.variant" />
+    {{ form.course }}
     {{ form.intake }}
     <c-field :field="form.message" />
   {% endif %}

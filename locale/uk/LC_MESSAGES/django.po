@@ -2151,3 +2151,8 @@ msgstr "Усі корисні посилання"
 #, python-format
 msgid "%(city)s, %(street)s. Zapisy po wcześniejszym ustaleniu telefonicznym."
 msgstr "%(city)s, %(street)s. Запис за попередньою домовленістю телефоном."
+
+#: apps/leads/forms.py
+#, python-format
+msgid "Wariant: %(variant)s"
+msgstr "Варіант: %(variant)s"

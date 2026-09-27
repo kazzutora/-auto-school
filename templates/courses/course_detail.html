@@ -65,7 +65,7 @@ only action on the page.
         <div><p class="data text-data-lg u-on-ground">{{ course.practice_hours }} h</p><p class="text-small u-muted-on-ground">{% translate "Jazdy" %}</p></div></li>
     {% else %}
       <li><c-icon name="car" size="lg" class="text-brand-500" />
-        <div><p class="data text-data-lg u-on-ground">{% translate "gratis" %}</p><p class="text-small u-muted-on-ground">{% translate "Dowóz na egzamin" %}</p></div></li>
+        <div><p class="data text-data-lg uppercase u-on-ground">{% translate "gratis" %}</p><p class="text-small u-muted-on-ground">{% translate "Dowóz na egzamin" %}</p></div></li>
     {% endif %}
     {# The figure from the view's facts, which format it without the price
        note; `price` carries the note and is a sentence, not a figure. #}
