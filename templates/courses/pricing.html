@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load core_ui i18n %}
+{% load core_ui i18n static %}
 
 {% comment %}
 The price list, REDESIGN.md B.8 and BLOCKS.md B and D.
@@ -41,10 +41,28 @@ złoty column line up digit under digit, A.5.
    card under the title. With two lines left it put 160px of nothing between
    CENNIK and the first section, which the section's top padding then added
    to. #}
-<c-page-header eyebrow="{% translate 'Ile to kosztuje' %}" title="{% translate 'Cennik' %}"
-               class="pb-0">
+{# The hero, the owner's pricing mockup: the car on the right, KURS B behind
+   it, and the basic course's figure written over it in the hand. The figure
+   is the featured card's, so it moves when the owner reprices. #}
+<c-page-hero eyebrow="{% translate 'Ile to kosztuje' %}" title="{% translate 'Cennik' %}"
+             lead="{% translate 'Wybierz kurs dopasowany do Ciebie i spełnij swoje marzenia o wolności na drodze.' %}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-</c-page-header>
+  <c-slot name="visual">
+    <div class="u-hero-stage">
+      <span class="u-watermark" aria-hidden="true">{% translate "Kurs B" %}</span>
+      {% for item in course_cards %}{% if item.featured %}
+        <p class="u-hero-price script">
+          <span>{{ item.price_gross|floatformat:0 }} zł</span>
+          <c-ornament kind="underline" class="u-hero-price-stroke" />
+        </p>
+      {% endif %}{% endfor %}
+      <img src="{% static 'img/pages/car-cennik.webp' %}" width="894" height="503"
+           alt="{% translate 'Czerwony samochód szkoleniowy z tablicą L na dachu' %}"
+           class="u-hero-car" fetchpriority="high" decoding="async">
+      <c-ornament kind="speed" class="u-hero-car-speed" />
+    </div>
+  </c-slot>
+</c-page-hero>
 
 {% if groups %}
   {% for label, rows in groups %}
@@ -53,9 +71,10 @@ złoty column line up digit under digit, A.5.
        stripes rather than contrast. The one band on this page is the group
        of fees that do not go to the school, below, and it is a band because
        that is a fact about the money rather than a rhythm. #}
-    <c-section tone="{% if label == external_group %}muted{% else %}default{% endif %}" size="compact" id="grupa-{{ forloop.counter }}">
+    <c-section tone="{% if label == external_group %}muted{% else %}default{% endif %}" size="compact" id="grupa-{{ forloop.counter }}"
+               class="{% if label == course_group and course_cards %}!pt-2 md:!pt-4{% endif %}">
       {% translate "Pozostałe usługi" as fallback %}
-      <c-heading level="2">{{ label|default:fallback }}</c-heading>
+      <c-heading level="2" class="u-accent-rule">{{ label|default:fallback }}</c-heading>
 
       {% if label == external_group %}
         <div class="mt-6 max-w-[900px]">
@@ -79,9 +98,25 @@ złoty column line up digit under digit, A.5.
         <p class="script mt-2">{% translate "Wybierz kurs dopasowany do Ciebie" %}</p>
         <ul class="mt-8 grid items-stretch gap-6 md:grid-cols-3">
           {% for item in course_cards %}
-            <c-price-card :item="item" href="{{ enrol_url }}?kurs={{ item.pk }}" />
+            <c-price-card compact="1" :item="item" href="{{ enrol_url }}?kurs={{ item.pk }}" />
           {% endfor %}
         </ul>
+        {# What the price buys, once. The cards used to print it three times
+           over; the lines are the featured course's, and the other two
+           differ from it only by the line that is already their note. #}
+        {% for item in course_cards %}{% if item.featured and item.include_lines %}
+          <div class="mt-10">
+            <p class="label u-muted-on-ground">{% translate "W cenie kursu" %}</p>
+            <ul class="mt-4 grid gap-x-8 gap-y-3 text-small u-body-on-ground sm:grid-cols-2 lg:grid-cols-3">
+              {% for line in item.include_lines %}
+                <li class="flex items-start gap-2">
+                  <c-icon name="check" size="sm" class="mt-0.5 shrink-0 text-brand-600" />
+                  <span>{{ line }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}{% endfor %}
       {% else %}
         {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
            stops reading as one line. #}
