@@ -94,8 +94,8 @@ is a forgery, not a placeholder.
   {% translate "Samochód szkoły OSK Ostrycharz na placu o zachodzie słońca" as t_hero_alt %}
   <c-photo stem="hero-fleet" crop="band" crop_mobile="hero-tall" alt="{{ t_hero_alt }}"
            priority="1"
-           class="h-[calc(34vh+var(--header-h))] max-h-[calc(340px+var(--header-h))] min-h-[calc(200px+var(--header-h))] w-full object-cover object-center
-                  md:h-[calc(420px+var(--header-h))] md:max-h-none md:object-right
+           class="u-hero-phone-pic w-full object-cover object-[center_70%]
+                  md:h-[calc(420px+var(--header-h))] md:object-right
                   lg:absolute lg:inset-0 lg:h-full lg:object-right" />
 
   {# Only at lg. Below lg nothing lies over the picture, so there is nothing
@@ -107,7 +107,12 @@ is a forgery, not a placeholder.
      row's height so the wash has room to fade rather than end in a line. #}
   <span aria-hidden="true" class="u-header-wash absolute inset-x-0 top-0 h-[calc(2*var(--header-h))]"></span>
 
-  <div class="u-container relative grid w-full items-center gap-10 pb-16 pt-12 md:pb-20 md:pt-16 lg:pt-[calc(2.5rem+var(--header-h))] lg:pb-12 lg:grid-cols-12 lg:gap-8">
+  {# Below lg the picture ends in the ground rather than in a line, and the
+     heading comes up into that fade: one block, not a photo strip with a
+     second block under it. #}
+  <span aria-hidden="true" class="u-hero-phone-fade absolute inset-x-0 lg:hidden"></span>
+
+  <div class="u-container relative grid w-full items-center gap-10 -mt-20 pb-12 md:-mt-16 md:pb-20 lg:mt-0 lg:pt-[calc(2.5rem+var(--header-h))] lg:pb-12 lg:grid-cols-12 lg:gap-8">
     {# Five columns. The words have to end while the scrim is still dark, and
        the measurement is of the box rather than of the glyphs — a block's box
        runs the full column whether or not the letters reach the end of it.
@@ -199,7 +204,7 @@ is a forgery, not a placeholder.
         </p>
       </div>
 
-      <p class="mt-6 max-w-[33rem] text-body-lg u-muted-on-ground">
+      <p class="mt-6 max-w-[33rem] text-body u-muted-on-ground md:text-body-lg">
         {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
       </p>
 
@@ -219,7 +224,9 @@ is a forgery, not a placeholder.
          theirs. A button carries its own opaque fill, so the few dozen pixels
          it borrows from the car's side are the one place on this block where
          the text is not reading the photograph at all. #}
-      <div class="mt-8 flex flex-wrap gap-3 lg:w-max lg:flex-nowrap">
+      {# Full width and a step smaller on a phone: two 60px pills of
+         different widths stacked read as two leftovers, not as a pair. #}
+      <div class="mt-8 grid gap-3 sm:flex sm:flex-wrap lg:w-max lg:flex-nowrap [&_.u-btn]:max-sm:w-full [&_.u-btn]:max-sm:justify-center">
         <c-button variant="primary" size="lg" href="{{ enrol_url }}">
           {% translate "Zapisz się na kurs" %} <c-icon name="arrow-right" size="sm" />
         </c-button>

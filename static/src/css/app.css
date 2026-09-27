@@ -1828,17 +1828,58 @@
     stroke: rgb(var(--fixed-paper));
   }
 
-  /* A phone: the row does not fit, and three items that wrap two and one
-   * read as a mistake. A column, as the file does below 900. */
+  /* A phone: the row does not fit side by side, and three items that wrap
+   * two and one read as a mistake. Three columns with the icon over the
+   * words, the red hairlines kept between them — a column of three was a
+   * third of the phone's first screen spent on six words. */
   @container (max-width: 590px) {
     .u-hero-points {
-      flex-direction: column;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0 18px;
+      margin-top: 22px;
       padding-left: 0;
+      font-size: 11px;
+    }
+
+    .u-hero-points li {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     .u-hero-points li + li::before {
-      display: none;
+      left: -9px;
+    }
+
+    .u-hero-points svg {
+      height: 28px;
+    }
+
+    .u-hero-mark .u-hero-tagline {
+      margin-top: 30px;
+    }
+  }
+
+  /* The phone's picture: square-ish, the car whole, and never less than
+   * 300px under the header. */
+  .u-hero-phone-pic {
+    height: calc(max(min(100vw, 60vh), 300px) + var(--header-h));
+  }
+
+  .u-hero-phone-fade {
+    top: calc(max(min(100vw, 60vh), 300px) + var(--header-h) - 150px);
+    height: 150px;
+    background-image: linear-gradient(180deg, rgb(var(--fixed-ink) / 0), rgb(var(--fixed-ink)) 65%);
+  }
+
+  @media (min-width: 768px) {
+    .u-hero-phone-pic {
+      height: auto;
+    }
+
+    .u-hero-phone-fade {
+      top: calc(420px + var(--header-h) - 150px);
     }
   }
 
