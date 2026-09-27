@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load core_ui i18n %}
+{% load core_ui i18n static %}
 
 {% comment %}
 Course page, REDESIGN.md B.8 and BLOCKS.md A, B and D. Serves every kind: licence categories,
@@ -14,6 +14,104 @@ only action on the page.
 
 {% block content %}
 
+{% if course.slug == 'kat-b' %}
+{# Category B, the one course this school sells, gets the owner's mockup: a
+   car on the road to the right, the figures in a strip under it, then why
+   and what is in it. The other kinds this template serves keep the header
+   and the spec list below. Every line in the three blocks is the school's
+   own, OSTRYCHARZ.md A.2 and A.3, or a field of the course. #}
+<c-page-hero eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}">
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+  {% if course.code or course.languages %}
+    <p class="flex flex-wrap gap-2">
+      {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
+      {% for language in course.languages %}<c-badge tone="neutral">{{ language|upper }}</c-badge>{% endfor %}
+    </p>
+  {% endif %}
+  <c-slot name="visual">
+    <div class="u-hero-road">
+      <img src="{% static 'img/pages/car-kurs.webp' %}" width="790" height="390"
+           alt="{% translate 'Czerwony samochód szkoleniowy z tablicą L na drodze' %}"
+           class="u-hero-photo" fetchpriority="high" decoding="async">
+      <c-ornament kind="speed" class="u-hero-road-speed" />
+    </div>
+  </c-slot>
+</c-page-hero>
+
+{# The figures, one row. Each tile only when its field is filled — the hours
+   are not in the course yet, and a strip that printed "— h" would be the
+   gap on the page instead of in owner_data_gaps(). #}
+<section class="pb-2" aria-label="{% translate 'W skrócie' %}">
+  <div class="u-container">
+  <ul class="u-fact-strip grid grid-cols-2 gap-y-6 rounded-card bg-brand-50 px-5 py-6 shadow-card lg:grid-cols-4 lg:px-8">
+    {% if course.min_age %}
+      <li><c-icon name="user" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{{ course.min_age }}+</p><p class="text-small u-muted-on-ground">{% translate "Minimalny wiek" %}</p></div></li>
+    {% endif %}
+    {% if course.theory_hours %}
+      <li><c-icon name="book" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{{ course.theory_hours }} h</p><p class="text-small u-muted-on-ground">{% translate "Teorii" %}</p></div></li>
+    {% elif start_age %}
+      <li><c-icon name="calendar" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{% blocktranslate with years=start_age.0 months=start_age.1 %}{{ years }} l. {{ months }} m.{% endblocktranslate %}</p><p class="text-small u-muted-on-ground">{% translate "Zapisy od" %}</p></div></li>
+    {% endif %}
+    {% if course.practice_hours %}
+      <li><c-icon name="car" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{{ course.practice_hours }} h</p><p class="text-small u-muted-on-ground">{% translate "Jazdy" %}</p></div></li>
+    {% else %}
+      <li><c-icon name="car" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{% translate "gratis" %}</p><p class="text-small u-muted-on-ground">{% translate "Dowóz na egzamin" %}</p></div></li>
+    {% endif %}
+    {# The figure from the view's facts, which format it without the price
+       note; `price` carries the note and is a sentence, not a figure. #}
+    {% translate "Cena" as t_cena %}
+    {% for fact in facts %}{% if fact.title == t_cena %}
+      <li><c-icon name="wallet" size="lg" class="text-brand-500" />
+        <div><p class="data text-data-lg u-on-ground">{{ fact.text }}</p><p class="text-small u-muted-on-ground">{% translate "Cena kursu" %}</p></div></li>
+    {% endif %}{% endfor %}
+  </ul>
+  </div>
+</section>
+
+<section id="dlaczego" class="u-section-compact relative overflow-hidden">
+  <div class="u-container grid items-center gap-8 lg:grid-cols-12">
+    <h2 class="u-accent-rule u-muted-heading lg:col-span-3">{% translate "Dlaczego warto?" %}</h2>
+    <ul class="flex flex-col gap-4 lg:col-span-5">
+      {% translate "Doświadczeni instruktorzy" as w1 %}
+      {% translate "Klimatyzowane samochody z bogatym wyposażeniem" as w2 %}
+      {% translate "Dowóz na egzamin państwowy gratis" as w3 %}
+      {% translate "Jedna z najwyższych zdawalności w województwie łódzkim" as w4 %}
+      <li class="u-check-row">{{ w1 }}</li>
+      <li class="u-check-row">{{ w2 }}</li>
+      <li class="u-check-row">{{ w3 }}</li>
+      <li class="u-check-row">{{ w4 }}</li>
+    </ul>
+    <div class="relative hidden min-h-[180px] lg:col-span-4 lg:block" aria-hidden="true">
+      <c-ornament kind="plate" class="u-plate-watermark" />
+      <p class="u-why-note script">{% translate "Z nami zdasz!" %}<c-ornament kind="underline" class="u-note-stroke" /></p>
+    </div>
+  </div>
+</section>
+
+<section id="w-cenie" class="u-section-compact pt-0 md:pt-0 xl:pt-0">
+  <div class="u-container">
+    <h2 class="u-accent-rule">{% translate "Co obejmuje kurs?" %}</h2>
+    <ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {% translate "Teoria" as c1t %}{% translate "Zajęcia teoretyczne w pełnym wymiarze." as c1 %}
+      {% translate "Jazdy" as c2t %}{% translate "Klimatyzowane auto z bogatym wyposażeniem." as c2 %}
+      {% translate "Egzamin wewnętrzny" as c3t %}{% translate "Sprawdzian przed egzaminem państwowym." as c3 %}
+      {% translate "Dowóz na egzamin" as c4t %}{% translate "Na egzamin państwowy dowozimy gratis." as c4 %}
+      <li class="flex"><div class="u-card w-full p-6"><c-icon name="book" size="lg" class="text-brand-500" /><h3 class="mt-4 text-body-lg font-semibold">{{ c1t }}</h3><p class="mt-1 text-small u-muted-on-ground">{{ c1 }}</p></div></li>
+      <li class="flex"><div class="u-card w-full p-6"><c-icon name="car" size="lg" class="text-brand-500" /><h3 class="mt-4 text-body-lg font-semibold">{{ c2t }}</h3><p class="mt-1 text-small u-muted-on-ground">{{ c2 }}</p></div></li>
+      <li class="flex"><div class="u-card w-full p-6"><c-icon name="clipboard" size="lg" class="text-brand-500" /><h3 class="mt-4 text-body-lg font-semibold">{{ c3t }}</h3><p class="mt-1 text-small u-muted-on-ground">{{ c3 }}</p></div></li>
+      <li class="flex"><div class="u-card w-full p-6"><c-icon name="pin" size="lg" class="text-brand-500" /><h3 class="mt-4 text-body-lg font-semibold">{{ c4t }}</h3><p class="mt-1 text-small u-muted-on-ground">{{ c4 }}</p></div></li>
+    </ul>
+    <p class="mt-10 text-center">
+      {% url "core:page" slug="zapisy" as zapisy_url %}<c-button variant="primary" size="lg" href="{{ zapisy_url }}">{% translate "Zapisz się na kurs" %} <c-icon name="arrow-right" size="sm" /></c-button>
+    </p>
+  </div>
+</section>
+{% else %}
 <c-page-header eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 
@@ -41,6 +139,7 @@ only action on the page.
     </div>
   </c-slot>
 </c-page-header>
+{% endif %}
 
 {# ------------------------------------------------------------- the variants
    This school's one real choice: the same category at three speeds and on two
