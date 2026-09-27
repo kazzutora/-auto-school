@@ -20,28 +20,25 @@ only action on the page.
    and what is in it. The other kinds this template serves keep the header
    and the spec list below. Every line in the three blocks is the school's
    own, OSTRYCHARZ.md A.2 and A.3, or a field of the course. #}
-<c-page-hero eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}">
+{% translate 'Czerwony samochód szkoleniowy z tablicą L na drodze o zachodzie słońca' as t_photo_alt %}
+<c-page-hero eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}"
+             photo="img/pages/kurs-hero.webp" photo_alt="{{ t_photo_alt }}" photo_w="1192" photo_h="724">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% if course.code or course.languages %}
+    {# A graphite fill rather than the neutral chip's hairline: on the
+       photograph the hairline is the lightest thing in the chip, and the
+       label sits against it. #}
     <p class="flex flex-wrap gap-2">
-      {% if course.code %}<c-badge tone="neutral">{{ course.code }}</c-badge>{% endif %}
-      {% for language in course.languages %}<c-badge tone="neutral">{{ language|upper }}</c-badge>{% endfor %}
+      {% if course.code %}<c-badge tone="neutral" class="border-transparent bg-brand-900/60 u-on-ground">{{ course.code }}</c-badge>{% endif %}
+      {% for language in course.languages %}<c-badge tone="neutral" class="border-transparent bg-brand-900/60 u-on-ground">{{ language|upper }}</c-badge>{% endfor %}
     </p>
   {% endif %}
-  <c-slot name="visual">
-    <div class="u-hero-road">
-      <img src="{% static 'img/pages/car-kurs.webp' %}" width="790" height="390"
-           alt="{% translate 'Czerwony samochód szkoleniowy z tablicą L na drodze' %}"
-           class="u-hero-photo" fetchpriority="high" decoding="async">
-      <c-ornament kind="speed" class="u-hero-road-speed" />
-    </div>
-  </c-slot>
 </c-page-hero>
 
 {# The figures, one row. Each tile only when its field is filled — the hours
    are not in the course yet, and a strip that printed "— h" would be the
    gap on the page instead of in owner_data_gaps(). #}
-<section class="pb-2" aria-label="{% translate 'W skrócie' %}">
+<section class="pt-8 pb-2" aria-label="{% translate 'W skrócie' %}">
   <div class="u-container">
   <ul class="u-fact-strip grid grid-cols-2 gap-y-6 rounded-card bg-brand-50 px-5 py-6 shadow-card lg:grid-cols-4 lg:px-8">
     {% if course.min_age %}

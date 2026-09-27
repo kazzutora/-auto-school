@@ -2068,3 +2068,7 @@ msgstr "На государственный экзамен отвозим бес
 #: templates/core/page_detail.html
 msgid "Kluczyk samochodowy z brelokiem L"
 msgstr "Автомобильный ключ с брелоком L"
+
+#: templates/courses/course_detail.html
+msgid "Czerwony samochód szkoleniowy z tablicą L na drodze o zachodzie słońca"
+msgstr "Красный учебный автомобиль со знаком L на дороге на закате"
