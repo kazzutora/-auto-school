@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
-from apps.courses.models import Course, CourseIntake
+from apps.courses.models import Course, CourseIntake, PriceItem
 
 
 class Lead(TimeStampedModel):
@@ -24,6 +24,18 @@ class Lead(TimeStampedModel):
     )
     intake = models.ForeignKey(
         CourseIntake, null=True, blank=True, on_delete=models.SET_NULL, related_name="leads"
+    )
+    # Which way of taking the course: standard, accelerated or automatic. The
+    # school sells category B three ways and the three are price rows, so the
+    # pick points at the row. SET_NULL: a row the owner retires must not take
+    # the leads that chose it with it. tech.md 4.3, core v46.
+    variant = models.ForeignKey(
+        PriceItem,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="leads",
+        verbose_name=_("Wariant"),
     )
     preferred_language = models.CharField(max_length=2, default="pl")
     message = models.TextField(blank=True, max_length=2000)
