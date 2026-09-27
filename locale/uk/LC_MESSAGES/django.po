@@ -2076,3 +2076,7 @@ msgstr "Червоний навчальний автомобіль зі знак
 #: templates/courses/course_detail.html
 msgid "Autostrada nocą, smugi świateł samochodów"
 msgstr "Автомагістраль уночі, сліди фар автомобілів"
+
+#: templates/courses/pricing.html
+msgid "Kierownica, kluczyk, prawo jazdy i tablica L"
+msgstr "Кермо, автомобільний ключ, посвідчення водія і знак L"

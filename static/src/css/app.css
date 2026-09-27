@@ -2658,6 +2658,30 @@
     }
   }
 
+  /* is-wide: a picture that is a still life across its whole width — the
+   price page's key, licence and plate. Three quarters of the band rather
+   than two thirds, and a lower band, so `cover` crops less off its left. */
+  @media (min-width: 1024px) {
+    .u-page-hero-photo.is-wide .u-container {
+      min-height: 460px;
+    }
+
+    .u-page-hero-photo.is-wide .u-page-hero-pic {
+      width: 78%;
+    }
+
+    /* The wider picture reaches under the words on a wide screen, so the
+     * dark holds further across before it lets go. */
+    .u-page-hero-photo.is-wide::after {
+      background:
+        linear-gradient(180deg, rgb(var(--fixed-ink) / 0.5) 0%, rgb(var(--fixed-ink) / 0) 32%),
+        linear-gradient(90deg,
+          rgb(var(--fixed-ink) / 0.8) 0%,
+          rgb(var(--fixed-ink) / 0.7) 44%,
+          rgb(var(--fixed-ink) / 0) 64%);
+    }
+  }
+
   /* photo_fit="full": the picture under the whole band at every width, no
    * blurred copy. The scrim above stays as it is and carries the words. */
   .u-page-hero-photo.is-full::before {
@@ -2729,44 +2753,6 @@
   /* The home hero's strokes, recoloured for a pale ground. */
   .u-ornament-fill {
     fill: rgb(var(--brand-500));
-  }
-
-  /* -------------------------------------------------------- Cennik */
-  .u-hero-stage {
-    position: relative;
-    isolation: isolate;
-    padding-top: 2.5rem;
-  }
-
-  /* KURS B behind the car. Five per cent of the ink, so it reads as texture;
-   * aria-hidden in the markup and unselectable here, because a drag across
-   * the heading should not pick it up. */
-  .u-watermark {
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 4%;
-    white-space: nowrap;
-    font-family: theme('fontFamily.display');
-    font-style: italic;
-    font-weight: 800;
-    text-transform: uppercase;
-    line-height: 0.9;
-    font-size: clamp(4.5rem, 13vw, 12.5rem);
-    color: rgb(var(--ink) / 0.05);
-    rotate: -6deg;
-    user-select: none;
-    pointer-events: none;
-  }
-
-  .u-hero-car {
-    display: block;
-    width: min(100%, 640px);
-    height: auto;
-    margin-left: auto;
-    margin-right: 4%;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 30%);
-    mask-image: linear-gradient(to right, transparent, #000 30%);
   }
 
   /* The strokes under a handwritten line hang off its box rather than

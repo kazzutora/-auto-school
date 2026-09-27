@@ -2076,3 +2076,7 @@ msgstr ""
 #: templates/courses/course_detail.html
 msgid "Autostrada nocą, smugi świateł samochodów"
 msgstr ""
+
+#: templates/courses/pricing.html
+msgid "Kierownica, kluczyk, prawo jazdy i tablica L"
+msgstr ""
