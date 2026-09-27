@@ -59,6 +59,9 @@ AUTOFILL = {
 # name apps/courses/views.py prices them under. Kept as a string here rather
 # than imported, so the form does not pull the course views in.
 COURSE_VARIANT_GROUP = "Kurs"
+# What the form offers under "Kurs": the course in its three variants, then
+# the hourly lessons, in that order. The same group names the price list uses.
+VARIANT_GROUPS = (COURSE_VARIANT_GROUP, "Jazdy doszkalające")
 
 
 class LeadForm(forms.ModelForm):
@@ -134,13 +137,11 @@ class LeadForm(forms.ModelForm):
         course.empty_label = _("Jeszcze nie wiem")
 
         # What the visitor picks under "Kurs": standard, accelerated or
-        # automatic — the active rows of the price list's course group, in its
-        # order, so the owner renames or adds one in the admin and the form
-        # follows. The course itself rides along hidden.
+        # automatic, then the hourly lessons — the active rows of those price
+        # groups in the price list's order, so the owner renames or adds one
+        # in the admin and the form follows. The course rides along hidden.
         variant = cast(forms.ModelChoiceField, self.fields["variant"])
-        variant.queryset = PriceItem.objects.filter(
-            group=COURSE_VARIANT_GROUP, is_active=True
-        ).order_by("order", "id")
+        variant.queryset = variant_rows()
         variant.required = False
         variant.empty_label = _("Jeszcze nie wiem")
 
@@ -200,7 +201,8 @@ class LeadForm(forms.ModelForm):
         it would otherwise leave the lead's course empty.
         """
         cleaned = super().clean() or self.cleaned_data
-        if cleaned.get("variant") and not cleaned.get("course"):
+        picked = cleaned.get("variant")
+        if picked and picked.group == COURSE_VARIANT_GROUP and not cleaned.get("course"):
             cleaned["course"] = (
                 Course.objects.filter(is_active=True, kind=Course.Kind.LICENSE)
                 .order_by("order", "id")
@@ -231,6 +233,21 @@ class LeadForm(forms.ModelForm):
         return bool(self.cleaned_data.get(HONEYPOT))
 
 
+def variant_rows() -> Any:
+    """The rows the form offers, the course group first."""
+    from django.db.models import Case, IntegerField, Value, When
+
+    rank = Case(
+        *(When(group=name, then=Value(i)) for i, name in enumerate(VARIANT_GROUPS)),
+        output_field=IntegerField(),
+    )
+    return (
+        PriceItem.objects.filter(group__in=VARIANT_GROUPS, is_active=True)
+        .annotate(rank=rank)
+        .order_by("rank", "order", "id")
+    )
+
+
 def initial_from_query(params: Any) -> dict[str, Any]:
     """Prefill the course from ?course= or ?intake=, DEV.md S3.1.
 
@@ -252,7 +269,7 @@ def initial_from_query(params: Any) -> dict[str, Any]:
     if (
         variant_id
         and PriceItem.objects.filter(
-            pk=_as_int(variant_id), group=COURSE_VARIANT_GROUP, is_active=True
+            pk=_as_int(variant_id), group__in=VARIANT_GROUPS, is_active=True
         ).exists()
     ):
         initial["variant"] = _as_int(variant_id)

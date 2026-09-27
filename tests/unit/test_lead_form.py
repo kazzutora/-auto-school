@@ -330,3 +330,15 @@ def test_the_chosen_variant_reaches_the_lead() -> None:
     assert form.cleaned_data["variant"] == automatic
     # Its own column since core v46; the message is the visitor's alone.
     assert form.cleaned_data["message"] == "Wolę popołudnia."
+
+
+def test_the_hourly_lessons_follow_the_course_variants(client: Client) -> None:
+    """The price list's extra lessons are on offer too, after the course."""
+    _variants()
+    PriceItem.objects.create(
+        group="Jazdy doszkalające", title="Jazda doszkalająca — manual", price_gross=160, order=0
+    )
+    body = client.get(reverse("leads:enroll")).content.decode()
+    assert body.index("Skrzynia automatyczna</option>") < body.index(
+        "Jazda doszkalająca — manual</option>"
+    )
