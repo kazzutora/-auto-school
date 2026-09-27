@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load core_ui i18n %}
+{% load core_ui i18n static %}
 
 {% comment %}
 A flat page, FRONTEND.md A.10. Serves o-nas, zapisy, polityka-prywatnosci and
@@ -30,26 +30,40 @@ nothing.
   <c-page-header plain="1" title="{{ page.title }}" lead="{{ page.lead }}">
     <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   </c-page-header>
+{% elif enrolment %}
+{# The enrolment page's own hero, the owner's mockup: the phone card and the
+   keys under the heading, the five steps down the right. The steps are the
+   view's, so they are the same five the school tells people on the phone;
+   the section that listed them again under the hero went, because it was
+   this list a second time. #}
+<c-page-hero bleed="" eyebrow="{% translate 'To proste!' %}" title="{{ page.title }}" lead="{{ page.lead }}">
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+  <div class="u-keys-row">
+    {% if site_settings.phone_primary %}
+      <div class="u-card relative z-10 w-full max-w-[300px] p-6">
+        <span class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 u-fixed-paper">
+          <c-icon name="phone" />
+        </span>
+        <p class="mt-4 font-semibold u-on-ground">{% translate "Masz pytania?" %}<br>{% translate "Zadzwoń do nas" %}</p>
+        <a href="tel:{{ site_settings.phone_primary|cut:' ' }}" class="data mt-1 block text-data-lg u-on-ground hover:text-brand-600">{{ site_settings.phone_primary }}</a>
+        <p class="mt-3 text-small u-muted-on-ground">{% translate "Zapisujemy po wcześniejszym ustaleniu terminu." %}</p>
+      </div>
+    {% endif %}
+    <div class="u-keys">
+      <img src="{% static 'img/pages/keys-l.webp' %}" width="310" height="194" alt="{% translate 'Kluczyk samochodowy z brelokiem L' %}" loading="lazy" decoding="async" class="u-keys-img">
+      <p class="u-keys-note script">{% translate "Twój klucz do przyszłości" %}<c-ornament kind="underline" class="u-note-stroke" /></p>
+    </div>
+  </div>
+  <c-slot name="visual"><c-step-trail :steps="steps" /></c-slot>
+</c-page-hero>
 {% else %}
-{# pb-0 where there is no aside. With one the header is as tall as the card
-   beside it and the padding is the air under that card; without one it is
-   160px of nothing between the lead and whatever comes next — on /o-nas/
-   that is now the instructors, which is what the reader came for. #}
-<c-page-header eyebrow="{% if enrolment %}{% translate 'To proste!' %}{% else %}{% translate 'O nas' %}{% endif %}"
-               class="{% if not enrolment %}pb-0{% endif %}"
+{# pb-0: without an aside the header's bottom padding is 160px of nothing
+   between the lead and whatever comes next — on /o-nas/ that is the
+   instructors, which is what the reader came for. The enrolment page, which
+   had the aside, has its own hero above. #}
+<c-page-header eyebrow="{% translate 'O nas' %}" class="pb-0"
                title="{{ page.title }}" lead="{{ page.lead }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-  {% if enrolment %}
-    <c-slot name="aside">
-      <c-fact-card label="{% translate 'Zapisy telefoniczne' %}" value="{{ site_settings.phone_primary }}"
-                   href="tel:{{ site_settings.phone_primary|cut:' ' }}"
-                   note="{% translate 'Zapisujemy po wcześniejszym ustaleniu terminu.' %}">
-        <c-slot name="action">
-          <c-button variant="primary" href="{{ enrol_url }}" full="1">{% translate "Zostaw numer" %}</c-button>
-        </c-slot>
-      </c-fact-card>
-    </c-slot>
-  {% endif %}
 </c-page-header>
 {% endif %}
 
@@ -148,12 +162,6 @@ nothing.
 
 {# ------------------------------------------------------------------ Zapisy #}
 {% if enrolment %}
-  <c-section id="jak">
-    <c-slot name="heading">{% translate "Jak się zapisać" %}</c-slot>
-    <c-slot name="sub">{% translate "Pięć kroków. Pierwszy to telefon, ostatni to pierwsze zajęcia." %}</c-slot>
-    <c-steps :steps="steps" />
-  </c-section>
-
   <c-section id="dokumenty">
     <c-slot name="heading">{% translate "Co przynieść" %}</c-slot>
     <div class="grid gap-10 lg:grid-cols-12">
