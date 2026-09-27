@@ -2528,6 +2528,89 @@
     }
   }
 
+  /* The photograph band, <c-page-hero photo>. The graphite is the ground
+   * under everything; the blurred copy of the picture lies over it, dimmed
+   * to under half, so the words sit on the photograph's colour and none of
+   * its detail. The sharp copy is a real <img> with its own alt. */
+  .u-page-hero-photo {
+    background-color: rgb(var(--fixed-ink));
+    isolation: isolate;
+  }
+
+  .u-page-hero-photo::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -40px;
+    /* The top left of the picture, blown up: the sky and the sun, not the
+     * car, so no red smudge lies under the heading. */
+    background: var(--hero-photo) 0% 12% / 180% auto no-repeat;
+    filter: blur(28px) brightness(0.42) saturate(1.1);
+  }
+
+  /* The scrim, over both copies of the picture and under the words: the
+   * top for the crumbs, which are small, and on a phone the whole band,
+   * since the words there run the full width. From lg it thins out to the
+   * right and is gone before the car. scripts/check_photo_contrast.py is
+   * what set these. */
+  .u-page-hero-photo::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgb(var(--fixed-ink) / 0.55) 0%, rgb(var(--fixed-ink) / 0) 40%),
+      rgb(var(--fixed-ink) / 0.35);
+  }
+
+  @media (min-width: 1024px) {
+    .u-page-hero-photo::after {
+      background:
+        linear-gradient(180deg, rgb(var(--fixed-ink) / 0.5) 0%, rgb(var(--fixed-ink) / 0) 32%),
+        linear-gradient(90deg,
+          rgb(var(--fixed-ink) / 0.6) 0%,
+          rgb(var(--fixed-ink) / 0.45) 40%,
+          rgb(var(--fixed-ink) / 0) 58%);
+    }
+  }
+
+  .u-page-hero-pic {
+    display: block;
+    width: 100%;
+    height: auto;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%);
+    mask-image: linear-gradient(to bottom, transparent, #000 18%);
+  }
+
+  @media (min-width: 1024px) {
+    .u-page-hero-photo .u-container {
+      min-height: 520px;
+      align-content: center;
+    }
+
+    /* Two thirds of the band, anchored right, fading out over its left
+     * third into the blurred copy under the words. The words end at half
+     * the container; the fade is done before they reach the car. */
+    .u-page-hero-pic {
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      right: 0;
+      width: 64%;
+      height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 38%);
+      mask-image: linear-gradient(to right, transparent, #000 38%);
+    }
+
+    .u-page-hero-photo .u-page-hero-title {
+      font-size: clamp(3.5rem, 5.4vw, 5rem);
+      line-height: 0.95;
+    }
+  }
+
   /* A short red rule over a section heading, the one over KURS in the
    * mockup. 40 by 3, and part of the heading's box so it moves with it. */
   .u-accent-rule::before {

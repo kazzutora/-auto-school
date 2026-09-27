@@ -1,4 +1,4 @@
-<c-vars eyebrow="" title="" lead="" bleed="1" class="" />
+<c-vars eyebrow="" title="" lead="" bleed="1" photo="" photo_alt="" photo_w="" photo_h="" class="" />{% load static %}
 {% comment %}
 The opening band of an inner page that has a picture to show: Cennik, Zapisy
 and the course page. The rest keep <c-page-header>.
@@ -16,9 +16,18 @@ under the menu and ends where its taller half does.
 `bleed` is on by default; a visual that is text, the steps on Zapisy, stays
 inside the container, where a line of it can be read to its end.
 
-Takes: eyebrow, title, lead, bleed; slots: crumbs, visual, the default slot.
+`photo` turns the band into a photograph, the course page's: a static path to
+a picture whose left part is clear of anything that matters. The sharp copy
+sits on the right and fades out to the left; under the words the same picture
+is blurred and dimmed, so the left half keeps the photograph's colour without
+any of its detail competing with the heading. u-photo-ground sets the white
+pair, and scripts/check_photo_contrast.py measures it like the home hero. On a
+phone the photograph goes under the words rather than behind them.
+
+Takes: eyebrow, title, lead, bleed, photo, photo_alt, photo_w, photo_h; slots: crumbs, visual, the default slot.
 {% endcomment %}
-<header class="u-page-hero relative overflow-hidden {{ class }}" {{ attrs }}>
+<header class="u-page-hero{% if photo %} u-page-hero-photo u-photo-ground{% endif %} relative overflow-hidden {{ class }}"
+  {% if photo %}style="--hero-photo: url('{% static photo %}')"{% endif %} {{ attrs }}>
   <div class="u-container relative grid items-start gap-8 pb-10 pt-8 md:pt-10 lg:grid-cols-2 lg:gap-6 lg:pb-12">
     <div class="relative z-10 min-w-0">
       {% if crumbs %}<div class="mb-6">{{ crumbs }}</div>{% endif %}
@@ -31,4 +40,8 @@ Takes: eyebrow, title, lead, bleed; slots: crumbs, visual, the default slot.
       <div class="{% if bleed %}u-page-hero-visual {% endif %}relative min-w-0 lg:self-center">{{ visual }}</div>
     {% endif %}
   </div>
+  {% if photo %}
+    <img src="{% static photo %}" width="{{ photo_w }}" height="{{ photo_h }}" alt="{{ photo_alt }}"
+         class="u-page-hero-pic" fetchpriority="high" decoding="async">
+  {% endif %}
 </header>
