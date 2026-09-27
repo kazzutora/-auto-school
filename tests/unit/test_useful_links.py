@@ -306,12 +306,15 @@ def test_a_link_is_a_card_not_a_row(client: Client, links: None) -> None:
 
     The flat list ran the full 1240px: the text sat in the left 40% and the
     external mark was pinned to the far right, a screen away from the name it
-    belonged to. A card holds the two together and stops at 400px.
+    belonged to. A card holds the two together.
+
+    Since the group-beside-its-links layout the cards sit two to a row in
+    the right eight twelfths of the container, which keeps each under 400px
+    at 1440 without a max-width of its own.
     """
     body = page(client)
     assert "u-card" in body
-    assert "max-w-[400px]" in body
-    assert "md:grid-cols-2" in body and "lg:grid-cols-3" in body
+    assert "sm:grid-cols-2 lg:col-span-8" in body
 
 
 def test_every_card_says_where_it_goes(client: Client, links: None) -> None:

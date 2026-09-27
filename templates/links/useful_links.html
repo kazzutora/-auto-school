@@ -13,58 +13,60 @@ and it is the thing that pushes the page sideways on a phone.
 {% endcomment %}
 
 {% block content %}
-<c-section size="compact">
-  {# The right half of a page header was empty on every inner page.
-     BLOCKS.md A4 puts a graphic figure there rather than inventing a
-     fact to fill the space with. #}
-  <div class="grid gap-10 lg:grid-cols-[7fr_5fr] lg:items-start">
-    <div>
-    <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-    {% translate "Dla kursanta" as t_dla_kursanta %}
-    <c-heading level="1" eyebrow="{{ t_dla_kursanta }}" class="mt-6">{% translate "Przydatne linki" %}</c-heading>
-    <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
-      {% translate "Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy." %}
-    </p>
-    </div>
+{# The photograph band every inner page opens on. #}
+{% translate "Kierowca za kierownicą, widok zza ramienia" as t_links_photo %}
+<c-page-hero eyebrow="{% translate 'Dla kursanta' %}" title="{% translate 'Przydatne linki' %}"
+             lead="{% translate 'Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy.' %}"
+             photo="img/band/band-day-1440.webp" photo_small="img/band/band-day-960.webp"
+             photo_w="1440" photo_h="617" photo_fit="full" photo_alt="{{ t_links_photo }}">
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+</c-page-hero>
 
-    <div class="hidden lg:block">
-      <p aria-hidden="true" class="u-bignum text-right">{{ groups|length }}</p>
-      <p class="label mt-2 text-right u-muted-on-ground">{% translate "Grupy odnośników" %}</p>
-    </div>
-  </div>
-</c-section>
+{# The group's icon, by its label: the order of the groups is the view's and
+   a group with no links drops out, so a position would put the wrong mark
+   on the next one. #}
+{% translate "Egzamin" as g_exam %}{% translate "Urzędy i e-usługi" as g_gov %}{% translate "Testy i przepisy" as g_tests %}{% translate "Wieluń i okolice" as g_local %}
 
 {% if groups %}
-  {% for group in groups %}
-    <c-section tone="{% cycle 'muted' 'default' %}" size="compact"
-               id="grupa-{{ forloop.counter }}" data-testid="groups">
-      <c-heading level="2">{{ group.label }}</c-heading>
+  <c-section size="compact" data-testid="groups">
+    <div class="flex flex-col">
+      {% for group in groups %}
+        {% if group.label == g_exam %}{% firstof "clipboard" as icon %}{% elif group.label == g_gov %}{% firstof "id-card" as icon %}{% elif group.label == g_tests %}{% firstof "book" as icon %}{% elif group.label == g_local %}{% firstof "pin" as icon %}{% else %}{% firstof "external" as icon %}{% endif %}
+        {# Two columns from lg: the group's name and mark on the left, its
+           links two to a row on the right. A group holds one or two links,
+           and three to a row across the page left most of each row empty. #}
+        <div id="grupa-{{ forloop.counter }}"
+             class="u-link-group grid gap-6 scroll-mt-[calc(var(--header-h)+24px)] lg:grid-cols-12 lg:gap-10">
+          <div class="flex items-center gap-4 lg:col-span-4 lg:items-start">
+            <span class="u-icon-ring u-icon-ring-lg" aria-hidden="true"><c-icon name="{{ icon }}" /></span>
+            <c-heading level="2" class="text-h3 md:text-h2">{{ group.label }}</c-heading>
+          </div>
 
-      {# A grid, not a list across the full page. The flat rows put the text in
-         the left 40% and the external mark a screen away from the name it
-         belonged to — X4 point 1, finding 16. #}
-      <ul class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {% for link in group.links %}
-          <li class="flex">
-            <c-card href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
-                    class="flex w-full max-w-[400px] flex-col">
-              <c-slot name="title">
-                <span class="flex items-start justify-between gap-3">
-                  <span class="min-w-0">{{ link.title }}</span>
-                  <c-icon name="external" size="sm" class="mt-1 shrink-0 u-muted-on-ground" />
-                </span>
-              </c-slot>
-              {% if link.description %}
-                <p class="text-small u-muted-on-ground">{{ link.description }}</p>
-              {% endif %}
-              <p class="label mt-auto pt-6 u-muted-on-ground">{{ link.url|domain }}</p>
-              <span class="sr-only">{% translate "otwiera się w nowej karcie" %}</span>
-            </c-card>
-          </li>
-        {% endfor %}
-      </ul>
-    </c-section>
-  {% endfor %}
+          <ul class="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+            {% for link in group.links %}
+              <li class="flex">
+                {# The whole card is the link, like the files on /do-pobrania/:
+                   the name with the out-arrow beside it, one line, and the
+                   domain at the foot. The arrow fills red on hover. #}
+                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                   class="u-card u-card-link u-link-card group">
+                  <span class="flex items-start justify-between gap-4">
+                    <span class="text-h3 font-bold u-on-ground">{{ link.title }}</span>
+                    <span class="u-file-arrow !mt-0" aria-hidden="true"><c-icon name="external" size="sm" /></span>
+                  </span>
+                  {% if link.description %}
+                    <span class="mt-2 block text-small u-body-on-ground">{{ link.description }}</span>
+                  {% endif %}
+                  <span class="label mt-auto block pt-6 u-muted-on-ground">{{ link.url|domain }}</span>
+                  <span class="sr-only">{% translate "otwiera się w nowej karcie" %}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+  </c-section>
 {% else %}
   <c-section>
     {% translate "Lista w przygotowaniu" as t_lista_w_przygotowaniu %}

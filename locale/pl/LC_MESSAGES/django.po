@@ -2122,3 +2122,27 @@ msgstr ""
 #: templates/core/contact.html
 msgid "Dłonie na kierownicy, droga przed samochodem"
 msgstr ""
+
+#: templates/pages/home.html
+msgid "Kierowca za kierownicą, widok zza ramienia"
+msgstr ""
+
+#: templates/pages/home.html
+msgid "Status PKK w Info-Car."
+msgstr ""
+
+#: templates/pages/home.html
+msgid "Jak uzyskać i sprawdzić prawo jazdy na gov.pl."
+msgstr ""
+
+#: templates/pages/home.html
+msgid "Baza pytań egzaminacyjnych."
+msgstr ""
+
+#: templates/pages/home.html
+msgid "Starostwo w Wieluniu i WORD Sieradz."
+msgstr ""
+
+#: templates/pages/home.html
+msgid "Wszystkie przydatne linki"
+msgstr ""

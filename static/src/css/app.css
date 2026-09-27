@@ -3172,6 +3172,52 @@
     object-position: 40% 35%;
   }
 
+  /* The bigger ring, beside a group heading. */
+  .u-icon-ring.u-icon-ring-lg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* A useful link, and a group of them on the home page: the card is the
+   * link. The group's mark top left on the page's grey, the out-arrow top
+   * right, the name, one line, and the domain or the way on at the foot. */
+  .u-link-card {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .u-link-group {
+    padding-block: 2.5rem;
+  }
+
+  .u-link-group:first-child {
+    padding-top: 0;
+  }
+
+  .u-link-group + .u-link-group {
+    border-top: 1px solid rgb(var(--line));
+  }
+
+  .u-link-mark {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 14px;
+    background-color: rgb(var(--brand-100));
+    color: rgb(var(--brand-500));
+  }
+
+  .u-link-card:hover .u-file-arrow {
+    border-color: rgb(var(--brand-500));
+    background-color: rgb(var(--brand-500));
+    color: rgb(var(--fixed-paper));
+  }
+
   /* A figure in a sentence, lifted out: graphite pill, white figures. */
   .u-pill {
     display: inline-flex;

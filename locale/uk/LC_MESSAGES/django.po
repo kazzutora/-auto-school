@@ -2122,3 +2122,27 @@ msgstr "Напишіть або зателефонуйте"
 #: templates/core/contact.html
 msgid "Dłonie na kierownicy, droga przed samochodem"
 msgstr "Руки на кермі, дорога попереду"
+
+#: templates/pages/home.html
+msgid "Kierowca za kierownicą, widok zza ramienia"
+msgstr "Водій за кермом, вигляд з-за плеча"
+
+#: templates/pages/home.html
+msgid "Status PKK w Info-Car."
+msgstr "Статус PKK в Info-Car."
+
+#: templates/pages/home.html
+msgid "Jak uzyskać i sprawdzić prawo jazdy na gov.pl."
+msgstr "Як отримати й перевірити посвідчення на gov.pl."
+
+#: templates/pages/home.html
+msgid "Baza pytań egzaminacyjnych."
+msgstr "База екзаменаційних питань."
+
+#: templates/pages/home.html
+msgid "Starostwo w Wieluniu i WORD Sieradz."
+msgstr "Староство у Велюні та WORD Серадз."
+
+#: templates/pages/home.html
+msgid "Wszystkie przydatne linki"
+msgstr "Усі корисні посилання"

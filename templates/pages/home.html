@@ -463,6 +463,42 @@ is a forgery, not a placeholder.
   </c-section>
 {% endif %}
 
+{# ====================================================== 4c. PRZYDATNE LINKI
+   The four groups of /przydatne-linki/, one tile each, straight to the group
+   on that page. The lines under the names say what is in the group today —
+   the links themselves are the owner's, in the admin; this block only points
+   at them.
+   ============================================================ #}
+{% url 'links:useful' as links_url %}
+{% translate "Dla kursanta" as t_links_eyebrow %}
+{% translate "Przydatne linki" as t_links_heading %}
+{% translate "Miejsca, do których i tak wyślemy Cię przez telefon: rezerwacja egzaminu, punkty karne, testy i urzędy." as t_links_sub %}
+<c-section id="przydatne-linki" eyebrow="{{ t_links_eyebrow }}" heading="{{ t_links_heading }}" sub="{{ t_links_sub }}">
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% translate "Egzamin" as g1 %}{% translate "Status PKK w Info-Car." as d1 %}
+    {% translate "Urzędy i e-usługi" as g2 %}{% translate "Jak uzyskać i sprawdzić prawo jazdy na gov.pl." as d2 %}
+    {% translate "Testy i przepisy" as g3 %}{% translate "Baza pytań egzaminacyjnych." as d3 %}
+    {% translate "Wieluń i okolice" as g4 %}{% translate "Starostwo w Wieluniu i WORD Sieradz." as d4 %}
+    <li class="flex"><a href="{{ links_url }}#grupa-1" class="u-card u-card-link u-link-card group">
+      <span class="flex items-start justify-between gap-4"><span class="u-link-mark" aria-hidden="true"><c-icon name="clipboard" size="sm" /></span><span class="u-file-arrow" aria-hidden="true"><c-icon name="arrow-right" size="sm" /></span></span>
+      <span class="mt-5 block text-h3 font-bold u-on-ground">{{ g1 }}</span><span class="mt-2 block text-small u-body-on-ground">{{ d1 }}</span></a></li>
+    <li class="flex"><a href="{{ links_url }}#grupa-2" class="u-card u-card-link u-link-card group">
+      <span class="flex items-start justify-between gap-4"><span class="u-link-mark" aria-hidden="true"><c-icon name="id-card" size="sm" /></span><span class="u-file-arrow" aria-hidden="true"><c-icon name="arrow-right" size="sm" /></span></span>
+      <span class="mt-5 block text-h3 font-bold u-on-ground">{{ g2 }}</span><span class="mt-2 block text-small u-body-on-ground">{{ d2 }}</span></a></li>
+    <li class="flex"><a href="{{ links_url }}#grupa-3" class="u-card u-card-link u-link-card group">
+      <span class="flex items-start justify-between gap-4"><span class="u-link-mark" aria-hidden="true"><c-icon name="book" size="sm" /></span><span class="u-file-arrow" aria-hidden="true"><c-icon name="arrow-right" size="sm" /></span></span>
+      <span class="mt-5 block text-h3 font-bold u-on-ground">{{ g3 }}</span><span class="mt-2 block text-small u-body-on-ground">{{ d3 }}</span></a></li>
+    <li class="flex"><a href="{{ links_url }}#grupa-4" class="u-card u-card-link u-link-card group">
+      <span class="flex items-start justify-between gap-4"><span class="u-link-mark" aria-hidden="true"><c-icon name="pin" size="sm" /></span><span class="u-file-arrow" aria-hidden="true"><c-icon name="arrow-right" size="sm" /></span></span>
+      <span class="mt-5 block text-h3 font-bold u-on-ground">{{ g4 }}</span><span class="mt-2 block text-small u-body-on-ground">{{ d4 }}</span></a></li>
+  </ul>
+  <p class="mt-8">
+    <c-button variant="secondary" href="{{ links_url }}">
+      {% translate "Wszystkie przydatne linki" %} <c-icon name="arrow-right" size="sm" />
+    </c-button>
+  </p>
+</c-section>
+
 {# ========================================================= 5. INSTRUKTORZY
    The CONTRACT GAP at the top of this file. Nothing in the context fills
    `instructors`, so the block does not render.
