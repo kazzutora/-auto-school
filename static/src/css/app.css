@@ -2791,11 +2791,10 @@
     }
   }
 
-  /* is-lesson: the enrolment page's photograph. The people are on its right
-   * half, so it is anchored there and the car's windscreen, the bright part,
-   * goes under the scrim on the left. */
+  /* is-lesson: the enrolment page's photograph. The two in the front seats
+   * are just right of centre; anchored there, so a phone keeps them both. */
   .u-page-hero-photo.is-lesson .u-page-hero-pic {
-    object-position: 70% 40%;
+    object-position: 60% 45%;
   }
 
   /* A short red rule over a section heading, the one over KURS in the

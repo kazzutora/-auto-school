@@ -10,13 +10,14 @@ the number, and what happens after they press send.
 {% endcomment %}
 
 {% block content %}
-{# A lesson seen from the back seat: the instructor with the clipboard, the
-   learner at the wheel. The file is darkened a fifth, and the band's scrim
-   does the rest under the words. #}
-{% translate "Instruktor z kursantką podczas jazdy, widok z tylnego siedzenia" as t_photo_alt %}
+{# A lesson seen from the back seat, Unsplash LcSpQ36Q2us, free under the
+   Unsplash licence. The file is darkened a fifth, and the band's scrim does
+   the rest under the words. #}
+{% translate "Kursant za kierownicą i instruktor obok, widok z tylnego siedzenia" as t_photo_alt %}
 <c-page-hero eyebrow="OSK Ostrycharz Wieluń" title="{% translate 'Zapisz się na kurs' %}"
              lead="{% translate 'Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz.' %}"
-             photo="img/pages/enroll-hero.webp" photo_w="1008" photo_h="672" photo_fit="full"
+             photo="img/pages/enroll-hero-1920.webp" photo_small="img/pages/enroll-hero-960.webp"
+             photo_w="1920" photo_h="1282" photo_fit="full"
              photo_alt="{{ t_photo_alt }}" class="is-lesson">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 </c-page-hero>
