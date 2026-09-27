@@ -1963,3 +1963,108 @@ msgstr "Сучасні методи навчання"
 #: templates/pages/home.html
 msgid "Indywidualne podejście"
 msgstr "Індивідуальний підхід"
+
+#: templates/courses/pricing.html
+msgid "Wybierz kurs dopasowany do Ciebie i spełnij swoje marzenia o wolności na drodze."
+msgstr "Оберіть курс, що вам підходить, і здійсніть мрію про свободу на дорозі."
+
+#: templates/courses/pricing.html
+msgid "Kurs B"
+msgstr "Курс B"
+
+#: templates/courses/pricing.html
+msgid "Czerwony samochód szkoleniowy z tablicą L na dachu"
+msgstr "Червоний навчальний автомобіль зі знаком L на даху"
+
+#: templates/courses/pricing.html
+msgid "W cenie kursu"
+msgstr "У вартість курсу входить"
+
+#: templates/cotton/price_card.html
+msgid "Sprawdź"
+msgstr "Детальніше"
+
+#: templates/core/page_detail.html
+msgid "Masz pytania?"
+msgstr "Маєте запитання?"
+
+#: templates/core/page_detail.html
+msgid "Zadzwoń do nas"
+msgstr "Зателефонуйте нам"
+
+#: templates/core/page_detail.html
+msgid "Twój klucz do przyszłości"
+msgstr "Твій ключ до майбутнього"
+
+#: templates/courses/course_detail.html
+msgid "Czerwony samochód szkoleniowy z tablicą L na drodze"
+msgstr "Червоний навчальний автомобіль зі знаком L на дорозі"
+
+#: templates/courses/course_detail.html
+msgid "Minimalny wiek"
+msgstr "Мінімальний вік"
+
+#: templates/courses/course_detail.html
+msgid "Teorii"
+msgstr "Теорії"
+
+#: templates/courses/course_detail.html
+#, python-format
+msgid "%(years)s l. %(months)s m."
+msgstr "%(years)s р. %(months)s міс."
+
+#: templates/courses/course_detail.html
+msgid "Jazdy"
+msgstr "Водіння"
+
+#: templates/courses/course_detail.html
+msgid "Cena kursu"
+msgstr "Ціна курсу"
+
+#: templates/courses/course_detail.html
+msgid "Dlaczego warto?"
+msgstr "Чому ми?"
+
+#: templates/courses/course_detail.html
+msgid "Klimatyzowane samochody z bogatym wyposażeniem"
+msgstr "Автомобілі з кондиціонером і багатою комплектацією"
+
+#: templates/courses/course_detail.html
+msgid "Dowóz na egzamin państwowy gratis"
+msgstr "Безкоштовно відвозимо на державний іспит"
+
+#: templates/courses/course_detail.html
+msgid "Jedna z najwyższych zdawalności w województwie łódzkim"
+msgstr "Одна з найвищих складаностей у Лодзинському воєводстві"
+
+#: templates/courses/course_detail.html
+msgid "Z nami zdasz!"
+msgstr "З нами складеш!"
+
+#: templates/courses/course_detail.html
+msgid "Co obejmuje kurs?"
+msgstr "Що входить у курс?"
+
+#: templates/courses/course_detail.html
+msgid "Zajęcia teoretyczne w pełnym wymiarze."
+msgstr "Теоретичні заняття в повному обсязі."
+
+#: templates/courses/course_detail.html
+msgid "Klimatyzowane auto z bogatym wyposażeniem."
+msgstr "Автомобіль з кондиціонером і багатою комплектацією."
+
+#: templates/courses/course_detail.html
+msgid "Egzamin wewnętrzny"
+msgstr "Внутрішній іспит"
+
+#: templates/courses/course_detail.html
+msgid "Sprawdzian przed egzaminem państwowym."
+msgstr "Перевірка перед державним іспитом."
+
+#: templates/courses/course_detail.html
+msgid "Na egzamin państwowy dowozimy gratis."
+msgstr "На державний іспит відвозимо безкоштовно."
+
+#: templates/core/page_detail.html
+msgid "Kluczyk samochodowy z brelokiem L"
+msgstr "Автомобільний ключ із брелоком L"

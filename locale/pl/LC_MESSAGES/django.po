@@ -1963,3 +1963,108 @@ msgstr ""
 #: templates/pages/home.html
 msgid "Indywidualne podejście"
 msgstr ""
+
+#: templates/courses/pricing.html
+msgid "Wybierz kurs dopasowany do Ciebie i spełnij swoje marzenia o wolności na drodze."
+msgstr ""
+
+#: templates/courses/pricing.html
+msgid "Kurs B"
+msgstr ""
+
+#: templates/courses/pricing.html
+msgid "Czerwony samochód szkoleniowy z tablicą L na dachu"
+msgstr ""
+
+#: templates/courses/pricing.html
+msgid "W cenie kursu"
+msgstr ""
+
+#: templates/cotton/price_card.html
+msgid "Sprawdź"
+msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Masz pytania?"
+msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Zadzwoń do nas"
+msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Twój klucz do przyszłości"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Czerwony samochód szkoleniowy z tablicą L na drodze"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Minimalny wiek"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Teorii"
+msgstr ""
+
+#: templates/courses/course_detail.html
+#, python-format
+msgid "%(years)s l. %(months)s m."
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Jazdy"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Cena kursu"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Dlaczego warto?"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Klimatyzowane samochody z bogatym wyposażeniem"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Dowóz na egzamin państwowy gratis"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Jedna z najwyższych zdawalności w województwie łódzkim"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Z nami zdasz!"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Co obejmuje kurs?"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Zajęcia teoretyczne w pełnym wymiarze."
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Klimatyzowane auto z bogatym wyposażeniem."
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Egzamin wewnętrzny"
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Sprawdzian przed egzaminem państwowym."
+msgstr ""
+
+#: templates/courses/course_detail.html
+msgid "Na egzamin państwowy dowozimy gratis."
+msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Kluczyk samochodowy z brelokiem L"
+msgstr ""
