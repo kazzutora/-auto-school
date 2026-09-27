@@ -21,7 +21,10 @@ filled tiles are two answers to a question that has one.
 Nothing invents a course. Whatever is in the database is what appears, and a
 course with no price says so rather than guessing, ROSE.md A.3.
 {% endcomment %}
-<a href="{{ course.get_absolute_url }}" data-testid="course-tile"
+{# A price row has no page of its own, so its tile goes to the price list.
+   An empty href reloaded the home page. #}
+{% url 'courses:pricing' as pricing_url %}
+<a href="{% firstof course.get_absolute_url pricing_url %}" data-testid="course-tile"
   class="u-tile u-card-link group relative flex h-full flex-col gap-1 overflow-hidden rounded-tile p-5 transition
 {% if active %} u-ground-brand{% else %} bg-brand-50 border border-line{% endif %} {{ class }}"
   {{ attrs }}>
