@@ -16,55 +16,48 @@ a submenu was the main defect of the old site, tech.md section 7, and a mobile
 panel is the easiest place to lose it again.
 
 Below the links sit the two things the header gives up on a phone: the language
-switcher and the phone number.
+switcher and the phone number, with the accounts beside the languages.
 {% endcomment %}
 {% nav_items as items %}
+{# The panel is the header's own graphite, core v45: the bar it opens from is
+   dark on every page, and a pale sheet dropping out of it read as another
+   site. u-ground-wine publishes the fixed white pair, so every token inside
+   — the rows, the rule, the social rings — follows without naming a colour.
+
+   The whole panel scrolls, not the list. With the list alone in a scroll box
+   a phone 740px tall hid Pliki and Kontakt behind the call button, which is
+   the defect this panel exists to avoid. #}
 <dialog id="main-menu" data-modal aria-label="{% translate 'Menu' %}"
-        {# u-ground-paper: the panel lives inside the header element, so it
-     takes the page ground back explicitly rather than inheriting whatever
-     the band is publishing. #}
-        class="u-ground-paper m-0 h-full max-h-none w-full max-w-none bg-brand-100 p-0 u-on-ground backdrop:bg-brand-900/60 xl:hidden">
-  <div class="flex h-full flex-col">
+        class="u-ground-wine u-menu-panel m-0 h-full max-h-none w-full max-w-none overflow-y-auto p-0 backdrop:bg-brand-900/60 xl:hidden">
+  <div class="flex min-h-full flex-col">
     <div class="u-container flex h-[var(--header-h)] shrink-0 items-center justify-between">
-      {# The mark plus the name as type, not the second lockup file.
-         This panel is inside the header and is display:none until the burger
-         opens it — and a browser fetches images inside a hidden element all
-         the same, so the lockup here was 16 KB of the first screen budget
-         spent on something nobody had asked to see. The mark is 256 bytes. #}
-      <p class="flex items-center gap-3">
-        {# Decorative: the school's name is spelled out in the text beside it,
-           so alt text here would have a screen reader read the name twice.
-           tech.md section 8 and c-picture both fix the convention — an empty
-           alt is only allowed together with aria-hidden, which is what says the
-           emptiness was meant. #}
-        <img src="{% static 'img/brand/mark-l.svg' %}" width="24" height="24" alt=""
-             aria-hidden="true" class="h-6 w-6">
-        <span class="font-display text-h3 font-extrabold uppercase leading-none tracking-tight">
-          {{ site_settings.short_name|default:"OSK Ostrycharz" }}
-        </span>
-      </p>
+      {# The same lockup as the bar under it. It is a css background, and the
+         header has already paid for it — nothing is fetched twice, which was
+         the reason the panel used to set the name in type instead. #}
+      <span role="img" aria-label="{{ site_settings.short_name|default:"OSK Ostrycharz" }}"
+            class="u-lockup-inverse block h-9 sm:h-11"></span>
       {% translate "Zamknij menu" as t_zamknij_menu %}
-      <c-button variant="ghost" size="icon" data-modal-close aria-label="{{ t_zamknij_menu }}" class="-mr-2">
+      <button type="button" data-modal-close aria-label="{{ t_zamknij_menu }}"
+              class="u-menu-close">
         <c-icon name="close" />
-      </c-button>
+      </button>
     </div>
 
-    <nav aria-label="{% translate 'Główna nawigacja' %}" class="u-container grow overflow-y-auto py-6">
-      <ul class="flex flex-col gap-1">
+    {# Focus lands here on open rather than on the close button: showModal()
+       focuses the first control, and a ring round the × on every open read
+       as a fault. tabindex -1 takes it without adding a stop to the tab
+       order; the first Tab goes to the first link. #}
+    <nav aria-label="{% translate 'Główna nawigacja' %}" tabindex="-1" autofocus
+         class="u-container grow pb-8 pt-4 focus:outline-none">
+      <ul class="flex flex-col">
         {% for item in items %}
           {% nav_url item as url %}
-          <li>
-            {# The row is a card shape now rather than a line in a ruled list,
-               B.4. The current page keeps the yellow, which is a state.
-
-               The pale yellow swaps with the theme since core v27 — cream in
-               the light one, a dark warm tint in the dark — so the text follows
-               the ground rather than a fixed ink, which would be dark on dark. #}
+          <li class="u-rule-on-ground border-b">
             <a href="{% if url %}{{ url }}{% else %}#{% endif %}"
                {% if request.path == url %}aria-current="page"{% endif %}
-               class="u-menurow{% if request.path == url %} bg-brand-200 u-on-ground{% endif %}">
-              {{ item.title }}
-              <c-icon name="arrow-right" size="sm" class="u-muted-on-ground" />
+               class="u-menurow">
+              <span>{{ item.title }}</span>
+              <c-icon name="arrow-right" class="u-menurow-arrow" />
             </a>
             {% if item.children %}
               <ul class="pb-3 pl-4">
@@ -82,19 +75,19 @@ switcher and the phone number.
       </ul>
     </nav>
 
-    <div class="u-container u-rule-on-ground flex shrink-0 flex-col gap-4 border-t py-6">
+    <div class="u-container flex shrink-0 flex-col gap-6 pb-[calc(2rem+env(safe-area-inset-bottom))]">
       {% if site_settings.phone_primary %}
-        <c-button variant="primary" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
+        <c-button variant="primary" size="lg" full="1" href="tel:{{ site_settings.phone_primary|cut:' ' }}">
           <c-icon name="phone" size="sm" /> <span class="data">{{ site_settings.phone_primary }}</span>
         </c-button>
       {% endif %}
-      <{# The accounts, for the readers who never see the header row: it hides
-      <   these below lg. #}
-      {# The accounts, for every reader who never sees the header row: it
-         hides them below lg. #}
-      {% translate "Znajdź nas w sieci" as t_social_panel %}
-      <c-social-links label="{{ t_social_panel }}" class="mb-6" />
-      <c-lang-switcher />
+      {# The accounts and the languages, for the readers who never see the
+         header row: it hides both below lg. #}
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        {% translate "Znajdź nas w sieci" as t_social_panel %}
+        <c-social-links label="{{ t_social_panel }}" />
+        <c-lang-switcher />
+      </div>
     </div>
   </div>
 </dialog>

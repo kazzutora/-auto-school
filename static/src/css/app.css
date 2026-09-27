@@ -2112,16 +2112,72 @@
     transform: scaleX(1);
   }
 
-  /* A row in the mobile panel. Full width, a touch target's worth of height,
-   * and the arrow travels when it is pointed at — the same 4px every other
-   * onward control on the site moves. */
+  /* A row in the mobile panel, on the graphite. The page's own heading
+   * voice — Rubik 800 italic in capitals — so the menu reads as this site
+   * rather than as a settings list; 64px a row, and the arrow travels when
+   * pointed at, the same 4px every other onward control moves.
+   *
+   * The current page is marked by a red bar before the word, not by red
+   * letters: on the graphite the red is for shapes, never for type. */
   .u-menurow {
-    @apply flex min-h-[52px] items-center justify-between gap-4 rounded px-4 text-body-lg font-bold;
-    transition: background-color var(--dur) var(--ease);
+    @apply flex min-h-[64px] items-center justify-between gap-4 text-h3 font-extrabold uppercase italic;
+    font-family: theme('fontFamily.display');
+    font-size: 1.625rem;
+    line-height: 1;
+    color: rgb(var(--on-ground));
+    transition: color var(--dur) var(--ease);
+  }
+
+  .u-menurow > span {
+    position: relative;
+    transition: translate var(--dur) var(--ease);
+  }
+
+  .u-menurow[aria-current="page"] > span {
+    translate: 18px 0;
+  }
+
+  .u-menurow[aria-current="page"] > span::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    width: 8px;
+    height: 70%;
+    translate: 0 -50%;
+    skew: -13deg;
+    background: rgb(var(--brand-500));
+  }
+
+  .u-menurow-arrow {
+    color: rgb(var(--brand-500));
   }
 
   .u-menurow:hover {
-    background-color: rgb(var(--on-ground) / 0.06);
+    color: rgb(var(--on-ground) / 0.8);
+  }
+
+  /* The panel's nav takes focus on open (tabindex -1, never a tab stop) so
+   * the ring does not land on the ×. It is a landing place, not a control,
+   * so it draws no ring of its own — the global focus rule drew one round
+   * the whole list, two white lines across the panel. */
+  #main-menu nav:focus,
+  #main-menu nav:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* The close control: a ring in the white at a third, the × in white. */
+  .u-menu-close {
+    @apply -mr-1 inline-flex h-11 w-11 items-center justify-center rounded-full;
+    border: 1.5px solid rgb(var(--on-ground) / 0.35);
+    color: rgb(var(--on-ground));
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .u-menu-close:hover {
+    border-color: rgb(var(--on-ground));
+    background-color: rgb(var(--on-ground) / 0.08);
   }
 
   .u-menurow:hover svg {
