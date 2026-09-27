@@ -91,25 +91,9 @@ złoty column line up digit under digit, A.5.
         <p class="script mt-2">{% translate "Wybierz kurs dopasowany do Ciebie" %}</p>
         <ul class="mt-8 grid items-stretch gap-6 md:grid-cols-3">
           {% for item in course_cards %}
-            <c-price-card compact="1" :item="item" href="{{ enrol_url }}?kurs={{ item.pk }}" />
+            <c-price-card :item="item" href="{{ enrol_url }}?kurs={{ item.pk }}" />
           {% endfor %}
         </ul>
-        {# What the price buys, once. The cards used to print it three times
-           over; the lines are the featured course's, and the other two
-           differ from it only by the line that is already their note. #}
-        {% for item in course_cards %}{% if item.featured and item.include_lines %}
-          <div class="mt-10">
-            <p class="label u-muted-on-ground">{% translate "W cenie kursu" %}</p>
-            <ul class="mt-4 grid gap-x-8 gap-y-3 text-small u-body-on-ground sm:grid-cols-2 lg:grid-cols-3">
-              {% for line in item.include_lines %}
-                <li class="flex items-start gap-2">
-                  <c-icon name="check" size="sm" class="mt-0.5 shrink-0 text-brand-600" />
-                  <span>{{ line }}</span>
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
-        {% endif %}{% endfor %}
       {% else %}
         {# 900px, BLOCKS.md B9: a line whose ends are further apart than that
            stops reading as one line. #}

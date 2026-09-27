@@ -2973,13 +2973,6 @@
     text-align: center;
   }
 
-  /* The featured compact price card: the crimson falling to its darker
-   * step. B.1 keeps gradients off cards in general; this is the one card
-   * the owner's mockup draws this way, and it stays inside the two reds. */
-  .u-price-featured {
-    background-image: linear-gradient(135deg, rgb(var(--brand-500)), rgb(var(--brand-600)));
-  }
-
   /* Anything wide scrolls inside its own box. The page never moves sideways,
    * B.4. */
   .u-scroll-x {

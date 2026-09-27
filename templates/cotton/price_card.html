@@ -1,4 +1,4 @@
-<c-vars item="" href="" compact="" class="" />{% load i18n %}
+<c-vars item="" href="" class="" />{% load i18n %}
 {% comment %}
 A price card, ROSE.md B.5 and the owner's own pricing mockup.
 
@@ -20,43 +20,7 @@ site uses.
 The list comes from `includes`, one line per item, and a row with none prints
 no list at all rather than an empty box. A tick per line, in the crimson on a
 quiet card and in white on the pressed one — the ground publishes which.
-
-`compact` is the row under the price list's hero: name, one line, the figure
-and the way in, ranged left, no list. What the price buys goes under the row
-once, since the three lists are the same four lines and a fifth that repeats
-the card's own note.
 {% endcomment %}
-{% if compact %}
-<li class="flex">
-  <div class="relative flex w-full flex-col rounded-card p-6
-{% if item.featured %} u-ground-brand u-price-featured shadow-card-hover{% else %} bg-brand-50 shadow-card{% endif %} {{ class }}"
-    {{ attrs }}>
-    {% if item.featured %}
-      <p class="label mb-3 inline-flex h-6 w-fit items-center rounded-full bg-brand-900 px-3 text-[0.6875rem] u-fixed-paper">
-        {% translate "Najczęściej wybierany" %}
-      </p>
-    {% endif %}
-    <h3 class="font-display text-body-lg font-extrabold uppercase italic leading-tight u-on-ground">{{ item.title }}</h3>
-    {% if item.note %}<p class="mt-1 text-small u-muted-on-ground">{{ item.note }}</p>{% endif %}
-    <p class="mt-5 flex items-baseline gap-1.5">
-      <span class="u-bignum text-data-xl">{{ item.price_gross|floatformat:0 }}</span>
-      <span class="data text-body-lg u-on-ground">zł</span>
-      {% if item.unit %}<span class="text-small u-muted-on-ground">/ {{ item.unit }}</span>{% endif %}
-    </p>
-    {% if href %}
-      <p class="mt-auto pt-6">
-        <c-button variant="outline" size="sm" href="{{ href }}">
-          {% if item.featured %}{% translate "Zapisz się" %}{% else %}{% translate "Sprawdź" %}{% endif %}
-          <c-icon name="arrow-right" size="sm" />
-        </c-button>
-      </p>
-    {% endif %}
-    {% if item.featured %}
-      <c-icon name="arrow-right" class="absolute bottom-7 right-6 u-on-ground opacity-70" />
-    {% endif %}
-  </div>
-</li>
-{% else %}
 <li class="flex">
   <div class="relative flex w-full flex-col rounded-card p-6 transition
 {% if item.featured %} u-ground-brand shadow-card-hover md:-my-3 md:py-9{% else %} border border-line bg-brand-50 shadow-card md:mt-4{% endif %} {{ class }}"
@@ -113,4 +77,3 @@ the card's own note.
     {% endif %}
   </div>
 </li>
-{% endif %}
