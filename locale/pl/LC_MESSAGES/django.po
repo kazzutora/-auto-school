@@ -2098,3 +2098,11 @@ msgstr ""
 #: templates/leads/enroll.html
 msgid "Kursant za kierownicą i instruktor obok, widok z tylnego siedzenia"
 msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Poznaj nas"
+msgstr ""
+
+#: templates/core/page_detail.html
+msgid "Zdjęcie wkrótce"
+msgstr ""

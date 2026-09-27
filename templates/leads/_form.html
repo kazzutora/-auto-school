@@ -46,7 +46,10 @@ Takes:
 <form id="{{ form_id|default:'lead-form' }}" method="post" action="{% url 'leads:submit' %}"
       hx-post="{% url 'leads:submit' %}" hx-target="this" hx-swap="outerHTML"
       hx-disabled-elt="find button[type=submit]"
-      class="flex flex-col gap-6">
+      {# The full form sits in a white card on the section's grey, .u-form-card,
+         which also sets the fields' own grey fill. The compact one lives on
+         the home page's dark band and keeps that band's ground. #}
+      class="flex flex-col gap-6{% if not compact %} u-form-card{% endif %}">
   {% csrf_token %}
 
   {# F7 point 6. Empty and hidden until app.js has something to say: a person
@@ -111,7 +114,7 @@ Takes:
     </c-alert>
   {% endif %}
 
-  <div>
+  <div class="u-form-submit">
     <c-button variant="primary" size="lg" type="submit">
       <span data-when-idle class="inline-flex items-center gap-2">{% translate "Wyślij zgłoszenie" %}</span>
       <span data-when-sending class="items-center gap-2" aria-live="polite">{% translate "Wysyłanie…" %}</span>

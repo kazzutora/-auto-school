@@ -61,7 +61,9 @@ nothing.
    between the lead and whatever comes next — on /o-nas/ that is the
    instructors, which is what the reader came for. The enrolment page, which
    had the aside, has its own hero above. #}
-<c-page-header eyebrow="{% translate 'O nas' %}" class="pb-0"
+{# "Poznaj nas" rather than "O nas": the h1 under it already says O nas,
+   and "Kim jesteśmy" heads the school's own text further down. #}
+<c-page-header eyebrow="{% translate 'Poznaj nas' %}" class="pb-0"
                title="{{ page.title }}" lead="{{ page.lead }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 </c-page-header>
@@ -74,7 +76,10 @@ nothing.
 {% if about %}
   {# Centred, because what is under it is a row of three cards of one width
      and a ranged-left heading over a centred row reads as a mistake. #}
-  <c-section id="instruktorzy" size="compact" class="text-center [&_.u-narrow]:mx-auto">
+  {# reveal off: this is the first section under the header, on screen at
+     load, and a scroll-driven fade that starts inside the viewport parks
+     half way — the heading came out grey until the page was scrolled. #}
+  <c-section id="instruktorzy" size="compact" reveal="" class="text-center [&_.u-narrow]:mx-auto">
     <c-slot name="heading">{% translate "Nasi instruktorzy" %}</c-slot>
     <c-slot name="sub">{% translate "Ludzie, z którymi jeździsz i którzy prowadzą wykłady." %}</c-slot>
     {# REDESIGN.md D.2, and the one rule in part D that is not negotiable.
@@ -135,10 +140,19 @@ nothing.
         {% for _slot in "123" %}
           <li>
             <c-card padded="" class="overflow-hidden">
-              <c-photo-slot ratio="square" class="[&_.u-photo-slot-frame]:rounded-none [&_.u-photo-slot-frame]:border-x-0 [&_.u-photo-slot-frame]:border-t-0" />
+              {# A neutral silhouette in the frame the photograph will fill:
+                 square, like the real card, so the row does not jump when the
+                 pictures arrive. The ink at a tenth on the page's grey — no
+                 red, no dashed frame, nothing that reads as an error. #}
+              <div class="u-avatar-slot" aria-hidden="true">
+                <svg viewBox="0 0 120 120" class="u-avatar-figure">
+                  <circle cx="60" cy="46" r="20" />
+                  <path d="M22 112c3-22 19-34 38-34s35 12 38 34z" />
+                </svg>
+              </div>
               <div class="p-5">
-                <p class="font-bold u-muted-on-ground">{% translate "Imię i nazwisko" %}</p>
-                <p class="mt-1 text-small u-muted-on-ground">{% translate "Szkoli od roku" %}</p>
+                <p class="font-bold u-on-ground">{% translate "Zdjęcie wkrótce" %}</p>
+                <p class="mt-1 text-small u-muted-on-ground">{% translate "Imię i nazwisko" %} · {% translate "Szkoli od roku" %}</p>
               </div>
             </c-card>
           </li>
@@ -166,7 +180,30 @@ nothing.
     <c-slot name="heading">{% translate "Co przynieść" %}</c-slot>
     <div class="grid gap-10 lg:grid-cols-12">
       <div class="lg:col-span-7">
-        <c-spec-list :items="required_documents" />
+        {# The five papers, each with its line icon. The view gives them in
+           a fixed order — the medical certificate, the photograph, the ID,
+           the registration certificate, the parents' consent — and the icons
+           follow that order; a sixth row falls back to the plain document.
+
+           The one figure in the list, the 17 zł, goes into a pill: it is the
+           only paper that costs anything, and a number set in a sentence is
+           the thing a reader skims past. Keyed on the figure itself, so a
+           row whose wording drops it simply renders as text. #}
+        <ul class="u-doc-list">
+          {% for item in required_documents %}
+            <li class="u-doc-row">
+              <span class="u-doc-icon" aria-hidden="true">
+                <c-icon name="{% cycle 'clipboard' 'image' 'id-card' 'home' 'pen' 'file' %}" size="sm" />
+              </span>
+              <span class="min-w-0 grow font-bold u-on-ground">{{ item.title }}</span>
+              {% if item.text %}
+                <span class="u-doc-note u-muted-on-ground">
+                  {% if ' 17 zł' in item.text %}{{ item.text|cut:' 17 zł.'|cut:' 17 zł' }} <span class="u-pill">17 zł</span>{% else %}{{ item.text }}{% endif %}
+                </span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
       </div>
       <div class="lg:col-span-5">
         <c-callout tone="accent" title="{% translate 'Jedyny płatny papier: 17 zł' %}">

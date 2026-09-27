@@ -2098,3 +2098,11 @@ msgstr "Зателефонуйте, напишіть або приїжджайт
 #: templates/leads/enroll.html
 msgid "Kursant za kierownicą i instruktor obok, widok z tylnego siedzenia"
 msgstr "Учень за кермом та інструктор поруч, вигляд із заднього сидіння"
+
+#: templates/core/page_detail.html
+msgid "Poznaj nas"
+msgstr "Познайомтеся з нами"
+
+#: templates/core/page_detail.html
+msgid "Zdjęcie wkrótce"
+msgstr "Фото незабаром"
