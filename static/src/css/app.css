@@ -1636,10 +1636,16 @@
   }
 
   /* 620 at the least from xl: under that the three points go to a column,
-   * and 40vw at 1280 is 512. */
+   * and 40vw at 1280 is 512.
+   *
+   * And no taller than the screen allows. The mark is three quarters as tall
+   * as it is wide, and the lead, the price line and the two buttons under it
+   * take about 250px more; with the header that leaves 100vh - 400px for the
+   * mark's height. At 680 wide the whole first screen needed 970px, and on a
+   * 1080p monitor at 100% the buttons ended under the fold. */
   @media (min-width: 1280px) {
     .u-hero-mark {
-      width: clamp(620px, 40vw, 680px);
+      width: clamp(620px, min(40vw, (100vh - 400px) * 1.34), 680px);
     }
   }
 
