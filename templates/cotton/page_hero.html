@@ -1,0 +1,34 @@
+<c-vars eyebrow="" title="" lead="" bleed="1" class="" />
+{% comment %}
+The opening band of an inner page that has a picture to show: Cennik, Zapisy
+and the course page. The rest keep <c-page-header>.
+
+Two halves. On the left the crumbs, the handwritten eyebrow, the h1 and one
+line of lead, with room under them for whatever the page adds (the phone card
+on Zapisy). On the right the `visual` slot, which runs past the container to
+the edge of the screen from lg — a car cut off by the container's gutter reads
+as a mistake, and the page's own layout decides what goes there.
+
+Short on purpose. The band that came before it put 160px of nothing between
+the menu and the heading and left the right half empty; this one starts 32px
+under the menu and ends where its taller half does.
+
+`bleed` is on by default; a visual that is text, the steps on Zapisy, stays
+inside the container, where a line of it can be read to its end.
+
+Takes: eyebrow, title, lead, bleed; slots: crumbs, visual, the default slot.
+{% endcomment %}
+<header class="u-page-hero relative overflow-hidden {{ class }}" {{ attrs }}>
+  <div class="u-container relative grid items-start gap-8 pb-10 pt-8 md:pt-10 lg:grid-cols-2 lg:gap-6 lg:pb-12">
+    <div class="relative z-10 min-w-0">
+      {% if crumbs %}<div class="mb-6">{{ crumbs }}</div>{% endif %}
+      {% if eyebrow %}<p class="script">{{ eyebrow }}</p>{% endif %}
+      <h1 class="u-page-hero-title {% if eyebrow %}mt-1{% endif %}">{{ title }}</h1>
+      {% if lead %}<p class="mt-5 max-w-[460px] text-body-lg u-muted-on-ground">{{ lead }}</p>{% endif %}
+      {% if slot %}<div class="mt-8">{{ slot }}</div>{% endif %}
+    </div>
+    {% if visual %}
+      <div class="{% if bleed %}u-page-hero-visual {% endif %}relative min-w-0 lg:self-center">{{ visual }}</div>
+    {% endif %}
+  </div>
+</header>

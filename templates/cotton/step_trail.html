@@ -1,0 +1,22 @@
+<c-vars steps="" class="" />
+{% comment %}
+The five steps in the hero of /zapisy/, the owner's mockup: the number in the
+display face at 64px, the first one red and the rest pale, and a red arc down
+the left that ends in an arrow at the first step.
+
+The same rows as <c-steps> — .title and .text — drawn large for a hero column
+rather than down a section. The numbers are aria-hidden: an <ol> already says
+which step is which, and "zero jeden" read aloud before every title is noise.
+{% endcomment %}
+<ol class="relative flex flex-col gap-5 pl-8 md:pl-10 {{ class }}" {{ attrs }}>
+  <span aria-hidden="true" class="u-steps-trail"></span>
+  {% for step in steps %}
+    <li class="grid grid-cols-[4.5rem_1fr] items-start gap-4 md:grid-cols-[5.5rem_1fr]">
+      <span aria-hidden="true" class="u-steps-num{% if forloop.first %} is-first{% endif %}">{{ forloop.counter|stringformat:"02d" }}</span>
+      <div class="min-w-0 pt-2">
+        <h3 class="text-body-lg font-semibold">{{ step.title }}</h3>
+        {% if step.text %}<p class="mt-1 text-small u-muted-on-ground">{{ step.text }}</p>{% endif %}
+      </div>
+    </li>
+  {% endfor %}
+</ol>

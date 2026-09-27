@@ -23,7 +23,34 @@ Size is not a prop. A stroke is placed by the utility that positions it —
 .u-brush-edge-top and the rest in app.css — and a heart takes its size from the
 class the call site passes, the way the icons do.
 {% endcomment %}
-{% if kind == 'brush' %}
+{% if kind == 'underline' %}
+  {# The home hero's own strokes, drawn inline so the inner pages share them
+     rather than a lookalike: the tagline's brush under a handwritten line,
+     and the four speed lines. Filled by class, .u-ornament-fill, in the
+     crimson. The underline stretches to its box, the speed lines keep their
+     shape. #}
+  <svg data-ornament="underline" class="u-ornament-fill pointer-events-none select-none {{ class }}"
+    viewBox="0 340 235 12" preserveAspectRatio="none" aria-hidden="true" focusable="false" {{ attrs }}>
+    <path d="M174.6 349.6C171.1 349.2 162.7 348.9 158.8 349C154.1 348.9 146.5 348.4 137.5 347.9C117.6 347 53.2 347.4 30.2 347.6C11.4 347.9 1.6 347.5 1.6 347.5C0.7 346.9 -0.8 344.3 8.9 343.8C16.5 343.6 48.1 343.8 79.8 344.4C94.6 344.7 145.3 344.7 158.4 344C166.5 343.8 168.2 346 169.7 344.7L172.4 343.9C179.5 343.7 224.8 343.5 228.2 344C230.4 343.8 235 343.9 235 343.9C234.5 344.5 226.8 344.8 212.8 345.5C190 346.1 181 346.7 188.5 347.5C193.2 348.1 193.2 348.5 193.2 348.5C193.2 349.7 178.3 350.5 174.6 349.6Z"/>
+  </svg>
+{% elif kind == 'speed' %}
+  <svg data-ornament="speed" class="u-ornament-fill pointer-events-none select-none {{ class }}"
+    viewBox="-94 140 200 62" aria-hidden="true" focusable="false" {{ attrs }}>
+    <path d="M-10 147.4 L106 141.1 L101 152.5Z"/>
+    <path d="M-42 166.3 L98.5 157 L93 169.5Z"/>
+    <path d="M-94 184.7 L89.5 175.9 L84 187Z"/>
+    <path d="M-18 196.9 L82.5 191.9 L77.5 201.6Z"/>
+  </svg>
+{% elif kind == 'plate' %}
+  {# The learner's L plate, as a watermark. In the ink, not the plate's own
+     blue: the palette is three colours, and at six per cent the shape is what
+     reads anyway. #}
+  <svg data-ornament="plate" class="pointer-events-none select-none {{ class }}"
+    viewBox="0 0 100 100" aria-hidden="true" focusable="false" {{ attrs }}>
+    <rect x="4" y="4" width="92" height="92" rx="10" fill="none" stroke="currentColor" stroke-width="6"/>
+    <path d="M34 22h13v44h22v12H34z" fill="currentColor"/>
+  </svg>
+{% elif kind == 'brush' %}
   {% with file="img/ornament/brush-"|add:variant|add:".svg" %}
   {# An edge stroke is stretched to its box and every other one keeps its
      shape. A stroke that runs the width of a 1440px page at its own 520:110

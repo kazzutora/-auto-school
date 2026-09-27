@@ -140,6 +140,12 @@ EXTRA_ICONS = (
     # the tile at five columns.
     "car-trailer",
     "truck-trailer",
+    # The inner pages' hero strips and course blocks: who may start, what it
+    # costs, the theory, the internal exam.
+    "user",
+    "wallet",
+    "book",
+    "clipboard",
     # The one course taught on something that is not a road vehicle.
     "forklift",
     # Where a photograph is going to be, core v38. It marks a frame the owner
