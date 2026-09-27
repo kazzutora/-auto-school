@@ -2658,6 +2658,59 @@
     }
   }
 
+  /* photo_fit="full": the picture under the whole band at every width, no
+   * blurred copy. The scrim above stays as it is and carries the words. */
+  .u-page-hero-photo.is-full::before {
+    display: none;
+  }
+
+  .u-page-hero-photo.is-full .u-page-hero-pic {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 65%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .u-page-hero-photo.is-full .u-container {
+    min-height: 420px;
+    align-content: center;
+  }
+
+  /* Heavier than the two-copy band's: here the sharp picture itself is under
+   * the words, and a night motorway is black with points of light — the
+   * lamps and the light trails are what the gate finds under the crumbs. */
+  .u-page-hero-photo.is-full::after {
+    background:
+      linear-gradient(180deg, rgb(var(--fixed-ink) / 0.5) 0%, rgb(var(--fixed-ink) / 0) 35%),
+      rgb(var(--fixed-ink) / 0.68);
+  }
+
+  /* Below lg the words run the full width, over the lamps as well as the
+   * dark, so the quiet grey of the crumbs and the lead goes to white: the
+   * grey needed a scrim that turned the photograph into a black band. */
+  @media (max-width: 1023px) {
+    .u-page-hero-photo.is-full {
+      --on-ground-muted: var(--fixed-paper);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .u-page-hero-photo.is-full::after {
+      background:
+        linear-gradient(180deg, rgb(var(--fixed-ink) / 0.55) 0%, rgb(var(--fixed-ink) / 0) 35%),
+        linear-gradient(90deg,
+          rgb(var(--fixed-ink) / 0.82) 0%,
+          rgb(var(--fixed-ink) / 0.74) 42%,
+          rgb(var(--fixed-ink) / 0.2) 64%,
+          rgb(var(--fixed-ink) / 0.1) 100%);
+    }
+  }
+
   /* A short red rule over a section heading, the one over KURS in the
    * mockup. 40 by 3, and part of the heading's box so it moves with it. */
   .u-accent-rule::before {

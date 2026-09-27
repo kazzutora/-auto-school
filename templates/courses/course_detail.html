@@ -20,9 +20,12 @@ only action on the page.
    and what is in it. The other kinds this template serves keep the header
    and the spec list below. Every line in the three blocks is the school's
    own, OSTRYCHARZ.md A.2 and A.3, or a field of the course. #}
-{% translate 'Czerwony samochód szkoleniowy z tablicą L na drodze o zachodzie słońca' as t_photo_alt %}
+{# Pexels 12181725, free to use under the Pexels licence. A city motorway at
+   night, long exposure: dark by nature, so it lies under the words whole. #}
+{% translate 'Autostrada nocą, smugi świateł samochodów' as t_photo_alt %}
 <c-page-hero eyebrow="{% translate 'Kurs' %}" title="{{ course.title }}" lead="{{ course.lead }}"
-             photo="img/pages/kurs-hero.webp" photo_alt="{{ t_photo_alt }}" photo_w="1192" photo_h="724">
+             photo="img/pages/kurs-night-1920.webp" photo_small="img/pages/kurs-night-960.webp"
+             photo_w="1920" photo_h="1282" photo_fit="full" photo_alt="{{ t_photo_alt }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   {% if course.code or course.languages %}
     {# A graphite fill rather than the neutral chip's hairline: on the
