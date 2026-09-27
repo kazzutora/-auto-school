@@ -18,10 +18,14 @@ light grey on mid grey.
 
 Takes: tone (default | accent | dark), title, icon.
 {% endcomment %}
-<aside class="rounded-card border-l-2 py-5 pl-6 pr-5
-{% if tone == 'accent' %} border-l-accent bg-brand-200/50
-{% elif tone == 'dark' or tone == 'ink' %} u-ground-wine border-l-accent p-6
-{% else %} border-l-line bg-brand-100
+{# A white card with a soft shadow and a 3px bar inside its left edge, drawn
+   by .u-callout::before — not a border-left, which on a 20px radius bends
+   into a crescent. The bar is the red on `accent` and the graphite on the
+   rest; the pale red fill `accent` used to carry was pink and went with it. #}
+<aside class="u-callout relative rounded-card py-5 pl-8 pr-6
+{% if tone == 'accent' %} u-callout-accent bg-brand-50 shadow-card
+{% elif tone == 'dark' or tone == 'ink' %} u-ground-wine u-callout-accent
+{% else %} bg-brand-50 shadow-card
 {% endif %} {{ class }}" {{ attrs }}>
   {% if title %}
     <p class="flex items-center gap-2 font-bold u-on-ground">

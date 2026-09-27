@@ -19,33 +19,27 @@ document waiting on the owner is a shorter list rather than a broken link.
 
 Takes: items — rows carrying .title, .description, .url and .size.
 {% endcomment %}
+{# The whole card is the link: a file is one thing to press, and a card with
+   a button inside it had two targets for one action. The PDF mark on the
+   left, the name and the line under it, the size, and the download arrow on
+   the right; the card lifts 2px on hover, .u-card-link, like every other
+   card that is a link. #}
 <ul class="grid gap-4 sm:grid-cols-2 {{ class }}" {{ attrs }}>
   {% for item in items %}
-    {# flex on the li, not only h-full on the card. A grid item stretches, but
-       the card inside it is a block measuring against a height it never
-       claimed, so two cards in a row ended up different heights whenever one
-       description wrapped and the other did not. #}
     <li class="flex">
-      <c-card class="flex h-full w-full flex-col gap-4">
-        <div class="flex items-start gap-4">
-          <span aria-hidden="true"
-                class="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-line bg-brand-50 u-muted-on-ground">
-            <c-icon name="download" size="sm" />
-          </span>
-          <div class="min-w-0">
-            <h3 class="text-h3">{{ item.title }}</h3>
-            {% if item.description %}<p class="mt-2 u-body-on-ground">{{ item.description }}</p>{% endif %}
-            {% if item.size %}
-              <p class="data mt-2 text-small u-muted-on-ground">PDF · {{ item.size }}</p>
-            {% endif %}
-          </div>
-        </div>
-        <div class="mt-auto">
-          <c-button variant="secondary" href="{{ item.url }}" download rel="noopener" full="1">
-            {% translate "Pobierz" %} <c-icon name="download" size="sm" />
-          </c-button>
-        </div>
-      </c-card>
+      <a href="{{ item.url }}" download rel="noopener" class="u-card u-card-link u-file-card group">
+        <span class="u-file-mark" aria-hidden="true">
+          <c-icon name="file" />
+          <span class="u-file-mark-label">PDF</span>
+        </span>
+        <span class="min-w-0 grow">
+          <span class="block text-h3 font-bold u-on-ground">{{ item.title }}</span>
+          {% if item.description %}<span class="mt-1 block text-small u-body-on-ground">{{ item.description }}</span>{% endif %}
+          {% if item.size %}<span class="data mt-2 block text-small u-muted-on-ground">PDF · {{ item.size }}</span>{% endif %}
+        </span>
+        <span class="u-file-arrow" aria-hidden="true"><c-icon name="download" size="sm" /></span>
+        <span class="sr-only">{% translate "Pobierz" %}</span>
+      </a>
     </li>
   {% endfor %}
 </ul>
