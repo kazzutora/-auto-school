@@ -2760,40 +2760,34 @@
     --script-ink: var(--brand-500);
   }
 
-  /* On a phone the two-copy band gives up its blurred copy: under the
-   * full-width words it read as a smear across the top of the screen. The
-   * sharp picture goes under the whole band instead, cropped to its right
-   * end, and the scrim below carries the words — the same arrangement as
-   * photo_fit="full". */
+  /* On a phone the two-copy band stacks: the words on the plain graphite
+   * first, then the picture as a strip under them, sharp and with no scrim
+   * over it and no fade at its top edge — the owner wants no darkening on
+   * the picture at all. Framed on the licence and the plate. */
   @media (max-width: 1023px) {
-    .u-page-hero-photo:not(.is-full)::before {
+    .u-page-hero-photo:not(.is-full)::before,
+    .u-page-hero-photo:not(.is-full)::after {
       display: none;
     }
 
+    .u-page-hero-photo:not(.is-full) .u-container {
+      padding-bottom: 2rem;
+    }
+
     .u-page-hero-photo:not(.is-full) .u-page-hero-pic {
-      position: absolute;
-      z-index: -1;
-      inset: 0;
+      position: relative;
+      z-index: 0;
       width: 100%;
-      height: 100%;
+      height: clamp(200px, 60vw, 380px);
       object-fit: cover;
-      object-position: 85% center;
+      object-position: 78% 70%;
       -webkit-mask-image: none;
       mask-image: none;
     }
 
-    .u-page-hero-photo:not(.is-full) {
-      --on-ground-muted: var(--fixed-paper);
-    }
-
-    .u-page-hero-photo:not(.is-full) .u-container {
-      min-height: 460px;
-      align-content: end;
-    }
-
-    .u-page-hero-photo:not(.is-full)::after {
-      background:
-        linear-gradient(180deg, rgb(var(--fixed-ink) / 0.55) 0%, rgb(var(--fixed-ink) / 0.72) 45%, rgb(var(--fixed-ink) / 0.82) 100%);
+    /* The words are on the plain graphite here, so the red needs no halo. */
+    .u-page-hero-photo:not(.is-full) :is(.u-title-accent, .script.u-script-accent) {
+      text-shadow: none;
     }
   }
 
@@ -3408,6 +3402,187 @@
   @media (max-width: 640px) {
     .u-form-submit .u-btn {
       width: 100%;
+    }
+  }
+
+  /* The home hero on a phone: the mark at four fifths of the width, so JAZDY
+   * no longer covers the car; the three points move to the strip under the
+   * hero; the lead and the price are left off. */
+  @media (max-width: 767px) {
+    /* Room under the heading for the car: the photograph is anchored to
+     * its bottom edge, so the space between the heading and the buttons is
+     * where the car sits, clear of the words. */
+    .u-hero-mark {
+      width: 80%;
+      margin-bottom: 68vw;
+    }
+
+    .u-hero-mark .u-hero-points {
+      display: none;
+    }
+
+    /* The lead and the price are not on the phone's first screen at all:
+     * the heading, the car and the two buttons are. The price is on the
+     * buttons' next page, and the lead says what the strip below says. */
+    .u-hero-pad {
+      display: none;
+    }
+  }
+
+  /* The strip: an icon over two lines of capitals, red hairlines between. */
+  .u-points-strip li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding-inline: 0.4rem;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: rgb(var(--fixed-paper));
+  }
+
+  .u-points-strip li + li {
+    border-left: 1px solid rgb(var(--brand-600));
+  }
+
+  .u-points-strip svg {
+    height: 2.1rem;
+    width: auto;
+    overflow: visible;
+  }
+
+  /* no-scrim: a photograph dark enough of its own that the words need
+   * nothing laid over it. After every scrim rule, so it wins on any band. */
+  .u-page-hero-photo.no-scrim::after {
+    display: none;
+  }
+
+  /* The price page's speedometer, shown whole. On a wide band the band takes
+   * the photograph's own shape, near enough, so `cover` barely crops it, and
+   * it is brought in by a tenth. The words are centred over the gap between
+   * the two dials, on the black of the dashboard, a step larger. */
+  @media (min-width: 1024px) {
+    .u-page-hero-photo.is-speedo .u-container {
+      grid-template-columns: 1fr;
+      min-height: min(58vw, 820px);
+      align-content: start;
+      justify-items: center;
+      padding-top: 3rem;
+      text-align: center;
+    }
+
+    .u-page-hero-photo.is-speedo .u-container > div:first-child {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .u-page-hero-photo.is-speedo .u-page-hero-title {
+      font-size: clamp(4rem, 6vw, 5.5rem);
+    }
+
+    /* Top-anchored and scaled from the top, so the dials sit low in the
+     * band and the centred words keep the black above them. */
+    .u-page-hero-photo.is-speedo .u-page-hero-pic {
+      object-position: center top;
+      transform: scale(1.1);
+      transform-origin: center top;
+    }
+  }
+
+  /* On a phone the photograph fills the band edge to edge with no bars: the
+   * band is only as tall as the words need, so `cover` brings the frame in
+   * no further than that. Eyebrow and heading at the top, lead and rule at
+   * the foot, the dials between. */
+  @media (max-width: 1023px) {
+    .u-page-hero-photo.is-speedo .u-page-hero-pic {
+      object-position: 45% center;
+    }
+
+    /* The band is the photograph's own height and a half again: 2:3 across
+     * the width is 67vw, and the column holds 94vw inside 1rem of padding.
+     * Everything centred, as on the desktop; the eyebrow and the heading a
+     * size and a half up, the lead on the dark foot of the frame. */
+    .u-page-hero-photo.is-speedo .u-container {
+      min-height: 0;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .u-page-hero-photo.is-speedo .u-container > div:first-child {
+      display: flex;
+      flex-direction: column;
+      min-height: 94vw;
+      align-items: center;
+      text-align: center;
+    }
+
+    .u-page-hero-photo.is-speedo .u-container > div:first-child > div:first-child {
+      margin-bottom: 0.5rem;
+    }
+
+    .u-page-hero-photo.is-speedo .u-page-hero-title {
+      font-size: 3rem;
+    }
+
+    .u-page-hero-photo.is-speedo .script {
+      font-size: 2.25rem;
+      transform-origin: center bottom;
+    }
+
+    .u-page-hero-photo.is-speedo .u-container > div:first-child > p:not(.script) {
+      margin-top: auto;
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+
+    .u-page-hero-photo.is-speedo .u-container > div:first-child > div:last-child {
+      margin-top: 0.6rem;
+    }
+  }
+
+  /* is-split, /o-nas/ and /kontakt/: the price page's arrangement. The
+   * crumbs, the red eyebrow and the heading centred at the top of the
+   * picture, the lead and whatever follows it at the foot. */
+  .u-page-hero-photo.is-split .u-container {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .u-page-hero-photo.is-split .u-container > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: max(94vw, 420px);
+  }
+
+  .u-page-hero-photo.is-split .u-container > div:first-child > p:not(.script) {
+    margin-top: auto;
+    margin-inline: auto;
+  }
+
+  .u-page-hero-photo.is-split .script {
+    font-size: 2.25rem;
+    transform-origin: center bottom;
+  }
+
+  .u-page-hero-photo.is-split .u-page-hero-title {
+    font-size: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .u-page-hero-photo.is-split .u-container > div:first-child {
+      min-height: 400px;
+    }
+
+    .u-page-hero-photo.is-split .u-page-hero-title {
+      font-size: clamp(4rem, 6vw, 5.5rem);
     }
   }
 

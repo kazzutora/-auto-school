@@ -41,15 +41,16 @@ złoty column line up digit under digit, A.5.
    card under the title. With two lines left it put 160px of nothing between
    CENNIK and the first section, which the section's top padding then added
    to. #}
-{# The hero, the owner's pricing mockup: the wheel, the key, a licence and
-   the L plate on the right, the words on the dark to the left of them. The
-   price painted into the owner's file is taken out of the picture; the
-   figures are in the cards below, where they come from the database. #}
-{% translate 'Kierownica, kluczyk, prawo jazdy i tablica L' as t_photo_alt %}
+{# A speedometer at night, Pexels 2622122, free under the Pexels licence. The
+   top third of the frame is near black of its own, so the words lie on the
+   photograph with nothing over it — .no-scrim — and the dial shows under
+   them. #}
+{% translate 'Prędkościomierz i obrotomierz w ciemnym samochodzie' as t_photo_alt %}
 <c-page-hero eyebrow="{% translate 'Ile to kosztuje' %}" eyebrow_accent="1" title="{% translate 'Cennik' %}"
              lead="{% translate 'Wybierz kurs dopasowany do Ciebie i spełnij swoje marzenia o wolności na drodze.' %}"
-             photo="img/pages/cennik-hero.webp" photo_w="1144" photo_h="462" photo_alt="{{ t_photo_alt }}"
-             class="is-wide">
+             photo="img/pages/cennik-speedo-1920.webp" photo_small="img/pages/cennik-speedo-960.webp"
+             photo_w="1920" photo_h="1280" photo_fit="full" photo_alt="{{ t_photo_alt }}"
+             class="no-scrim is-speedo">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <span aria-hidden="true" class="block h-[3px] w-[72px] bg-brand-500"></span>
 </c-page-hero>

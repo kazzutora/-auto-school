@@ -60,9 +60,9 @@ nothing.
 {# The about page opens on a photograph like the other inner pages: an
    instructor with a clipboard and a learner on a manoeuvring yard. #}
 {% translate "Instruktor z kursantem na placu manewrowym" as t_about_photo %}
-<c-page-hero eyebrow="{% translate 'Poznaj nas' %}" title="{{ page.title }}" lead="{{ page.lead }}"
+<c-page-hero eyebrow="{% translate 'Poznaj nas' %}" eyebrow_accent="1" title="{{ page.title }}" lead="{{ page.lead }}"
              photo="img/card/about-plac-1440.webp" photo_small="img/card/about-plac-960.webp"
-             photo_w="1440" photo_h="960" photo_fit="full" photo_alt="{{ t_about_photo }}" class="is-plac">
+             photo_w="1440" photo_h="960" photo_fit="full" photo_alt="{{ t_about_photo }}" class="is-plac is-split">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 </c-page-hero>
 {% else %}

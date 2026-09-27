@@ -22,9 +22,9 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
    "Kontakt" a second time over the h1. #}
 {% translate "Dłonie na kierownicy, droga przed samochodem" as t_contact_photo %}
 {% blocktranslate with street=site_settings.street asvar t_contact_lead %}Zadzwoń, napisz albo przyjedź do biura: {{ street }}. Zapisujemy na kursy przez telefon i przez formularz.{% endblocktranslate %}
-<c-page-hero eyebrow="{% translate 'Napisz lub zadzwoń' %}" title="{% translate 'Kontakt' %}" lead="{{ t_contact_lead }}"
+<c-page-hero eyebrow="{% translate 'Napisz lub zadzwoń' %}" eyebrow_accent="1" title="{% translate 'Kontakt' %}" lead="{{ t_contact_lead }}"
              photo="img/band/band-road-1440.webp" photo_small="img/band/band-road-960.webp"
-             photo_w="1440" photo_h="617" photo_fit="full" photo_alt="{{ t_contact_photo }}">
+             photo_w="1440" photo_h="617" photo_fit="full" photo_alt="{{ t_contact_photo }}" class="is-split">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
 </c-page-hero>
 

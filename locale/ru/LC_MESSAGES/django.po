@@ -2155,3 +2155,11 @@ msgstr "%(city)s, %(street)s. Запись по предварительной �
 #: apps/leads/models.py
 msgid "Wariant"
 msgstr "Вариант"
+
+#: templates/pages/home.html
+msgid "Dlaczego my"
+msgstr "Почему мы"
+
+#: templates/courses/pricing.html
+msgid "Prędkościomierz i obrotomierz w ciemnym samochodzie"
+msgstr "Спидометр и тахометр в тёмном автомобиле"

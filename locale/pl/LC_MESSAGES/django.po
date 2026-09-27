@@ -2155,3 +2155,11 @@ msgstr ""
 #: apps/leads/models.py
 msgid "Wariant"
 msgstr ""
+
+#: templates/pages/home.html
+msgid "Dlaczego my"
+msgstr ""
+
+#: templates/courses/pricing.html
+msgid "Prędkościomierz i obrotomierz w ciemnym samochodzie"
+msgstr ""
