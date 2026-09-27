@@ -2769,30 +2769,9 @@
     mask-image: linear-gradient(to right, transparent, #000 30%);
   }
 
-  .u-hero-car-speed {
-    position: absolute;
-    left: 6%;
-    bottom: 4%;
-    width: 30%;
-    z-index: -1;
-  }
-
-  /* The figure in the hand, over the car's roof line. */
-  .u-hero-price {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    right: 6%;
-    font-size: clamp(2.5rem, 4.4vw, 4rem);
-    line-height: 1;
-    rotate: -8deg;
-    white-space: nowrap;
-  }
-
   /* The strokes under a handwritten line hang off its box rather than
    * sitting in the flow: an svg in the flow has an intrinsic 300px of its
    * own, and it was stretching the line to the edge of the screen. */
-  .u-hero-price-stroke,
   .u-note-stroke {
     position: absolute;
     left: -4%;
@@ -2835,7 +2814,6 @@
     text-align: center;
   }
 
-  .u-hero-price,
   .u-keys-note,
   .u-why-note {
     isolation: isolate;

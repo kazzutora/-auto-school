@@ -41,25 +41,18 @@ złoty column line up digit under digit, A.5.
    card under the title. With two lines left it put 160px of nothing between
    CENNIK and the first section, which the section's top padding then added
    to. #}
-{# The hero, the owner's pricing mockup: the car on the right, KURS B behind
-   it, and the basic course's figure written over it in the hand. The figure
-   is the featured card's, so it moves when the owner reprices. #}
+{# The hero, the owner's pricing mockup: the car on the right and KURS B
+   behind it. No handwritten figure over the roof and no speed lines under
+   the wheels — the owner took both out; the price is in the cards below. #}
 <c-page-hero eyebrow="{% translate 'Ile to kosztuje' %}" title="{% translate 'Cennik' %}"
              lead="{% translate 'Wybierz kurs dopasowany do Ciebie i spełnij swoje marzenia o wolności na drodze.' %}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
   <c-slot name="visual">
     <div class="u-hero-stage">
       <span class="u-watermark" aria-hidden="true">{% translate "Kurs B" %}</span>
-      {% for item in course_cards %}{% if item.featured %}
-        <p class="u-hero-price script">
-          <span>{{ item.price_gross|floatformat:0 }} zł</span>
-          <c-ornament kind="underline" class="u-hero-price-stroke" />
-        </p>
-      {% endif %}{% endfor %}
       <img src="{% static 'img/pages/car-cennik.webp' %}" width="894" height="503"
            alt="{% translate 'Czerwony samochód szkoleniowy z tablicą L na dachu' %}"
            class="u-hero-car" fetchpriority="high" decoding="async">
-      <c-ornament kind="speed" class="u-hero-car-speed" />
     </div>
   </c-slot>
 </c-page-hero>
