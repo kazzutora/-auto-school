@@ -73,6 +73,11 @@ class Crop:
     # width, and on a photograph whose subject stands to one side the centre is
     # exactly where the subject is not.
     focus_x: float = 0.5
+    # The file name the renditions are written under, when it is not the
+    # source's own. The phone hero is cut from a portrait file of its own but
+    # has to land under the banner's stem, which is the name <c-photo> asks
+    # for with crop_mobile.
+    as_stem: str = ""
 
 
 # PHOTOS.md section 4's table, to the kilobyte.
@@ -91,9 +96,13 @@ HERO = (
 # with a thumbnail of a car in it. It gets a 4:5 cut pulled hard to the right,
 # which is the car alone, and the text sits under it on the page rather than
 # over it.
-FLEET = (
-    Crop("band", (21, 9), 140 * KB, (960, 1440, 1920)),
-    Crop("hero-tall", (4, 5), 120 * KB, (480, 960), focus=0.5, focus_x=0.92),
+FLEET = (Crop("band", (21, 9), 140 * KB, (960, 1440, 1920)),)
+
+# The phone's hero since 2026-09-27: a portrait frame of its own, the car small
+# under a tall sky, so the heading lies on the sky and not on the car. Kept
+# whole at 2:3 and written under the banner's stem.
+FLEET_PHONE = (
+    Crop("hero-tall", (2, 3), 160 * KB, (480, 960), as_stem="hero-fleet"),
 )
 BAND = (Crop("band", (21, 9), 140 * KB, (960, 1440, 1920)),)
 CARD = (Crop("card", (3, 2), 90 * KB, (480, 960, 1440)),)
@@ -103,6 +112,7 @@ POSTER = (Crop("poster", (16, 9), 120 * KB, (960, 1440)),)
 # which is the commonest shape and the safest default.
 ROLES: dict[str, tuple[Crop, ...]] = {
     "hero-fleet": FLEET,
+    "hero-fleet-phone": FLEET_PHONE,
     "hero-dusk": HERO,
     "hero-motion": HERO,
     "hero-city": HERO,
@@ -283,7 +293,7 @@ def process(path: Path, watermark: bool) -> list[str]:
                     resized = stamp(resized)
 
                 for fmt, ext, quality in FORMATS:
-                    target = OUT / crop.name / f"{path.stem}-{width}.{ext}"
+                    target = OUT / crop.name / f"{crop.as_stem or path.stem}-{width}.{ext}"
                     ceiling = crop.max_bytes
                     if fmt == "JPEG":
                         ceiling = round(ceiling * FALLBACK_ALLOWANCE)
