@@ -96,8 +96,4 @@ one file is the only way to hold it.
             action="{% translate 'Zapisz się' %}"
             phone="{{ site_settings.phone_primary }}" />
 
-<div class="h-16 md:hidden" aria-hidden="true"></div>
-{% translate "Nie wiesz, którą kategorię wybrać?" as t_nie_wiesz_ktora %}
-<c-cta-bar data-testid="call-bar" title="{{ t_nie_wiesz_ktora }}"
-           phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

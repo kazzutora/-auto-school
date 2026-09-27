@@ -392,10 +392,6 @@ nothing.
               phone="{{ site_settings.phone_primary }}" />
 {% endif %}
 
-<div class="h-16 md:hidden" aria-hidden="true"></div>
-{% translate "Chcesz zacząć kurs?" as t_chcesz_zaczac_kurs %}
-<c-cta-bar data-testid="call-bar" title="{{ t_chcesz_zaczac_kurs }}"
-           phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}
 
 {# B.7 point 4: the policy and the RODO notice carry no ornament, and the

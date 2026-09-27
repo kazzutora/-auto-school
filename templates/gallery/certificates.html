@@ -71,8 +71,4 @@ and when, and a download beside the scan wherever there is a pdf.
   </div>
 </c-section>
 
-<div class="h-16 md:hidden" aria-hidden="true"></div>
-{% translate "Masz pytanie o uprawnienia ośrodka?" as t_masz_pytanie_o %}
-<c-cta-bar title="{{ t_masz_pytanie_o }}"
-           phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}

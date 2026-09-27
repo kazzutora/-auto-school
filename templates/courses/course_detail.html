@@ -359,8 +359,4 @@ only action on the page.
             action="{% translate 'Zapisz się' %}"
             phone="{{ site_settings.phone_primary }}" />
 
-<div class="h-16 md:hidden" aria-hidden="true"></div>
-{% blocktranslate with title=course.title asvar enrol_title %}Zapisz się na {{ title }}{% endblocktranslate %}
-<c-cta-bar data-testid="call-bar" title="{{ enrol_title }}"
-           phone="{{ site_settings.phone_primary }}" href="{{ enrol_url }}" />
 {% endblock %}

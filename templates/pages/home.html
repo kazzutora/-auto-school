@@ -642,8 +642,5 @@ is a forgery, not a placeholder.
   </c-section>
 {% endif %}
 
-{% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
-<c-cta-bar href="{{ enrol_url }}" label="{{ t_zapisz_sie_na }}" />
-
 {% if fragment_map %}{{ fragment_map|json_script:"legacy-fragments" }}{% endif %}
 {% endblock %}

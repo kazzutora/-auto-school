@@ -134,17 +134,6 @@ def test_every_number_is_tappable_on_a_phone(live_server, office: SiteSettings, 
         assert round(box["height"]) >= 44
 
 
-def test_the_call_bar_sticks_to_the_bottom(live_server, office: SiteSettings, page: Page) -> None:
-    page.goto(f"{live_server.url}/kontakt/")
-    page.mouse.wheel(0, 4000)
-
-    bar = page.locator("[data-testid='call-bar']")
-    box = bar.bounding_box()
-
-    assert box is not None
-    assert box["y"] + box["height"] <= 844 + 1
-
-
 def test_the_page_does_not_move_sideways(live_server, office: SiteSettings, page: Page) -> None:
     page.goto(f"{live_server.url}/kontakt/")
 

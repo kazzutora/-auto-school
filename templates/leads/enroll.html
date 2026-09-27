@@ -60,7 +60,4 @@ the number, and what happens after they press send.
             text="{% translate 'Zadzwoń w godzinach pracy biura — zapiszemy Cię przez telefon i odpowiemy na pytania od razu.' %}"
             phone="{{ site_settings.phone_primary }}" />
 
-<div class="h-16 md:hidden" aria-hidden="true"></div>
-{% translate "Zapisz się na kurs" as t_zapisz_sie_na %}
-<c-cta-bar title="{{ t_zapisz_sie_na }}" phone="{{ site_settings.phone_primary }}" href="{% url 'leads:enroll' %}" />
 {% endblock %}
