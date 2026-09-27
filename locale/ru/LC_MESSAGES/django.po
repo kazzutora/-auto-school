@@ -2152,7 +2152,6 @@ msgstr "Все полезные ссылки"
 msgid "%(city)s, %(street)s. Zapisy po wcześniejszym ustaleniu telefonicznym."
 msgstr "%(city)s, %(street)s. Запись по предварительной договорённости по телефону."
 
-#: apps/leads/forms.py
-#, python-format
-msgid "Wariant: %(variant)s"
-msgstr "Вариант: %(variant)s"
+#: apps/leads/models.py
+msgid "Wariant"
+msgstr "Вариант"

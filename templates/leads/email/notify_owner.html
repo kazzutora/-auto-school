@@ -24,6 +24,12 @@
       <td style="padding:6px 12px 6px 0;color:#6B6B70;vertical-align:top;">Kurs</td>
       <td style="padding:6px 0;">{% if lead.course %}{{ lead.course.title }}{% else %}nie wybrano{% endif %}</td>
     </tr>
+    {% if lead.variant %}
+      <tr>
+        <td style="padding:6px 12px 6px 0;color:#6B6B70;vertical-align:top;">Wariant</td>
+        <td style="padding:6px 0;">{{ lead.variant.title }}</td>
+      </tr>
+    {% endif %}
     {% if lead.intake %}
       <tr>
         <td style="padding:6px 12px 6px 0;color:#6B6B70;vertical-align:top;">Termin</td>

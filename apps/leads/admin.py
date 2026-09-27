@@ -18,11 +18,11 @@ from apps.leads.views import leads_csv
 
 @admin.register(Lead)
 class LeadAdmin(admin.ModelAdmin):
-    list_display = ("created_at", "first_name", "last_name", "phone", "course", "status")
-    list_filter = ("status", "course", "preferred_language", "consent_marketing")
+    list_display = ("created_at", "first_name", "last_name", "phone", "course", "variant", "status")
+    list_filter = ("status", "course", "variant", "preferred_language", "consent_marketing")
     search_fields = ("first_name", "last_name", "phone", "email")
     date_hierarchy = "created_at"
-    list_select_related = ("course", "intake")
+    list_select_related = ("course", "variant", "intake")
     autocomplete_fields = ()
     actions = ("mark_contacted", "export_csv")
 
@@ -42,7 +42,7 @@ class LeadAdmin(admin.ModelAdmin):
     )
     fieldsets = (
         (None, {"fields": ("status", "first_name", "last_name", "phone", "email")}),
-        (_("Kurs"), {"fields": ("course", "intake", "preferred_language", "message")}),
+        (_("Kurs"), {"fields": ("course", "variant", "intake", "preferred_language", "message")}),
         (_("Zgody"), {"fields": ("consent_rodo", "consent_marketing")}),
         (
             _("Skąd przyszło"),

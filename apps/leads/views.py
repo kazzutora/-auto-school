@@ -179,6 +179,7 @@ CSV_COLUMNS = (
     "phone",
     "email",
     "course",
+    "variant",
     "intake",
     "preferred_language",
     "message",
@@ -199,7 +200,7 @@ def leads_csv(queryset: Any) -> HttpResponse:
 
     writer = csv.writer(response)
     writer.writerow(CSV_COLUMNS)
-    for lead in queryset.select_related("course", "intake"):
+    for lead in queryset.select_related("course", "variant", "intake"):
         writer.writerow(
             [
                 lead.created_at.isoformat(),
@@ -209,6 +210,7 @@ def leads_csv(queryset: Any) -> HttpResponse:
                 lead.phone,
                 lead.email,
                 lead.course.title if lead.course else "",
+                lead.variant.title if lead.variant else "",
                 lead.intake.start_date.isoformat() if lead.intake else "",
                 lead.preferred_language,
                 lead.message.replace("\n", " "),

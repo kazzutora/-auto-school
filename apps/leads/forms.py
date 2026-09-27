@@ -69,14 +69,6 @@ class LeadForm(forms.ModelForm):
     whether it came back filled.
     """
 
-    # What the visitor picks under "Kurs": standard, accelerated or automatic.
-    # The school sells one course three ways, and the three are price rows,
-    # not courses, so this is a plain choice over those rows. The pick is
-    # written into the lead in clean() — the course set to category B and the
-    # variant as the first line of the message — which the owner reads in the
-    # admin and in the notification without a new column on Lead.
-    variant = forms.ChoiceField(required=False, label=_("Kurs"))
-
     website = forms.CharField(
         required=False,
         label=_("Zostaw to pole puste"),
@@ -101,6 +93,7 @@ class LeadForm(forms.ModelForm):
             "phone",
             "email",
             "course",
+            "variant",
             "intake",
             "message",
             "consent_rodo",
@@ -112,6 +105,7 @@ class LeadForm(forms.ModelForm):
             "phone": _("Telefon"),
             "email": _("E-mail"),
             "course": _("Kurs"),
+            "variant": _("Kurs"),
             "message": _("Wiadomość"),
         }
         help_texts = {
@@ -139,10 +133,16 @@ class LeadForm(forms.ModelForm):
         course.required = False
         course.empty_label = _("Jeszcze nie wiem")
 
-        variant = cast(forms.ChoiceField, self.fields["variant"])
-        variant.choices = [("", _("Jeszcze nie wiem"))] + [
-            (str(item.pk), item.title) for item in self.variant_items()
-        ]
+        # What the visitor picks under "Kurs": standard, accelerated or
+        # automatic — the active rows of the price list's course group, in its
+        # order, so the owner renames or adds one in the admin and the form
+        # follows. The course itself rides along hidden.
+        variant = cast(forms.ModelChoiceField, self.fields["variant"])
+        variant.queryset = PriceItem.objects.filter(
+            group=COURSE_VARIANT_GROUP, is_active=True
+        ).order_by("order", "id")
+        variant.required = False
+        variant.empty_label = _("Jeszcze nie wiem")
 
         intake = cast(forms.ModelChoiceField, self.fields["intake"])
         intake.queryset = CourseIntake.objects.all()
@@ -193,35 +193,19 @@ class LeadForm(forms.ModelForm):
         if isinstance(phone, forms.TextInput):
             phone.input_type = "tel"
 
-    @staticmethod
-    def variant_items() -> list[PriceItem]:
-        """The active rows of the course group, in the price list's order."""
-        return list(
-            PriceItem.objects.filter(group=COURSE_VARIANT_GROUP, is_active=True).order_by(
-                "order", "id"
-            )
-        )
-
     def clean(self) -> dict[str, Any]:
-        """Write the chosen variant into the lead.
+        """A chosen variant is a variant of category B.
 
-        The course becomes category B when nothing else set it, and the
-        variant goes in front of the message as its own line.
+        Picked on the enrolment page, where no course page handed one over,
+        it would otherwise leave the lead's course empty.
         """
         cleaned = super().clean() or self.cleaned_data
-        picked = cleaned.get("variant")
-        if picked:
-            item = PriceItem.objects.filter(pk=_as_int(picked), is_active=True).first()
-            if item:
-                if not cleaned.get("course"):
-                    cleaned["course"] = (
-                        Course.objects.filter(is_active=True, kind=Course.Kind.LICENSE)
-                        .order_by("order", "id")
-                        .first()
-                    )
-                line = _("Wariant: %(variant)s") % {"variant": item.title}
-                message = (cleaned.get("message") or "").strip()
-                cleaned["message"] = f"{line}\n{message}" if message else str(line)
+        if cleaned.get("variant") and not cleaned.get("course"):
+            cleaned["course"] = (
+                Course.objects.filter(is_active=True, kind=Course.Kind.LICENSE)
+                .order_by("order", "id")
+                .first()
+            )
         return cleaned
 
     def clean_phone(self) -> str:
@@ -271,7 +255,7 @@ def initial_from_query(params: Any) -> dict[str, Any]:
             pk=_as_int(variant_id), group=COURSE_VARIANT_GROUP, is_active=True
         ).exists()
     ):
-        initial["variant"] = str(_as_int(variant_id))
+        initial["variant"] = _as_int(variant_id)
 
     course_id = params.get("course")
     if course_id:

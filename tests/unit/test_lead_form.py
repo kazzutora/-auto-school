@@ -327,4 +327,6 @@ def test_the_chosen_variant_reaches_the_lead() -> None:
     )
     assert form.is_valid(), form.errors
     assert form.cleaned_data["course"] == course
-    assert form.cleaned_data["message"] == "Wariant: Skrzynia automatyczna\nWolę popołudnia."
+    assert form.cleaned_data["variant"] == automatic
+    # Its own column since core v46; the message is the visitor's alone.
+    assert form.cleaned_data["message"] == "Wolę popołudnia."

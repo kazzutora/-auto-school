@@ -4,7 +4,8 @@ Imię i nazwisko: {{ lead.first_name }} {{ lead.last_name }}
 Telefon: {{ lead.phone }}
 {% if lead.email %}E-mail: {{ lead.email }}
 {% endif %}Kurs: {% if lead.course %}{{ lead.course.title }}{% else %}nie wybrano{% endif %}
-{% if lead.intake %}Termin: {{ lead.intake.start_date|date:"d.m.Y" }}, {{ lead.intake.get_mode_display }}
+{% if lead.variant %}Wariant: {{ lead.variant.title }}
+{% endif %}{% if lead.intake %}Termin: {{ lead.intake.start_date|date:"d.m.Y" }}, {{ lead.intake.get_mode_display }}
 {% endif %}Język: {{ language_name }}
 {% if lead.source_path %}Strona: {{ lead.source_path }}
 {% endif %}{% if lead.message %}
