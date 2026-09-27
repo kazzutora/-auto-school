@@ -33,10 +33,18 @@ past the edge is the point and a horizontal scrollbar is not.
   {% if corner == 'tr' %}<c-ornament kind="brush" variant="2" class="u-brush-corner-tr" />{% endif %}
   {% if corner == 'bl' %}<c-ornament kind="brush" variant="2" class="u-brush-corner-bl" />{% endif %}
 
+  {# The one quiet motif a pale section carries: the L plate in the ink at
+     four per cent, in a corner, in the margin rather than under the words.
+     app.css .u-motif alternates the corner from one section to the next and
+     drops it on a phone. A section that already has a brush has its motif. #}
+  {% if not edge and not corner %}{% if tone == 'default' or tone == 'muted' or tone == 'surface' %}
+    <c-ornament kind="plate" class="u-motif" />
+  {% endif %}{% endif %}
+
   <div class="u-container relative">
     {% if eyebrow %}<p class="script mb-2">{{ eyebrow }}</p>{% endif %}
-    {% if heading %}<h2>{{ heading }}</h2>{% endif %}
-    {% if sub %}<p class="u-narrow mt-4 text-body-lg u-muted-on-ground">{{ sub }}</p>{% endif %}
+    {% if heading %}<h2 class="u-head">{{ heading }}</h2>{% endif %}
+    {% if sub %}<p class="u-narrow mt-5 text-body-lg u-muted-on-ground">{{ sub }}</p>{% endif %}
     <div class="{% if heading or sub or eyebrow %}mt-10 md:mt-14{% endif %}">{{ slot }}</div>
   </div>
 </section>

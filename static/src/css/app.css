@@ -2797,15 +2797,79 @@
     object-position: 60% 45%;
   }
 
-  /* A short red rule over a section heading, the one over KURS in the
-   * mockup. 40 by 3, and part of the heading's box so it moves with it. */
-  .u-accent-rule::before {
+  /* The section heading, one voice for every h2 a section opens with: the
+   * heading, then a short red stroke in the hand under it — the tagline's
+   * brush from the home hero, drawn thinner. A mask over the red rather than
+   * an svg in the markup, so no template carries it and a screen reader
+   * never meets it. 84 by 7, red at full strength: a pale red on the grey is
+   * pink, and the owner asked for the pink to go.
+   *
+   * It draws itself in as the section arrives, motion.css section 11, and
+   * only there — with reduced motion it is simply present. */
+  .u-head::after {
     content: "";
     display: block;
-    width: 40px;
-    height: 3px;
-    margin-bottom: 0.75rem;
-    background: rgb(var(--brand-500));
+    width: 84px;
+    height: 7px;
+    margin-top: 0.6rem;
+    background-color: rgb(var(--brand-500));
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 340 235 12' preserveAspectRatio='none'%3E%3Cpath d='M174.6 349.6C171.1 349.2 162.7 348.9 158.8 349C154.1 348.9 146.5 348.4 137.5 347.9C117.6 347 53.2 347.4 30.2 347.6C11.4 347.9 1.6 347.5 1.6 347.5C0.7 346.9 -0.8 344.3 8.9 343.8C16.5 343.6 48.1 343.8 79.8 344.4C94.6 344.7 145.3 344.7 158.4 344C166.5 343.8 168.2 346 169.7 344.7L172.4 343.9C179.5 343.7 224.8 343.5 228.2 344C230.4 343.8 235 343.9 235 343.9C234.5 344.5 226.8 344.8 212.8 345.5C190 346.1 181 346.7 188.5 347.5C193.2 348.1 193.2 348.5 193.2 348.5C193.2 349.7 178.3 350.5 174.6 349.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 340 235 12' preserveAspectRatio='none'%3E%3Cpath d='M174.6 349.6C171.1 349.2 162.7 348.9 158.8 349C154.1 348.9 146.5 348.4 137.5 347.9C117.6 347 53.2 347.4 30.2 347.6C11.4 347.9 1.6 347.5 1.6 347.5C0.7 346.9 -0.8 344.3 8.9 343.8C16.5 343.6 48.1 343.8 79.8 344.4C94.6 344.7 145.3 344.7 158.4 344C166.5 343.8 168.2 346 169.7 344.7L172.4 343.9C179.5 343.7 224.8 343.5 228.2 344C230.4 343.8 235 343.9 235 343.9C234.5 344.5 226.8 344.8 212.8 345.5C190 346.1 181 346.7 188.5 347.5C193.2 348.1 193.2 348.5 193.2 348.5C193.2 349.7 178.3 350.5 174.6 349.6Z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    pointer-events: none;
+  }
+
+  .text-center .u-head::after,
+  .u-head.text-center::after {
+    margin-inline: auto;
+  }
+
+  /* On the red and the graphite bands the red stroke would be red on red,
+   * or red letters' worth of shape on graphite: white there. */
+  .u-ground-brand .u-head::after,
+  .u-ground-wine .u-head::after,
+  .u-photo-ground .u-head::after {
+    background-color: rgb(var(--on-ground));
+  }
+
+  /* Sections clip their own sideways overflow, so a motif or a stroke that
+   * hangs past the edge never gives the page a horizontal scroll. clip, not
+   * hidden: hidden makes a scroll container and would break the sticky
+   * enrolment card on the course page. */
+  .u-section,
+  .u-section-compact,
+  .u-section-tall {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  /* The L plate behind a pale section, B.7's one ornament a section may
+   * carry. The ink at four per cent — neutral, never a pale red — in the
+   * margin beside the container: top right on one section, bottom left on
+   * the next, so two in a row never stack into a pattern. Gone on a phone,
+   * where there is no margin for it to sit in. */
+  .u-motif {
+    position: absolute;
+    z-index: 0;
+    top: 3rem;
+    right: -3.5rem;
+    width: clamp(120px, 12vw, 180px);
+    rotate: -10deg;
+    color: rgb(var(--ink) / 0.04);
+    pointer-events: none;
+  }
+
+  .u-section:nth-of-type(even) > .u-motif {
+    top: auto;
+    right: auto;
+    bottom: 2rem;
+    left: -3.5rem;
+    rotate: 8deg;
+  }
+
+  @media (max-width: 640px) {
+    .u-motif {
+      display: none;
+    }
   }
 
   .u-muted-heading {
@@ -3019,6 +3083,208 @@
     translate: 0 -50%;
     rotate: -10deg;
     text-align: center;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The quieter sections, dressed: the instructors' placeholders, the list
+   * of papers, the callouts, the files and the form. One vocabulary — white
+   * cards with the soft shadow on the grey, a thin line or a small icon for
+   * the accent, the red only at full strength and only small.
+   * ------------------------------------------------------------------ */
+
+  /* An instructor card waiting for its photograph: a square, like the real
+   * one, with a neutral silhouette standing on its lower edge. */
+  .u-avatar-slot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    aspect-ratio: 1;
+    background-color: rgb(var(--brand-100));
+    border-bottom: 1px solid rgb(var(--line));
+  }
+
+  .u-avatar-figure {
+    width: 58%;
+    fill: rgb(var(--ink) / 0.1);
+  }
+
+  /* The papers on /zapisy/: an icon in a small ring, the name, the note
+   * ranged right on a wide screen and under the name on a phone. */
+  .u-doc-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .u-doc-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1rem;
+    padding-block: 0.9rem;
+  }
+
+  .u-doc-row + .u-doc-row {
+    border-top: 1px solid rgb(var(--line));
+  }
+
+  .u-doc-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--line));
+    background-color: rgb(var(--brand-50));
+    color: rgb(var(--brand-500));
+  }
+
+  .u-doc-note {
+    flex-basis: 100%;
+    padding-left: 3.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .u-doc-note {
+      flex-basis: auto;
+      padding-left: 0;
+      text-align: right;
+    }
+  }
+
+  /* A figure in a sentence, lifted out: graphite pill, white figures. */
+  .u-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 1.5rem;
+    padding-inline: 0.6rem;
+    border-radius: 999px;
+    background-color: rgb(var(--brand-900));
+    color: rgb(var(--fixed-paper));
+    font-size: 0.8125rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    vertical-align: 0.05em;
+  }
+
+  /* The callout's bar: 3px, inset from the edges, inside the card rather
+   * than a border on it. Graphite by default, red on `accent`. */
+  .u-callout::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 18px;
+    bottom: 18px;
+    width: 3px;
+    border-radius: 3px;
+    background-color: rgb(var(--brand-700));
+    pointer-events: none;
+  }
+
+  .u-callout-accent::before {
+    background-color: rgb(var(--brand-500));
+  }
+
+  .u-ground-wine.u-callout::before {
+    background-color: rgb(var(--brand-500));
+  }
+
+  /* A file on /do-pobrania/: the card is the link. */
+  .u-file-card {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.25rem;
+  }
+
+  .u-file-mark {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 14px;
+    background-color: rgb(var(--brand-100));
+    color: rgb(var(--ink));
+  }
+
+  .u-file-mark-label {
+    position: absolute;
+    bottom: -4px;
+    right: -6px;
+    padding: 1px 5px;
+    border-radius: 6px;
+    background-color: rgb(var(--brand-500));
+    color: rgb(var(--fixed-paper));
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  .u-file-arrow {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-top: 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--line));
+    color: rgb(var(--ink));
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+
+  .u-file-card:hover .u-file-arrow {
+    border-color: rgb(var(--brand-500));
+    background-color: rgb(var(--brand-500));
+    color: rgb(var(--fixed-paper));
+  }
+
+  /* The form in its card. The fields take the page's grey inside the white
+   * card and go white when focused, with a 2px red frame and no halo. */
+  .u-form-card {
+    --field: var(--brand-100);
+    padding: 1.5rem;
+    border-radius: 20px;
+    background-color: rgb(var(--brand-50));
+    box-shadow: theme('boxShadow.card');
+  }
+
+  @media (min-width: 768px) {
+    .u-form-card {
+      padding: 2rem 2.25rem;
+    }
+  }
+
+  .u-form-card :is(input, select, textarea):focus,
+  .u-form-card :is(input, select, textarea):focus-visible {
+    outline: none;
+    background-color: rgb(var(--brand-50));
+    box-shadow: inset 0 0 0 2px rgb(var(--brand-red));
+  }
+
+  /* The select's own arrow, the site's chevron in the ink. */
+  .u-form-card select {
+    appearance: none;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231C1C1E' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 18px 18px;
+  }
+
+  /* The send button runs the width of the card on a phone. */
+  @media (max-width: 640px) {
+    .u-form-submit .u-btn {
+      width: 100%;
+    }
   }
 
   /* Anything wide scrolls inside its own box. The page never moves sideways,

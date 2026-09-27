@@ -17,9 +17,10 @@ the seam between a warm grey band and a white one says it now, and the little
 line above every heading read as a leftover from a language the page no longer
 speaks.
 {% endcomment %}
-<c-vars level="2" eyebrow="" />
+<c-vars level="2" eyebrow="" class="" />
 {% if eyebrow %}<p class="script mb-1">{{ eyebrow }}</p>{% endif %}
-{% if level == '1' or level == 1 %}<h1 {{ attrs }}>{{ slot }}</h1>
-{% elif level == '3' or level == 3 %}<h3 {{ attrs }}>{{ slot }}</h3>
-{% elif level == '4' or level == 4 %}<h4 {{ attrs }}>{{ slot }}</h4>
-{% else %}<h2 {{ attrs }}>{{ slot }}</h2>{% endif %}
+{% if level == '1' or level == 1 %}<h1 class="{{ class }}" {{ attrs }}>{{ slot }}</h1>
+{% elif level == '3' or level == 3 %}<h3 class="{{ class }}" {{ attrs }}>{{ slot }}</h3>
+{% elif level == '4' or level == 4 %}<h4 class="{{ class }}" {{ attrs }}>{{ slot }}</h4>
+{# A section heading carries the red stroke under it, .u-head. #}
+{% else %}<h2 class="u-head {{ class }}" {{ attrs }}>{{ slot }}</h2>{% endif %}

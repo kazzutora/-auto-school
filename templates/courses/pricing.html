@@ -63,7 +63,7 @@ złoty column line up digit under digit, A.5.
        that is a fact about the money rather than a rhythm. #}
     <c-section tone="{% if label == external_group %}muted{% else %}default{% endif %}" size="compact" id="grupa-{{ forloop.counter }}">
       {% translate "Pozostałe usługi" as fallback %}
-      <c-heading level="2" class="u-accent-rule">{{ label|default:fallback }}</c-heading>
+      <c-heading level="2">{{ label|default:fallback }}</c-heading>
 
       {% if label == external_group %}
         <div class="mt-6 max-w-[900px]">

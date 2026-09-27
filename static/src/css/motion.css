@@ -383,6 +383,38 @@ dialog[open]::backdrop {
 }
 
 /* ---------------------------------------------------------------------------
+ * 8b. The stroke under a section heading, app.css .u-head.
+ *
+ * The one piece of motion the section heads have: the red stroke draws in
+ * from the left as the heading scrolls into view, on the heading's own view
+ * timeline — the mechanism .reveal runs on. Named, because the stroke is a
+ * pseudo-element and view() on it would track the pseudo rather than the
+ * heading.
+ * ------------------------------------------------------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes u-stroke-draw {
+      from {
+        clip-path: inset(0 100% 0 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .u-head {
+      view-timeline-name: --u-head;
+    }
+
+    .u-head::after {
+      animation: u-stroke-draw linear both;
+      animation-timeline: --u-head;
+      animation-range: entry 30% cover 30%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * 9. C.5. The global reduce block lives in app.css and covers durations; what
  * it cannot do from there is stop an animation that has not started yet, which
  * is why every keyframe above is already inside a no-preference query. This is
@@ -402,6 +434,11 @@ dialog[open]::backdrop {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .u-head::after {
+    animation: none !important;
+    clip-path: none !important;
   }
 
   .u-carousel {
@@ -438,6 +475,11 @@ dialog[open]::backdrop {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .u-head::after {
+    animation: none !important;
+    clip-path: none !important;
   }
 
   /* The two fixed bars are screen furniture. On paper they would be stamped
