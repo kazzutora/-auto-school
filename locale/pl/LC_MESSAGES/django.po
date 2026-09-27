@@ -2106,3 +2106,19 @@ msgstr ""
 #: templates/core/page_detail.html
 msgid "Zdjęcie wkrótce"
 msgstr ""
+
+#: templates/core/contact.html
+msgid "Instruktor z kursantem na placu manewrowym"
+msgstr ""
+
+#: templates/core/contact.html
+msgid "Kierownica i deska rozdzielcza o zmierzchu"
+msgstr ""
+
+#: templates/core/contact.html
+msgid "Napisz lub zadzwoń"
+msgstr ""
+
+#: templates/core/contact.html
+msgid "Dłonie na kierownicy, droga przed samochodem"
+msgstr ""

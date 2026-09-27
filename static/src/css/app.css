@@ -3127,7 +3127,8 @@
     border-top: 1px solid rgb(var(--line));
   }
 
-  .u-doc-icon {
+  .u-doc-icon,
+  .u-icon-ring {
     display: inline-flex;
     flex: none;
     align-items: center;
@@ -3151,6 +3152,24 @@
       padding-left: 0;
       text-align: right;
     }
+  }
+
+  /* A way to reach the school on /kontakt/: the icon in its ring on the
+   * left, the label and the detail beside it. */
+  .u-contact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .u-contact-card .u-icon-ring {
+    margin-top: 0.1rem;
+  }
+
+  /* The about page's photograph: the two people are left of centre. */
+  .u-page-hero-photo.is-plac .u-page-hero-pic {
+    object-position: 40% 35%;
   }
 
   /* A figure in a sentence, lifted out: graphite pill, white figures. */

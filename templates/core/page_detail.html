@@ -56,6 +56,15 @@ nothing.
   </div>
   <c-slot name="visual"><c-step-trail :steps="steps" /></c-slot>
 </c-page-hero>
+{% elif about %}
+{# The about page opens on a photograph like the other inner pages: an
+   instructor with a clipboard and a learner on a manoeuvring yard. #}
+{% translate "Instruktor z kursantem na placu manewrowym" as t_about_photo %}
+<c-page-hero eyebrow="{% translate 'Poznaj nas' %}" title="{{ page.title }}" lead="{{ page.lead }}"
+             photo="img/card/about-plac-1440.webp" photo_small="img/card/about-plac-960.webp"
+             photo_w="1440" photo_h="960" photo_fit="full" photo_alt="{{ t_about_photo }}" class="is-plac">
+  <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
+</c-page-hero>
 {% else %}
 {# pb-0: without an aside the header's bottom padding is 160px of nothing
    between the lead and whatever comes next — on /o-nas/ that is the

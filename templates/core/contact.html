@@ -17,61 +17,77 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+{# The same photograph band the other inner pages open on: hands on the
+   wheel and the road ahead. The eyebrow says what to do rather than printing
+   "Kontakt" a second time over the h1. #}
+{% translate "Dłonie na kierownicy, droga przed samochodem" as t_contact_photo %}
+{% blocktranslate with street=site_settings.street asvar t_contact_lead %}Zadzwoń, napisz albo przyjedź do biura: {{ street }}. Zapisujemy na kursy przez telefon i przez formularz.{% endblocktranslate %}
+<c-page-hero eyebrow="{% translate 'Napisz lub zadzwoń' %}" title="{% translate 'Kontakt' %}" lead="{{ t_contact_lead }}"
+             photo="img/band/band-road-1440.webp" photo_small="img/band/band-road-960.webp"
+             photo_w="1440" photo_h="617" photo_fit="full" photo_alt="{{ t_contact_photo }}">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-  {% translate "Kontakt" as t_kontakt %}
-  <c-heading level="1" eyebrow="{{ t_kontakt }}" class="mt-6">{% translate "Kontakt" %}</c-heading>
-  <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
-    {% blocktranslate with street=site_settings.street %}Zadzwoń, napisz albo przyjedź do biura: {{ street }}. Zapisujemy na kursy przez telefon i przez formularz.{% endblocktranslate %}
-  </p>
+</c-page-hero>
 
-  <div class="mt-12 grid gap-12 lg:grid-cols-2">
+<c-section>
+  <div class="grid gap-12 lg:grid-cols-2">
 
-    {# --------------------------------------------------------- left column #}
-    <div class="flex min-w-0 flex-col gap-10" data-testid="details">
-      <address class="flex flex-col gap-6 not-italic">
-        <div>
-          <p class="label u-muted-on-ground">{% translate "Adres" %}</p>
-          <p class="mt-2 font-bold u-on-ground">{{ site_settings.legal_name }}</p>
-          <p class="mt-1 u-body-on-ground">
-            {{ site_settings.street }}<br>
-            <span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}
-          </p>
+    {# --------------------------------------------------------- left column
+       Each way of reaching the school on its own white card with its icon in
+       a ring, rather than small labels stacked on the grey. #}
+    <div class="flex min-w-0 flex-col gap-4" data-testid="details">
+      <address class="flex flex-col gap-4 not-italic">
+        <div class="u-card u-contact-card">
+          <span class="u-icon-ring" aria-hidden="true"><c-icon name="pin" size="sm" /></span>
+          <div class="min-w-0">
+            <p class="label u-muted-on-ground">{% translate "Adres" %}</p>
+            <p class="mt-2 font-bold u-on-ground">{{ site_settings.legal_name }}</p>
+            <p class="mt-1 u-body-on-ground">
+              {{ site_settings.street }}<br>
+              <span class="data">{{ site_settings.postal_code }}</span> {{ site_settings.city }}
+            </p>
+          </div>
         </div>
 
         {# Every number is a tel: link — the visitor arrives on a phone and the
            point of this page is that they call, tech.md section 1. nowrap so a
            320px screen never breaks a number in the middle of the digits. #}
         {% if site_settings.phones %}
-          <div>
-            <p class="label u-muted-on-ground">{% translate "Telefon" %}</p>
-            <ul class="mt-2 flex flex-col gap-1">
-              {% for phone in site_settings.phones %}
-                <li>
-                  <a href="tel:{{ phone|cut:' ' }}"
-                     class="data inline-flex min-h-[44px] items-center gap-3 whitespace-nowrap text-data-lg u-on-ground underline-offset-4 hover:underline">
-                    <c-icon name="phone" size="sm" class="u-muted-on-ground" />{{ phone }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+          <div class="u-card u-contact-card">
+            <span class="u-icon-ring" aria-hidden="true"><c-icon name="phone" size="sm" /></span>
+            <div class="min-w-0">
+              <p class="label u-muted-on-ground">{% translate "Telefon" %}</p>
+              <ul class="mt-1 flex flex-col">
+                {% for phone in site_settings.phones %}
+                  <li>
+                    <a href="tel:{{ phone|cut:' ' }}"
+                       class="data inline-flex min-h-[44px] items-center whitespace-nowrap text-data-lg u-on-ground underline-offset-4 hover:underline">{{ phone }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         {% endif %}
 
         {% if site_settings.email %}
-          <div>
-            <p class="label u-muted-on-ground">{% translate "E-mail" %}</p>
-            <p class="mt-2">
-              <a href="mailto:{{ site_settings.email }}"
-                 class="inline-flex min-h-[44px] items-center gap-3 u-on-ground underline-offset-4 hover:underline">
-                <c-icon name="mail" size="sm" class="u-muted-on-ground" />{{ site_settings.email }}
-              </a>
-            </p>
+          <div class="u-card u-contact-card">
+            <span class="u-icon-ring" aria-hidden="true"><c-icon name="mail" size="sm" /></span>
+            <div class="min-w-0">
+              <p class="label u-muted-on-ground">{% translate "E-mail" %}</p>
+              <p class="mt-1">
+                <a href="mailto:{{ site_settings.email }}"
+                   class="inline-flex min-h-[44px] items-center break-all u-on-ground underline-offset-4 hover:underline">{{ site_settings.email }}</a>
+              </p>
+            </div>
           </div>
         {% endif %}
       </address>
 
-      <div>
+      {# Only when there is something in it: the NIP is not on the school's own
+         site yet, and an empty card with a heading is a gap on display. #}
+      {% if site_settings.nip or site_settings.bank_account_public and site_settings.bank_account %}
+      <div class="u-card u-contact-card">
+        <span class="u-icon-ring" aria-hidden="true"><c-icon name="file" size="sm" /></span>
+        <div class="min-w-0 grow">
         <p class="label u-muted-on-ground">{% translate "Dane firmy" %}</p>
         <dl class="mt-2 flex flex-col gap-1 u-body-on-ground">
           {% if site_settings.nip %}
@@ -86,7 +102,9 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
             </div>
           {% endif %}
         </dl>
+        </div>
       </div>
+      {% endif %}
 
       {# A.10 puts the hours beside the number, not in a section of their own:
          somebody reading a phone number wants to know whether calling now is
@@ -95,9 +113,12 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
          school does not run one — it was inherited from the previous client's
          page and nobody had taken it down. A department nobody can visit is
          worse than a gap: somebody drives to Asnyka 7 for it. #}
-      <div id="godziny">
-        <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
-        <c-hours-table department="office" data-testid="hours-office" />
+      <div id="godziny" class="u-card u-contact-card">
+        <span class="u-icon-ring" aria-hidden="true"><c-icon name="clock" size="sm" /></span>
+        <div class="min-w-0 grow">
+          <p class="label mb-3 u-muted-on-ground">{% translate "Biuro" %}</p>
+          <c-hours-table department="office" data-testid="hours-office" />
+        </div>
       </div>
     </div>
 

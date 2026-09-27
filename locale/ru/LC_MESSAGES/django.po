@@ -2106,3 +2106,19 @@ msgstr "Познакомьтесь с нами"
 #: templates/core/page_detail.html
 msgid "Zdjęcie wkrótce"
 msgstr "Фото скоро"
+
+#: templates/core/contact.html
+msgid "Instruktor z kursantem na placu manewrowym"
+msgstr "Инструктор с учеником на площадке"
+
+#: templates/core/contact.html
+msgid "Kierownica i deska rozdzielcza o zmierzchu"
+msgstr "Руль и приборная панель в сумерках"
+
+#: templates/core/contact.html
+msgid "Napisz lub zadzwoń"
+msgstr "Напишите или позвоните"
+
+#: templates/core/contact.html
+msgid "Dłonie na kierownicy, droga przed samochodem"
+msgstr "Руки на руле, дорога впереди"

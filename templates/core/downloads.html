@@ -18,22 +18,27 @@ sending the pdfs over.
 
 {# pb-0: the header's bottom padding plus the section's top padding left
    282px of nothing between the lead and the first group. #}
-<c-page-header eyebrow="{% translate 'Dokumenty' %}" title="{% translate 'Do pobrania' %}"
-               class="pb-0"
-               lead="{% translate 'Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować.' %}">
+{# A dark photograph under the heading, the card with the phone on the right
+   of it — a white card on the dusk, the one thing on the band to press. #}
+{% translate "Kierownica i deska rozdzielcza o zmierzchu" as t_files_photo %}
+<c-page-hero eyebrow="{% translate 'Dokumenty' %}" title="{% translate 'Do pobrania' %}"
+             lead="{% translate 'Papiery, które warto mieć przeczytane i wypełnione przed pierwszymi zajęciami. Wszystko w PDF, nic nie trzeba zakładać ani rejestrować.' %}"
+             photo="img/hero/hero-dusk-1440.webp" photo_small="img/hero/hero-dusk-960.webp"
+             photo_w="1440" photo_h="810" photo_fit="full" photo_alt="{{ t_files_photo }}" bleed="">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-  <c-slot name="aside">
+  <c-slot name="visual">
+    <div class="lg:ml-auto lg:max-w-[380px]">
     <c-fact-card label="{% translate 'Pytania o papiery' %}" value="{{ site_settings.phone_primary }}"
                  href="tel:{{ site_settings.phone_primary|cut:' ' }}"
-                 note="{% translate 'Zadzwoń, powiemy od ręki, czego brakuje.' %}">
-      <c-slot name="action">
-        <c-button variant="secondary" href="{% url 'core:page' slug='zapisy' %}" full="1">
-          {% translate "Jak się zapisać" %}
-        </c-button>
-      </c-slot>
-    </c-fact-card>
+                 note="{% translate 'Zadzwoń, powiemy od ręki, czego brakuje.' %}" />
+    {# Under the card rather than in its action slot: a named slot inside the
+       hero's own `visual` slot does not reach the card. #}
+    <c-button variant="outline" href="{% url 'core:page' slug='zapisy' %}" full="1" class="mt-3">
+      {% translate "Jak się zapisać" %}
+    </c-button>
+    </div>
   </c-slot>
-</c-page-header>
+</c-page-hero>
 
 <c-section id="pliki">
   {% if document_groups %}
