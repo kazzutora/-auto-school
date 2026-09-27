@@ -3059,22 +3059,6 @@
   color: rgb(var(--brand-600));
 }
 
-/* The footer's red top stripe, core v44. It is the one place the palette asks
- * for red as a rule rather than as a control: the page hands over to the
- * closing band and the line says where. Four pixels, because a hairline on a
- * graphite block a thousand pixels wide is not a stripe, it is dirt.
- *
- * Here rather than on `.u-ground-wine` because the stroke belongs to the
- * footer: the same class carries the enquiry-style dark band elsewhere, and a
- * red line across the top of that would read as a divider that means nothing.
- *
- * Outside every @layer for the same reason the button override below is —
- * tailwind purges what it puts in @layer utilities by matching class names,
- * and it does not recognise a tag-plus-class selector. */
-footer.u-ground-wine {
-  border-top: 4px solid rgb(var(--brand-red));
-}
-
 /* The figures in the stat strip, when the strip itself is red.
  *
  * <c-stat> names `text-brand-500` on the number, which is right on every pale
