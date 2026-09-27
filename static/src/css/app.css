@@ -2739,28 +2739,25 @@
   }
 
   /* The red accents on a photograph band: a heading's last words, or the
-   * handwritten line. The red needs a ground within a few per cent of black
-   * to reach 3:1, and a photograph has lamps and sky in it, so the words sit
-   * on a graphite tag of their own — a label, not a hope about the pixels
-   * under them. 3.6:1 on the tag, large text only. */
+   * handwritten line. No tag behind them — the owner wants the photograph
+   * whole. The red needs a ground within a few per cent of black for 3:1,
+   * large text only; the lead stays white. */
   .u-title-accent,
   .u-page-hero .script.u-script-accent {
     color: rgb(var(--brand-500));
-    background-color: rgb(var(--fixed-ink));
-    padding: 0.02em 0.18em 0.06em;
-    /* A 2px lip of the same graphite, so the tag covers its box to the
-     * whole pixel however the edge falls. */
-    box-shadow: 0 0 0 2px rgb(var(--fixed-ink));
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
+    /* A soft graphite halo that follows the letters, not a box: a lamp or a
+     * patch of sky behind a red word would otherwise take it under 3:1, and
+     * the owner wants no tag over the picture. The glow darkens only the
+     * ground right around the glyphs, the way a caption over video does. */
+    text-shadow:
+      0 0 2px rgb(var(--fixed-ink)),
+      0 0 10px rgb(var(--fixed-ink)),
+      0 0 22px rgb(var(--fixed-ink)),
+      0 0 34px rgb(var(--fixed-ink) / 0.9);
   }
 
-  /* Square and straight: a rounded corner or the eyebrow's usual tilt
-   * leaves the corners of the words' box on the photograph. */
   .u-page-hero .script.u-script-accent {
     --script-ink: var(--brand-500);
-    padding: 0 0.3em 0.05em;
-    rotate: none;
   }
 
   /* On a phone the two-copy band gives up its blurred copy: under the

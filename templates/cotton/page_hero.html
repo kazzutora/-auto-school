@@ -37,7 +37,7 @@ red on the graphite is 3.5:1, which a heading clears and body text does not.
 Takes: eyebrow, title, lead, bleed, photo, photo_alt, photo_w, photo_h,
 photo_small, photo_fit, title_accent, eyebrow_accent; slots: crumbs, visual, the default slot.
 {% endcomment %}
-<header class="u-page-hero{% if photo %} u-page-hero-photo u-photo-ground{% if photo_fit == 'full' %} is-full{% endif %}{% endif %} relative overflow-hidden {{ class }}"
+<header class="u-page-hero{% if photo %} u-page-hero-photo u-photo-ground{% if photo_fit == 'full' %} is-full{% endif %}{% if title_accent or eyebrow_accent %} has-accent{% endif %}{% endif %} relative overflow-hidden {{ class }}"
   {% if photo and photo_fit != 'full' %}style="--hero-photo: url('{% static photo %}')"{% endif %} {{ attrs }}>
   <div class="u-container relative grid items-start gap-8 pb-10 pt-8 md:pt-10 lg:grid-cols-2 lg:gap-6 lg:pb-12">
     <div class="relative z-10 min-w-0">
