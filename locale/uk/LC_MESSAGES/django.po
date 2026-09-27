@@ -2080,3 +2080,17 @@ msgstr "Автомагістраль уночі, сліди фар автомо�
 #: templates/courses/pricing.html
 msgid "Kierownica, kluczyk, prawo jazdy i tablica L"
 msgstr "Кермо, автомобільний ключ, посвідчення водія і знак L"
+
+#: templates/leads/enroll.html
+msgid "Instruktor z kursantką podczas jazdy, widok z tylnego siedzenia"
+msgstr "Інструктор із ученицею під час уроку водіння, вигляд із заднього сидіння"
+
+#: templates/leads/enroll.html
+#, python-format
+msgid "Zapisy przyjmujemy też telefonicznie i w biurze: %(street)s."
+msgstr "Записуємо також телефоном і в офісі: %(street)s."
+
+#: templates/leads/enroll.html
+#, python-format
+msgid "Zadzwoń, napisz albo przyjedź do biura: %(street)s. Zapisujemy na kursy przez telefon i przez formularz."
+msgstr "Зателефонуйте, напишіть або приїжджайте в офіс: %(street)s. Записуємо на курси телефоном і через форму."

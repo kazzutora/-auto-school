@@ -2791,6 +2791,13 @@
     }
   }
 
+  /* is-lesson: the enrolment page's photograph. The people are on its right
+   * half, so it is anchored there and the car's windscreen, the bright part,
+   * goes under the scrim on the left. */
+  .u-page-hero-photo.is-lesson .u-page-hero-pic {
+    object-position: 70% 40%;
+  }
+
   /* A short red rule over a section heading, the one over KURS in the
    * mockup. 40 by 3, and part of the heading's box so it moves with it. */
   .u-accent-rule::before {

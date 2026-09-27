@@ -22,7 +22,7 @@ tech.md section 2 as of core v26: the page reaches no third party on its own.
   {% translate "Kontakt" as t_kontakt %}
   <c-heading level="1" eyebrow="{{ t_kontakt }}" class="mt-6">{% translate "Kontakt" %}</c-heading>
   <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
-    {% translate "Zadzwoń, napisz albo przyjedź do biura na ul. Zieloną 45. Zapisujemy na kursy przez telefon i przez formularz." %}
+    {% blocktranslate with street=site_settings.street %}Zadzwoń, napisz albo przyjedź do biura: {{ street }}. Zapisujemy na kursy przez telefon i przez formularz.{% endblocktranslate %}
   </p>
 
   <div class="mt-12 grid gap-12 lg:grid-cols-2">

@@ -2080,3 +2080,17 @@ msgstr ""
 #: templates/courses/pricing.html
 msgid "Kierownica, kluczyk, prawo jazdy i tablica L"
 msgstr ""
+
+#: templates/leads/enroll.html
+msgid "Instruktor z kursantką podczas jazdy, widok z tylnego siedzenia"
+msgstr ""
+
+#: templates/leads/enroll.html
+#, python-format
+msgid "Zapisy przyjmujemy też telefonicznie i w biurze: %(street)s."
+msgstr ""
+
+#: templates/leads/enroll.html
+#, python-format
+msgid "Zadzwoń, napisz albo przyjedź do biura: %(street)s. Zapisujemy na kursy przez telefon i przez formularz."
+msgstr ""

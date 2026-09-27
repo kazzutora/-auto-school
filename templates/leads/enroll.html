@@ -10,14 +10,16 @@ the number, and what happens after they press send.
 {% endcomment %}
 
 {% block content %}
-<c-section>
+{# A lesson seen from the back seat: the instructor with the clipboard, the
+   learner at the wheel. The file is darkened a fifth, and the band's scrim
+   does the rest under the words. #}
+{% translate "Instruktor z kursantką podczas jazdy, widok z tylnego siedzenia" as t_photo_alt %}
+<c-page-hero eyebrow="OSK Ostrycharz Wieluń" title="{% translate 'Zapisz się na kurs' %}"
+             lead="{% translate 'Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz.' %}"
+             photo="img/pages/enroll-hero.webp" photo_w="1008" photo_h="672" photo_fit="full"
+             photo_alt="{{ t_photo_alt }}" class="is-lesson">
   <c-slot name="crumbs"><c-breadcrumbs :items="breadcrumbs" /></c-slot>
-  <c-heading level="1" eyebrow="OSK Ostrycharz Wieluń" class="mt-6">{% translate "Zapisz się na kurs" %}</c-heading>
-  <p class="u-narrow mt-4 text-body-lg u-body-on-ground">
-    {% translate "Zostaw numer, oddzwonimy i dobierzemy najbliższy termin. Nic nie płacisz przez formularz." %}
-  </p>
-
-</c-section>
+</c-page-hero>
 
 <c-section tone="muted">
   <div class="grid gap-12 lg:grid-cols-3">
@@ -28,7 +30,9 @@ the number, and what happens after they press send.
     <aside class="min-w-0">
       <c-card level="2" class="flex flex-col">
         <c-slot name="title">{% translate "Wolisz zadzwonić?" %}</c-slot>
-        <p>{% translate "Zapisy przyjmujemy też telefonicznie i w biurze na ul. Zielonej 45." %}</p>
+        {# The street from SiteSettings. It was typed in here, and it was the
+           previous client's office. #}
+        <p>{% blocktranslate with street=site_settings.street %}Zapisy przyjmujemy też telefonicznie i w biurze: {{ street }}.{% endblocktranslate %}</p>
         <div class="mt-6 flex flex-col gap-3">
           {% for phone in site_settings.phones %}
             <c-button variant="{% if forloop.first %}primary{% else %}secondary{% endif %}" full="1"
