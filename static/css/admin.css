@@ -1,0 +1,795 @@
+/* The admin in the site's dress. Loaded after Django's base.css and
+ * dark_mode.css by templates/admin/base_site.html.
+ *
+ * Django's admin reads every colour from a set of custom properties, so the
+ * theme is a remap of those onto the brand, not a rewrite of its markup: each
+ * widget Django ships keeps working and simply picks the colours up.
+ *
+ * The values are the token table in static/src/css/app.css, written out as
+ * hex because that file's :root lives inside the Tailwind build and loading
+ * it here would drag the preflight reset over Django's layout. The comment
+ * beside each value names the token it copies — change the token there, then
+ * here. Three colours and no fourth: red, white, graphite.
+ *
+ * Django's theme switch writes data-theme="auto|light|dark" on <html>, the
+ * same attribute the site uses, so the two doors below match app.css.
+ */
+
+/* Fonts: the text face and the display face, same files as the site. */
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(../fonts/nunito-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/rubik-italic-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/rubik-italic-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/rubik-italic-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url(../fonts/rubik-italic-cyrillic-ext.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+/* ---- tokens -------------------------------------------------------- */
+
+html[data-theme="light"],
+:root {
+  /* The brand, fixed in both themes. */
+  --osk-red: #E1141D;          /* --brand-red */
+  --osk-red-dark: #C01017;     /* --brand-red-dark */
+  --osk-red-light: #F0EEEE;    /* --brand-red-light */
+  --osk-graphite: #1C1C1E;     /* --brand-ink */
+  --osk-graphite-soft: #2C2C30;/* --ink-soft */
+  --osk-paper: #FFFFFF;        /* --brand-paper */
+  --osk-on-ink-muted: #A1A1AA; /* --on-ink-muted */
+
+  /* Roles, swapped by the dark theme below. */
+  --osk-page: #F4F4F5;         /* --surface-alt */
+  --osk-card: #FFFFFF;         /* --surface */
+  --osk-line: #E4E4E7;         /* --border */
+  --osk-ink: #1C1C1E;          /* --ink */
+  --osk-muted: #6B6B70;        /* --muted */
+  --osk-ink-300: #9C9CA2;      /* --ink-300 */
+  --osk-link: #C01017;         /* --brand-link */
+  --osk-band: #1C1C1E;         /* --brand-900 */
+  --osk-ok: #136B42;           /* --state-ok */
+  --osk-warn: #845400;         /* --state-warn */
+  --osk-err: #A4262C;          /* --state-err */
+
+  --osk-shadow: 0 1px 2px rgb(28 28 30 / .06), 0 14px 30px -18px rgb(28 28 30 / .22);
+
+  /* Django's own vocabulary, pointed at the tokens. */
+  --primary: var(--osk-band);
+  --secondary: var(--osk-graphite);
+  --accent: var(--osk-paper);
+  --primary-fg: var(--osk-paper);
+
+  --body-fg: var(--osk-ink);
+  --body-bg: var(--osk-card);
+  --body-quiet-color: var(--osk-muted);
+  --body-medium-color: var(--osk-ink);
+  --body-loud-color: var(--osk-ink);
+
+  --header-color: var(--osk-on-ink-muted);
+  --header-branding-color: var(--osk-paper);
+  --header-bg: var(--osk-graphite);
+  --header-link-color: var(--osk-paper);
+
+  --breadcrumbs-fg: var(--osk-on-ink-muted);
+  --breadcrumbs-link-fg: var(--osk-paper);
+  --breadcrumbs-bg: var(--osk-graphite-soft);
+
+  --link-fg: var(--osk-link);
+  --link-hover-color: var(--osk-ink);
+  --link-selected-fg: var(--osk-link);
+
+  --hairline-color: var(--osk-line);
+  --border-color: var(--osk-ink-300);
+
+  --error-fg: var(--osk-err);
+
+  --message-success-bg: color-mix(in srgb, var(--osk-ok) 10%, var(--osk-card));
+  --message-warning-bg: color-mix(in srgb, var(--osk-warn) 10%, var(--osk-card));
+  --message-error-bg: color-mix(in srgb, var(--osk-err) 10%, var(--osk-card));
+
+  --darkened-bg: var(--osk-page);
+  --selected-bg: var(--osk-line);
+  --selected-row: var(--osk-red-light);
+
+  --button-fg: var(--osk-paper);
+  --button-bg: var(--osk-graphite);
+  --button-hover-bg: var(--osk-graphite-soft);
+  --default-button-bg: var(--osk-red);
+  --default-button-hover-bg: var(--osk-red-dark);
+  --close-button-bg: var(--osk-muted);
+  --close-button-hover-bg: var(--osk-graphite);
+  --delete-button-bg: var(--osk-err);
+  --delete-button-hover-bg: var(--osk-graphite);
+
+  --object-tools-fg: var(--osk-paper);
+  --object-tools-bg: var(--osk-graphite);
+  --object-tools-hover-bg: var(--osk-red);
+
+  --font-family-primary: 'Nunito', system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  color-scheme: light;
+}
+
+/* Dark: the same values app.css swaps, through the same two doors. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --osk-page: #0E0E10;
+    --osk-card: #1A1A1C;
+    --osk-line: #2E2E33;
+    --osk-ink: #EDEDF0;
+    --osk-muted: #A1A1AA;
+    --osk-ink-300: #6B6B70;
+    --osk-link: #FF8A90;
+    --osk-band: #252529;
+    --osk-ok: #4ABE91;
+    --osk-warn: #E8B03D;
+    --osk-err: #FF9A93;
+    --osk-shadow: 0 1px 2px rgb(0 0 0 / .4);
+
+    --primary: var(--osk-band);
+    --primary-fg: var(--osk-paper);
+    --body-fg: var(--osk-ink);
+    --body-bg: var(--osk-card);
+    --body-quiet-color: var(--osk-muted);
+    --body-medium-color: var(--osk-ink);
+    --body-loud-color: var(--osk-ink);
+    --breadcrumbs-link-fg: var(--osk-paper);
+    --breadcrumbs-bg: var(--osk-graphite-soft);
+    --link-fg: var(--osk-link);
+    --link-hover-color: var(--osk-ink);
+    --link-selected-fg: var(--osk-link);
+    --hairline-color: var(--osk-line);
+    --border-color: var(--osk-ink-300);
+    --error-fg: var(--osk-err);
+    --message-success-bg: color-mix(in srgb, var(--osk-ok) 16%, var(--osk-card));
+    --message-warning-bg: color-mix(in srgb, var(--osk-warn) 16%, var(--osk-card));
+    --message-error-bg: color-mix(in srgb, var(--osk-err) 16%, var(--osk-card));
+    --darkened-bg: var(--osk-page);
+    --selected-bg: var(--osk-line);
+    --selected-row: color-mix(in srgb, var(--osk-red) 18%, var(--osk-card));
+    --button-bg: var(--osk-graphite-soft);
+    --button-hover-bg: var(--osk-red-dark);
+    --close-button-bg: var(--osk-graphite-soft);
+    --close-button-hover-bg: var(--osk-muted);
+    --delete-button-hover-bg: var(--osk-red-dark);
+    --object-tools-bg: var(--osk-graphite-soft);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --osk-page: #0E0E10;
+  --osk-card: #1A1A1C;
+  --osk-line: #2E2E33;
+  --osk-ink: #EDEDF0;
+  --osk-muted: #A1A1AA;
+  --osk-ink-300: #6B6B70;
+  --osk-link: #FF8A90;
+  --osk-band: #252529;
+  --osk-ok: #4ABE91;
+  --osk-warn: #E8B03D;
+  --osk-err: #FF9A93;
+  --osk-shadow: 0 1px 2px rgb(0 0 0 / .4);
+
+  --primary: var(--osk-band);
+  --primary-fg: var(--osk-paper);
+  --body-fg: var(--osk-ink);
+  --body-bg: var(--osk-card);
+  --body-quiet-color: var(--osk-muted);
+  --body-medium-color: var(--osk-ink);
+  --body-loud-color: var(--osk-ink);
+  --breadcrumbs-link-fg: var(--osk-paper);
+  --breadcrumbs-bg: var(--osk-graphite-soft);
+  --link-fg: var(--osk-link);
+  --link-hover-color: var(--osk-ink);
+  --link-selected-fg: var(--osk-link);
+  --hairline-color: var(--osk-line);
+  --border-color: var(--osk-ink-300);
+  --error-fg: var(--osk-err);
+  --message-success-bg: color-mix(in srgb, var(--osk-ok) 16%, var(--osk-card));
+  --message-warning-bg: color-mix(in srgb, var(--osk-warn) 16%, var(--osk-card));
+  --message-error-bg: color-mix(in srgb, var(--osk-err) 16%, var(--osk-card));
+  --darkened-bg: var(--osk-page);
+  --selected-bg: var(--osk-line);
+  --selected-row: color-mix(in srgb, var(--osk-red) 18%, var(--osk-card));
+  --button-bg: var(--osk-graphite-soft);
+  --button-hover-bg: var(--osk-red-dark);
+  --close-button-bg: var(--osk-graphite-soft);
+  --close-button-hover-bg: var(--osk-muted);
+  --delete-button-hover-bg: var(--osk-red-dark);
+  --object-tools-bg: var(--osk-graphite-soft);
+
+  color-scheme: dark;
+}
+
+/* ---- page ------------------------------------------------------------ */
+
+html, body {
+  background: var(--osk-page);
+}
+
+body {
+  font-size: 0.9375rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--osk-red);
+  outline-offset: 2px;
+}
+
+/* ---- header: the site's graphite bar and the footer's red strip ------ */
+
+#header {
+  border-top: 4px solid var(--osk-red);
+  padding: 12px 40px;
+  min-height: 64px;
+  box-sizing: border-box;
+}
+
+#site-name a.osk-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--osk-paper);
+  text-decoration: none;
+}
+
+.osk-lockup {
+  display: block;
+  height: 36px;
+  aspect-ratio: 788 / 156;
+  border-radius: 6px;
+  background-image: url("../img/brand/lockup-owner-inverse.webp");
+  background-image: image-set(
+    url("../img/brand/lockup-owner-inverse.avif") type("image/avif"),
+    url("../img/brand/lockup-owner-inverse.webp") type("image/webp")
+  );
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.osk-brand-title {
+  padding-left: 14px;
+  border-left: 1px solid var(--osk-graphite-soft);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--osk-on-ink-muted);
+}
+
+#site-name a.osk-brand:hover .osk-brand-title {
+  color: var(--osk-paper);
+}
+
+#user-tools {
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+#user-tools a,
+#logout-form button {
+  border-bottom: none;
+  font-weight: 700;
+}
+
+#user-tools a:focus,
+#user-tools a:hover,
+#logout-form button:focus,
+#logout-form button:hover {
+  color: var(--osk-paper);
+  text-decoration: underline;
+  text-decoration-color: var(--osk-red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  border-bottom: none;
+}
+
+div.breadcrumbs {
+  padding: 10px 40px;
+  font-size: 0.8125rem;
+}
+
+div.breadcrumbs a:hover,
+div.breadcrumbs a:focus {
+  color: var(--osk-paper);
+  text-decoration: underline;
+  text-decoration-color: var(--osk-red);
+}
+
+/* ---- headings -------------------------------------------------------- */
+
+#content h1 {
+  font-family: 'Rubik', 'Nunito', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--osk-ink);
+  margin: 8px 0 20px;
+}
+
+#content h2.subhead,
+#content > h2 {
+  font-weight: 700;
+  color: var(--osk-muted);
+}
+
+/* The label style of the site: small, heavy, spaced capitals. */
+.module h2,
+.module caption,
+.inline-group h2 {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+}
+
+.module caption a,
+.module h2 a {
+  color: var(--osk-paper);
+}
+
+/* ---- cards ----------------------------------------------------------- */
+
+#content {
+  padding: 24px 40px;
+}
+
+.module,
+#content-related .module,
+#changelist-filter,
+.dashboard .module {
+  background: var(--osk-card);
+  border-radius: 20px;
+  box-shadow: var(--osk-shadow);
+  overflow: hidden;
+  border: 1px solid var(--osk-line);
+}
+
+.module {
+  margin-bottom: 24px;
+}
+
+fieldset.module {
+  padding: 0;
+}
+
+fieldset.module .form-row {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.module table,
+.dashboard .module table {
+  width: 100%;
+}
+
+.dashboard .module table th {
+  font-weight: 700;
+}
+
+.dashboard .module table td a.addlink,
+.dashboard .module table td a.changelink {
+  font-weight: 700;
+}
+
+#changelist .results {
+  border-radius: 20px;
+  border: 1px solid var(--osk-line);
+  background: var(--osk-card);
+  box-shadow: var(--osk-shadow);
+}
+
+#changelist table thead th {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--osk-page);
+  color: var(--osk-muted);
+}
+
+#changelist table thead th a {
+  color: var(--osk-muted);
+}
+
+#changelist table tbody tr:hover {
+  background: var(--osk-page);
+}
+
+#changelist table tbody tr.selected {
+  background: var(--selected-row);
+}
+
+#changelist .toplinks,
+#changelist .actions,
+#changelist-search,
+#toolbar {
+  background: transparent;
+  border: none;
+}
+
+#changelist-filter {
+  padding-bottom: 8px;
+}
+
+#changelist-filter h2 {
+  background: var(--primary);
+  color: var(--primary-fg);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#changelist-filter li.selected a {
+  color: var(--osk-link);
+  font-weight: 800;
+}
+
+/* ---- sidebar --------------------------------------------------------- */
+
+#nav-sidebar {
+  background: var(--osk-page);
+  border-right: 1px solid var(--osk-line);
+}
+
+#nav-sidebar .module {
+  box-shadow: none;
+  border-radius: 14px;
+  margin: 12px 12px 0;
+}
+
+#nav-sidebar .current-app .section:link,
+#nav-sidebar .current-app .section:visited {
+  color: var(--osk-paper);
+}
+
+#nav-sidebar .current-model {
+  background: var(--selected-row);
+}
+
+#nav-sidebar .current-model a {
+  color: var(--osk-link);
+  font-weight: 800;
+}
+
+#nav-filter {
+  border-radius: 14px;
+  margin: 12px 12px 0;
+  width: calc(100% - 24px);
+}
+
+.toggle-nav-sidebar {
+  background: var(--osk-page);
+  border-color: var(--osk-line);
+}
+
+/* ---- fields ---------------------------------------------------------- */
+
+input[type=text], input[type=password], input[type=email], input[type=url],
+input[type=number], input[type=tel], input[type=search], textarea, select,
+.vTextField {
+  border: 1px solid var(--osk-ink-300);
+  border-radius: 14px;
+  padding: 8px 12px;
+  background: var(--osk-card);
+  color: var(--osk-ink);
+  font-family: var(--font-family-primary);
+  transition: border-color 160ms cubic-bezier(.22, .61, .36, 1),
+              box-shadow 160ms cubic-bezier(.22, .61, .36, 1);
+}
+
+select {
+  height: auto;
+  padding-right: 28px;
+}
+
+select[multiple] {
+  border-radius: 14px;
+}
+
+input:focus, textarea:focus, select:focus,
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
+input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus,
+input[type=search]:focus, textarea:focus, select:focus, .vTextField:focus {
+  border-color: var(--osk-red);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--osk-red) 18%, transparent);
+  outline: none;
+}
+
+input[type=checkbox],
+input[type=radio] {
+  accent-color: var(--osk-red);
+}
+
+.form-row label,
+.aligned label {
+  font-weight: 700;
+}
+
+.required label,
+label.required {
+  color: var(--osk-ink);
+}
+
+.help,
+p.help,
+form p.help,
+div.help,
+form div.help {
+  color: var(--osk-muted);
+}
+
+/* ---- buttons: pills, as on the site ---------------------------------- */
+
+.button, input[type=submit], input[type=button], .submit-row input,
+a.button, button.button, .object-tools a,
+#changelist-search input[type=submit],
+.actions button {
+  border-radius: 999px;
+  font-family: var(--font-family-primary);
+  font-weight: 700;
+  padding: 10px 20px;
+  transition: background-color 160ms cubic-bezier(.22, .61, .36, 1);
+}
+
+.actions button,
+#changelist-search input[type=submit] {
+  padding: 6px 16px;
+}
+
+.submit-row {
+  background: var(--osk-card);
+  border: 1px solid var(--osk-line);
+  border-radius: 20px;
+  padding: 14px;
+  gap: 10px;
+}
+
+.submit-row a.deletelink {
+  border-radius: 999px;
+  padding: 10px 20px;
+  height: auto;
+  line-height: normal;
+}
+
+.submit-row a.closelink {
+  border-radius: 999px;
+  padding: 10px 20px;
+}
+
+.object-tools a:link,
+.object-tools a:visited {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.object-tools a.addlink {
+  background-color: var(--osk-red);
+  background-position: right 12px center;
+  padding-right: 30px;
+}
+
+.object-tools a.addlink:hover {
+  background-color: var(--osk-red-dark);
+}
+
+/* Django's add and change icons are green and yellow: a fourth and fifth
+ * colour. Redrawn in the brand — the plus in red, the pencil in graphite. */
+a.addlink,
+.addlink {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='none' stroke='%23C01017' stroke-width='2.4' stroke-linecap='round' d='M7 2v10M2 7h10'/%3E%3C/svg%3E");
+}
+
+a.changelink,
+.changelink {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='none' stroke='%236B6B70' stroke-width='1.8' stroke-linejoin='round' d='M2 12l.6-3L9.5 2.1l2.4 2.4L5 11.4z'/%3E%3C/svg%3E");
+}
+
+/* Dark: the plus follows --brand-link, which lightens there. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) a.addlink:not(.object-tools a) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='none' stroke='%23FF8A90' stroke-width='2.4' stroke-linecap='round' d='M7 2v10M2 7h10'/%3E%3C/svg%3E");
+  }
+}
+
+:root[data-theme="dark"] a.addlink:not(.object-tools a) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='none' stroke='%23FF8A90' stroke-width='2.4' stroke-linecap='round' d='M7 2v10M2 7h10'/%3E%3C/svg%3E");
+}
+
+a.addlink,
+.addlink,
+a.changelink,
+.changelink {
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: 0 center;
+}
+
+/* Recent actions: the item is two lines, the icon belongs to the first. */
+ul.actionlist li {
+  background-position: 0 4px;
+}
+
+.object-tools a.addlink {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='none' stroke='%23FFFFFF' stroke-width='2.4' stroke-linecap='round' d='M7 2v10M2 7h10'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-repeat: no-repeat;
+}
+
+/* ---- messages -------------------------------------------------------- */
+
+ul.messagelist li {
+  border-radius: 14px;
+  margin: 0 0 10px;
+  color: var(--osk-ink);
+  font-weight: 600;
+}
+
+ul.messagelist li.success { border-left: 4px solid var(--osk-ok); }
+ul.messagelist li.warning { border-left: 4px solid var(--osk-warn); }
+ul.messagelist li.error   { border-left: 4px solid var(--osk-err); }
+
+.errornote {
+  border-radius: 14px;
+  border: 1px solid var(--osk-err);
+  background: var(--message-error-bg);
+  font-weight: 700;
+}
+
+.errorlist li {
+  border-radius: 10px;
+  background: var(--osk-err);
+}
+
+/* ---- the login page -------------------------------------------------- */
+
+body.login {
+  background: var(--osk-graphite);
+}
+
+body.login #container {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px -24px rgb(0 0 0 / .6);
+  width: 26em;
+  margin: 12vh auto 40px;
+  background: var(--osk-card);
+}
+
+body.login #header {
+  padding: 22px 24px 18px;
+  justify-content: center;
+}
+
+body.login #site-name a.osk-brand {
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.login .osk-lockup {
+  height: 44px;
+}
+
+body.login .osk-brand-title {
+  border-left: none;
+  padding-left: 0;
+}
+
+body.login #content {
+  padding: 24px 28px 28px;
+}
+
+body.login .form-row #id_username,
+body.login .form-row #id_password {
+  padding: 12px 14px;
+}
+
+body.login .submit-row {
+  border: none;
+  padding: 20px 0 0;
+  background: transparent;
+}
+
+body.login .submit-row input {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1rem;
+}
+
+/* ---- small screens --------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  #header,
+  div.breadcrumbs,
+  #content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .osk-brand-title {
+    display: none;
+  }
+
+  .module,
+  #changelist .results,
+  .submit-row {
+    border-radius: 14px;
+  }
+}

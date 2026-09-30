@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+{# The owner's panel in the site's own dress: graphite bar with the red strip
+   the footer carries, the owner's lockup on its red plate, Nunito for the text
+   and Rubik for the page title. Django's own markup is left alone — the theme
+   is a swap of the variables admin/css/base.css reads, in static/css/admin.css,
+   so every widget Django ships keeps working and picks up the colours. #}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="icon" href="{% static 'img/brand/favicon.svg' %}" type="image/svg+xml">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" class="osk-brand">
+    <span class="osk-lockup" aria-hidden="true"></span>
+    <span class="osk-brand-title">{{ site_header|default:_('Django administration') }}</span>
+  </a>
+</div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
