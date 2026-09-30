@@ -680,6 +680,29 @@ a.changelink,
   background-position: 0 center;
 }
 
+/* The edit, add, delete and view buttons beside a related field ship as
+ * yellow, green, red and blue images. Taken down to graphite; the red comes
+ * back under the cursor. */
+.related-widget-wrapper-link img {
+  filter: grayscale(1) brightness(.45);
+  transition: filter 160ms cubic-bezier(.22, .61, .36, 1);
+}
+
+.related-widget-wrapper-link:link:hover img,
+.related-widget-wrapper-link:link:focus img {
+  filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .related-widget-wrapper-link img {
+    filter: grayscale(1) brightness(1.6);
+  }
+}
+
+:root[data-theme="dark"] .related-widget-wrapper-link img {
+  filter: grayscale(1) brightness(1.6);
+}
+
 /* Recent actions: the item is two lines, the icon belongs to the first. */
 ul.actionlist li {
   background-position: 0 4px;
