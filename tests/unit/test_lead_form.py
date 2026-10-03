@@ -209,6 +209,51 @@ def test_the_limit_is_per_address(client: Client, queued: list[str]) -> None:
     assert fresh.status_code == 302
 
 
+# Behind Caddy every request arrives from the proxy's own address and the
+# visitor's is in X-Forwarded-For. Counting the proxy would put the whole town
+# in one bucket of five an hour.
+PROXY = "172.18.0.5"
+
+
+def test_visitors_behind_the_proxy_do_not_share_one_limit(
+    client: Client, queued: list[str]
+) -> None:
+    allowed = int(RATE.split("/")[0])
+    for number in range(allowed):
+        client.post(
+            SUBMIT,
+            {**VALID, "phone": f"60506579{number}"},
+            REMOTE_ADDR=PROXY,
+            HTTP_X_FORWARDED_FOR="198.51.100.7",
+        )
+
+    other = client.post(SUBMIT, VALID, REMOTE_ADDR=PROXY, HTTP_X_FORWARDED_FOR="203.0.113.9")
+    assert other.status_code == 302
+
+
+def test_one_visitor_behind_the_proxy_is_still_limited(client: Client, queued: list[str]) -> None:
+    allowed = int(RATE.split("/")[0])
+    for number in range(allowed):
+        client.post(
+            SUBMIT,
+            {**VALID, "phone": f"60506579{number}"},
+            REMOTE_ADDR=PROXY,
+            HTTP_X_FORWARDED_FOR="198.51.100.7",
+        )
+
+    refused = client.post(SUBMIT, VALID, REMOTE_ADDR=PROXY, HTTP_X_FORWARDED_FOR="198.51.100.7")
+    assert refused.status_code == 429
+
+
+def test_the_limit_counts_in_a_cache_every_worker_shares() -> None:
+    """Gunicorn runs several processes. A per-process cache gives each its own
+    count, and the limit multiplies by the number of workers."""
+    from config.settings import base
+
+    backend = base.CACHES["default"]["BACKEND"]
+    assert backend == "django.core.cache.backends.redis.RedisCache"
+
+
 # --------------------------------------------------------------------------
 # prefill, DEV.md S3.1
 
