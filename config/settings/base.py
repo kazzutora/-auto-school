@@ -25,6 +25,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 
+# Shared by every gunicorn worker: the lead form's rate limit counts here, and
+# a per-process cache would give each worker a count of its own. Database 1,
+# so a cache.clear() never flushes the Celery queue on database 0.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("CACHE_URL", default=REDIS_URL.rsplit("/", 1)[0] + "/1"),
+    }
+}
+
+# The visitor's address rather than Caddy's, apps/leads/services.py.
+RATELIMIT_IP_META_KEY = "apps.leads.services.request_ip"
+
 INSTALLED_APPS = [
     # Before django.contrib.admin: modeltranslation patches the admin classes.
     "modeltranslation",

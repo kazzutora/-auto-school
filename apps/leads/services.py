@@ -3,6 +3,8 @@
 import hashlib
 import re
 
+from django.http import HttpRequest
+
 # Polish numbers: nine national digits behind country code 48.
 COUNTRY_CODE = "48"
 NATIONAL_LENGTH = 9
@@ -52,3 +54,12 @@ def client_ip(meta: dict[str, str]) -> str:
     """
     forwarded = (meta.get("HTTP_X_FORWARDED_FOR") or "").split(",")[0].strip()
     return forwarded or (meta.get("REMOTE_ADDR") or "").strip()
+
+
+def request_ip(request: HttpRequest) -> str:
+    """client_ip for django-ratelimit, RATELIMIT_IP_META_KEY in settings.
+
+    Its own default reads REMOTE_ADDR, which behind Caddy is the proxy, and
+    every visitor would share one limit.
+    """
+    return client_ip(request.META)
