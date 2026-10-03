@@ -19,6 +19,7 @@ history:
 
 import colorsys
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -108,7 +109,13 @@ def active_piece():
     spec = importlib.util.spec_from_file_location("gen_lockup_raster", path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    # dataclasses resolves a class's module through sys.modules while the
+    # module is still executing, so it has to be there first.
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.modules.pop(spec.name, None)
     return module.PIECES[module.ACTIVE]
 
 
@@ -182,6 +189,6 @@ def test_the_pages_reference_both_variants() -> None:
     on a light page.
     """
     css = CSS.read_text(encoding="utf-8")
-    assert 'prefers-color-scheme: dark' in css
+    assert "prefers-color-scheme: dark" in css
     assert ':root[data-theme="dark"] .u-lockup' in css
     assert css.count("lockup-owner-dark") >= 4
