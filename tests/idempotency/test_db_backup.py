@@ -9,6 +9,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
+from celery.exceptions import Retry
 
 from apps.core.tasks import _rotate, db_backup
 
@@ -61,8 +62,11 @@ def test_no_half_written_dump_survives_a_failure(backup_dir: Path, monkeypatch) 
 
     monkeypatch.setattr(tasks.subprocess, "Popen", explode)
 
-    with pytest.raises(OSError):
+    # autoretry answers the outage with a Retry carrying it, and the next
+    # attempt is the worker's, not this apply()'s.
+    with pytest.raises(Retry) as raised:
         db_backup.apply().get()
+    assert isinstance(raised.value.exc, OSError)
 
     assert list(backup_dir.glob("*.sql.gz")) == []
     assert list(backup_dir.glob("*.part")) == []

@@ -207,15 +207,19 @@ def test_a_failing_mail_client_is_retried_and_the_lead_survives(
     lead = LeadFactory()
     client = failing_mail(fail_with)
 
-    with pytest.raises(BaseException) as raised:  # noqa: B017, PT011
+    with pytest.raises(Retry) as raised:
         task.apply(kwargs={"lead_id": lead.pk}).get()
 
     # The task asked for another attempt instead of swallowing the outage.
     assert isinstance(cause(raised.value), error)
-    # Eager mode runs the retries inline rather than handing them to a worker,
-    # so one apply() reaches the client once per attempt the policy allows. The
-    # number is the point: it proves autoretry is wired and that it stops.
-    assert client.attempts == 1 + BaseTask.max_retries
+    assert client.attempts == 1
+
+    # And it stops: on the last attempt the policy allows, the outage itself
+    # comes out rather than one more Retry. Celery 5.6 no longer loops eager
+    # retries inside one apply(), so the last attempt is asked for directly.
+    with pytest.raises(error):
+        task.apply(kwargs={"lead_id": lead.pk}, retries=BaseTask.max_retries).get()
+    assert client.attempts == 2
     assert sent(outbox) == []
     lead.refresh_from_db()
     # The lead stays in the admin as unfinished work, DEV.md S3.2.
