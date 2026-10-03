@@ -26,8 +26,9 @@ from apps.leads.models import Lead
 from apps.leads.services import client_ip, hash_ip
 from apps.leads.tasks import notify_owner, send_confirmation
 
-# DEV.md S3.1: five submissions an hour from one address.
-RATE = "5/h"
+# Two submissions an hour from one address, at the owner's request: one
+# real enquiry and one correction is all a person sends.
+RATE = "2/h"
 TOO_MANY_REQUESTS = 429
 
 ENROL_DESCRIPTION = _(

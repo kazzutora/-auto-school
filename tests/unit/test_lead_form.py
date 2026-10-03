@@ -184,7 +184,7 @@ def test_the_raw_address_is_never_stored(client: Client, queued: list[str]) -> N
 def test_the_sixth_submission_from_one_address_is_refused(
     client: Client, queued: list[str]
 ) -> None:
-    """DEV.md S3.1: five an hour. 429 rather than 403 — later, not never."""
+    """Two an hour. 429 rather than 403 — later, not never."""
     allowed = int(RATE.split("/")[0])
 
     for number in range(allowed):
@@ -211,7 +211,7 @@ def test_the_limit_is_per_address(client: Client, queued: list[str]) -> None:
 
 # Behind Caddy every request arrives from the proxy's own address and the
 # visitor's is in X-Forwarded-For. Counting the proxy would put the whole town
-# in one bucket of five an hour.
+# in one bucket of two an hour.
 PROXY = "172.18.0.5"
 
 
