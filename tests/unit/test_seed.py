@@ -1,5 +1,6 @@
 """The seed is the single source of fixtures, DEV.md S0.8."""
 
+from datetime import time
 from decimal import Decimal
 
 import pytest
@@ -114,17 +115,22 @@ def test_the_confirmed_year_carries_the_schools_own_counts(seeded: None) -> None
     assert (entry.passed_2nd, entry.passed_3rd, entry.passed_4th) == (16, 3, 3)
 
 
-def test_office_hours_say_by_arrangement_rather_than_inventing_a_schedule(seeded: None) -> None:
-    """The school publishes no opening hours, only "ustal telefonicznie".
+def test_office_hours_are_the_ones_the_school_publishes(seeded: None) -> None:
+    """OSTRYCHARZ.md part A: pn-pt 06:30-19:00, sob 06:30-12:30, niedz. nieczynne,
+    from the school's own Google Business profile.
 
-    Inventing 9-17 is the one lie on the page a visitor can catch by turning up.
+    Inventing hours is the one lie on the page a visitor can catch by turning
+    up, so the seed carries exactly these and nothing rounder.
     """
-    rows = OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE)
+    rows = {
+        row.weekday: row for row in OpeningHours.objects.filter(department=OpeningHours.DEPT.OFFICE)
+    }
 
-    assert rows.count() == 7
-    for row in rows:
-        assert row.is_closed
-        assert row.note.strip()
+    assert sorted(rows) == list(range(7))
+    for weekday in range(5):
+        assert (rows[weekday].opens, rows[weekday].closes) == (time(6, 30), time(19, 0))
+    assert (rows[5].opens, rows[5].closes) == (time(6, 30), time(12, 30))
+    assert rows[6].is_closed
 
 
 def test_there_is_no_psychology_lab(seeded: None) -> None:
