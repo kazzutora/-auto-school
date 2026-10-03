@@ -1359,26 +1359,10 @@
    * low sun, the brightest part of the picture, so the hero is a photo ground
    * with white words and the scrim darkens that half in the ground's graphite.
    *
-   * It is rendered from md — see the hidden md:block on the span. Below that
-   * the lead and the price are not on the screen and the heading has the
-   * header wash. */
+   * It is rendered only at lg — see the hidden lg:block on the span. Below
+   * that the picture is a block above the words and covers nothing. */
   .u-hero-scrim {
     background-image: none;
-  }
-
-  /* Between md and lg the words still run most of the width, so the scrim
-   * holds further across than the desktop one and fades out on the car's
-   * side, which object-right keeps at the right edge. */
-  @media (min-width: 768px) {
-    .u-hero-scrim {
-      background-image: linear-gradient(
-        90deg,
-        rgb(var(--ground) / 0.94) 0%,
-        rgb(var(--ground) / 0.9) 70%,
-        rgb(var(--ground) / 0.55) 85%,
-        rgb(var(--ground) / 0.15) 100%
-      );
-    }
   }
 
   /* A marker, not a style. scripts/check_photo_contrast.py used to find its

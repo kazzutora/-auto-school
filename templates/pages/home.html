@@ -96,12 +96,9 @@ is a forgery, not a placeholder.
            priority="1"
            class="absolute inset-0 h-full w-full object-cover object-[62%_bottom] lg:object-right" />
 
-  {# From md the lead and the price lie on the sunset, the brightest part of
-     the frame, and bare they measured 1.0:1. The scrim darkens the left side
-     in graphite and fades out before the car. Below md there is nothing to
-     darken: the lead and the price are off the phone's first screen and the
-     heading reads on the header wash. #}
-  <span aria-hidden="true" class="u-hero-scrim absolute inset-0 hidden md:block"></span>
+  {# No scrim over the picture, at the owner's request: the photograph is
+     shown as it is, at every width, and the words lie straight on it — on a
+     phone too, rather than under the picture as a second block. #}
 
   {# The header's row lies on the top of the frame at every width. Twice the
      row's height so the wash has room to fade rather than end in a line. #}
@@ -213,7 +210,7 @@ is a forgery, not a placeholder.
            a price in the hero and the design before it did, on purpose — so it
            is here as one line of the lead rather than as a block of its own,
            which is the smallest thing that keeps both true. #}
-        <p class="mt-4 w-fit u-muted-on-ground">
+        <p class="mt-4 u-muted-on-ground">
           {% blocktranslate with price=course.price_gross|floatformat:0 %}Kurs kat. B od {{ price }} zł{% endblocktranslate %}
         </p>
       {% endif %}
