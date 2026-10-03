@@ -17,7 +17,7 @@ from celery import Task, shared_task
 from django.conf import settings
 from django.urls import reverse
 
-from apps.core.contracts import validate_payload
+from apps.core.contracts import ContractError, validate_payload
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,9 @@ class BaseTask(Task):
     """
 
     autoretry_for = (Exception,)
+    # A payload that breaks the contract breaks it on every attempt. Retrying
+    # it five times only delays the error the caller has to see.
+    dont_autoretry_for = (ContractError,)
     retry_backoff = True
     retry_backoff_max = 600
     max_retries = 5

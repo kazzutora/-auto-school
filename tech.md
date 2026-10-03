@@ -538,7 +538,7 @@ HTMX-эндпоинты (частичные ответы, всегда `_partial
 Общие правила:
 
 - Очередь по умолчанию `default`, брокер и бэкенд результатов — Redis.
-- Все задачи `bind=True`, `autoretry_for=(Exception,)`, `retry_backoff=True`, `retry_backoff_max=600`, `max_retries=5`, `acks_late=True`.
+- Все задачи `bind=True`, `autoretry_for=(Exception,)`, `dont_autoretry_for=(ContractError,)` — битый payload не повторяется, `retry_backoff=True`, `retry_backoff_max=600`, `max_retries=5`, `acks_late=True`.
 - **Идемпотентность обязательна.** Каждая задача первым делом проверяет своё поле-ключ и выходит без побочного эффекта, если работа уже сделана.
 - Payload задачи — только примитивы (id, строки). Объекты модели в аргументы не передаём.
 - Payload валидируется через `apps.core.contracts` (TypedDict + функция `validate_payload`). Тест контракта обязателен.
