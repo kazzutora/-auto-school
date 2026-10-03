@@ -170,19 +170,17 @@ def test_the_footer_never_shows_the_bank_account(
     assert settings_row.bank_account.replace(" ", "") not in footer.group()
 
 
-def test_the_footer_is_not_the_second_dark_band(client: Client, settings_row: SiteSettings) -> None:
-    """ROSE.md B.8: one dark block on a page, and the enquiry form has it.
+def test_the_footer_is_the_graphite_band(client: Client, settings_row: SiteSettings) -> None:
+    """tech.md v44: graphite carries the text, the dark band and the footer.
 
-    The footer was near black through core v28 and wine for about an hour of
-    v29, and both put a dark band directly under the dark enquiry block. Two of
-    them in a row turn the bottom of every page into stripes, which is the one
-    thing B.8 spends a paragraph on. It is the pale card face now, opened by a
-    brush stroke instead of a radius.
+    The footer was pale from v29 to v43; since the palette went red, white and
+    graphite it closes every page on the dark ground, with the photograph
+    under it.
     """
     footer = re.search(r"<footer[^>]*>", body(client))
     assert footer
-    assert "u-ground-wine" not in footer.group()
-    assert "bg-brand-50" in footer.group()
+    assert "u-ground-wine" in footer.group()
+    assert "bg-brand-50" not in footer.group()
 
 
 def test_the_header_shrinks_from_a_sentinel_rather_than_a_scroll_handler(

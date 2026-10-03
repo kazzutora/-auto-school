@@ -190,7 +190,10 @@ def test_the_photos_are_served_as_webp(client: Client, about_page: Page, categor
     make_vehicle(category)
     body = page(client)
 
-    assert body.count('<source type="image/webp"') == 2
+    # The instructor's and the car's, uploaded through the admin. The footer's
+    # photograph is a webp source as well, from static, and is not what this
+    # page is being asked about.
+    assert body.count('<source type="image/webp" srcset="/media/') == 2
 
 
 # --------------------------------------------------------------------------
