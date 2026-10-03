@@ -187,11 +187,14 @@ def test_a_review_with_nowhere_to_check_it_never_counts(client: Client, site: Si
     assert 'id="opinie"' not in body(client)
 
 
-def test_the_hero_prints_the_course_price(client: Client, site: SiteSettings) -> None:
-    """The figure a visitor arrived for, on the first screen."""
+def test_the_hero_leaves_the_course_price_to_the_price_list(
+    client: Client, site: SiteSettings
+) -> None:
+    """The owner took the lead and the price out of the hero: on the bare
+    sunset they could not be read."""
     make_course(price_gross=Decimal("3700"))
 
-    assert "3700 zł" in body(client)
+    assert "3700 zł" not in body(client)
 
 
 def test_the_hero_says_nothing_about_price_before_there_is_one(

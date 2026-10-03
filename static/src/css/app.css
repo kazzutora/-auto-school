@@ -3420,13 +3420,6 @@
     .u-hero-mark .u-hero-points {
       display: none;
     }
-
-    /* The lead and the price are not on the phone's first screen at all:
-     * the heading, the car and the two buttons are. The price is on the
-     * buttons' next page, and the lead says what the strip below says. */
-    .u-hero-pad {
-      display: none;
-    }
   }
 
   /* The strip: an icon over two lines of capitals, red hairlines between. */

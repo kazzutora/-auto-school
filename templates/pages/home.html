@@ -197,24 +197,9 @@ is a forgery, not a placeholder.
         </p>
       </div>
 
-      {# On a phone the photograph is under these lines with no scrim, so they
-         sit on a pad of their own, .u-hero-pad: the picture stays whole and
-         only the paragraph gets a ground. From md the pad is gone. #}
-      <div class="u-hero-pad mt-6">
-      <p class="max-w-[33rem] text-body u-muted-on-ground md:text-body-lg">
-        {% translate "Kurs standardowy, przyspieszony w dwa tygodnie albo na skrzyni automatycznej. Klimatyzowane auta, dowóz na egzamin w cenie." %}
-      </p>
-
-      {% if course.price_gross %}
-        {# The number a visitor came for, on the first screen. C.1 does not put
-           a price in the hero and the design before it did, on purpose — so it
-           is here as one line of the lead rather than as a block of its own,
-           which is the smallest thing that keeps both true. #}
-        <p class="mt-4 u-muted-on-ground">
-          {% blocktranslate with price=course.price_gross|floatformat:0 %}Kurs kat. B od {{ price }} zł{% endblocktranslate %}
-        </p>
-      {% endif %}
-      </div>
+      {# No lead and no price under the mark, at the owner's request: the
+         words lie straight on the sunset with no scrim, and there they could
+         not be read. The price is one click away on the buttons' pages. #}
 
       {# The row is allowed past the column at lg. Five columns is 475px at
          1440 and the two large pills come to 532, so inside the column they
